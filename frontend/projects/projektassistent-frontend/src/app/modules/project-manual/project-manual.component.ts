@@ -16,6 +16,11 @@ export class ProjectManualComponent implements OnInit {
   setSideNavMenu(): void {
     this.navMenuItems = [
       {
+        name: 'Projekt',
+        icon: 'settings',
+        route: 'project-manual/project',
+      },
+      {
         name: 'Tailoring',
         icon: 'check_box',
         route: 'project-manual/tailoring',

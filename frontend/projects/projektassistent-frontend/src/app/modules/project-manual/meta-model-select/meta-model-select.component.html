@@ -1,0 +1,9 @@
+<h4>Verfügbare Varianten</h4>
+<mat-form-field appearance="fill">
+  <mat-label>Meta-Modell</mat-label>
+  <mat-select>
+    <mat-option *ngFor="let model of metaModels" [value]="model.value">
+      {{model.viewValue}}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
