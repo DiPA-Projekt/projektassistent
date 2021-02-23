@@ -1,0 +1,11 @@
+openapi: 3.0.3
+info:
+  title: @project.description@
+  version: @project.version@
+servers:
+  - url: http://localhost:9081/api/v1
+    description: Development
+paths:
+  /status:
+    $ref: "paths/status.yml"
+

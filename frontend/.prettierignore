@@ -1,0 +1,6 @@
+**/assets/**
+projects/projektassistent-api-client/**
+favicon.ico
+*.log
+*.sass
+*.scss
