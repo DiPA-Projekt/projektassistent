@@ -1,19 +1,22 @@
-import { Component } from '@angular/core';
-
-interface MetaModel {
-  value: string;
-  viewValue: string;
-}
+import { Component, OnInit } from '@angular/core';
+import { MetaModel } from 'projektassistent-api-client';
 
 @Component({
   selector: 'app-metal-model-select',
   templateUrl: './meta-model-select.component.html',
-  styleUrls: ['./meta-model-select.component.scss'],
 })
-export class MetaModelSelectComponent {
-  metaModels: MetaModel[] = [
-    { value: 'vmxt', viewValue: 'VMXT' },
-    { value: 'vmxt-bund', viewValue: 'VMXT Bund' },
-    { value: 'vmxt-itz-bund', viewValue: 'VMXT ITZ Bund' },
-  ];
+export class MetaModelSelectComponent implements OnInit {
+  metaModels: MetaModel[];
+
+  ngOnInit(): void {
+    this.metaModels = this.getAvailableMetaModels();
+  }
+
+  getAvailableMetaModels(): MetaModel[] {
+    return [
+      { id: 1, name: 'VMXT' },
+      { id: 2, name: 'VMXT Bund' },
+      { id: 3, name: 'VMXT ITZ Bund' },
+    ];
+  }
 }

@@ -10,7 +10,13 @@ import { MetaModelSelectComponent } from './meta-model-select/meta-model-select.
 import { ProjectComponent } from './project/project.component';
 
 @NgModule({
-  declarations: [ProjectManualComponent, NavMenuListItemComponent, TailoringFormComponent, MetaModelSelectComponent, ProjectComponent],
+  declarations: [
+    ProjectManualComponent,
+    NavMenuListItemComponent,
+    TailoringFormComponent,
+    MetaModelSelectComponent,
+    ProjectComponent,
+  ],
   imports: [CommonModule, MaterialModule, ProjectManualRoutingModule, ReactiveFormsModule],
 })
 export class ProjectManualModule {}

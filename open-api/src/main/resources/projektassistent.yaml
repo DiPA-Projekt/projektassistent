@@ -8,4 +8,6 @@ servers:
 paths:
   /status:
     $ref: "paths/status.yml"
+  /metaModels:
+    $ref: "paths/metaModels.yml"
 

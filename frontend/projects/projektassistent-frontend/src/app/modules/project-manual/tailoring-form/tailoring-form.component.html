@@ -1,6 +1,5 @@
 <div class="container">
   <form class="tailoring-form" [formGroup]="formGroup">
-    <h3>Auswahl</h3>
     <mat-selection-list formControlName="tailoringList">
       <mat-list-option *ngFor="let option of tailoringOptions" color="primary" [id]="option.key" [value]="option.key">
         {{ option.label }}
@@ -13,14 +12,14 @@
     <mat-accordion class="tailoring-headers-align" multi>
       <ng-container *ngFor="let role of projectRoles">
         <mat-expansion-panel *ngIf="!role.dependency || formGroup.get('tailoringList').value.includes(role.dependency)">
-            <mat-expansion-panel-header>
-              <mat-panel-title>
-                {{ role.label }}
-              </mat-panel-title>
-              <mat-panel-description *ngIf="role.dependency">
-                {{ getDependencyLabel(role.dependency) }}
-              </mat-panel-description>
-            </mat-expansion-panel-header>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              {{ role.label }}
+            </mat-panel-title>
+            <mat-panel-description *ngIf="role.dependency">
+              {{ getDependencyLabel(role.dependency) }}
+            </mat-panel-description>
+          </mat-expansion-panel-header>
           <p>
             Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et
             dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet
