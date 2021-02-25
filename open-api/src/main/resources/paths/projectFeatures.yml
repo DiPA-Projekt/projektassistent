@@ -1,0 +1,15 @@
+get:
+  tags:
+    - project
+  summary: Project Features List
+  description: Retrieves the list of project features.
+  operationId: getProjectFeatures
+  responses:
+    200:
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: "../models/projectFeature.yml#/ProjectFeature"

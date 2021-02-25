@@ -134,6 +134,7 @@
                             <enablePostProcessFile>false</enablePostProcessFile>
 
                             <generatorName>spring</generatorName>
+                            <additionalProperties>useOneOfInterfaces=true</additionalProperties>
 
                             <configOptions>
                                 <apiPackage>online.projektassistent.api.rest</apiPackage>

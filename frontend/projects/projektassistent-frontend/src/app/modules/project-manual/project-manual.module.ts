@@ -8,6 +8,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { NavMenuListItemComponent } from '../../shared/nav-menu-list-item/nav-menu-list-item.component';
 import { MetaModelSelectComponent } from './meta-model-select/meta-model-select.component';
 import { ProjectComponent } from './project/project.component';
+import { ApplicationProfileComponent } from './application-profile/application-profile.component';
+import { ProjectTypeSelectComponent } from './project-type-select/project-type-select.component';
+import { ProjectTypeVariantSelectComponent } from './project-type-variant-select/project-type-variant-select.component';
 
 @NgModule({
   declarations: [
@@ -16,6 +19,9 @@ import { ProjectComponent } from './project/project.component';
     TailoringFormComponent,
     MetaModelSelectComponent,
     ProjectComponent,
+    ApplicationProfileComponent,
+    ProjectTypeSelectComponent,
+    ProjectTypeVariantSelectComponent,
   ],
   imports: [CommonModule, MaterialModule, ProjectManualRoutingModule, ReactiveFormsModule],
 })

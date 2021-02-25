@@ -1,6 +1,6 @@
 get:
   tags:
-    - metaModels
+    - project
   summary: Meta Models List
   description: Retrieves the list of available meta models.
   operationId: getMetaModels
