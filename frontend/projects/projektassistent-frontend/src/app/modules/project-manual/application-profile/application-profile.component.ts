@@ -56,12 +56,16 @@ export class ApplicationProfileComponent implements OnInit, OnDestroy {
                 selectedValue: false,
                 possibleValues: [
                   {
-                    key: false,
-                    title: 'Nein',
+                    key: null,
+                    title: '--',
                   },
                   {
                     key: true,
                     title: 'Ja',
+                  },
+                  {
+                    key: false,
+                    title: 'Nein',
                   },
                 ],
               },
@@ -74,17 +78,249 @@ export class ApplicationProfileComponent implements OnInit, OnDestroy {
                 selectedValue: false,
                 possibleValues: [
                   {
-                    key: false,
-                    title: 'Nein',
+                    key: null,
+                    title: '--',
                   },
                   {
                     key: true,
                     title: 'Ja',
                   },
+                  {
+                    key: false,
+                    title: 'Nein',
+                  },
                 ],
               },
               name: 'Messung und Analyse',
               description: 'Sollen quantitative Projektkennzahlen gemessen und analysiert werden?',
+            },
+            {
+              id: 3,
+              values: {
+                selectedValue: null,
+                possibleValues: [
+                  {
+                    key: null,
+                    title: '--',
+                  },
+                  {
+                    key: true,
+                    title: 'Ja',
+                  },
+                  {
+                    key: false,
+                    title: 'Nein',
+                  },
+                ],
+              },
+              name: 'Informationssicherheit und Datenschutz (AG)',
+              description:
+                'Müssen im Projekt Aspekte der Informationssicherheit (Security) oder des Datenschutzes (Privacy) berücksichtigt werden?',
+            },
+            {
+              id: 4,
+              values: {
+                selectedValue: null,
+                possibleValues: [
+                  {
+                    key: null,
+                    title: '--',
+                  },
+                  {
+                    key: true,
+                    title: 'Ja',
+                  },
+                  {
+                    key: false,
+                    title: 'Nein',
+                  },
+                ],
+              },
+              name: 'Funktionssicherheit (AG)',
+              description: 'Müssen im Projekt Aspekte der Funktionssicherheit (Safety) berücksichtigt werden?',
+            },
+            {
+              id: 5,
+              values: {
+                selectedValue: true,
+                possibleValues: [
+                  {
+                    key: null,
+                    title: '--',
+                  },
+                  {
+                    key: true,
+                    title: 'Ja',
+                  },
+                  {
+                    key: false,
+                    title: 'Nein',
+                  },
+                ],
+              },
+              name: 'Fertigprodukte',
+              description: 'Sollen, soweit sinnvoll und möglich, Fertigprodukte evaluiert und eingesetzt werden?',
+            },
+            {
+              id: 6,
+              values: {
+                selectedValue: true,
+                possibleValues: [
+                  {
+                    key: null,
+                    title: '--',
+                  },
+                  {
+                    key: true,
+                    title: 'Ja',
+                  },
+                  {
+                    key: false,
+                    title: 'Nein',
+                  },
+                ],
+              },
+              name: 'Betriebsübergabe (AG)',
+              description: 'Wird das System nach der Entwicklung in den IT-Betrieb überführt?',
+            },
+          ],
+        },
+        {
+          projectTypeId: 1,
+          projectTypeVariantId: 2,
+          projectTypeFeatures: [
+            {
+              id: 1,
+              values: {
+                selectedValue: false,
+                possibleValues: [
+                  {
+                    key: null,
+                    title: '--',
+                  },
+                  {
+                    key: true,
+                    title: 'Ja',
+                  },
+                  {
+                    key: false,
+                    title: 'Nein',
+                  },
+                ],
+              },
+              name: 'Kaufmännisches Projektmanagement',
+              description: 'Ist eine kaufmännische Projektplanung und -verfolgung notwendig?',
+            },
+            {
+              id: 2,
+              values: {
+                selectedValue: false,
+                possibleValues: [
+                  {
+                    key: null,
+                    title: '--',
+                  },
+                  {
+                    key: true,
+                    title: 'Ja',
+                  },
+                  {
+                    key: false,
+                    title: 'Nein',
+                  },
+                ],
+              },
+              name: 'Messung und Analyse',
+              description: 'Sollen quantitative Projektkennzahlen gemessen und analysiert werden?',
+            },
+            {
+              id: 3,
+              values: {
+                selectedValue: null,
+                possibleValues: [
+                  {
+                    key: null,
+                    title: '--',
+                  },
+                  {
+                    key: true,
+                    title: 'Ja',
+                  },
+                  {
+                    key: false,
+                    title: 'Nein',
+                  },
+                ],
+              },
+              name: 'Informationssicherheit und Datenschutz (AG)',
+              description:
+                'Müssen im Projekt Aspekte der Informationssicherheit (Security) oder des Datenschutzes (Privacy) berücksichtigt werden?',
+            },
+            {
+              id: 4,
+              values: {
+                selectedValue: null,
+                possibleValues: [
+                  {
+                    key: null,
+                    title: '--',
+                  },
+                  {
+                    key: true,
+                    title: 'Ja',
+                  },
+                  {
+                    key: false,
+                    title: 'Nein',
+                  },
+                ],
+              },
+              name: 'Funktionssicherheit (AG)',
+              description: 'Müssen im Projekt Aspekte der Funktionssicherheit (Safety) berücksichtigt werden?',
+            },
+            {
+              id: 5,
+              values: {
+                selectedValue: true,
+                possibleValues: [
+                  {
+                    key: null,
+                    title: '--',
+                  },
+                  {
+                    key: true,
+                    title: 'Ja',
+                  },
+                  {
+                    key: false,
+                    title: 'Nein',
+                  },
+                ],
+              },
+              name: 'Fertigprodukte',
+              description: 'Sollen, soweit sinnvoll und möglich, Fertigprodukte evaluiert und eingesetzt werden?',
+            },
+            {
+              id: 6,
+              values: {
+                selectedValue: true,
+                possibleValues: [
+                  {
+                    key: null,
+                    title: '--',
+                  },
+                  {
+                    key: true,
+                    title: 'Ja',
+                  },
+                  {
+                    key: false,
+                    title: 'Nein',
+                  },
+                ],
+              },
+              name: 'Betriebsübergabe (AG)',
+              description: 'Wird das System nach der Entwicklung in den IT-Betrieb überführt?',
             },
           ],
         },
@@ -98,16 +334,20 @@ export class ApplicationProfileComponent implements OnInit, OnDestroy {
                 selectedValue: false,
                 possibleValues: [
                   {
-                    key: false,
-                    title: 'Nein',
+                    key: null,
+                    title: '--',
                   },
                   {
                     key: true,
                     title: 'Ja',
                   },
+                  {
+                    key: false,
+                    title: 'Nein',
+                  },
                 ],
               },
-              name: 'Informationssicherheit und Datenschutz (AG)',
+              name: 'Informationssicherheit und Datenschutz (AN)',
               description:
                 'Müssen im Projekt Aspekte der Informationssicherheit (Security) oder des Datenschutzes (Privacy) berücksichtigt werden?',
             },
@@ -117,17 +357,131 @@ export class ApplicationProfileComponent implements OnInit, OnDestroy {
                 selectedValue: false,
                 possibleValues: [
                   {
-                    key: false,
-                    title: 'Nein',
+                    key: null,
+                    title: '--',
                   },
                   {
                     key: true,
                     title: 'Ja',
                   },
+                  {
+                    key: false,
+                    title: 'Nein',
+                  },
                 ],
               },
-              name: 'Funktionssicherheit (AG)',
+              name: 'Funktionssicherheit (AN)',
               description: 'Müssen im Projekt Aspekte der Funktionssicherheit (Safety) berücksichtigt werden?',
+            },
+            {
+              id: 10,
+              values: {
+                selectedValue: 'SW',
+                possibleValues: [
+                  {
+                    key: null,
+                    title: '--',
+                  },
+                  {
+                    key: 'HW',
+                    title: 'HW',
+                  },
+                  {
+                    key: 'SW',
+                    title: 'SW',
+                  },
+                  {
+                    key: 'HW_SW',
+                    title: 'HW und SW',
+                  },
+                  {
+                    key: 'Integration',
+                    title: 'Integration',
+                  },
+                ],
+              },
+              name: 'Projektgegenstand',
+              description: 'Was ist der Entwicklungsgegenstand des Projekts?',
+            },
+          ],
+        },
+        {
+          projectTypeId: 2,
+          projectTypeVariantId: 4,
+          projectTypeFeatures: [
+            {
+              id: 1,
+              values: {
+                selectedValue: false,
+                possibleValues: [
+                  {
+                    key: null,
+                    title: '--',
+                  },
+                  {
+                    key: true,
+                    title: 'Ja',
+                  },
+                  {
+                    key: false,
+                    title: 'Nein',
+                  },
+                ],
+              },
+              name: 'Kaufmännisches Projektmanagement',
+              description: 'Ist eine kaufmännische Projektplanung und -verfolgung notwendig?',
+            },
+            {
+              id: 2,
+              values: {
+                selectedValue: false,
+                possibleValues: [
+                  {
+                    key: null,
+                    title: '--',
+                  },
+                  {
+                    key: true,
+                    title: 'Ja',
+                  },
+                  {
+                    key: false,
+                    title: 'Nein',
+                  },
+                ],
+              },
+              name: 'Messung und Analyse',
+              description: 'Sollen quantitative Projektkennzahlen gemessen und analysiert werden?',
+            },
+            {
+              id: 10,
+              values: {
+                selectedValue: 'SW',
+                possibleValues: [
+                  {
+                    key: null,
+                    title: '--',
+                  },
+                  {
+                    key: 'HW',
+                    title: 'HW',
+                  },
+                  {
+                    key: 'SW',
+                    title: 'SW',
+                  },
+                  {
+                    key: 'HW_SW',
+                    title: 'HW und SW',
+                  },
+                  {
+                    key: 'Integration',
+                    title: 'Integration',
+                  },
+                ],
+              },
+              name: 'Projektgegenstand',
+              description: 'Was ist der Entwicklungsgegenstand des Projekts?',
             },
           ],
         },
@@ -141,12 +495,16 @@ export class ApplicationProfileComponent implements OnInit, OnDestroy {
                 selectedValue: null,
                 possibleValues: [
                   {
-                    key: false,
-                    title: 'Nein',
+                    key: null,
+                    title: '--',
                   },
                   {
                     key: true,
                     title: 'Ja',
+                  },
+                  {
+                    key: false,
+                    title: 'Nein',
                   },
                 ],
               },
@@ -156,20 +514,134 @@ export class ApplicationProfileComponent implements OnInit, OnDestroy {
             {
               id: 6,
               values: {
-                selectedValue: 'Test',
+                selectedValue: false,
                 possibleValues: [
                   {
-                    key: 'Test',
-                    title: 'Test',
+                    key: null,
+                    title: '--',
                   },
                   {
-                    key: 'Test2',
-                    title: 'Test2',
+                    key: true,
+                    title: 'Ja',
+                  },
+                  {
+                    key: false,
+                    title: 'Nein',
                   },
                 ],
               },
-              name: 'Betriebsübergabe (AG)',
+              name: 'Betriebsübergabe (AG/AN)',
               description: 'Wird das System nach der Entwicklung in den IT-Betrieb überführt?',
+            },
+            {
+              id: 10,
+              values: {
+                selectedValue: 'SW',
+                possibleValues: [
+                  {
+                    key: null,
+                    title: '--',
+                  },
+                  {
+                    key: 'HW',
+                    title: 'HW',
+                  },
+                  {
+                    key: 'SW',
+                    title: 'SW',
+                  },
+                  {
+                    key: 'HW_SW',
+                    title: 'HW und SW',
+                  },
+                  {
+                    key: 'Integration',
+                    title: 'Integration',
+                  },
+                ],
+              },
+              name: 'Projektgegenstand',
+              description: 'Was ist der Entwicklungsgegenstand des Projekts?',
+            },
+          ],
+        },
+        {
+          projectTypeId: 3,
+          projectTypeVariantId: 6,
+          projectTypeFeatures: [
+            {
+              id: 1,
+              values: {
+                selectedValue: false,
+                possibleValues: [
+                  {
+                    key: null,
+                    title: '--',
+                  },
+                  {
+                    key: true,
+                    title: 'Ja',
+                  },
+                  {
+                    key: false,
+                    title: 'Nein',
+                  },
+                ],
+              },
+              name: 'Kaufmännisches Projektmanagement',
+              description: 'Ist eine kaufmännische Projektplanung und -verfolgung notwendig?',
+            },
+            {
+              id: 2,
+              values: {
+                selectedValue: false,
+                possibleValues: [
+                  {
+                    key: null,
+                    title: '--',
+                  },
+                  {
+                    key: true,
+                    title: 'Ja',
+                  },
+                  {
+                    key: false,
+                    title: 'Nein',
+                  },
+                ],
+              },
+              name: 'Messung und Analyse',
+              description: 'Sollen quantitative Projektkennzahlen gemessen und analysiert werden?',
+            },
+            {
+              id: 10,
+              values: {
+                selectedValue: 'SW',
+                possibleValues: [
+                  {
+                    key: null,
+                    title: '--',
+                  },
+                  {
+                    key: 'HW',
+                    title: 'HW',
+                  },
+                  {
+                    key: 'SW',
+                    title: 'SW',
+                  },
+                  {
+                    key: 'HW_SW',
+                    title: 'HW und SW',
+                  },
+                  {
+                    key: 'Integration',
+                    title: 'Integration',
+                  },
+                ],
+              },
+              name: 'Projektgegenstand',
+              description: 'Was ist der Entwicklungsgegenstand des Projekts?',
             },
           ],
         },
