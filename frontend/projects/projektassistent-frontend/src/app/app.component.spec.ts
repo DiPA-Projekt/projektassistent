@@ -2,13 +2,13 @@ import { TestBed } from '@angular/core/testing';
 
 import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
-import { MatIcon } from '@angular/material/icon';
-import { MatToolbar, MatToolbarRow } from '@angular/material/toolbar';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { MaterialModule } from './material/material.module';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [AppComponent, MatIcon, MatToolbar, MatToolbarRow],
+      declarations: [AppComponent],
       imports: [RouterTestingModule],
     }).compileComponents();
   });
