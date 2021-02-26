@@ -1,6 +1,5 @@
 <div class="container">
   <form class="tailoring-form" [formGroup]="formGroup">
-    <h3>Auswahl</h3>
     <mat-selection-list formControlName="tailoringList">
       <mat-list-option *ngFor="let option of tailoringOptions" color="primary" [id]="option.key" [value]="option.key">
         {{ option.label }}
