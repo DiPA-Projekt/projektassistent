@@ -1,0 +1,20 @@
+MenuEntry:
+  type: object
+  properties:
+    id:
+      description: Unique identifier of the Menu Entry
+      type: integer
+      format: int64
+      example: 1
+    displayName:
+      description: Text of the Menu Entry
+      type: string
+      example: "Produkte"
+    subMenuEntries:
+      description: Short description text for the meta model
+      type: Array
+      items:
+        $ref: 'menuEntry.yml#/MenuEntry'
+  required:
+    - id
+    - displayName
