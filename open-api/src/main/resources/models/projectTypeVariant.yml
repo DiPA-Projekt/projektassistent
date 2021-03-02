@@ -1,0 +1,15 @@
+ProjectTypeVariant:
+  type: object
+  properties:
+    id:
+      description: Unique identifier of the project type variant
+      type: integer
+      format: int64
+      example: 1
+    name:
+      description: Name of the project type variant
+      type: string
+      example: "AG-Projekt mit einem Auftragnehmer"
+  required:
+    - id
+    - name

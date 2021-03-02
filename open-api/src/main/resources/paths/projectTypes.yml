@@ -1,0 +1,23 @@
+get:
+  tags:
+    - project
+  summary: Project Types List
+  description: Retrieves the list of project types.
+  operationId: getProjectTypes
+  parameters:
+    - in: path
+      name: metaModelId
+      schema:
+        type: integer
+        format: int64
+      required: true
+      description: Numeric ID of the meta model.
+  responses:
+    200:
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: "../models/projectType.yml#/ProjectType"

@@ -1,0 +1,8 @@
+<mat-form-field appearance="fill" class="full-width">
+  <mat-label>Projekttyp-Variante</mat-label>
+  <mat-select (selectionChange)="changeProjectTypeVariant($event)">
+    <mat-option *ngFor="let typeVariant of projectTypeVariants" [value]="typeVariant.id">
+      {{ typeVariant.name }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>

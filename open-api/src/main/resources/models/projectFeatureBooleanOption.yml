@@ -1,0 +1,14 @@
+ProjectFeatureBooleanOption:
+  type: object
+  properties:
+    key:
+      description: Value of the project feature boolean option
+      type: boolean
+      example: false
+    title:
+      description: Name of the project feature boolean option
+      type: string
+      example: Nein
+  required:
+    - key
+    - title
