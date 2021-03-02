@@ -18,5 +18,7 @@ paths:
     $ref: "paths/projectFeatures.yml"
   /menuEntries:
     $ref: "paths/menuEntry.yml"
+  /page/{pageId}:
+    $ref: "paths/page.yml"
 
 
