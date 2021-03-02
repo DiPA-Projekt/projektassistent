@@ -20,5 +20,3 @@ paths:
     $ref: "paths/menuEntry.yml"
   /page/{pageId}:
     $ref: "paths/page.yml"
-
-
