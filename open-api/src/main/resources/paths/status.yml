@@ -3,6 +3,7 @@ get:
     - Status
   summary: Webservice-Status
   description: Liefert den aktuellen Status des Webservices zurück.
+  operationId: getStatus
   responses:
     200:
       description: OK

@@ -1,0 +1,21 @@
+get:
+  tags:
+    - page
+  summary: single page
+  description: Retrieves the information to display a single page of the project definition
+  operationId: getPage
+  parameters:
+    - in: path
+      name: pageId
+      schema:
+        type: integer
+        format: int64
+      required: true
+      description: Numeric ID of the page
+  responses:
+    200:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '../models/page.yml#/Page'
