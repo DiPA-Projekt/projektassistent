@@ -11,7 +11,7 @@ PageEntry:
       type: string
       example: "Produkte"
     descriptionText:
-      description: First text on the page which descripes the pages content
+      description: First text on the page which describes the pages content
       type: string
       example: "Das V-Modell ist ein generischer Vorgehensstandard, der für ein konkretes Projekt angepasst und konkretisiert werden muss..."
     tableEntries:
