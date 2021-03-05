@@ -156,7 +156,7 @@
                 <dependencies>
                     <dependency>
                         <groupId>${project.groupId}</groupId>
-                        <artifactId>projektassistent-open-api</artifactId>
+                        <artifactId>projektassistent-openapi</artifactId>
                         <version>${project.version}</version>
                     </dependency>
                 </dependencies>

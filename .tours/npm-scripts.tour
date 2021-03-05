@@ -1,0 +1,17 @@
+{
+  "$schema": "https://aka.ms/codetour-schema",
+  "title": "NPM Scripts",
+  "steps": [
+    {
+      "file": "client/package.json",
+      "description": "Hier sind alle NPM-Scripts aufgelistet, die für das Entwickeln wissenswert sind.",
+      "line": 4
+    },
+    {
+      "file": "client/package.json",
+      "description": "Mittels `npm start` kann die Anwendung gesurft und weiterentwickelt werden. Aktuell ist hier Vite statt Webpack eingestellt.",
+      "line": 24
+    }
+  ],
+  "ref": "refactor/react-app"
+}
