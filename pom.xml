@@ -52,7 +52,8 @@
     </properties>
 
     <modules>
-        <module>open-api</module>
+        <module>openapi</module>
+        <module>client</module>
         <module>frontend</module>
         <module>server</module>
     </modules>
