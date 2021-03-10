@@ -1,6 +1,2 @@
-secretGenerator:
-  - name: database-password
-    literals:
-      - password=dipasecret
 resources:
   - projektassistent-deployment.yaml

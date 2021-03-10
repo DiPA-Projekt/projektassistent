@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: projektassistent-@k8s.release.track@
+  name: pa-@k8s.release.track@
   labels:
     app: projektassistent
     track: @k8s.release.track@
 spec:
   ports:
-    - name: projektassistent
+    - name: pa
       port: 9081
       targetPort: 9081
       nodePort: @k8s.server.service.port@
@@ -17,23 +17,10 @@ spec:
     track: @k8s.release.track@
   type: NodePort
 ---
-#apiVersion: v1
-#kind: PersistentVolumeClaim
-#metadata:
-#  name: wp-pv-claim
-#  labels:
-#    app: wordpress
-#spec:
-#  accessModes:
-#    - ReadWriteOnce
-#  resources:
-#   requests:
-#      storage: 20Gi
----
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
-  name: projektassistent-@k8s.release.track@
+  name: pa-@k8s.release.track@
   labels:
     app: projektassistent
     track: @k8s.release.track@
@@ -55,23 +42,8 @@ spec:
       containers:
         - image: docker.dipa.online/dipa-projekt/projektassistent:@k8s.image.version@
           name: projektassistent
-          #          env:
-          #            - name: WORDPRESS_DB_HOST
-          #              value: wordpress-mysql
-          #            - name: WORDPRESS_DB_PASSWORD
-          #              valueFrom:
-          #                secretKeyRef:
-          #                  name: mysql-pass
-          #                  key: password
           ports:
             - containerPort: 9081
-              name: projektassistent
-      #          volumeMounts:
-      #            - name: wordpress-persistent-storage
-      #              mountPath: /var/www/html
+              name: pa
       imagePullSecrets:
         - name: regcred
-#      volumes:
-#        - name: wordpress-persistent-storage
-#          persistentVolumeClaim:
-#            claimName: wp-pv-claim
