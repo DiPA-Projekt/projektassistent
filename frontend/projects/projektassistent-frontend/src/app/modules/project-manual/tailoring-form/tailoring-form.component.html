@@ -1,0 +1,59 @@
+<div class="container">
+  <form class="tailoring-form" [formGroup]="formGroup">
+    <mat-selection-list formControlName="tailoringList">
+      <mat-list-option *ngFor="let option of tailoringOptions" color="primary" [id]="option.key" [value]="option.key">
+        {{ option.label }}
+      </mat-list-option>
+    </mat-selection-list>
+  </form>
+
+  <div *ngIf="formGroup.get('tailoringList').value.length" class="tailoring-result">
+    <h3>Projektrollen</h3>
+    <mat-accordion class="tailoring-headers-align" multi>
+      <ng-container *ngFor="let role of projectRoles">
+        <mat-expansion-panel *ngIf="!role.dependency || formGroup.get('tailoringList').value.includes(role.dependency)">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              {{ role.label }}
+            </mat-panel-title>
+            <mat-panel-description *ngIf="role.dependency">
+              {{ getDependencyLabel(role.dependency) }}
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <p>
+            Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et
+            dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet
+            clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet,
+            consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,
+            sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no
+            sea takimata sanctus est Lorem ipsum dolor sit amet.
+          </p>
+        </mat-expansion-panel>
+      </ng-container>
+    </mat-accordion>
+
+    <h3>Organisationsrollen</h3>
+    <mat-accordion class="tailoring-headers-align" multi>
+      <ng-container *ngFor="let role of organisationRoles">
+        <mat-expansion-panel *ngIf="!role.dependency || formGroup.get('tailoringList').value.includes(role.dependency)">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              {{ role.label }}
+            </mat-panel-title>
+            <mat-panel-description *ngIf="role.dependency">
+              {{ getDependencyLabel(role.dependency) }}
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <p>
+            Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et
+            dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet
+            clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet,
+            consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,
+            sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no
+            sea takimata sanctus est Lorem ipsum dolor sit amet.
+          </p>
+        </mat-expansion-panel>
+      </ng-container>
+    </mat-accordion>
+  </div>
+</div>

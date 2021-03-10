@@ -1,0 +1,15 @@
+get:
+  tags:
+    - menu
+  summary: Menu Entries List
+  description: Retrieves the list of menu entries.
+  operationId: getMenu
+  responses:
+    200:
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: "../models/menuEntry.yml#/MenuEntry"

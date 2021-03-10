@@ -1,0 +1,16 @@
+<ng-container *ngIf="features.length">
+  <h3>Anwendungsprofil</h3>
+  <form>
+    <ng-container *ngFor="let feature of features">
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>{{ feature.name }}</mat-label>
+        <mat-select [value]="feature.values.selectedValue">
+          <mat-option *ngFor="let valueOptions of feature.values.possibleValues" [value]="valueOptions.key">
+            {{ valueOptions.title }}
+          </mat-option>
+        </mat-select>
+        <mat-hint>{{ feature.description }}</mat-hint>
+      </mat-form-field>
+    </ng-container>
+  </form>
+</ng-container>

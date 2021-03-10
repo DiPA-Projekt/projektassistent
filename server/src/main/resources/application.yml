@@ -1,0 +1,10 @@
+server:
+  port: 9081
+  use-forward-headers: true
+
+spring:
+  banner:
+    location: classpath:projektassistent-banner.txt
+
+logging:
+  path: "logs"

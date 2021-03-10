@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: pa-@k8s.release.track@
+  labels:
+    app: projektassistent
+    track: @k8s.release.track@
+spec:
+  ports:
+    - name: pa
+      port: 9081
+      targetPort: 9081
+      nodePort: @k8s.server.service.port@
+  selector:
+    app: projektassistent
+    tier: server
+    track: @k8s.release.track@
+  type: NodePort
+---
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: pa-@k8s.release.track@
+  labels:
+    app: projektassistent
+    track: @k8s.release.track@
+spec:
+  selector:
+    matchLabels:
+      app: projektassistent
+      tier: server
+      track: @k8s.release.track@
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: projektassistent
+        tier: server
+        track: @k8s.release.track@
+    spec:
+      containers:
+        - image: docker.dipa.online/dipa-projekt/projektassistent:@k8s.image.version@
+          name: projektassistent
+          ports:
+            - containerPort: 9081
+              name: pa
+      imagePullSecrets:
+        - name: regcred

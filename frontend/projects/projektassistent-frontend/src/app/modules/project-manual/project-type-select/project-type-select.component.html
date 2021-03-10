@@ -1,0 +1,8 @@
+<mat-form-field appearance="fill" class="full-width">
+  <mat-label>Projekttyp</mat-label>
+  <mat-select (selectionChange)="changeProjectType($event)">
+    <mat-option *ngFor="let type of projectTypes" [value]="type.id">
+      {{ type.name }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>

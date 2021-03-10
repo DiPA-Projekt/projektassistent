@@ -1,0 +1,14 @@
+ProjectFeatureStringOption:
+  type: object
+  properties:
+    key:
+      description: Value of the project feature string option
+      type: string
+      example: Test
+    title:
+      description: Name of the project feature string option
+      type: string
+      example: Test
+  required:
+    - key
+    - title

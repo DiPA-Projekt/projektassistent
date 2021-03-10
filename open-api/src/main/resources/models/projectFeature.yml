@@ -1,0 +1,65 @@
+ProjectFeature:
+  type: object
+  properties:
+    id:
+      description: Unique identifier of the project feature
+      type: integer
+      format: int64
+      example: 1
+    resultType:
+      type: string
+      example: "TYPE_STRING"
+    name:
+      description: Name of the project feature
+      type: string
+      example: "Kaufmännisches Projektmanagement"
+    description:
+      description: Short description text for the project feature
+      type: string
+      example: "Ist eine kaufmännische Projektplanung und -verfolgung notwendig?"
+  required:
+    - id
+    - name
+  discriminator:
+    propertyName: resultType
+    mapping:
+      TYPE_BOOLEAN: "#/components/schemas/ProjectFeatureBoolean"
+      TYPE_STRING: "#/components/schemas/ProjectFeatureString"
+components:
+  schemas:
+    ProjectFeatureBoolean:
+      type: object
+      properties:
+        selectedValue:
+          description: Selected boolean value of the project feature
+          type: boolean
+          example: false
+        possibleValues:
+          description: Possible boolean values for the project feature
+          type: array
+          items:
+            $ref: "./projectFeatureBooleanOption.yml#/ProjectFeatureBooleanOption"
+      required:
+        - selectedValue
+        - possibleValues
+      allOf:
+        - $ref: 'projectFeature.yml#/ProjectFeature'
+        - type: object
+    ProjectFeatureString:
+      type: object
+      properties:
+        selectedValue:
+          description: Selected string value of the project feature
+          type: string
+          example: false
+        possibleValues:
+          description: Possible string values for the project feature
+          type: array
+          items:
+            $ref: "./projectFeatureStringOption.yml#/ProjectFeatureStringOption"
+      required:
+        - selectedValue
+        - possibleValues
+      allOf:
+        - $ref: 'projectFeature.yml#/ProjectFeature'
+        - type: object

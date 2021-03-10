@@ -1,0 +1,8 @@
+<mat-form-field appearance="fill" class="full-width">
+  <mat-label>Meta-Modell</mat-label>
+  <mat-select (selectionChange)="changeMetaModel($event)">
+    <mat-option *ngFor="let model of metaModels" [value]="model.id">
+      {{ model.name }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>

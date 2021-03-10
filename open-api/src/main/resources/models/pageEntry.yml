@@ -1,0 +1,27 @@
+PageEntry:
+  type: object
+  properties:
+    id:
+      description: Unique identifier of the Page
+      type: integer
+      format: int64
+      example: 1
+    header:
+      description: Text of the header
+      type: string
+      example: "Produkte"
+    descriptionText:
+      description: First text on the page which describes the pages content
+      type: string
+      example: "Das V-Modell ist ein generischer Vorgehensstandard, der für ein konkretes Projekt angepasst und konkretisiert werden muss..."
+    tableEntries:
+      description: Table entries which are sometimes displayed at the end of the page entry
+      type: array
+      items:
+        $ref: 'tableEntry.yml#/TableEntry'
+
+  required:
+    - id
+    - header
+    - descriptionText
+    - tableEntries

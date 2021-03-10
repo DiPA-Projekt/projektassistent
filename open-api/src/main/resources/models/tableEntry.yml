@@ -1,0 +1,21 @@
+TableEntry:
+  type: object
+  properties:
+    id:
+      description: Unique identifier of the table entry
+      type: integer
+      format: int64
+      example: 1
+    descriptionEntry:
+      description: Entry on the left side of the table
+      type: string
+      example: "Erzeugt"
+    dataEntry:
+      description: Entry on the right side of the table
+      type: string
+      example: "Leistungsvereinbarung (SLA/OLA/UC)"
+
+  required:
+    - id
+    - descriptionEntry
+    - dataEntry
