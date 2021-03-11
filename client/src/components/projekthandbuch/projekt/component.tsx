@@ -18,6 +18,7 @@ export class ProjektComponent extends ReactComponent<unknown, ProjektController>
         name="basic"
         // onFinish={onFinish}
         // onFinishFailed={onFinishFailed}
+        initialValues={{}}
       >
         <h1>Verfügbare Varianten</h1>
         <MetaModellComponent />
