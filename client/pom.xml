@@ -15,6 +15,13 @@
 
   <build>
     <defaultGoal>install</defaultGoal>
+    <resources>
+      <resource>
+        <directory>dist</directory>
+        <filtering>false</filtering>
+        <targetPath>META-INF/resources</targetPath>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <groupId>org.openapitools</groupId>
@@ -66,7 +73,7 @@
               <goal>install-node-and-npm</goal>
             </goals>
           </execution>
-          <execution>
+          <!-- <execution>
             <id>npm ci</id>
             <goals>
               <goal>npm</goal>
@@ -74,7 +81,7 @@
             <configuration>
               <arguments>ci</arguments>
             </configuration>
-          </execution>
+          </execution> -->
           <execution>
             <id>npm build</id>
             <goals>
