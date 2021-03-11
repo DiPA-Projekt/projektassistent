@@ -21,7 +21,8 @@
     "build": "npm run webpack:build && cp -r public/* dist/",
     "build:ci": "npm run format && npm run lint && npm run coverage && npm run build",
     "serve": "npm run vite:serve",
-    "start": "npm run vite:start"
+    "start": "npm run vite:start",
+    "preview": "vite preview --open"
   },
   "dependencies": {
     "@ant-design/icons": "4.5.0",
@@ -46,6 +47,7 @@
     "@types/react-router": "5.1.12",
     "@types/react-router-dom": "5.1.7",
     "chromedriver": "89.0.0",
+    "copy-webpack-plugin": "^8.0.0",
     "cssnano": "4.1.10",
     "npm-check-updates": "11.2.1",
     "selenium-server": "3.141.59",
