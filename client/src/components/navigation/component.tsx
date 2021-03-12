@@ -2,7 +2,9 @@ import { Layout, Menu } from 'antd';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import { BookOutlined, DashboardOutlined } from '@ant-design/icons';
+import {
+    ArrowLeftOutlined, ArrowRightOutlined, BookOutlined, DashboardOutlined
+} from '@ant-design/icons';
 import { GenericComponent } from '@leanup/lib/components/generic';
 import { ReactComponent } from '@leanup/lib/components/react';
 
@@ -17,13 +19,22 @@ export class NavigationComponent extends ReactComponent<unknown, NavigationContr
   public render(): JSX.Element {
     return (
       <Sider
-        // collapsible
-        // collapsed={this.ctrl.collapsed}
+        collapsible
+        collapsed={this.ctrl.collapsed}
         // collapsedWidth={50}
-        // onCollapse={() => {
-        //   this.ctrl.toggleCollapse();
-        //   this.forceUpdate();
-        // }}
+        trigger={
+          <button
+            type="button"
+            className="remove-button-style"
+            title={`Seitemenü ${this.ctrl.collapsed ? 'auf' : 'zu'}klappen`}
+          >
+            {this.ctrl.collapsed ? <ArrowRightOutlined aria-label="" /> : <ArrowLeftOutlined aria-label="" />}
+          </button>
+        }
+        onCollapse={() => {
+          this.ctrl.toggleCollapse();
+          this.forceUpdate();
+        }}
         width={250}
       >
         <Menu
@@ -31,16 +42,37 @@ export class NavigationComponent extends ReactComponent<unknown, NavigationContr
           theme="dark"
           defaultSelectedKeys={['/projekthandbuch/projekt']}
           defaultOpenKeys={['/projekthandbuch']}
+          triggerSubMenuAction="click"
           style={{ height: '100%' }}
         >
           <Menu.Item key="/">
-            <DashboardOutlined />
-            <Link to="/">Dashboard</Link>
+            {this.ctrl.collapsed ? (
+              <Link to="/" style={{ margin: 0, padding: 0 }}>
+                <DashboardOutlined />
+              </Link>
+            ) : (
+              <>
+                <DashboardOutlined />
+                <Link to="/">Dashboard</Link>
+              </>
+            )}
           </Menu.Item>
           <SubMenu
             key="/projekthandbuch"
-            icon={<BookOutlined />}
-            title={<button className="remove-button-style">Projekthandbuch</button>}
+            icon={
+              <>
+                {this.ctrl.collapsed ? (
+                  <Link to="/" style={{ margin: 0, padding: 0 }}>
+                    <BookOutlined />
+                  </Link>
+                ) : (
+                  <>
+                    <BookOutlined />
+                  </>
+                )}
+              </>
+            }
+            title={<>{this.ctrl.collapsed ? null : <button className="remove-button-style">Projekthandbuch</button>}</>}
           >
             <Menu.Item key="/projekthandbuch/projekt">
               <Link to="/projekthandbuch/projekt">Projekt</Link>

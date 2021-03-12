@@ -36,7 +36,7 @@ export class HeaderComponent extends ReactComponent<unknown, unknown> implements
             />
           </Col>
           <Col span={18}>
-            <Menu mode="horizontal" theme="dark">
+            <Menu mode="horizontal" triggerSubMenuAction="click" theme="dark">
               <Menu.Item key="1">
                 <DashboardOutlined />
                 <Link to="/"> Dashboard</Link>
