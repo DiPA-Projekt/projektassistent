@@ -7,9 +7,9 @@
         <artifactId>projektassistent-parent</artifactId>
         <version>0.0.2-SNAPSHOT</version>
     </parent>
-    <artifactId>projektassistent-open-api</artifactId>
-    <name>Projektassistent :: Open Api Spec</name>
-    <description>Weit e.V. Projektassistent Open API</description>
+    <artifactId>projektassistent-openapi</artifactId>
+    <name>Projektassistent :: OpenAPI</name>
+    <description>Weit e.V. Projektassistent OpenAPI</description>
 
     <build>
         <resources>

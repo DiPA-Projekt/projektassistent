@@ -1,0 +1,20 @@
+[
+  {
+    "label": "Einkäufer"
+  },
+  {
+    "label": "Qualitätsmanager"
+  },
+  {
+    "label": "Datenschutzbeauftragter (Organisation)",
+    "dependency": "OPTION_INFO_SEC_N_PROJ_DATA_PROT"
+  },
+  {
+    "label": "Informationssicherheitsbeauftragter (Organisation)",
+    "dependency": "OPTION_INFO_SEC_N_PROJ_DATA_PROT2"
+  },
+  {
+    "label": "Betriebsbeauftragter (Organisation)",
+    "dependency": "OPTION_HANDOVER"
+  }
+]

@@ -1,0 +1,7 @@
+.reports/
+dist/
+hint-report/
+node/
+node_modules/
+openapi/
+*.log

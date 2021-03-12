@@ -1,0 +1,26 @@
+[
+  {
+    "key": "OPTION_PROJ_MGMNT",
+    "label": "Kaufmännisches Projektmanagement"
+  },
+  {
+    "key": "OPTION_MEAS_ANAL",
+    "label": "Messung und Analyse"
+  },
+  {
+    "key": "OPTION_INFO_SEC_N_PROJ_DATA_PROT",
+    "label": "Informationssicherheit und Datenschutz (AG)"
+  },
+  {
+    "key": "OPTION_FUNC_RELY",
+    "label": "Funktionssicherheit (AG)"
+  },
+  {
+    "key": "OPTION_FIN_PROD",
+    "label": "Fertigprodukte"
+  },
+  {
+    "key": "OPTION_HANDOVER",
+    "label": "Betriebsübergabe (AG)"
+  }
+]

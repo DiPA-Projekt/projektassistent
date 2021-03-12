@@ -8,16 +8,16 @@
     <version>0.0.2-SNAPSHOT</version>
   </parent>
 
-  <artifactId>projektassistent-frontend</artifactId>
+  <artifactId>projektassistent-client</artifactId>
   <packaging>jar</packaging>
-  <name>Projektassistent :: Frontend</name>
-  <description>Weit e.V. Projektassistent Frontend</description>
+  <name>Projektassistent :: Client</name>
+  <description>Weit e.V. Projektassistent Client</description>
 
   <build>
     <defaultGoal>install</defaultGoal>
     <resources>
       <resource>
-        <directory>dist/projektassistent-frontend</directory>
+        <directory>dist</directory>
         <filtering>false</filtering>
         <targetPath>META-INF/resources</targetPath>
       </resource>
@@ -35,8 +35,8 @@
             <configuration>
               <!-- specify the OpenAPI spec -->
               <inputSpec>projektassistent.yaml</inputSpec>
-              <generatorName>typescript-angular</generatorName>
-              <output>${project.basedir}/projects/projektassistent-api-client/src</output>
+              <generatorName>typescript-rxjs</generatorName>
+              <output>openapi</output>
               <configOptions>
               </configOptions>
             </configuration>
@@ -55,7 +55,7 @@
         <configuration>
           <filesets>
             <fileset>
-              <directory>projects/projektassistent-api-client/src</directory>
+              <directory>openapi</directory>
               <includes>
                 <include>**/*.*</include>
               </includes>
