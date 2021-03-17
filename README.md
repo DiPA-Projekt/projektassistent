@@ -16,3 +16,11 @@ auf unsere, [Development Guide](DEVELOPMENT.md) nachgelesen werden.
 ## Lizenz
 
 Der PA wird unter der Version 2.0 der [Apache License](https://www.apache.org/licenses/LICENSE-2.0) entwickelt.
+
+## Projekt Infrastruktur
+
+Development Stand: https://padev.dipa.online/#/
+
+Prod: https://pa.dipa.online/
+
+Build und Deployment sind als Github Actions hinterlegt.
