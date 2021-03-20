@@ -25,7 +25,7 @@
     "preview": "vite preview --open"
   },
   "dependencies": {
-    "@ant-design/icons": "4.5.0",
+    "@ant-design/icons": "4.6.2",
     "@leanup/lib": "1.1.8",
     "antd": "4.14.0",
     "dayjs": "1.10.4",
