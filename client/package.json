@@ -37,7 +37,7 @@
   },
   "devDependencies": {
     "@leanup/stack": "1.1.8",
-    "@leanup/stack-react": "1.1.6",
+    "@leanup/stack-react": "1.1.8",
     "@leanup/stack-vite": "1.1.6",
     "@leanup/stack-webpack": "1.1.8",
     "@types/react": "17.0.3",
