@@ -19,6 +19,11 @@ auf unsere, [Development Guide](DEVELOPMENT.md) nachgelesen werden.
 
 Gehen Sie in Ihre persönlichen GitHub-Einstellungen und erstellen Sie sich einen Personal Access Token mit dem Recht von der Registry lesen zu dürfen.
 
+Link: https://github.com/settings/tokens
+
+![image](https://user-images.githubusercontent.com/6279703/111908499-cb273980-8a59-11eb-85d5-5630c5c8e4bd.png)
+
+
 #### Maven
 
 Legen Sie eine `settings.xml` im `~/.m2` Verzeichnis an oder ergänzen Sie es entsprechend.
@@ -73,3 +78,9 @@ Development Stand: https://padev.dipa.online/#/
 Prod: https://pa.dipa.online/
 
 Build und Deployment sind als Github Actions hinterlegt.
+
+## Sonstiges
+
+`mvn clean install -pl client,server`
+![image](https://user-images.githubusercontent.com/6279703/111908464-a7fc8a00-8a59-11eb-8abb-d409b4930fdc.png)
+
