@@ -42,11 +42,25 @@ Legen Sie eine `settings.xml` im `~/.m2` Verzeichnis an oder ergänzen Sie es en
       <id>github-packages</id>
       <repositories>
         <repository>
+          <id>central</id>
+          <url>https://repo1.maven.org/maven2</url>
+          <releases>
+			<enabled>true</enabled>
+		  </releases>
+          <snapshots>
+		    <enabled>true</enabled>
+		  </snapshots>
+        </repository>
+        <repository>
           <id>github-packages</id>
           <name>GitHub - DiPA-Projekt</name>
           <url>https://maven.pkg.github.com/dipa-projekt/projektassistent-openapi</url>
-          <releases><enabled>true</enabled></releases>
-          <snapshots><enabled>true</enabled></snapshots>
+          <releases>
+			<enabled>true</enabled>
+		  </releases>
+          <snapshots>
+		    <enabled>true</enabled>
+		  </snapshots>
         </repository>
       </repositories>
     </profile>

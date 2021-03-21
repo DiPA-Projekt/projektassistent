@@ -11,7 +11,7 @@
     <artifactId>projektassistent-server</artifactId>
     <name>Projektassistent :: Server</name>
     <description>Weit e.V. Projektassistent Server Backend</description>
-    
+
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
