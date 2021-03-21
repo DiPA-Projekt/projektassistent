@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "4.5.0",
+    "@dipa-projekt/projektassistent-openapi": "0.0.1",
     "@leanup/lib": "1.1.8",
     "antd": "4.14.0",
     "dayjs": "1.10.4",

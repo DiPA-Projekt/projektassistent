@@ -11,7 +11,7 @@
     <artifactId>projektassistent-server</artifactId>
     <name>Projektassistent :: Server</name>
     <description>Weit e.V. Projektassistent Server Backend</description>
-
+    
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -50,7 +50,13 @@
             <scope>runtime</scope>
         </dependency>
         -->
+
         <!-- OpenAPI -->
+        <dependency>
+            <groupId>online.dipa</groupId>
+            <artifactId>projektassistent-openapi</artifactId>
+            <version>0.0.1</version>
+        </dependency>
 
         <dependency>
             <groupId>io.springfox</groupId>
