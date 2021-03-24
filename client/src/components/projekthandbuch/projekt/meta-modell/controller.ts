@@ -1,7 +1,7 @@
 import { AbstractController } from '@leanup/lib/components/generic';
 import { DI } from '@leanup/lib/helpers/injector';
 
-import { MetaModel } from '../../../../../openapi/models/MetaModel';
+import { MetaModel } from '../../../../../openapi';
 import { ProjekthandbuchService } from '../../../../services/projekthandbuch/service';
 
 export const META_MODELS: MetaModel[] = [
@@ -15,7 +15,6 @@ export class MetaModellController extends AbstractController {
 
   public changeMetaModel(mataModelId: number): void {
     this.projekthandbuchService.setMetaModelId(mataModelId);
-    this.projekthandbuchService.setProjectTypeId(-1);
     this.projekthandbuchService.setProjectTypeVariantId(-1);
   }
 }

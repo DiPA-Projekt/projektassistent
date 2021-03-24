@@ -4,7 +4,7 @@ import React from 'react';
 import { GenericComponent } from '@leanup/lib/components/generic';
 import { ReactComponent } from '@leanup/lib/components/react';
 
-import { MetaModel } from '../../../../../openapi/models/MetaModel';
+import { MetaModel } from '../../../../../openapi';
 import { META_MODELS, MetaModellController } from './controller';
 
 const { Option } = Select;
@@ -19,15 +19,12 @@ export class MetaModellComponent extends ReactComponent<unknown, MetaModellContr
 
   public render(): JSX.Element {
     return (
-      <Form.Item {...layout} label="Meta-Modell">
+      <Form.Item {...layout}>
         <Select
+          placeholder="Bitte wählen"
           onChange={(value: number) => {
             this.ctrl.projekthandbuchService.setMetaModelId(value);
           }}
-          // onFocus={onFocus}
-          // onBlur={onBlur}
-          // onSearch={onSearch}
-          // filterOption={(input, option) => option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
         >
           {META_MODELS.map((metaModel: MetaModel, index: number) => {
             return (
