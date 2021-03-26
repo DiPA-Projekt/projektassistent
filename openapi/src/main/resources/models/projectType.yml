@@ -10,6 +10,11 @@ ProjectType:
       description: Name of the project type
       type: string
       example: "Systementwicklungsprojekt (AG)"
+    variants:
+      description: Possible Project Type Variants
+      type: Array
+      items:
+        $ref: "./projectTypeVariant.yml#/ProjectTypeVariant"
   required:
     - id
     - name
