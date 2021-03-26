@@ -1,6 +1,6 @@
 get:
   tags:
-    - project
+    - Tailoring
   summary: Project Features List
   description: Retrieves the list of project features.
   operationId: getProjectFeatures

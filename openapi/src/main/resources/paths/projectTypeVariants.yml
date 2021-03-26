@@ -1,6 +1,6 @@
 get:
   tags:
-    - project
+    - Tailoring
   summary: Project Type Variants List
   description: Retrieves the list of project type variants.
   operationId: getProjectTypeVariants

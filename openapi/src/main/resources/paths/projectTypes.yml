@@ -1,6 +1,6 @@
 get:
   tags:
-    - project
+    - Tailoring
   summary: Project Types List
   description: Retrieves the list of project types.
   operationId: getProjectTypes

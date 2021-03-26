@@ -1,6 +1,6 @@
 get:
   tags:
-    - project
+    - Tailoring
   summary: Model variants list
   description: Retrieves the list of available model variants.
   operationId: getModelVariants

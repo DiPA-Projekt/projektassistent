@@ -1,6 +1,6 @@
 get:
   tags:
-    - page
+    - Dokumentation
   summary: single page
   description: Retrieves the information to display a single page of the project definition
   operationId: getPage

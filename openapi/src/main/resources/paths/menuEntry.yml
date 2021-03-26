@@ -1,6 +1,6 @@
 get:
   tags:
-    - menu
+    - Dokumentation
   summary: Menu Entries List
   description: Retrieves the list of menu entries.
   operationId: getMenu
