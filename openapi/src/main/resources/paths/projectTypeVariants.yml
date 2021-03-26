@@ -1,0 +1,23 @@
+get:
+  tags:
+    - project
+  summary: Project Type Variants List
+  description: Retrieves the list of project type variants.
+  operationId: getProjectTypeVariants
+  parameters:
+    - in: path
+      name: projectTypeId
+      schema:
+        type: integer
+        format: int64
+      required: true
+      description: Numeric ID of the project type.
+  responses:
+    200:
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: "../models/projectTypeVariant.yml#/ProjectTypeVariant"

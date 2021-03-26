@@ -1,18 +1,18 @@
 openapi: 3.0.3
 info:
-  title: @project.description@
-  version: @project.version@
+  title: projektassistent-openapi
+  version: 0.0.2
 servers:
   - url: http://localhost:9081/api/v1
     description: Development
 paths:
   /status:
     $ref: "paths/status.yml"
-  /metaModels:
-    $ref: "paths/metaModels.yml"
-  /projectTypes/{metaModelId}:
+  /modelVariants:
+    $ref: "paths/modelVariants.yml"
+  /projectTypes/{modellVariantId}:
     $ref: "paths/projectTypes.yml"
-  /projectFeatures:
+  /projectFeatures/{projectTypeVariantId}:
     $ref: "paths/projectFeatures.yml"
   /menuEntries:
     $ref: "paths/menuEntry.yml"

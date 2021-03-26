@@ -17,6 +17,10 @@ ProjectFeature:
       description: Short description text for the project feature
       type: string
       example: "Ist eine kaufmännische Projektplanung und -verfolgung notwendig?"
+    helptext:
+      description: Long description of the project feature
+      type: string
+      example: "Die Kaufmännische Projektplanung und -verfolgung umfasst die Kostenplanung..."
   required:
     - id
     - name
@@ -39,9 +43,17 @@ components:
           type: array
           items:
             $ref: "./projectFeatureBooleanOption.yml#/ProjectFeatureBooleanOption"
+        answers:
+          description: anser given for each possible value
+          type: array
+          items:
+            type: string
+          example: ["Ja, eine kaufmännische Projektplanung und -verfolgung ist notwendig",
+                    "Nein, eine kaufmännische Projektplanung und -verfolgung ist nicht notwendig"]
       required:
         - selectedValue
         - possibleValues
+        - answers
       allOf:
         - $ref: 'projectFeature.yml#/ProjectFeature'
         - type: object
@@ -57,9 +69,15 @@ components:
           type: array
           items:
             $ref: "./projectFeatureStringOption.yml#/ProjectFeatureStringOption"
+        answers:
+          description: anser given for each possible value
+          type: array
+          items:
+            type: string
       required:
         - selectedValue
         - possibleValues
+        - answers
       allOf:
         - $ref: 'projectFeature.yml#/ProjectFeature'
         - type: object
