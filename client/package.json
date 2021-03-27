@@ -25,7 +25,7 @@
     "preview": "vite preview --open"
   },
   "dependencies": {
-    "@ant-design/icons": "4.5.0",
+    "@ant-design/icons": "4.6.2",
     "@dipa-projekt/projektassistent-openapi": "0.0.1",
     "@leanup/lib": "1.1.8",
     "antd": "4.14.0",
@@ -38,8 +38,8 @@
   },
   "devDependencies": {
     "@leanup/stack": "1.1.8",
-    "@leanup/stack-react": "1.1.6",
-    "@leanup/stack-vite": "1.1.6",
+    "@leanup/stack-react": "1.1.8",
+    "@leanup/stack-vite": "1.1.8",
     "@leanup/stack-webpack": "1.1.8",
     "@types/react": "17.0.3",
     "@types/react-dom": "17.0.2",
