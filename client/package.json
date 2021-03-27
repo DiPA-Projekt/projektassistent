@@ -19,7 +19,7 @@
     "webpack:serve": "cross-env NODE_ENV=development webpack serve --devtool=source-map",
     "webpack:start": "npm run webpack:serve -- --open=chrome",
     "build": "npm run webpack:build",
-    "build:ci": "npm run format && npm run lint && npm run coverage && npm run build",
+    "build:ci": "npm run format && npm run coverage && npm run build",
     "serve": "npm run vite:serve",
     "start": "npm run vite:start",
     "preview": "vite preview --open"
