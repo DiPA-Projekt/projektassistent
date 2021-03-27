@@ -16,4 +16,4 @@ jobs:
         with:
           java-version: 11
       - name: Check
-        run: mvn clean install -pl openapi,client
+        run: mvn clean install -pl client
