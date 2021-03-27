@@ -17,8 +17,8 @@ jobs:
           node-version: 14.x
           registry-url: "https://npm.pkg.github.com"
           scope: "@dipa-projekt"
-      - name: Install and update dependencies
-        run: npm run update
+      - name: Install dependencies
+        run: npm ci
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GIT_HUB_PACKAGES_ACCESS_TOKEN }}
         working-directory: client
