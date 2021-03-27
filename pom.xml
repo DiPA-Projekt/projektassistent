@@ -190,7 +190,6 @@
                 <profile.properties.file>config-production.properties</profile.properties.file>
             </properties>
         </profile>
-
     </profiles>
 
     <dependencyManagement>
