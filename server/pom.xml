@@ -8,6 +8,7 @@
         <artifactId>projektassistent-parent</artifactId>
         <version>0.0.2-SNAPSHOT</version>
     </parent>
+
     <artifactId>projektassistent-server</artifactId>
     <name>Projektassistent :: Server</name>
     <description>Weit e.V. Projektassistent Server Backend</description>
@@ -20,6 +21,10 @@
         </dependency>
 
         <!-- spring dependencies -->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-boot-starter</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -42,26 +47,12 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- for initial setup deactivated -->
-        <!--
         <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        -->
-
-        <!-- OpenAPI -->
-        <dependency>
-            <groupId>online.dipa</groupId>
-            <artifactId>projektassistent-openapi</artifactId>
-            <version>0.0.1</version>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-jpa</artifactId>
+            <version>${spring-data-jpa.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-boot-starter</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
@@ -89,6 +80,13 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
+        </dependency>
+
+        <!-- OpenAPI -->
+        <dependency>
+            <groupId>online.dipa</groupId>
+            <artifactId>projektassistent-openapi</artifactId>
+            <version>0.0.1</version>
         </dependency>
 
         <!-- testing -->
@@ -119,55 +117,6 @@
                 <targetPath>${project.build.directory}/deployment</targetPath>
             </resource>
         </resources>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-
-            <plugin>
-                <groupId>org.openapitools</groupId>
-                <artifactId>openapi-generator-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <?m2e execute onConfiguration?>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <!-- specify the OpenAPI spec -->
-                            <inputSpec>projektassistent.yaml</inputSpec>
-                            <enablePostProcessFile>false</enablePostProcessFile>
-
-                            <generatorName>spring</generatorName>
-
-                            <configOptions>
-                                <apiPackage>online.projektassistent.api.rest</apiPackage>
-                                <modelPackage>online.projektassistent.api.model</modelPackage>
-                                <interfaceOnly>true</interfaceOnly>
-                                <generateSupportingFiles>false</generateSupportingFiles>
-                                <generateModelTests>false</generateModelTests>
-                                <generateModelDocumentation>false</generateModelDocumentation>
-                                <generateApiDocumentation>false</generateApiDocumentation>
-                                <generateApiTests>false</generateApiTests>
-                                <serializableModel>true</serializableModel>
-                                <snapshotVersion>true</snapshotVersion>
-                                <useTags>true</useTags>
-                            </configOptions>
-
-                        </configuration>
-
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>${project.groupId}</groupId>
-                        <artifactId>projektassistent-openapi</artifactId>
-                        <version>${project.version}</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-        </plugins>
     </build>
 
     <profiles>

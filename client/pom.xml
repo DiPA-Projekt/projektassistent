@@ -39,7 +39,8 @@
               <goal>npm</goal>
             </goals>
             <configuration>
-              <arguments>ci</arguments>
+              <!-- <arguments>ci</arguments> -->
+              <arguments>i</arguments>
             </configuration>
           </execution>
           <execution>
@@ -48,7 +49,8 @@
               <goal>npm</goal>
             </goals>
             <configuration>
-              <arguments>run-script build:ci</arguments>
+              <arguments>run-script build</arguments>
+              <!-- <arguments>run-script build:ci</arguments> -->
             </configuration>
           </execution>
         </executions>
