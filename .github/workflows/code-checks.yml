@@ -15,7 +15,10 @@ jobs:
         uses: actions/setup-node@v2.1.5
         with:
           node-version: 14.x
-      - run: npm ci
+          registry-url: "https://npm.pkg.github.com"
+          scope: "@dipa-projekt"
+      - name: Install and update dependencies
+        run: npm run update
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GIT_HUB_PACKAGES_ACCESS_TOKEN }}
         working-directory: client
