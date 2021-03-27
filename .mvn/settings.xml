@@ -35,6 +35,7 @@
       </repositories>
     </profile>
   </profiles>
+  
   <servers>
     <server>
       <id>github-packages</id>

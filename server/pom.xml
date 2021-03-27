@@ -163,7 +163,7 @@
                 </plugins>
             </build>
         </profile>
-        <profile>
+        <!-- <profile>
             <id>github-packages</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
@@ -181,6 +181,6 @@
                     </snapshots>
                 </repository>
             </repositories>
-        </profile>
+        </profile> -->
     </profiles>
 </project>
