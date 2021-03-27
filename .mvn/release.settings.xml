@@ -7,6 +7,13 @@
             <username>${env.GITHUB_ACTOR}</username>
             <password>${env.GITHUB_TOKEN}</password>
         </server>
+        <servers>
+            <server>
+            <id>github-packages</id>
+            <username>${env.GIT_HUB_USERNAME}</username>
+            <password>${env.GIT_HUB_PACKAGES_ACCESS_TOKEN}</password>
+            </server>
+        </servers>
         <server>
             <id>docker.dipa.online</id>
             <username>${env.DOCKER_REGISTRY_USERNAME}</username>
