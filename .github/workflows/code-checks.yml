@@ -28,9 +28,9 @@ jobs:
           npm run lint:eslint
           npm run coverage
           npm run build
+        working-directory: client
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GIT_HUB_PACKAGES_ACCESS_TOKEN }}
-
       - name: Check via MAVEN
         run: mvn clean install -pl client,server -s .mvn/settings.xml
         env:
