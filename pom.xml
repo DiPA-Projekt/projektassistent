@@ -43,8 +43,8 @@
         <spring-data-jpa.version>2.4.6</spring-data-jpa.version>
 
         <!-- maven plugins -->
-        <openapi-generator-maven-plugin.version>5.0.1</openapi-generator-maven-plugin.version>
-        <frontend-maven-plugin.version>1.11.2</frontend-maven-plugin.version>
+        <openapi-generator-maven-plugin.version>5.1.0</openapi-generator-maven-plugin.version>
+        <frontend-maven-plugin.version>1.11.3</frontend-maven-plugin.version>
         <dockerfile-maven.version>1.4.13</dockerfile-maven.version>
 
         <!-- build profile defaults -->
@@ -152,7 +152,7 @@
                 <plugin>
                     <groupId>com.amashchenko.maven.plugin</groupId>
                     <artifactId>gitflow-maven-plugin</artifactId>
-                    <version>1.15.1</version>
+                    <version>1.16.0</version>
                     <configuration>
                         <argLine>-s .mvn/release.settings.xml -DskipTests -P production-ci</argLine>
                         <gitFlowConfig>
