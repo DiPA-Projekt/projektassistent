@@ -27,13 +27,13 @@
   "dependencies": {
     "@ant-design/icons": "4.6.2",
     "@leanup/lib": "1.1.8",
-    "antd": "4.14.0",
+    "antd": "4.15.0",
     "dayjs": "1.10.4",
     "react": "17.0.1",
     "react-dom": "17.0.1",
     "react-router": "5.2.0",
     "react-router-dom": "5.2.0",
-    "rxjs": "6.6.6"
+    "rxjs": "6.6.7"
   },
   "devDependencies": {
     "@leanup/stack": "1.1.8",
