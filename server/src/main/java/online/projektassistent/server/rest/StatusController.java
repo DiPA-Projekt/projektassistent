@@ -9,7 +9,7 @@ public class StatusController implements StatusApi {
 
     @Override
     public ResponseEntity<Status> getStatus() {
-        return new ResponseEntity<Status>(new Status(), HttpStatus.OK);
+        return new ResponseEntity<>(new Status(), HttpStatus.OK);
     }
 
 }
