@@ -8,7 +8,6 @@
         <outputRelativeToContentRoot value="true" />
         <module name="projektassistent-client" />
         <module name="projektassistent-server" />
-        <module name="projektassistent-server" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
