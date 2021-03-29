@@ -1,7 +1,7 @@
+import { MetaModel } from '@dipa-projekt/projektassistent-openapi';
 import { AbstractController } from '@leanup/lib/components/generic';
 import { DI } from '@leanup/lib/helpers/injector';
 
-import { MetaModel } from '../../../../../openapi/models/MetaModel';
 import { ProjekthandbuchService } from '../../../../services/projekthandbuch/service';
 
 export const META_MODELS: MetaModel[] = [

@@ -1,10 +1,10 @@
 import { Form, Select } from 'antd';
 import React from 'react';
 
+import { ProjectType } from '@dipa-projekt/projektassistent-openapi';
 import { GenericComponent } from '@leanup/lib/components/generic';
 import { ReactComponent } from '@leanup/lib/components/react';
 
-import { ProjectType } from '../../../../../openapi/models/ProjectType';
 import { ProjekttypvarianteComponent } from '../projekttypvariante/component';
 import { ProjekttypController } from './controller';
 
