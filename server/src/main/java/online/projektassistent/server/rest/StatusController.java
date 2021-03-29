@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 public class StatusController implements StatusApi {
 
     @Override
-    public ResponseEntity getStatus() {
+    public ResponseEntity<Status> getStatus() {
         return new ResponseEntity(new Status(), HttpStatus.OK);
     }
 
