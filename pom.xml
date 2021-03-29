@@ -209,11 +209,6 @@
                 </repository>
             </repositories>
         </profile>
-        <server>
-            <id>github-packages</id>
-            <username>${env.GIT_HUB_USERNAME}</username>
-            <password>${env.GIT_HUB_PACKAGES_ACCESS_TOKEN}</password>
-        </server>
     </profiles>
 
     <dependencyManagement>
