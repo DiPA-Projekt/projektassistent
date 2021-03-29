@@ -6,13 +6,15 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="projektassistent-server" />
         <module name="projektassistent-client" />
+        <module name="projektassistent-frontend" />
+        <module name="projektassistent-server" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="projektassistent" target="11" />
       <module name="projektassistent-client" target="11" />
+      <module name="projektassistent-frontend" target="11" />
       <module name="projektassistent-parent" target="11" />
       <module name="projektassistent-server" target="11" />
     </bytecodeTargetLevel>
@@ -20,6 +22,7 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="projektassistent-client" options="-parameters" />
+      <module name="projektassistent-frontend" options="-parameters" />
       <module name="projektassistent-server" options="-parameters" />
     </option>
   </component>
