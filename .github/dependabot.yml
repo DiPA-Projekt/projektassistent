@@ -20,10 +20,6 @@ updates:
     directory: "/client/"
     schedule:
       interval: "daily"
-  - package-ecosystem: "npm"
-    directory: "/frontend/"
-    schedule:
-      interval: "daily"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:

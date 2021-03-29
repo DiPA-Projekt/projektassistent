@@ -193,8 +193,5 @@ buildNumber.properties
 
 # VS Code
 .vscode
-/frontend/node/**
-/frontend/coverage/**
-/frontend/projects/projektassistent-api-client/src/**
+/client/eslint-report.json
 /server/src/main/resources/liquibase-diff-changeLog.yaml
-/frontend/eslint-report.json

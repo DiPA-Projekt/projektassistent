@@ -85,7 +85,7 @@ Der folgende Abschnitt beschreibt das Minimalsetup um PA auf Basis des Source zu
 PA ist eine Webanwendung, die der Client-Server-Architektur entspricht. Derzeit besteht PA aus drei Modulen:
 
 - Schnittsellen-Definition Client/Server (OpenAPI REST) `\openapi`
-- Client (Frontend), SPA/PWA, JavaScript/TypeScript `\frontend`
+- Client (Client), SPA/PWA, JavaScript/TypeScript `\frontend`
 - Server (Backend), Java Spring Boot `\server`
 
 ### API mit OpenAPI
@@ -108,16 +108,16 @@ Build Prozesses zu generieren.
 anderen Module berücksichtigt werden, empfiehlt es sich nach Änderung an der am _API-Modul_ einen vollständigen
 "Build-From-Source" durchzuführen (`mvnw clean install`).
 
-### Client mit Angular
+### Client mit React
 
-Das _Frontend-Modul_ enthält den PA Client. Dieser ist als Angular-Anwendung aufgesetzt. Während der
-Frontend-Entwicklung können die üblichen Standard-Werkzeuge verwendet werden (z.B. npm, Angular-CLI, ...).
+Das _Client-Modul_ enthält den PA Client. Dieser ist als React-Anwendung aufgesetzt. Während der
+Client-Entwicklung können die üblichen Standard-Werkzeuge verwendet werden (z.B. npm).
 
-Zur Integration des Frontends in den Gesamt-Build-Prozess werden diese mit Hilfe des
-[frontend-maven-plugin](https://github.com/eirslett/frontend-maven-plugin) gewrapped. Das Ergebnis des Frontend Builds
-wird ebenfalls als jar-Datei gepackaged (diese jar entspricht den
-[Konventionen](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#boot-features-spring-mvc-static-content),
-damit Spring Boot den Inhalt als "static resources" hosten kann). Dadurch kann das Frontend über den gleichen Server
+Zur Integration des Clients in den Gesamt-Build-Prozess werden diese mit Hilfe des
+[frontend-maven-plugin](https://github.com/eirslett/frontend-maven-plugin) gewrapped. Das Ergebnis des Client
+Builds wird ebenfalls als jar-Datei gepackaged (diese jar entspricht den
+[Konventionen](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#boot-features-spring-mvc-static-content)
+, damit Spring Boot den Inhalt als "static resources" hosten kann). Dadurch kann das Client über den gleichen Server
 bereitgestellt werden wie das Backend.
 
 ### Server mit Spring Boot

@@ -58,7 +58,6 @@
     <modules>
         <module>openapi</module>
         <module>client</module>
-        <module>frontend</module>
         <module>server</module>
     </modules>
     <build>
