@@ -43,7 +43,7 @@ jobs:
       - name: Cache Frontend Build Node Modules
         uses: actions/cache@v2.1.4
         with:
-          path: frontend/node_modules
+          path: client/node_modules
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
