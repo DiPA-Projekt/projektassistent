@@ -4,13 +4,12 @@
 name: Java CI with Maven
 
 on:
-  # push:
-  #   branches:
-  #     - "**"
-  #     - "!main"
-  # pull_request:
-  #   types: [opened, synchronize, reopened]
-  workflow_dispatch:
+  push:
+    branches:
+      - "**"
+      - "!main"
+  pull_request:
+    types: [opened, synchronize, reopened]
 
 jobs:
   build:
@@ -61,7 +60,7 @@ jobs:
           GIT_HUB_USERNAME: ${{ secrets.GIT_HUB_USERNAME }}
           GIT_HUB_PACKAGES_ACCESS_TOKEN: ${{ secrets.GIT_HUB_PACKAGES_ACCESS_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.GIT_HUB_PACKAGES_ACCESS_TOKEN }}
-        run: mvn -P develop-ci -Ddockerfile.build.skip=true -B clean install org.sonarsource.scanner.maven:sonar-maven-plugin:sonar --file pom.xml
+        run: mvn -P develop-ci -Ddockerfile.build.skip=true -B clean install org.sonarsource.scanner.maven:sonar-maven-plugin:sonar --file pom.xml -s .mvn/settings.xml
       - name: Deployment to Kubernetes
         if: github.ref == 'refs/heads/develop'
         run: |
@@ -69,7 +68,7 @@ jobs:
           echo -e "${{ secrets.DEPLOYMENT_SSH_KEY }}" > ~/.ssh/id_rsa
           echo -e "${{ secrets.DEPLOYMENT_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
           chmod 600 ~/.ssh/id_rsa
-          mvn -P develop-ci -B -DskipTests install dockerfile:push --file pom.xml
+          mvn -P develop-ci -B -DskipTests install dockerfile:push --file pom.xml -s .mvn/settings.xml
           scp server/target/deployment/*.yaml dipa-deployment@dipa.rz-housing.tu-clausthal.de:pa-deployment/develop
           ssh dipa-deployment@dipa.rz-housing.tu-clausthal.de kubectl apply -k pa-deployment/develop
         env:
