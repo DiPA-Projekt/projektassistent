@@ -32,7 +32,7 @@ jobs:
           java-version: 11
       - name: Check
         run: |
-          mvn clean install -pl client,server
+          mvn clean install -pl client,server -s .mvn/release.settings.xml
         env:
           GIT_HUB_USERNAME: ${{ secrets.GIT_HUB_USERNAME }}
           GIT_HUB_PACKAGES_ACCESS_TOKEN: ${{ secrets.GIT_HUB_PACKAGES_ACCESS_TOKEN }}
