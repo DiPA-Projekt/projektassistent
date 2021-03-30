@@ -4,6 +4,14 @@ get:
   summary: Project Features List
   description: Retrieves the list of project features.
   operationId: getProjectFeatures
+  parameters:
+    - in: path
+      name: projectTypeVariantId
+      schema:
+        type: integer
+        format: int64
+      required: true
+      description: Numeric ID of the project type variant
   responses:
     200:
       description: OK

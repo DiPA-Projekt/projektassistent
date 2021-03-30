@@ -17,6 +17,10 @@ ProjectFeature:
       description: Short description text for the project feature
       type: string
       example: "Ist eine kaufmännische Projektplanung und -verfolgung notwendig?"
+    helpText:
+      description: Long description of the project feature
+      type: string
+      example: "Die Kaufmännische Projektplanung und -verfolgung umfasst die Kostenplanung..."
   required:
     - id
     - name
