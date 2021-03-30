@@ -1,0 +1,15 @@
+get:
+  tags:
+    - project
+  summary: Model variants list
+  description: Retrieves the list of available model variants.
+  operationId: getModelVariants
+  responses:
+    200:
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: "../models/modelVariant.yml#/ModelVariant"

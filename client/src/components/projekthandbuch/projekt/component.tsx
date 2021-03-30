@@ -6,7 +6,7 @@ import { ReactComponent } from '@leanup/lib/components/react';
 
 import { AnwendungsprofileComponent } from './anwendungsprofile/component';
 import { ProjektController } from './controller';
-import { MetaModellComponent } from './meta-modell/component';
+import { ModellVarianteComponent } from './modellvariante/component';
 import { ProjekttypvarianteComponent } from './projekttypvariante/component';
 import { ProjektkennzahlenComponent } from './projektkennzahlen/component';
 
@@ -22,8 +22,8 @@ export class ProjektComponent extends ReactComponent<unknown, ProjektController>
         // onFinishFailed={onFinishFailed}
         initialValues={{}}
       >
-        <h2>Wähle das Meta-Modell</h2>
-        <MetaModellComponent />
+        <h2>Wähle die Modellvariante</h2>
+        <ModellVarianteComponent />
         <ProjekttypvarianteComponent />
         <AnwendungsprofileComponent />
         <ProjektkennzahlenComponent />
