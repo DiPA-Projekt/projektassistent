@@ -84,7 +84,7 @@ Der folgende Abschnitt beschreibt das Minimalsetup um PA auf Basis des Source zu
 
 PA ist eine Webanwendung, die der Client-Server-Architektur entspricht. Derzeit besteht PA aus drei Modulen:
 
-- Schnittsellen-Definition Client/Server (OpenAPI REST) `\openapi`
+- Schnittsellen-Definition Client/Server (OpenAPI REST) `projektassistent-openapi` (https://github.com/DiPA-Projekt/projektassistent-openapi)
 - Client (Client), SPA/PWA, JavaScript/TypeScript `\frontend`
 - Server (Backend), Java Spring Boot `\server`
 

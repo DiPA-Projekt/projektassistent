@@ -9,10 +9,6 @@ updates:
     schedule:
       interval: "daily"
   - package-ecosystem: "maven"
-    directory: "/openapi/"
-    schedule:
-      interval: "daily"
-  - package-ecosystem: "maven"
     directory: "/server/"
     schedule:
       interval: "daily"
