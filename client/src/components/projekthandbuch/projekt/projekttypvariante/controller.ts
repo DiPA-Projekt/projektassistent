@@ -1,9 +1,9 @@
 import { Subscription } from 'rxjs';
 
+import { ProjectTypeVariant } from '@dipa-projekt/projektassistent-openapi';
 import { AbstractController } from '@leanup/lib/components/generic';
 import { DI } from '@leanup/lib/helpers/injector';
 
-import { ProjectTypeVariant } from '../../../../../openapi/models/ProjectTypeVariant';
 import { ProjekthandbuchService } from '../../../../services/projekthandbuch/service';
 
 export const PROJECT_TYPE_VARIANTS: {
