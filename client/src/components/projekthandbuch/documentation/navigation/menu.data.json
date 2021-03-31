@@ -1,0 +1,322 @@
+[
+  {
+    "id": 1,
+    "displayName": "Einstieg in das V-Modell XT Bund",
+    "displayIcon": "home",
+    "subMenuEntries": [
+      {
+        "id": 9,
+        "displayName": "Ziele und Vorteile",
+        "subMenuEntries": []
+      },
+      {
+        "id": 10,
+        "displayName": "Zielgruppen",
+        "subMenuEntries": []
+      },
+      {
+        "id": 11,
+        "displayName": "V-Modell XT Bund im Überblick",
+        "subMenuEntries": []
+      },
+      {
+        "id": 12,
+        "displayName": "Anwendungsbereich und Abgrenzung",
+        "subMenuEntries": []
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "displayName": "Konzepte und Inhalte des V-Modell XT Bund",
+    "displayIcon": "file-protect",
+    "subMenuEntries": [
+      {
+        "id": 13,
+        "displayName": "Grundkonzepte",
+        "subMenuEntries": []
+      },
+      {
+        "id": 14,
+        "displayName": "Inhalte des V-Modell XT Bund",
+        "subMenuEntries": []
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "displayName": "Referenz Produkte",
+    "displayIcon": "shopping",
+    "subMenuEntries": [
+      {
+        "id": 15,
+        "displayName": "Produkte",
+        "subMenuEntries": [
+          {
+            "id": 18,
+            "displayName": "Anbahnung und Organisation",
+            "subMenuEntries": [
+              {
+                "id": 36,
+                "displayName": "Projektvorstudie",
+                "subMenuEntries": [
+                  {
+                    "id": 40,
+                    "displayName": "Problemstellung",
+                    "subMenuEntries": []
+                  },
+                  {
+                    "id": 41,
+                    "displayName": "Bestehende Rahmenbedingungen",
+                    "subMenuEntries": []
+                  },
+                  {
+                    "id": 42,
+                    "displayName": "Lösungsalternativen",
+                    "subMenuEntries": []
+                  },
+                  {
+                    "id": 43,
+                    "displayName": "Machbarkeitsanalyse",
+                    "subMenuEntries": []
+                  },
+                  {
+                    "id": 44,
+                    "displayName": "Lösungsvorschlag und Projektumfang",
+                    "subMenuEntries": []
+                  }
+                ]
+              },
+              {
+                "id": 37,
+                "displayName": "Projekthandbuch",
+                "subMenuEntries": [
+                  {
+                    "id": 45,
+                    "displayName": "Projektüberblick, Projektziele und Erfolgsfaktoren",
+                    "subMenuEntries": []
+                  },
+                  {
+                    "id": 46,
+                    "displayName": "Teilprojekte",
+                    "subMenuEntries": []
+                  },
+                  {
+                    "id": 47,
+                    "displayName": "Projektspezifisches V-Modell",
+                    "subMenuEntries": []
+                  },
+                  {
+                    "id": 48,
+                    "displayName": "Abweichungen vom V-Modell",
+                    "subMenuEntries": []
+                  },
+                  {
+                    "id": 49,
+                    "displayName": "Projektdurchführungsplan",
+                    "subMenuEntries": []
+                  },
+                  {
+                    "id": 50,
+                    "displayName": "Organisation und Vorgaben zur Vergabe von Entwicklungsleistungen",
+                    "subMenuEntries": []
+                  },
+                  {
+                    "id": 51,
+                    "displayName": "Organisation und Vorgaben zur Beauftragung eines IT-Dienstleisters des Bundes",
+                    "subMenuEntries": []
+                  },
+                  {
+                    "id": 52,
+                    "displayName": "Organisation und Vorgaben zum Projektmanagement",
+                    "subMenuEntries": []
+                  },
+                  {
+                    "id": 53,
+                    "displayName": "Organisation und Vorgaben zum Risikomanagement",
+                    "subMenuEntries": []
+                  },
+                  {
+                    "id": 54,
+                    "displayName": "Organisation und Vorgaben zum Problem- und Änderungsmanagement",
+                    "subMenuEntries": []
+                  },
+                  {
+                    "id": 55,
+                    "displayName": "Organisation und Vorgaben zum Konfigurationsmanagement",
+                    "subMenuEntries": []
+                  },
+                  {
+                    "id": 56,
+                    "displayName": "Organisation und Vorgaben zum Projektcontrolling",
+                    "subMenuEntries": []
+                  },
+                  {
+                    "id": 57,
+                    "displayName": "Organisation und Vorgaben zum Anforderungsmanagement",
+                    "subMenuEntries": []
+                  },
+                  {
+                    "id": 58,
+                    "displayName": "Organisation und Vorgaben zur Systemerstellung",
+                    "subMenuEntries": []
+                  },
+                  {
+                    "id": 59,
+                    "displayName": "Abstimmung mit IT-Organisation und Betrieb",
+                    "subMenuEntries": []
+                  },
+                  {
+                    "id": 60,
+                    "displayName": "Vorgaben für das Projekthandbuch der Auftragnehmer",
+                    "subMenuEntries": []
+                  },
+                  {
+                    "id": 61,
+                    "displayName": "Berichtswesen und Kommunikationswege",
+                    "subMenuEntries": []
+                  }
+                ]
+              },
+              {
+                "id": 38,
+                "displayName": "Projektauftrag",
+                "subMenuEntries": []
+              },
+              {
+                "id": 39,
+                "displayName": "Projektmanagement-Infrastruktur",
+                "subMenuEntries": []
+              }
+            ]
+          },
+          {
+            "id": 19,
+            "displayName": "Planung und Steuerung",
+            "subMenuEntries": []
+          },
+          {
+            "id": 20,
+            "displayName": "Risikomanagement",
+            "subMenuEntries": []
+          },
+          {
+            "id": 21,
+            "displayName": "Problem- und Änderungsmanagement",
+            "subMenuEntries": []
+          },
+          {
+            "id": 22,
+            "displayName": "Konfiguarationsmanagement",
+            "subMenuEntries": []
+          },
+          {
+            "id": 23,
+            "displayName": "Qualitätssicherung",
+            "subMenuEntries": []
+          },
+          {
+            "id": 24,
+            "displayName": "Messung und Analyse",
+            "subMenuEntries": []
+          },
+          {
+            "id": 25,
+            "displayName": "Berichtswesen",
+            "subMenuEntries": []
+          },
+          {
+            "id": 26,
+            "displayName": "Systemelemente",
+            "subMenuEntries": []
+          },
+          {
+            "id": 27,
+            "displayName": "Systemanalyse",
+            "subMenuEntries": []
+          },
+          {
+            "id": 28,
+            "displayName": "Systemspezifikation",
+            "subMenuEntries": []
+          },
+          {
+            "id": 29,
+            "displayName": "Systementwurf",
+            "subMenuEntries": []
+          },
+          {
+            "id": 30,
+            "displayName": "Logistikelemente",
+            "subMenuEntries": []
+          },
+          {
+            "id": 31,
+            "displayName": "IT-Organisation und Betrieb",
+            "subMenuEntries": []
+          },
+          {
+            "id": 32,
+            "displayName": "Ausschreibungswesen (Vergabeakte)",
+            "subMenuEntries": []
+          },
+          {
+            "id": 33,
+            "displayName": "Vertragswesen",
+            "subMenuEntries": []
+          },
+          {
+            "id": 34,
+            "displayName": "Angebots- und Auftragswesen",
+            "subMenuEntries": []
+          },
+          {
+            "id": 35,
+            "displayName": "Lieferung und Abnahme",
+            "subMenuEntries": []
+          }
+        ]
+      },
+      {
+        "id": 16,
+        "displayName": "Produktabhängigkeiten",
+        "subMenuEntries": []
+      },
+      {
+        "id": 17,
+        "displayName": "Produktindex",
+        "subMenuEntries": []
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "displayName": "Referenz Rollen",
+    "displayIcon": "team",
+    "subMenuEntries": []
+  },
+  {
+    "id": 5,
+    "displayName": "Referenz Abläufe",
+    "displayIcon": "ordered-list",
+    "subMenuEntries": []
+  },
+  {
+    "id": 6,
+    "displayName": "Referenz Tailoring",
+    "displayIcon": "scissor",
+    "subMenuEntries": []
+  },
+  {
+    "id": 7,
+    "displayName": "Referenz Arbeitshilfen",
+    "displayIcon": "tool",
+    "subMenuEntries": []
+  },
+  {
+    "id": 8,
+    "displayName": "Anhang",
+    "displayIcon": "paperclip",
+    "subMenuEntries": []
+  }
+]

@@ -7,7 +7,6 @@ import { ReactComponent } from '@leanup/lib/components/react';
 import { AnwendungsprofileComponent } from './anwendungsprofile/component';
 import { ProjektController } from './controller';
 import { MetaModellComponent } from './meta-modell/component';
-import { ProjekttypComponent } from './projekttyp/component';
 
 export class ProjektComponent extends ReactComponent<unknown, ProjektController> implements GenericComponent {
   public ctrl: ProjektController = new ProjektController();
@@ -22,7 +21,6 @@ export class ProjektComponent extends ReactComponent<unknown, ProjektController>
       >
         <h1>Verfügbare Varianten</h1>
         <MetaModellComponent />
-        <ProjekttypComponent />
         <AnwendungsprofileComponent />
       </Form>
     );

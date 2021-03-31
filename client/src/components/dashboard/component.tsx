@@ -1,4 +1,4 @@
-import { Breadcrumb, Divider, Layout } from 'antd';
+import { Layout } from 'antd';
 import React from 'react';
 
 import { GenericComponent } from '@leanup/lib/components/generic';
@@ -14,11 +14,7 @@ export class DashboardComponent extends ReactComponent<unknown, DashboardControl
   public render(): JSX.Element {
     return (
       <>
-        <Breadcrumb style={{ margin: '16px 0 0 0' }}>
-          <Breadcrumb.Item>Dashboard</Breadcrumb.Item>
-        </Breadcrumb>
-        <Divider />
-        <Content>
+        <Content style={{ margin: '16px' }}>
           <h1>Dashboard</h1>
         </Content>
       </>

@@ -10,6 +10,10 @@ MenuEntry:
       description: Text of the Menu Entry
       type: string
       example: "Produkte"
+    displayIcon:
+      description: Icon of the Menu Entry
+      type: string
+      example: "team"
     subMenuEntries:
       description: Short description text for the meta model
       type: Array
