@@ -36,7 +36,7 @@
     "rxjs": "6.6.7"
   },
   "devDependencies": {
-    "@leanup/stack": "1.1.9",
+    "@leanup/stack": "1.1.10",
     "@leanup/stack-react": "1.1.9",
     "@leanup/stack-vite": "1.1.9",
     "@leanup/stack-webpack": "1.1.9",
