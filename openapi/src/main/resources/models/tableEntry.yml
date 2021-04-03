@@ -14,7 +14,6 @@ TableEntry:
       description: Entry on the right side of the table
       type: string
       example: "Leistungsvereinbarung (SLA/OLA/UC)"
-
   required:
     - id
     - descriptionEntry

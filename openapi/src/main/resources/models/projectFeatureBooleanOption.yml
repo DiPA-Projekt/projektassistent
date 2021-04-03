@@ -9,6 +9,10 @@ ProjectFeatureBooleanOption:
       description: Name of the project feature boolean option
       type: string
       example: Nein
+    answer:
+      description: Explanation of the project feature boolean option value
+      type: string
+      example: "Nein, eine wirtschaftliche Planung und Verfolgung ist für das Projekt nicht erforderlich."
   required:
     - key
     - title

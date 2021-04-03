@@ -1,17 +1,17 @@
-MetaModel:
+ModelVariant:
   type: object
   properties:
     id:
-      description: Unique identifier of the meta model
+      description: Unique identifier of the model variant
       type: integer
       format: int64
       example: 1
     name:
-      description: Name of the meta model
+      description: Name of the model variant
       type: string
       example: "VMXT ITZ Bund"
     description:
-      description: Short description text for the meta model
+      description: Short description text for the model variant
       type: string
       example: "V-Modell XT des ITZ Bund"
   required:

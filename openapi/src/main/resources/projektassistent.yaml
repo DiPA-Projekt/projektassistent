@@ -8,8 +8,8 @@ servers:
 paths:
   /status:
     $ref: "paths/status.yml"
-  /metaModels:
-    $ref: "paths/metaModels.yml"
+  /modelVariants:
+    $ref: "paths/modelVariants.yml"
   /projectTypes/{metaModelId}:
     $ref: "paths/projectTypes.yml"
   /projectFeatures:
