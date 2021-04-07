@@ -58,7 +58,6 @@ export class TailoringComponent extends ReactComponent<unknown, TailoringControl
 
   private onChange(checkedValues: CheckboxValueType[]): void {
     this.ctrl.checkedTailorings = checkedValues as string[];
-    console.log(this.ctrl.checkedTailorings);
     this.forceUpdate();
   }
 
