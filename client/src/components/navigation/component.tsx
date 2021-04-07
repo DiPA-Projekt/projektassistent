@@ -2,7 +2,7 @@ import { Layout, Menu } from 'antd';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import { BookOutlined, DashboardOutlined } from '@ant-design/icons';
+import { DashboardOutlined, ScissorOutlined } from '@ant-design/icons';
 import { GenericComponent } from '@leanup/lib/components/generic';
 import { ReactComponent } from '@leanup/lib/components/react';
 
@@ -39,14 +39,11 @@ export class NavigationComponent extends ReactComponent<unknown, NavigationContr
           </Menu.Item>
           <SubMenu
             key="/projekthandbuch"
-            icon={<BookOutlined />}
+            icon={<ScissorOutlined />}
             title={<button className="remove-button-style">Projekthandbuch</button>}
           >
             <Menu.Item key="/projekthandbuch/projekt">
               <Link to="/projekthandbuch/projekt">Projekt</Link>
-            </Menu.Item>
-            <Menu.Item key="/projekthandbuch/tailoring">
-              <Link to="/projekthandbuch/tailoring">Tailoring</Link>
             </Menu.Item>
           </SubMenu>
         </Menu>

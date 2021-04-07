@@ -43,7 +43,7 @@ export class HeaderComponent extends ReactComponent<unknown, unknown> implements
               </Menu.Item>
               <Menu.Item key="2">
                 <BookOutlined />
-                <Link to="/projekthandbuch">Projekthandbuch</Link>
+                <Link to="/projekthandbuch/projekt">Tailoring</Link>
               </Menu.Item>
             </Menu>
           </Col>

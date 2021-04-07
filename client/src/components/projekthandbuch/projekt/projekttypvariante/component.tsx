@@ -1,13 +1,11 @@
-import { Form, Select } from 'antd';
+import { Cascader, Form } from 'antd';
+import { CascaderValueType } from 'antd/es/cascader';
 import React from 'react';
 
-import { ProjectTypeVariant } from '@dipa-projekt/projektassistent-openapi';
 import { GenericComponent } from '@leanup/lib/components/generic';
 import { ReactComponent } from '@leanup/lib/components/react';
 
-import { ProjekttypvarianteController } from './controller';
-
-const { Option } = Select;
+import { PROJECT_TYPE_VARIANTS, ProjekttypvarianteController } from './controller';
 
 const layout = {
   labelCol: { span: 8 },
@@ -36,25 +34,19 @@ export class ProjekttypvarianteComponent
     return (
       <>
         {this.ctrl.projectTypeVariants.length > 0 && (
-          <Form.Item {...layout} label="Projekttypvariante">
-            <Select
-              onChange={(value: number) => {
-                this.ctrl.setProjectTypeVariantId(value);
-              }}
-              // onFocus={onFocus}
-              // onBlur={onBlur}
-              // onSearch={onSearch}
-              // filterOption={(input, option) => option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-            >
-              {this.ctrl.projectTypeVariants.map((projectTypeVariant: ProjectTypeVariant, index: number) => {
-                return (
-                  <Option value={projectTypeVariant.id} key={`project-type-variant-${index}`}>
-                    {projectTypeVariant.name}
-                  </Option>
-                );
-              })}
-            </Select>
-          </Form.Item>
+          <>
+            <h2>Wähle die Projekttypvariante</h2>
+            <Form.Item {...layout}>
+              <Cascader
+                fieldNames={{ label: 'name', value: 'id', children: 'children' }}
+                options={PROJECT_TYPE_VARIANTS}
+                onChange={(value: CascaderValueType) => {
+                  this.ctrl.setProjectTypeVariantId(value[1] as number);
+                }}
+                placeholder="Bitte wählen"
+              />
+            </Form.Item>
+          </>
         )}
       </>
     );

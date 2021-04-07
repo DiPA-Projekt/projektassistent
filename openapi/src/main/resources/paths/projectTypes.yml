@@ -11,7 +11,7 @@ get:
         type: integer
         format: int64
       required: true
-      description: Numeric ID of the meta model.
+      description: Numeric ID of the model variant
   responses:
     200:
       description: OK

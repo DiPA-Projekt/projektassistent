@@ -16,11 +16,9 @@ export class ProjektController extends AbstractController {
   public readonly projectFeatures: ContainsProductFeatures[] = PROJECT_FEATURES as ContainsProductFeatures[];
   public readonly projekthandbuchService: ProjekthandbuchService = DI.get<ProjekthandbuchService>('Projekthandbuch');
 
-  public getProjectFeatures(projectTypeId: number, projectTypeVariantId: number): ProjectFeature[] {
+  public getProjectFeatures(projectTypeVariantId: number): ProjectFeature[] {
     return (
-      this.projectFeatures.find(
-        (item) => item.projectTypeId === projectTypeId && item.projectTypeVariantId === projectTypeVariantId
-      )?.projectFeatures || []
+      this.projectFeatures.find((item) => item.projectTypeVariantId === projectTypeVariantId)?.projectFeatures || []
     );
   }
 }
