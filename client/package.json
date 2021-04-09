@@ -26,30 +26,30 @@
   },
   "dependencies": {
     "@ant-design/icons": "4.6.2",
-    "@leanup/lib": "1.1.8",
-    "antd": "4.14.0",
+    "@leanup/lib": "1.1.11",
+    "antd": "4.15.0",
     "dayjs": "1.10.4",
-    "react": "17.0.1",
-    "react-dom": "17.0.1",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
     "react-router": "5.2.0",
     "react-router-dom": "5.2.0",
-    "rxjs": "6.6.6"
+    "rxjs": "6.6.7"
   },
   "devDependencies": {
-    "@leanup/stack": "1.1.8",
-    "@leanup/stack-react": "1.1.8",
-    "@leanup/stack-vite": "1.1.8",
-    "@leanup/stack-webpack": "1.1.8",
+    "@leanup/stack": "1.1.11",
+    "@leanup/stack-react": "1.1.11",
+    "@leanup/stack-vite": "1.1.11",
+    "@leanup/stack-webpack": "1.1.11",
     "@types/react": "17.0.3",
-    "@types/react-dom": "17.0.2",
-    "@types/react-router": "5.1.12",
+    "@types/react-dom": "17.0.3",
+    "@types/react-router": "5.1.13",
     "@types/react-router-dom": "5.1.7",
     "chromedriver": "89.0.0",
-    "copy-webpack-plugin": "8.0.0",
-    "cssnano": "4.1.10",
-    "npm-check-updates": "11.3.0",
+    "copy-webpack-plugin": "8.1.1",
+    "cssnano": "4.1.11",
+    "npm-check-updates": "11.4.1",
     "selenium-server": "3.141.59",
-    "tslib": "2.1.0",
-    "typescript": "4.2.3"
+    "tslib": "2.2.0",
+    "typescript": "4.2.4"
   }
 }

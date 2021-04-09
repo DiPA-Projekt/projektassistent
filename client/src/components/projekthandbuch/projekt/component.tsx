@@ -6,7 +6,9 @@ import { ReactComponent } from '@leanup/lib/components/react';
 
 import { AnwendungsprofileComponent } from './anwendungsprofile/component';
 import { ProjektController } from './controller';
-import { MetaModellComponent } from './meta-modell/component';
+import { ModellVarianteComponent } from './modellvariante/component';
+import { ProjekttypvarianteComponent } from './projekttypvariante/component';
+import { ProjektkennzahlenComponent } from './projektkennzahlen/component';
 
 export class ProjektComponent extends ReactComponent<unknown, ProjektController> implements GenericComponent {
   public ctrl: ProjektController = new ProjektController();
@@ -15,13 +17,16 @@ export class ProjektComponent extends ReactComponent<unknown, ProjektController>
     return (
       <Form
         name="basic"
+        layout="vertical"
         // onFinish={onFinish}
         // onFinishFailed={onFinishFailed}
         initialValues={{}}
       >
-        <h1>Verfügbare Varianten</h1>
-        <MetaModellComponent />
+        <h2>Wähle die Modellvariante</h2>
+        <ModellVarianteComponent />
+        <ProjekttypvarianteComponent />
         <AnwendungsprofileComponent />
+        <ProjektkennzahlenComponent />
       </Form>
     );
   }

@@ -11,128 +11,143 @@
       {
         "id": 1,
         "values": {
-          "selectedValue": false,
+          "selectedValue": "false",
           "possibleValues": [
             {
-              "key": null,
+              "key": "null",
               "title": "--"
             },
             {
-              "key": true,
-              "title": "Ja"
+              "key": "true",
+              "title": "Ja",
+              "answer": "ᐅ Ja, eine wirtschaftliche Planung und Verfolgung ist für das Projekt erforderlich."
             },
             {
-              "key": false,
-              "title": "Nein"
+              "key": "false",
+              "title": "Nein",
+              "answer": "ᐅ Nein, eine wirtschaftliche Planung und Verfolgung ist für das Projekt nicht erforderlich."
             }
           ]
         },
         "name": "Kaufmännisches Projektmanagement",
-        "description": "Ist eine kaufmännische Projektplanung und -verfolgung notwendig?"
+        "description": "Ist eine kaufmännische Projektplanung und -verfolgung notwendig?",
+        "helpText": "Die kaufmännische Projektplanung und -verfolgung umfasst die Kostenplanung des Projekts und die entsprechende Projektsteuerung. Dies ist insbesondere bei hohen zu erwartenden Kosten wichtig, um den Erfolg eines Projekts zu gewährleisten."
       },
       {
         "id": 2,
         "values": {
-          "selectedValue": false,
+          "selectedValue": "false",
           "possibleValues": [
             {
-              "key": null,
+              "key": "null",
               "title": "--"
             },
             {
-              "key": true,
-              "title": "Ja"
+              "key": "true",
+              "title": "Ja",
+              "answer": "ᐅ Ja, die Ermittlung quantitativer Projektkennzahlen ist erforderlich."
             },
             {
-              "key": false,
-              "title": "Nein"
+              "key": "false",
+              "title": "Nein",
+              "answer": "ᐅ Nein, die Ermittlung quantitativer Projektkennzahlen ist nicht erforderlich."
             }
           ]
         },
         "name": "Messung und Analyse",
-        "description": "Sollen quantitative Projektkennzahlen gemessen und analysiert werden?"
+        "description": "Sollen quantitative Projektkennzahlen gemessen und analysiert werden?",
+        "helpText": "Die Ermittlung quantitativer Projektkennzahlen in Form von Messungen und Metriken ist erforderlich, um vergleichende Aussagen über Projektergebnisse während einer längeren Zeitspanne treffen zu können. Die ist z.B. wichtig für die Bewertung der Effektivität eines Entwicklungsprozesses. Dieses Projektmerkmal muss ausgewählt werden, wenn CMMI-Level 3 verfolgt wird."
       },
       {
         "id": 3,
         "values": {
-          "selectedValue": null,
+          "selectedValue": "null",
           "possibleValues": [
             {
-              "key": null,
+              "key": "null",
               "title": "--"
             },
             {
-              "key": true,
-              "title": "Ja"
+              "key": "true",
+              "title": "Ja",
+              "answer": "Ja, im Projekt müssen Aspekte der Informationssicherheit oder des Datenschutzes berücksichtigt werden."
             },
             {
-              "key": false,
-              "title": "Nein"
+              "key": "false",
+              "title": "Nein",
+              "answer": "Nein, im Projekt müssen keine Aspekte der Informationssicherheit oder des Datenschutzes berücksichtigt werden."
             }
           ]
         },
         "name": "Informationssicherheit und Datenschutz (AG)",
-        "description": "Müssen im Projekt Aspekte der Informationssicherheit (Security) oder des Datenschutzes (Privacy) berücksichtigt werden?"
+        "description": "Müssen im Projekt Aspekte der Informationssicherheit (Security) oder des Datenschutzes (Privacy) berücksichtigt werden?",
+        "helpText": "Um die vom System verarbeiteten Daten und Datenabflüsse zu schützen, muss der Auftraggeber Vorgaben zur Informationssicherheit und zum Datenschutz festlegen. Die Checkliste Informationssicherheit enthält verschiedene Kriterien und Beispiele, anhand derer der Auftraggeber die Relevanz von Informationssicherheit und Datenschutz im Projekt bestimmen kann."
       },
       {
         "id": 4,
         "values": {
-          "selectedValue": null,
+          "selectedValue": "null",
           "possibleValues": [
             {
-              "key": null,
+              "key": "null",
               "title": "--"
             },
             {
-              "key": true,
-              "title": "Ja"
+              "key": "true",
+              "title": "Ja",
+              "answer": "ᐅ Ja, ..."
             },
             {
-              "key": false,
-              "title": "Nein"
+              "key": "false",
+              "title": "Nein",
+              "answer": "ᐅ Nein, ..."
             }
           ]
         },
         "name": "Funktionssicherheit (AG)",
-        "description": "Müssen im Projekt Aspekte der Funktionssicherheit (Safety) berücksichtigt werden?"
+        "description": "Müssen im Projekt Aspekte der Funktionssicherheit (Safety) berücksichtigt werden?",
+        "helpText": "Als funktionssicherheitskritisch werden Systeme bezeichnet, die im Fehlerfall Personen-, Umwelt- oder Sachschäden verursachen können. Für solche Systeme müssen Anforderungen an die Funktionssicherheit definiert und im Rahmen der Systementwicklung Funktionssicherheitsanalysen erstellt werden."
       },
       {
         "id": 5,
         "values": {
-          "selectedValue": true,
+          "selectedValue": "true",
           "possibleValues": [
             {
-              "key": null,
+              "key": "null",
               "title": "--"
             },
             {
-              "key": true,
-              "title": "Ja"
+              "key": "true",
+              "title": "Ja",
+              "answer": "ᐅ Ja, ..."
             },
             {
-              "key": false,
+              "key": "false",
               "title": "Nein"
             }
           ]
         },
         "name": "Fertigprodukte",
-        "description": "Sollen, soweit sinnvoll und möglich, Fertigprodukte evaluiert und eingesetzt werden?"
+        "description": "Sollen, soweit sinnvoll und möglich, Fertigprodukte evaluiert und eingesetzt werden?",
+        "helpText": ""
       },
       {
         "id": 6,
         "values": {
-          "selectedValue": true,
+          "selectedValue": "true",
           "possibleValues": [
             {
-              "key": null,
+              "key": "null",
               "title": "--"
             },
             {
-              "key": true,
-              "title": "Ja"
+              "key": "true",
+              "title": "Ja",
+              "answer": "ᐅ Ja, ..."
             },
             {
-              "key": false,
+              "key": "false",
               "title": "Nein"
             }
           ]
@@ -149,134 +164,151 @@
       {
         "id": 1,
         "values": {
-          "selectedValue": false,
+          "selectedValue": "false",
           "possibleValues": [
             {
-              "key": null,
+              "key": "null",
               "title": "--"
             },
             {
-              "key": true,
-              "title": "Ja"
+              "key": "true",
+              "title": "Ja",
+              "answer": "ᐅ Ja, ..."
             },
             {
-              "key": false,
+              "key": "false",
               "title": "Nein"
             }
           ]
         },
         "name": "Kaufmännisches Projektmanagement",
-        "description": "Ist eine kaufmännische Projektplanung und -verfolgung notwendig?"
+        "description": "Ist eine kaufmännische Projektplanung und -verfolgung notwendig?",
+        "helpText": "Die kaufmännische Projektplanung und -verfolgung umfasst die Kostenplanung des Projekts und die entsprechende Projektsteuerung. Dies ist insbesondere bei hohen zu erwartenden Kosten wichtig, um den Erfolg eines Projekts zu gewährleisten."
       },
       {
         "id": 2,
         "values": {
-          "selectedValue": false,
+          "selectedValue": "false",
           "possibleValues": [
             {
-              "key": null,
+              "key": "null",
               "title": "--"
             },
             {
-              "key": true,
-              "title": "Ja"
+              "key": "true",
+              "title": "Ja",
+              "answer": "ᐅ Ja, ..."
             },
             {
-              "key": false,
-              "title": "Nein"
+              "key": "false",
+              "title": "Nein",
+              "answer": "ᐅ Nein, ..."
             }
           ]
         },
         "name": "Messung und Analyse",
-        "description": "Sollen quantitative Projektkennzahlen gemessen und analysiert werden?"
+        "description": "Sollen quantitative Projektkennzahlen gemessen und analysiert werden?",
+        "helpText": "Die Ermittlung quantitativer Projektkennzahlen in Form von Messungen und Metriken ist erforderlich, um vergleichende Aussagen über Projektergebnisse während einer längeren Zeitspanne treffen zu können. Die ist z.B. wichtig für die Bewertung der Effektivität eines Entwicklungsprozesses. Dieses Projektmerkmal muss ausgewählt werden, wenn CMMI-Level 3 verfolgt wird."
       },
       {
         "id": 3,
         "values": {
-          "selectedValue": null,
+          "selectedValue": "null",
           "possibleValues": [
             {
-              "key": null,
+              "key": "null",
               "title": "--"
             },
             {
-              "key": true,
-              "title": "Ja"
+              "key": "true",
+              "title": "Ja",
+              "answer": "ᐅ Ja, ..."
             },
             {
-              "key": false,
-              "title": "Nein"
+              "key": "false",
+              "title": "Nein",
+              "answer": "ᐅ Nein, ..."
             }
           ]
         },
         "name": "Informationssicherheit und Datenschutz (AG)",
-        "description": "Müssen im Projekt Aspekte der Informationssicherheit (Security) oder des Datenschutzes (Privacy) berücksichtigt werden?"
+        "description": "Müssen im Projekt Aspekte der Informationssicherheit (Security) oder des Datenschutzes (Privacy) berücksichtigt werden?",
+        "helpText": "Um die vom System verarbeiteten Daten und Datenabflüsse zu schützen, muss der Auftraggeber Vorgaben zur Informationssicherheit und zum Datenschutz festlegen. Die Checkliste Informationssicherheit enthält verschiedene Kriterien und Beispiele, anhand derer der Auftraggeber die Relevanz von Informationssicherheit und Datenschutz im Projekt bestimmen kann."
       },
       {
         "id": 4,
         "values": {
-          "selectedValue": null,
+          "selectedValue": "null",
           "possibleValues": [
             {
-              "key": null,
+              "key": "null",
               "title": "--"
             },
             {
-              "key": true,
-              "title": "Ja"
+              "key": "true",
+              "title": "Ja",
+              "answer": "ᐅ Ja, ..."
             },
             {
-              "key": false,
-              "title": "Nein"
+              "key": "false",
+              "title": "Nein",
+              "answer": "ᐅ Nein, ..."
             }
           ]
         },
         "name": "Funktionssicherheit (AG)",
-        "description": "Müssen im Projekt Aspekte der Funktionssicherheit (Safety) berücksichtigt werden?"
+        "description": "Müssen im Projekt Aspekte der Funktionssicherheit (Safety) berücksichtigt werden?",
+        "helpText": "Als funktionssicherheitskritisch werden Systeme bezeichnet, die im Fehlerfall Personen-, Umwelt- oder Sachschäden verursachen können. Für solche Systeme müssen Anforderungen an die Funktionssicherheit definiert und im Rahmen der Systementwicklung Funktionssicherheitsanalysen erstellt werden."
       },
       {
         "id": 5,
         "values": {
-          "selectedValue": true,
+          "selectedValue": "true",
           "possibleValues": [
             {
-              "key": null,
+              "key": "null",
               "title": "--"
             },
             {
-              "key": true,
-              "title": "Ja"
+              "key": "true",
+              "title": "Ja",
+              "answer": "ᐅ Ja, ..."
             },
             {
-              "key": false,
-              "title": "Nein"
+              "key": "false",
+              "title": "Nein",
+              "answer": "ᐅ Nein, ..."
             }
           ]
         },
         "name": "Fertigprodukte",
-        "description": "Sollen, soweit sinnvoll und möglich, Fertigprodukte evaluiert und eingesetzt werden?"
+        "description": "Sollen, soweit sinnvoll und möglich, Fertigprodukte evaluiert und eingesetzt werden?",
+        "helpText": "Der Einsatz von Fertigprodukten erfordert frühzeitig in der Systementwicklung Maßnahmen zur Erfassung der möglichen Systemelemente, die Kandidaten für Fertigprodukte sind. Zudem müssen die hierfür auf dem Markt existierenden Lösungen ermittelt und bewertet werden. Der Einsatz von Fertigkomponenten ist besonders sinnvoll, wenn ein Projekt Komponenten beinhaltet, für die bereits viele Lösungen auf dem Markt existieren."
       },
       {
         "id": 6,
         "values": {
-          "selectedValue": true,
+          "selectedValue": "true",
           "possibleValues": [
             {
-              "key": null,
+              "key": "null",
               "title": "--"
             },
             {
-              "key": true,
-              "title": "Ja"
+              "key": "true",
+              "title": "Ja",
+              "answer": "ᐅ Ja, ..."
             },
             {
-              "key": false,
-              "title": "Nein"
+              "key": "false",
+              "title": "Nein",
+              "answer": "ᐅ Nein, ..."
             }
           ]
         },
         "name": "Betriebsübergabe (AG)",
-        "description": "Wird das System nach der Entwicklung in den IT-Betrieb überführt?"
+        "description": "Wird das System nach der Entwicklung in den IT-Betrieb überführt?",
+        "helpText": "Wird das System nach der Entwicklung in den IT-Betrieb überführt, muss der Auftraggeber Vorgaben zum IT-Betrieb festlegen."
       }
     ]
   },
@@ -287,46 +319,52 @@
       {
         "id": 3,
         "values": {
-          "selectedValue": false,
+          "selectedValue": "false",
           "possibleValues": [
             {
-              "key": null,
+              "key": "null",
               "title": "--"
             },
             {
-              "key": true,
-              "title": "Ja"
+              "key": "true",
+              "title": "Ja",
+              "answer": "ᐅ Ja, ..."
             },
             {
-              "key": false,
-              "title": "Nein"
+              "key": "false",
+              "title": "Nein",
+              "answer": "ᐅ Nein, ..."
             }
           ]
         },
         "name": "Informationssicherheit und Datenschutz (AN)",
-        "description": "Müssen im Projekt Aspekte der Informationssicherheit (Security) oder des Datenschutzes (Privacy) berücksichtigt werden?"
+        "description": "Müssen im Projekt Aspekte der Informationssicherheit (Security) oder des Datenschutzes (Privacy) berücksichtigt werden?",
+        "helpText": "Um die vom System verarbeiteten Daten und Datenabflüsse zu schützen, muss der Auftraggeber Vorgaben zur Informationssicherheit und zum Datenschutz festlegen. Die Checkliste Informationssicherheit enthält verschiedene Kriterien und Beispiele, anhand derer der Auftraggeber die Relevanz von Informationssicherheit und Datenschutz im Projekt bestimmen kann."
       },
       {
         "id": 4,
         "values": {
-          "selectedValue": false,
+          "selectedValue": "false",
           "possibleValues": [
             {
-              "key": null,
+              "key": "null",
               "title": "--"
             },
             {
-              "key": true,
-              "title": "Ja"
+              "key": "true",
+              "title": "Ja",
+              "answer": "ᐅ Ja, ..."
             },
             {
-              "key": false,
-              "title": "Nein"
+              "key": "false",
+              "title": "Nein",
+              "answer": "ᐅ Nein, ..."
             }
           ]
         },
         "name": "Funktionssicherheit (AN)",
-        "description": "Müssen im Projekt Aspekte der Funktionssicherheit (Safety) berücksichtigt werden?"
+        "description": "Müssen im Projekt Aspekte der Funktionssicherheit (Safety) berücksichtigt werden?",
+        "helpText": "Als funktionssicherheitskritisch werden Systeme bezeichnet, die im Fehlerfall Personen-, Umwelt- oder Sachschäden verursachen können. Für solche Systeme müssen Anforderungen an die Funktionssicherheit definiert und im Rahmen der Systementwicklung Funktionssicherheitsanalysen erstellt werden."
       },
       {
         "id": 10,
@@ -334,29 +372,34 @@
           "selectedValue": "SW",
           "possibleValues": [
             {
-              "key": null,
+              "key": "null",
               "title": "--"
             },
             {
               "key": "HW",
-              "title": "HW"
+              "title": "HW",
+              "answer": "ᐅ HW, ..."
             },
             {
               "key": "SW",
-              "title": "SW"
+              "title": "SW",
+              "answer": "ᐅ SW, ..."
             },
             {
               "key": "HW_SW",
-              "title": "HW und SW"
+              "title": "HW und SW",
+              "answer": "ᐅ HW und SW, ..."
             },
             {
               "key": "Integration",
-              "title": "Integration"
+              "title": "Integration",
+              "answer": "ᐅ Integration, ..."
             }
           ]
         },
         "name": "Projektgegenstand",
-        "description": "Was ist der Entwicklungsgegenstand des Projekts?"
+        "description": "Was ist der Entwicklungsgegenstand des Projekts?",
+        "helpText": "Der Projektgegenstand ist das Ergebnis, das im Projekt erarbeitet werden soll. Das Ergebnis kann dabei ein reines SW- oder ein reines HW-System sein, oder aber auch eine Kombination von HW und SW, z.B. ein eingebettetes System."
       }
     ]
   },
@@ -367,46 +410,52 @@
       {
         "id": 1,
         "values": {
-          "selectedValue": false,
+          "selectedValue": "false",
           "possibleValues": [
             {
-              "key": null,
+              "key": "null",
               "title": "--"
             },
             {
-              "key": true,
-              "title": "Ja"
+              "key": "true",
+              "title": "Ja",
+              "answer": "ᐅ Ja, ..."
             },
             {
-              "key": false,
-              "title": "Nein"
+              "key": "false",
+              "title": "Nein",
+              "answer": "ᐅ Nein, ..."
             }
           ]
         },
         "name": "Kaufmännisches Projektmanagement",
-        "description": "Ist eine kaufmännische Projektplanung und -verfolgung notwendig?"
+        "description": "Ist eine kaufmännische Projektplanung und -verfolgung notwendig?",
+        "helpText": "Die kaufmännische Projektplanung und -verfolgung umfasst die Kostenplanung des Projekts und die entsprechende Projektsteuerung. Dies ist insbesondere bei hohen zu erwartenden Kosten wichtig, um den Erfolg eines Projekts zu gewährleisten."
       },
       {
         "id": 2,
         "values": {
-          "selectedValue": false,
+          "selectedValue": "false",
           "possibleValues": [
             {
-              "key": null,
+              "key": "null",
               "title": "--"
             },
             {
-              "key": true,
-              "title": "Ja"
+              "key": "true",
+              "title": "Ja",
+              "answer": "ᐅ Ja, ..."
             },
             {
-              "key": false,
-              "title": "Nein"
+              "key": "false",
+              "title": "Nein",
+              "answer": "ᐅ Nein, ..."
             }
           ]
         },
         "name": "Messung und Analyse",
-        "description": "Sollen quantitative Projektkennzahlen gemessen und analysiert werden?"
+        "description": "Sollen quantitative Projektkennzahlen gemessen und analysiert werden?",
+        "helpText": "Die Ermittlung quantitativer Projektkennzahlen in Form von Messungen und Metriken ist erforderlich, um vergleichende Aussagen über Projektergebnisse während einer längeren Zeitspanne treffen zu können. Die ist z.B. wichtig für die Bewertung der Effektivität eines Entwicklungsprozesses. Dieses Projektmerkmal muss ausgewählt werden, wenn CMMI-Level 3 verfolgt wird."
       },
       {
         "id": 10,
@@ -414,29 +463,34 @@
           "selectedValue": "SW",
           "possibleValues": [
             {
-              "key": null,
+              "key": "null",
               "title": "--"
             },
             {
               "key": "HW",
-              "title": "HW"
+              "title": "HW",
+              "answer": "ᐅ HW, ..."
             },
             {
               "key": "SW",
-              "title": "SW"
+              "title": "SW",
+              "answer": "ᐅ SW, ..."
             },
             {
               "key": "HW_SW",
-              "title": "HW und SW"
+              "title": "HW und SW",
+              "answer": "ᐅ HW und SW, ..."
             },
             {
               "key": "Integration",
-              "title": "Integration"
+              "title": "Integration",
+              "answer": "ᐅ Integration, ..."
             }
           ]
         },
         "name": "Projektgegenstand",
-        "description": "Was ist der Entwicklungsgegenstand des Projekts?"
+        "description": "Was ist der Entwicklungsgegenstand des Projekts?",
+        "helpText": "Der Projektgegenstand ist das Ergebnis, das im Projekt erarbeitet werden soll. Das Ergebnis kann dabei ein reines SW- oder ein reines HW-System sein, oder aber auch eine Kombination von HW und SW, z.B. ein eingebettetes System."
       }
     ]
   },
@@ -447,46 +501,52 @@
       {
         "id": 5,
         "values": {
-          "selectedValue": null,
+          "selectedValue": "null",
           "possibleValues": [
             {
-              "key": null,
+              "key": "null",
               "title": "--"
             },
             {
-              "key": true,
-              "title": "Ja"
+              "key": "true",
+              "title": "Ja",
+              "answer": "ᐅ Ja, ..."
             },
             {
-              "key": false,
-              "title": "Nein"
+              "key": "false",
+              "title": "Nein",
+              "answer": "ᐅ Nein, ..."
             }
           ]
         },
         "name": "Fertigprodukte",
-        "description": "Sollen, soweit sinnvoll und möglich, Fertigprodukte evaluiert und eingesetzt werden?"
+        "description": "Sollen, soweit sinnvoll und möglich, Fertigprodukte evaluiert und eingesetzt werden?",
+        "helpText": "Der Einsatz von Fertigprodukten erfordert frühzeitig in der Systementwicklung Maßnahmen zur Erfassung der möglichen Systemelemente, die Kandidaten für Fertigprodukte sind. Zudem müssen die hierfür auf dem Markt existierenden Lösungen ermittelt und bewertet werden. Der Einsatz von Fertigkomponenten ist besonders sinnvoll, wenn ein Projekt Komponenten beinhaltet, für die bereits viele Lösungen auf dem Markt existieren."
       },
       {
         "id": 6,
         "values": {
-          "selectedValue": false,
+          "selectedValue": "false",
           "possibleValues": [
             {
-              "key": null,
+              "key": "null",
               "title": "--"
             },
             {
-              "key": true,
-              "title": "Ja"
+              "key": "true",
+              "title": "Ja",
+              "answer": "ᐅ Ja, ..."
             },
             {
-              "key": false,
-              "title": "Nein"
+              "key": "false",
+              "title": "Nein",
+              "answer": "ᐅ Nein, ..."
             }
           ]
         },
         "name": "Betriebsübergabe (AG/AN)",
-        "description": "Wird das System nach der Entwicklung in den IT-Betrieb überführt?"
+        "description": "Wird das System nach der Entwicklung in den IT-Betrieb überführt?",
+        "helpText": "Wird das System nach der Entwicklung in den IT-Betrieb überführt, muss der Auftraggeber Vorgaben zum IT-Betrieb festlegen."
       },
       {
         "id": 10,
@@ -494,29 +554,34 @@
           "selectedValue": "SW",
           "possibleValues": [
             {
-              "key": null,
+              "key": "null",
               "title": "--"
             },
             {
               "key": "HW",
-              "title": "HW"
+              "title": "HW",
+              "answer": "ᐅ HW, ..."
             },
             {
               "key": "SW",
-              "title": "SW"
+              "title": "SW",
+              "answer": "ᐅ SW, ..."
             },
             {
               "key": "HW_SW",
-              "title": "HW und SW"
+              "title": "HW und SW",
+              "answer": "ᐅ HW und SW, ..."
             },
             {
               "key": "Integration",
-              "title": "Integration"
+              "title": "Integration",
+              "answer": "ᐅ Integration, ..."
             }
           ]
         },
         "name": "Projektgegenstand",
-        "description": "Was ist der Entwicklungsgegenstand des Projekts?"
+        "description": "Was ist der Entwicklungsgegenstand des Projekts?",
+        "helpText": "Der Projektgegenstand ist das Ergebnis, das im Projekt erarbeitet werden soll. Das Ergebnis kann dabei ein reines SW- oder ein reines HW-System sein, oder aber auch eine Kombination von HW und SW, z.B. ein eingebettetes System."
       }
     ]
   },
@@ -527,46 +592,52 @@
       {
         "id": 1,
         "values": {
-          "selectedValue": false,
+          "selectedValue": "false",
           "possibleValues": [
             {
-              "key": null,
+              "key": "null",
               "title": "--"
             },
             {
-              "key": true,
-              "title": "Ja"
+              "key": "true",
+              "title": "Ja",
+              "answer": "ᐅ Ja, ..."
             },
             {
-              "key": false,
-              "title": "Nein"
+              "key": "false",
+              "title": "Nein",
+              "answer": "ᐅ Nein, ..."
             }
           ]
         },
         "name": "Kaufmännisches Projektmanagement",
-        "description": "Ist eine kaufmännische Projektplanung und -verfolgung notwendig?"
+        "description": "Ist eine kaufmännische Projektplanung und -verfolgung notwendig?",
+        "helpText": "Die kaufmännische Projektplanung und -verfolgung umfasst die Kostenplanung des Projekts und die entsprechende Projektsteuerung. Dies ist insbesondere bei hohen zu erwartenden Kosten wichtig, um den Erfolg eines Projekts zu gewährleisten."
       },
       {
         "id": 2,
         "values": {
-          "selectedValue": false,
+          "selectedValue": "false",
           "possibleValues": [
             {
-              "key": null,
+              "key": "null",
               "title": "--"
             },
             {
-              "key": true,
-              "title": "Ja"
+              "key": "true",
+              "title": "Ja",
+              "answer": "ᐅ Ja, ..."
             },
             {
-              "key": false,
-              "title": "Nein"
+              "key": "false",
+              "title": "Nein",
+              "answer": "ᐅ Nein, ..."
             }
           ]
         },
         "name": "Messung und Analyse",
-        "description": "Sollen quantitative Projektkennzahlen gemessen und analysiert werden?"
+        "description": "Sollen quantitative Projektkennzahlen gemessen und analysiert werden?",
+        "helpText": "Die Ermittlung quantitativer Projektkennzahlen in Form von Messungen und Metriken ist erforderlich, um vergleichende Aussagen über Projektergebnisse während einer längeren Zeitspanne treffen zu können. Die ist z.B. wichtig für die Bewertung der Effektivität eines Entwicklungsprozesses. Dieses Projektmerkmal muss ausgewählt werden, wenn CMMI-Level 3 verfolgt wird."
       },
       {
         "id": 10,
@@ -574,29 +645,34 @@
           "selectedValue": "SW",
           "possibleValues": [
             {
-              "key": null,
+              "key": "null",
               "title": "--"
             },
             {
               "key": "HW",
-              "title": "HW"
+              "title": "HW",
+              "answer": "ᐅ HW, ..."
             },
             {
               "key": "SW",
-              "title": "SW"
+              "title": "SW",
+              "answer": "ᐅ SW, ..."
             },
             {
               "key": "HW_SW",
-              "title": "HW und SW"
+              "title": "HW und SW",
+              "answer": "ᐅ HW und SW, ..."
             },
             {
               "key": "Integration",
-              "title": "Integration"
+              "title": "Integration",
+              "answer": "ᐅ Integration, ..."
             }
           ]
         },
         "name": "Projektgegenstand",
-        "description": "Was ist der Entwicklungsgegenstand des Projekts?"
+        "description": "Was ist der Entwicklungsgegenstand des Projekts?",
+        "helpText": "Der Projektgegenstand ist das Ergebnis, das im Projekt erarbeitet werden soll. Das Ergebnis kann dabei ein reines SW- oder ein reines HW-System sein, oder aber auch eine Kombination von HW und SW, z.B. ein eingebettetes System."
       }
     ]
   }
