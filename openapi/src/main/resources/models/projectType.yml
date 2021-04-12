@@ -12,7 +12,7 @@ ProjectType:
       example: "Systementwicklungsprojekt (AG)"
     variants:
       description: Possible Project Type Variants
-      type: Array
+      type: array
       items:
         $ref: "./projectTypeVariant.yml#/ProjectTypeVariant"
   required:

@@ -7,7 +7,7 @@ import { ContentController } from './controller';
 
 import { useParams } from 'react-router-dom';
 import MENU_DATA from './../navigation/menu.data.json';
-import { Anchor, Avatar, BackTop, Col, Layout, List, Row } from 'antd';
+import { Avatar, Col, Layout, List, Row } from 'antd';
 import { MenuEntry, TableEntry } from '../../../../../openapi';
 
 import 'antd/dist/antd.css';
@@ -23,33 +23,7 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import { FooterComponent } from '../../../footer/component';
-
-const handleClick = (e: MouseEvent, link: Object) => {
-  e.preventDefault();
-};
-
-function AnchorList() {
-  return (
-    <>
-      <Anchor affix={false} onClick={handleClick}>
-        <h3 style={{ paddingLeft: '16px' }}>Seitenübersicht</h3>
-        <Anchor.Link href={`#${menuEntryFound?.menuEntry?.id}`} title={menuEntryFound?.menuEntry?.displayName}>
-          {menuEntryFound?.depth >= 3 &&
-            menuEntryFound.menuEntry.subMenuEntries?.map((productChild: MenuEntry) => {
-              return (
-                <Anchor.Link
-                  key={productChild.id.toString()}
-                  href={`#${productChild.id}`}
-                  title={productChild.displayName}
-                />
-              );
-            })}
-        </Anchor.Link>
-      </Anchor>
-      <BackTop />
-    </>
-  );
-}
+import { AnchorList } from '../anchorList/component';
 
 // Tiny helper interface
 interface MenuEntryDepth {
@@ -60,7 +34,7 @@ interface MenuEntryDepth {
 export let menuEntryFound: MenuEntryDepth;
 
 function findMenuEntry(menuEntry: MenuEntry, menuEntryId: number, depth: number): MenuEntryDepth | undefined {
-  if (menuEntry.id === parseInt(menuEntryId, 10)) {
+  if (menuEntry.id === menuEntryId) {
     return { menuEntry, depth };
   }
 
@@ -147,7 +121,7 @@ function DataTable(props: { data: TableEntry[] }) {
           <List.Item>
             <List.Item.Meta
               avatar={renderSwitch(item.descriptionEntry)}
-              title={<a href="https://ant.design">{item.descriptionEntry}</a>}
+              title={item.descriptionEntry}
               description={item.dataEntry}
             />
           </List.Item>
@@ -160,14 +134,18 @@ function DataTable(props: { data: TableEntry[] }) {
   }
 }
 
-function PageEntry(props: { ctrl: ContentController }) {
-  const { id } = useParams();
+function PageEntryContent(props: { ctrl: ContentController }) {
+  const { id } = useParams<{ id: string }>();
   const product = props.ctrl.getPageEntryContent(parseInt(id, 10));
 
-  menuEntryFound = undefined;
+  menuEntryFound = {
+    // empty dummy entry
+    menuEntry: { id: -1, displayName: '' },
+    depth: 0,
+  };
 
   for (const menuEntry of MENU_DATA) {
-    const menu = findMenuEntry(menuEntry, id, 0);
+    const menu = findMenuEntry(menuEntry, parseInt(id, 10), 0);
     if (menu !== undefined) {
       menuEntryFound = menu;
       break;
@@ -178,7 +156,7 @@ function PageEntry(props: { ctrl: ContentController }) {
 
   const productDataArray = [];
 
-  if (product || menuEntryFound) {
+  if (product || menuEntryFound.menuEntry.id > -1) {
     productDataArray.push(
       <div key={product?.menuEntryId.toString()}>
         <h2 id={product?.menuEntryId.toString()}> {product?.header} </h2>
@@ -187,9 +165,9 @@ function PageEntry(props: { ctrl: ContentController }) {
       </div>
     );
 
-    if (menuEntryFound?.depth >= 3) {
-      for (const menuEntryChildren of menuEntryFound?.menuEntry?.subMenuEntries) {
-        const productChild = props.ctrl.getPageEntryContent(parseInt(menuEntryChildren.id, 10)); //PAGES_DATA.find((p) => p.id === Number(id));
+    if (menuEntryFound?.depth >= 3 && menuEntryFound.menuEntry?.subMenuEntries) {
+      for (const menuEntryChildren of menuEntryFound.menuEntry.subMenuEntries) {
+        const productChild = props.ctrl.getPageEntryContent(menuEntryChildren.id);
 
         productDataArray.push(
           <div key={productChild?.menuEntryId.toString()} style={{ marginTop: '40px' }}>
@@ -235,9 +213,13 @@ export class ContentComponent extends ReactComponent<unknown, ContentController>
           <>
             <Layout style={{ background: '#FFF' }}>
               <Row>
-                <Col xs={{ span: 24, order: 2 }} lg={{ span: 16, order: 1 }}>
-                  <div style={{ padding: '24px' }}>
-                    <PageEntry ctrl={this.ctrl} />
+                <Col
+                  style={{ display: 'flex', flexDirection: 'column' }}
+                  xs={{ span: 24, order: 2 }}
+                  lg={{ span: 16, order: 1 }}
+                >
+                  <div style={{ padding: '24px', flex: '1 0 auto' }}>
+                    <PageEntryContent ctrl={this.ctrl} />
                   </div>
                   <FooterComponent />
                 </Col>

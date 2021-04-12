@@ -16,3 +16,4 @@ ProjectFeatureBooleanOption:
   required:
     - key
     - title
+    - answer

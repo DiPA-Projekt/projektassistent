@@ -4,18 +4,18 @@ import React from 'react';
 import { GenericComponent } from '@leanup/lib/components/generic';
 import { ReactComponent } from '@leanup/lib/components/react';
 
-import { DashboardController } from './controller';
+import { HomeController } from './controller';
 
 const { Content } = Layout;
 
-export class DashboardComponent extends ReactComponent<unknown, DashboardController> implements GenericComponent {
-  public ctrl: DashboardController = new DashboardController();
+export class HomeComponent extends ReactComponent<unknown, HomeController> implements GenericComponent {
+  public ctrl: HomeController = new HomeController();
 
   public render(): JSX.Element {
     return (
       <>
         <Content style={{ margin: '16px' }}>
-          <h1>Dashboard</h1>
+          <h1>Home</h1>
         </Content>
       </>
     );

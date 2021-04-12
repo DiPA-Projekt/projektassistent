@@ -7,6 +7,7 @@ import { TableEntry } from '../../../../../openapi';
 interface PageEntry {
   id: number;
   menuEntryId: number;
+  header: string;
   descriptionText: string;
   tableEntries: TableEntry[];
 }

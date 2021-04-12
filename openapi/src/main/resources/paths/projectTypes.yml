@@ -6,7 +6,7 @@ get:
   operationId: getProjectTypes
   parameters:
     - in: path
-      name: metaModelId
+      name: modelVariantId
       schema:
         type: integer
         format: int64

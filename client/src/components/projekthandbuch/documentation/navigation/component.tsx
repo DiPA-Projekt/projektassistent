@@ -8,7 +8,7 @@ import { NavigationController } from './controller';
 
 import { MenuEntry } from '../../../../../openapi';
 import SubMenu from 'antd/es/menu/SubMenu';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import {
   FileProtectOutlined,
   HomeOutlined,
@@ -49,14 +49,24 @@ function renderIcon(param: string | undefined) {
   }
 }
 
-function renderMenuItem(menuItems: MenuEntry[], depth: number): JSX.Element {
+function RenderMenuItem(menuItems: MenuEntry[], depth: number): JSX.Element {
+  const history = useHistory();
+  const handleTitleClick = (event: { key: string; domEvent: Event }) => {
+    history.push(`./${event.key}`);
+  };
+
   return (
     <>
       {menuItems.map((menuItem: MenuEntry) => {
         if (depth < 3 && menuItem.subMenuEntries && menuItem.subMenuEntries.length > 0) {
           return (
-            <SubMenu key={menuItem.id.toString()} title={menuItem.displayName} icon={renderIcon(menuItem.displayIcon)}>
-              {renderMenuItem(menuItem.subMenuEntries, depth + 1)}
+            <SubMenu
+              onTitleClick={handleTitleClick}
+              key={menuItem.id.toString()}
+              title={menuItem.displayName}
+              icon={renderIcon(menuItem.displayIcon)}
+            >
+              {RenderMenuItem(menuItem.subMenuEntries, depth + 1)}
             </SubMenu>
           );
         } else {
@@ -75,10 +85,10 @@ function NavMenu(props: { ctrl: NavigationController }): JSX.Element {
   const [openKeys, setOpenKeys] = useState(OPEN_KEYS);
   const onOpenChange = (keys: React.Key[]) => {
     const latestOpenKey = keys.find((key) => openKeys.indexOf(key) === -1);
-    if (latestOpenKey && rootSubmenuKeys.indexOf(latestOpenKey.toString()) === -1) {
-      setOpenKeys(keys);
+    if (latestOpenKey && rootSubmenuKeys.indexOf(latestOpenKey.toString()) > -1) {
+      setOpenKeys([latestOpenKey]);
     } else {
-      setOpenKeys(latestOpenKey ? [latestOpenKey] : []);
+      setOpenKeys(keys);
     }
   };
 
@@ -89,11 +99,11 @@ function NavMenu(props: { ctrl: NavigationController }): JSX.Element {
       theme="dark"
       openKeys={openKeys as string[]}
       onOpenChange={onOpenChange}
-      defaultSelectedKeys={['36']}
-      defaultOpenKeys={['36']}
+      // defaultSelectedKeys={['36']}
+      // defaultOpenKeys={['3', '15', '18']}
       style={{ height: '100%' }}
     >
-      {renderMenuItem(props.ctrl.getMenuEntries(), 0)}
+      {RenderMenuItem(props.ctrl.getMenuEntries(), 0)}
     </Menu>
   );
 }

@@ -75,7 +75,7 @@ export class ProjekthandbuchComponent
               <ProjektComponent />
             </Route>
             <Redirect exact path="/projekthandbuch/dokumentation" to="/projekthandbuch/dokumentation/1" />
-            <Route path="/projekthandbuch/dokumentation/:id" component={DocumentationComponent}></Route>
+            <Route path="/projekthandbuch/dokumentation/:id" component={DocumentationComponent} />
           </Switch>
         </Content>
       </>

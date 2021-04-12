@@ -1,26 +1,31 @@
 [
   {
     "id": 1,
+    "parentId": -1,
     "displayName": "Einstieg in das V-Modell XT Bund",
     "displayIcon": "home",
     "subMenuEntries": [
       {
         "id": 9,
+        "parentId": 1,
         "displayName": "Ziele und Vorteile",
         "subMenuEntries": []
       },
       {
         "id": 10,
+        "parentId": 1,
         "displayName": "Zielgruppen",
         "subMenuEntries": []
       },
       {
         "id": 11,
+        "parentId": 1,
         "displayName": "V-Modell XT Bund im Überblick",
         "subMenuEntries": []
       },
       {
         "id": 12,
+        "parentId": 1,
         "displayName": "Anwendungsbereich und Abgrenzung",
         "subMenuEntries": []
       }
@@ -28,16 +33,19 @@
   },
   {
     "id": 2,
+    "parentId": -1,
     "displayName": "Konzepte und Inhalte des V-Modell XT Bund",
     "displayIcon": "file-protect",
     "subMenuEntries": [
       {
         "id": 13,
+        "parentId": 2,
         "displayName": "Grundkonzepte",
         "subMenuEntries": []
       },
       {
         "id": 14,
+        "parentId": 2,
         "displayName": "Inhalte des V-Modell XT Bund",
         "subMenuEntries": []
       }
@@ -45,43 +53,52 @@
   },
   {
     "id": 3,
+    "parentId": -1,
     "displayName": "Referenz Produkte",
     "displayIcon": "shopping",
     "subMenuEntries": [
       {
         "id": 15,
+        "parentId": 3,
         "displayName": "Produkte",
         "subMenuEntries": [
           {
             "id": 18,
+            "parentId": 15,
             "displayName": "Anbahnung und Organisation",
             "subMenuEntries": [
               {
                 "id": 36,
+                "parentId": 18,
                 "displayName": "Projektvorstudie",
                 "subMenuEntries": [
                   {
                     "id": 40,
+                    "parentId": 36,
                     "displayName": "Problemstellung",
                     "subMenuEntries": []
                   },
                   {
                     "id": 41,
+                    "parentId": 36,
                     "displayName": "Bestehende Rahmenbedingungen",
                     "subMenuEntries": []
                   },
                   {
                     "id": 42,
+                    "parentId": 36,
                     "displayName": "Lösungsalternativen",
                     "subMenuEntries": []
                   },
                   {
                     "id": 43,
+                    "parentId": 36,
                     "displayName": "Machbarkeitsanalyse",
                     "subMenuEntries": []
                   },
                   {
                     "id": 44,
+                    "parentId": 36,
                     "displayName": "Lösungsvorschlag und Projektumfang",
                     "subMenuEntries": []
                   }
@@ -89,90 +106,108 @@
               },
               {
                 "id": 37,
+                "parentId": 18,
                 "displayName": "Projekthandbuch",
                 "subMenuEntries": [
                   {
                     "id": 45,
+                    "parentId": 37,
                     "displayName": "Projektüberblick, Projektziele und Erfolgsfaktoren",
                     "subMenuEntries": []
                   },
                   {
                     "id": 46,
+                    "parentId": 37,
                     "displayName": "Teilprojekte",
                     "subMenuEntries": []
                   },
                   {
                     "id": 47,
+                    "parentId": 37,
                     "displayName": "Projektspezifisches V-Modell",
                     "subMenuEntries": []
                   },
                   {
                     "id": 48,
+                    "parentId": 37,
                     "displayName": "Abweichungen vom V-Modell",
                     "subMenuEntries": []
                   },
                   {
                     "id": 49,
+                    "parentId": 37,
                     "displayName": "Projektdurchführungsplan",
                     "subMenuEntries": []
                   },
                   {
                     "id": 50,
+                    "parentId": 37,
                     "displayName": "Organisation und Vorgaben zur Vergabe von Entwicklungsleistungen",
                     "subMenuEntries": []
                   },
                   {
                     "id": 51,
+                    "parentId": 37,
                     "displayName": "Organisation und Vorgaben zur Beauftragung eines IT-Dienstleisters des Bundes",
                     "subMenuEntries": []
                   },
                   {
                     "id": 52,
+                    "parentId": 37,
                     "displayName": "Organisation und Vorgaben zum Projektmanagement",
                     "subMenuEntries": []
                   },
                   {
                     "id": 53,
+                    "parentId": 37,
                     "displayName": "Organisation und Vorgaben zum Risikomanagement",
                     "subMenuEntries": []
                   },
                   {
                     "id": 54,
+                    "parentId": 37,
                     "displayName": "Organisation und Vorgaben zum Problem- und Änderungsmanagement",
                     "subMenuEntries": []
                   },
                   {
                     "id": 55,
+                    "parentId": 37,
                     "displayName": "Organisation und Vorgaben zum Konfigurationsmanagement",
                     "subMenuEntries": []
                   },
                   {
                     "id": 56,
+                    "parentId": 37,
                     "displayName": "Organisation und Vorgaben zum Projektcontrolling",
                     "subMenuEntries": []
                   },
                   {
                     "id": 57,
+                    "parentId": 37,
                     "displayName": "Organisation und Vorgaben zum Anforderungsmanagement",
                     "subMenuEntries": []
                   },
                   {
                     "id": 58,
+                    "parentId": 37,
                     "displayName": "Organisation und Vorgaben zur Systemerstellung",
                     "subMenuEntries": []
                   },
                   {
                     "id": 59,
+                    "parentId": 37,
                     "displayName": "Abstimmung mit IT-Organisation und Betrieb",
                     "subMenuEntries": []
                   },
                   {
                     "id": 60,
+                    "parentId": 37,
                     "displayName": "Vorgaben für das Projekthandbuch der Auftragnehmer",
                     "subMenuEntries": []
                   },
                   {
                     "id": 61,
+                    "parentId": 37,
                     "displayName": "Berichtswesen und Kommunikationswege",
                     "subMenuEntries": []
                   }
@@ -180,11 +215,13 @@
               },
               {
                 "id": 38,
+                "parentId": 18,
                 "displayName": "Projektauftrag",
                 "subMenuEntries": []
               },
               {
                 "id": 39,
+                "parentId": 18,
                 "displayName": "Projektmanagement-Infrastruktur",
                 "subMenuEntries": []
               }
@@ -192,86 +229,103 @@
           },
           {
             "id": 19,
+            "parentId": 15,
             "displayName": "Planung und Steuerung",
             "subMenuEntries": []
           },
           {
             "id": 20,
+            "parentId": 15,
             "displayName": "Risikomanagement",
             "subMenuEntries": []
           },
           {
             "id": 21,
+            "parentId": 15,
             "displayName": "Problem- und Änderungsmanagement",
             "subMenuEntries": []
           },
           {
             "id": 22,
+            "parentId": 15,
             "displayName": "Konfiguarationsmanagement",
             "subMenuEntries": []
           },
           {
             "id": 23,
+            "parentId": 15,
             "displayName": "Qualitätssicherung",
             "subMenuEntries": []
           },
           {
             "id": 24,
+            "parentId": 15,
             "displayName": "Messung und Analyse",
             "subMenuEntries": []
           },
           {
             "id": 25,
+            "parentId": 15,
             "displayName": "Berichtswesen",
             "subMenuEntries": []
           },
           {
             "id": 26,
+            "parentId": 15,
             "displayName": "Systemelemente",
             "subMenuEntries": []
           },
           {
             "id": 27,
+            "parentId": 15,
             "displayName": "Systemanalyse",
             "subMenuEntries": []
           },
           {
             "id": 28,
+            "parentId": 15,
             "displayName": "Systemspezifikation",
             "subMenuEntries": []
           },
           {
             "id": 29,
+            "parentId": 15,
             "displayName": "Systementwurf",
             "subMenuEntries": []
           },
           {
             "id": 30,
+            "parentId": 15,
             "displayName": "Logistikelemente",
             "subMenuEntries": []
           },
           {
             "id": 31,
+            "parentId": 15,
             "displayName": "IT-Organisation und Betrieb",
             "subMenuEntries": []
           },
           {
             "id": 32,
+            "parentId": 15,
             "displayName": "Ausschreibungswesen (Vergabeakte)",
             "subMenuEntries": []
           },
           {
             "id": 33,
+            "parentId": 15,
             "displayName": "Vertragswesen",
             "subMenuEntries": []
           },
           {
             "id": 34,
+            "parentId": 15,
             "displayName": "Angebots- und Auftragswesen",
             "subMenuEntries": []
           },
           {
             "id": 35,
+            "parentId": 15,
             "displayName": "Lieferung und Abnahme",
             "subMenuEntries": []
           }
@@ -279,11 +333,13 @@
       },
       {
         "id": 16,
+        "parentId": 3,
         "displayName": "Produktabhängigkeiten",
         "subMenuEntries": []
       },
       {
         "id": 17,
+        "parentId": 3,
         "displayName": "Produktindex",
         "subMenuEntries": []
       }
@@ -291,30 +347,35 @@
   },
   {
     "id": 4,
+    "parentId": -1,
     "displayName": "Referenz Rollen",
     "displayIcon": "team",
     "subMenuEntries": []
   },
   {
     "id": 5,
+    "parentId": -1,
     "displayName": "Referenz Abläufe",
     "displayIcon": "ordered-list",
     "subMenuEntries": []
   },
   {
     "id": 6,
+    "parentId": -1,
     "displayName": "Referenz Tailoring",
     "displayIcon": "scissor",
     "subMenuEntries": []
   },
   {
     "id": 7,
+    "parentId": -1,
     "displayName": "Referenz Arbeitshilfen",
     "displayIcon": "tool",
     "subMenuEntries": []
   },
   {
     "id": 8,
+    "parentId": -1,
     "displayName": "Anhang",
     "displayIcon": "paperclip",
     "subMenuEntries": []
