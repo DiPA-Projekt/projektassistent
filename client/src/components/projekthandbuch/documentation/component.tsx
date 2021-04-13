@@ -15,12 +15,10 @@ export class DocumentationComponent
 
   public render(): JSX.Element {
     return (
-      <>
-        <Layout>
-          <NavigationComponent />
-          <ContentComponent />
-        </Layout>
-      </>
+      <Layout>
+        <NavigationComponent />
+        <ContentComponent />
+      </Layout>
     );
   }
 }

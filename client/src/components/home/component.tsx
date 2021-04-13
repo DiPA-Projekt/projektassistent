@@ -13,11 +13,9 @@ export class HomeComponent extends ReactComponent<unknown, HomeController> imple
 
   public render(): JSX.Element {
     return (
-      <>
-        <Content style={{ margin: '16px' }}>
-          <h1>Home</h1>
-        </Content>
-      </>
+      <Content style={{ margin: '16px' }}>
+        <h1>Home</h1>
+      </Content>
     );
   }
 }

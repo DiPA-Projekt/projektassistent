@@ -7,7 +7,7 @@ import { ContentController } from './controller';
 
 import { useParams } from 'react-router-dom';
 import MENU_DATA from './../navigation/menu.data.json';
-import { Avatar, Col, Layout, List, Row } from 'antd';
+import { Avatar, BackTop, Col, Layout, List, Row } from 'antd';
 import { MenuEntry, TableEntry } from '../../../../../openapi';
 
 import 'antd/dist/antd.css';
@@ -225,6 +225,7 @@ export class ContentComponent extends ReactComponent<unknown, ContentController>
                 </Col>
                 <Col xs={{ span: 24, order: 1 }} lg={{ span: 8, order: 2 }}>
                   <AnchorList />
+                  <BackTop />
                 </Col>
               </Row>
             </Layout>
