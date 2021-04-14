@@ -8,6 +8,7 @@ import { ReactComponent } from '@leanup/lib/components/react';
 import { ProjekthandbuchController } from './controller';
 import { ProjektComponent } from './projekt/component';
 import { TailoringComponent } from './tailoring/component';
+import { ProduktvorlagenComponent } from './produktvorlagen/component';
 
 const { Content } = Layout;
 
@@ -33,6 +34,9 @@ export class ProjekthandbuchComponent
             </Route>
             <Route exact path="/projekthandbuch/tailoring">
               <TailoringComponent />
+            </Route>
+            <Route exact path="/produktvorlagen">
+              <ProduktvorlagenComponent />
             </Route>
           </Switch>
         </Content>

@@ -9,10 +9,22 @@ h2 {
   font-size: 18pt;
 }
 
-.ant-popover-placement-top {
+.ant-popover-inner {
   max-width: 500px;
+  max-height: 200px;
+  overflow-y: auto;
 }
 
 .ant-popover-inner-content {
   font-size: 14px;
+}
+
+.sticky-wrapper {
+  @media (min-width: 992px) {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 1rem;
+    height: calc(100vh - 2rem);
+    overflow-y: auto;
+  }
 }
