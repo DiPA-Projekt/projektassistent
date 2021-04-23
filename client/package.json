@@ -27,9 +27,9 @@
   },
   "dependencies": {
     "@ant-design/icons": "4.6.2",
-    "@dipa-projekt/projektassistent-openapi": "0.0.1",
-    "@leanup/lib": "1.1.9",
-    "antd": "4.15.0",
+    "@dipa-projekt/projektassistent-openapi": "0.2.1",
+    "@leanup/lib": "1.1.16",
+    "antd": "4.15.2",
     "dayjs": "1.10.4",
     "react": "17.0.2",
     "react-dom": "17.0.2",
@@ -38,20 +38,20 @@
     "rxjs": "6.6.7"
   },
   "devDependencies": {
-    "@leanup/stack": "1.1.10",
-    "@leanup/stack-react": "1.1.10",
-    "@leanup/stack-vite": "1.1.10",
-    "@leanup/stack-webpack": "1.1.10",
+    "@leanup/stack": "1.1.16",
+    "@leanup/stack-react": "1.1.16",
+    "@leanup/stack-vite": "1.1.16",
+    "@leanup/stack-webpack": "1.1.16",
     "@types/react": "17.0.3",
     "@types/react-dom": "17.0.3",
     "@types/react-router": "5.1.13",
     "@types/react-router-dom": "5.1.7",
-    "chromedriver": "89.0.0",
+    "chromedriver": "90.0.0",
     "copy-webpack-plugin": "8.1.1",
-    "cssnano": "4.1.10",
-    "npm-check-updates": "11.3.0",
+    "cssnano": "5.0.1",
+    "npm-check-updates": "11.5.1",
     "selenium-server": "3.141.59",
     "tslib": "2.2.0",
-    "typescript": "4.2.3"
+    "typescript": "4.2.4"
   }
 }
