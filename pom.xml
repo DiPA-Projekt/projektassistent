@@ -28,6 +28,20 @@
         </repository>
     </distributionManagement>
 
+    <repositories>
+        <repository>
+            <id>github</id>
+            <name>GitHub - DiPA-Projekt</name>
+            <url>https://maven.pkg.github.com/dipa-projekt/projektassistent-openapi</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
     <properties>
         <project.scm.id>github</project.scm.id>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
