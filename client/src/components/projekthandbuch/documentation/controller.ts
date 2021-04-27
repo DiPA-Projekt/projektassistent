@@ -1,3 +1,3 @@
 import { AbstractController } from '@leanup/lib/components/generic';
 
-export class DashboardController extends AbstractController {}
+export class DocumentationController extends AbstractController {}
