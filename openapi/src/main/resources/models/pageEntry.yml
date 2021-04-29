@@ -6,6 +6,11 @@ PageEntry:
       type: integer
       format: int64
       example: 1
+    menuEntryId:
+      description: Unique identifier of the Menu Entry
+      type: integer
+      format: int64
+      example: 1
     header:
       description: Text of the header
       type: string
@@ -21,7 +26,7 @@ PageEntry:
         $ref: 'tableEntry.yml#/TableEntry'
 
   required:
-    - id
-    - header
+    - menuEntryId
+#    - header
     - descriptionText
     - tableEntries

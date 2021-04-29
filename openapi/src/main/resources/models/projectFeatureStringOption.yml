@@ -10,9 +10,10 @@ ProjectFeatureStringOption:
       type: string
       example: Test
     answer:
-      description: Explanation of the project feature boolean option value
+      description: Explanation of the project feature string option value
       type: string
       example: "Test, diese Eigenschaft wird so gesetzt."
   required:
     - key
     - title
+    - answer

@@ -1,0 +1,592 @@
+[
+  {
+    "id": 1,
+    "menuEntryId": 1,
+    "header": "Einstieg in das V-Modell XT Bund",
+    "descriptionText": "Das V-Modell XT ist ein Vorgehensmodell zum Planen und Durchführen von Systementwicklungs-Projekten. Das V-Modell XT Bund (im Text kurz: \"V-Modell\") ist eine Anpassung des V-Modell XT an die Bedürfnisse der Bundesverwaltung.",
+    "tableEntries": []
+  },
+  {
+    "id": 2,
+    "menuEntryId": 2,
+    "header": "Konzepte und Inhalte des V-Modell XT Bund",
+    "descriptionText": "Der Lieferumfang des V-Modells besteht aus Dokumentationen, Produktvorlagen und Werkzeugen:\n\nDokumentationen: Die im Lieferumfang enthaltene Prozessdokumentation umfasst alle Elemente des V-Modells. Die Projektdokumentation enthält den für ein konkretes Projekt relevanten Ausschnitt aus der Prozessdokumentation, beispielsweise den Projektablauf, zu erstellende Ergebnisse und dafür nötige Rollen. Sie wird durch das Tailoring aus dem Lieferumfang erzeugt.\nProduktvorlagen: Für die während des Projekts zu erstellenden Ergebnisse (Produkte) werden Vorlagen angeboten.\nWerkzeuge: Der V-Modell XT Projektassistent unterstützt die Anpassung des V-Modells an ein konkretes Projekt. Mit dem V-Modell XT Editor kann das V-Modell selbst editiert werden, um es an Organisationsspezifika anzupassen.\nDie Dokumentationen sind wie folgt gegliedert:\n\nDer Einstieg in das V-Modell XT Bund (nur Prozessdokumentation) beschreibt die Ziele und Adressaten des V-Modells, bietet einen Überblick über dessen Prinzipien, erläutert seinen Anwendungsbereich und zeigt die Grenzen seiner Anwendung auf.\nDer Einstieg in das projektspezifische V-Modell (nur Projektdokumentation) stellt die gewählten Tailoring-Einstellungen dar, die zum Projekt-spezifischen Vorgehensmodell geführt haben.\nDie Konzepte und Inhalte des V-Modell XT Bund enthalten Definitionen wesentlicher Begriffe, Erklärungen grundlegender Konzepte und eine Beschreibung des Projekt-Vorgehens und des Zusammenspiels verschiedener V-Modell-Projekte.\nDie Referenz Produkte beschreibt die Produkte und Themen des V-Modells sowie deren Zusammenhänge über Produktabhängigkeiten.\nDie Referenz Rollen beschreibt die Rollen des V-Modells und deren Verantwortung oder Mitwirkung bei der Erstellung von Produkten. Die Rollen sind nach Organisations-, Projektteam- und sonstigen Projekt-Rollen kategorisiert.\nDie Referenz Abläufe beschreibt die im V-Modell vorgesehenen Projektdurchführungsstrategien und Entscheidungspunkte.\nDie Referenz Tailoring (nur Prozessdokumentation) beschreibt die Projekttypen, Projekttypvarianten und Projektmerkmale, mit denen das V-Modell auf ein bestimmtes Projekt zugeschnitten werden kann (Anwendungsprofil).\nDie Referenz Arbeitshilfen beschreibt die Aktivitäten zur Erstellung von Produkten, beinhaltet Methodenreferenzen und Werkzeugreferenzen sowie Hinweise zu den Produktvorlagen.\nDer Anhang enthält ein Glossar, ein Abkürzungsverzeichnis und Literaturangaben.\nDie ersten beiden Kapitel (Einstieg, Konzepte und Inhalte) sollten sie gelesen haben, um das V-Modell in Projekten erfolgreich anwenden zu können. Die Referenzen dienen zusammen mit dem Anhang als Nachschlagewerk während der Projektdurchführung.",
+    "tableEntries": []
+  },
+  {
+    "id": 3,
+    "menuEntryId": 3,
+    "header": "Referenz Produkte",
+    "descriptionText": "Hinweise zum Aufbau siehe Inhalt und Aufbau der Referenz Produkte.",
+    "tableEntries": []
+  },
+  {
+    "id": 4,
+    "menuEntryId": 4,
+    "header": "Referenz Rollen",
+    "descriptionText": "",
+    "tableEntries": []
+  },
+  {
+    "id": 5,
+    "menuEntryId": 5,
+    "header": "Referenz Abläufe",
+    "descriptionText": "",
+    "tableEntries": []
+  },
+  {
+    "id": 6,
+    "menuEntryId": 6,
+    "header": "Referenz Tailoring",
+    "descriptionText": "",
+    "tableEntries": []
+  },
+  {
+    "id": 7,
+    "menuEntryId": 7,
+    "header": "Referenz Arbeitshilfen",
+    "descriptionText": "",
+    "tableEntries": []
+  },
+  {
+    "id": 8,
+    "menuEntryId": 8,
+    "header": "Anhang",
+    "descriptionText": "",
+    "tableEntries": []
+  },
+  {
+    "id": 9,
+    "menuEntryId": 9,
+    "header": "Ziele und Vorteile",
+    "descriptionText": "Die Beteiligten eines Systementwicklungs-Projekts benötigen ein einheitliches und konsistentes Bild des gemeinsamen Vorgehens, um das Projekt zum Erfolg führen zu können. Die Anwendung des V-Modells gewährleistet dies und unterstützt zudem folgende Ziele:\n\nKommunikation verbessern: Die Projektbeteiligten verfügen anhand detaillierter Beschreibungen der Bestandteile des V-Modells und klarer Begriffsdefinitionen über ein gemeinsames Vokabular und ein gemeinsames Verständnis des Vorgehens. So werden Reibungsverluste zwischen Auftraggeber und Auftragnehmer, aber auch innerhalb von Projektteams reduziert.\nProjektrisiken minimieren: Durch die Vorgabe von Ergebnissen, verantwortlichen Rollen, standardisierten Vorgehensweisen und Entscheidungspunkten im Projekt erhöht das V-Modell die Projekttransparenz und verbessert die Planbarkeit von Projekten. Planungsabweichungen und Risiken werden so frühzeitig erkannt.\nQualität sicherstellen: Durch die Beschreibung der erwarteten Inhalte und die frühzeitige Überprüfung von Ergebnissen unterstützt das V-Modell die Projektmitarbeiter, Ergebnisse vollständig und in der gewünschten Qualität zu liefern. Qualitätsbewusstsein von Anfang an zahlt sich mit Blick auf das gesamte Projekt und den gesamten Systemlebenszyklus aus.\nBundesstandards einhalten: In Systementwicklungsprojekten des Bundes müssen bestimmte Standards beachtet werden, insbesondere WiBe und UfAB. Jeder Standard fokussiert einen bestimmten Aspekt und gibt dazu detaillierte Vorgaben. Das V-Modell integriert die Standards und stellt sie im Zusammenhang dar.\nControlling-Anforderungen erfüllen: Die Anwendung des V-Modells entspricht den IuK-Mindestanforderungen-2011 der Rechnungshöfe des Bundes und der Länder in den Bereichen Projektmanagement, Softwareentwicklung und Test- und Freigabeverfahren.",
+    "tableEntries": []
+  },
+  {
+    "id": 10,
+    "menuEntryId": 10,
+    "header": "Zielgruppen",
+    "descriptionText": "Das V-Modell ist ein Angebot des BfIT an alle Bundesbehörden, die Systementwicklungs-Projekte durchführen. Es beschreibt Projektabläufe bei Bundesbehörden als Auftraggeber und bei der Entwicklung innerhalb einer Bundesbehörde (Inhouse-Entwicklung). Das V-Modell wendet sich an alle Projektbeteiligten, insbesondere an Projektleiter, QS-Verantwortliche und Projektmitarbeiter.",
+    "tableEntries": []
+  },
+  {
+    "id": 11,
+    "menuEntryId": 11,
+    "header": "V-Modell XT Bund im Überblick",
+    "descriptionText": "<p>Das V-Modell ist ein Produkt-zentriertes Vorgehensmodell; die Projektergebnisse stehen also im Mittelpunkt. Es definiert die Struktur und die Inhalte dieser Ergebnisse und beschreibt, wie die einzelnen Ergebnisse aufeinander aufbauen und voneinander abhängen. Ein Rollenmodell kapselt Kompetenzen von und Anforderungen an Projektbeteiligte und bestimmt ihre Verantwortung oder Mitwirkung bei der Erstellung der Projektergebnisse. Das V-Modell gibt eine Reihe von Entscheidungspunkten (Meilensteinen) vor, denen Projektergebnisse zugeordnet sind. Es fordert an diesen Entscheidungspunkten eine Fortschrittskontrolle und eine Entscheidung über den weiteren Projektverlauf.</p><p><figure><img src='/src/assets/INKON-BigPicture-Einstieg.gif' alt='BigPicture-Einstieg' /><figcaption>Abbildung 1: V-Modell im Überblick</figcaption></figure></p><p>Das Entwicklungsvorgehen (gelb-blaues \"V\" in Abbildung 1) ist eingebettet in ein Managementmodell zur Steuerung des Projekts. Neben dem eigentlichen Projektmanagement enthält es Vorgaben zur Qualitätssicherung, zum Umgang mit Problemen und Änderungen im Projektverlauf und zur Vorhaltung von Projektergebnissen (Konfigurations-Management). Das V-Modell ist dabei auf ein iteratives Vorgehen ausgelegt, bei dem der Entwicklungszyklus mehrmals durchlaufen wird. Dadurch können technische Risiken frühzeitig erkannt und die Anwenderzufriedenheit durch zeitnahe Reaktionen verbessert werden.</p><p>Das V-Modell unterscheidet zwischen einem Inhouse-Projekt und einer Beauftragung Dritter samt Aufteilung in zwei getrennte Projekte - eines auf der Auftraggeber- und eines auf der Auftragnehmerseite. Hierbei legt der Auftraggeber (AG) die Anforderungen fest und prüft die Ergebnisse, die der Auftragnehmer (AN) entwickelt. Das V-Modell regelt das Zusammenspiel der beiden Projekte in der AG/AN-Schnittstelle. Inhouse-Projekte benötigen diese Regelungen nicht und kommen daher mit einem schlankeren Satz an V-Modell-Bestandteilen aus.</p><p>Das V-Modell kann zu Beginn eines Projekts an die konkrete Projektsituation angepasst werden (Tailoring). Mit dem V-Modell-XT-Projektassistenten können ein Projekt-spezifisches Vorgehensmodell samt Vorlagen für die erwarteten Ergebnisse erzeugt und ein erster grober Projektplan erarbeitet werden.</p>",
+    "tableEntries": []
+  },
+  {
+    "id": 12,
+    "menuEntryId": 12,
+    "header": "Anwendungsbereich und Abgrenzung",
+    "descriptionText": "Das V-Modell ist auf die Planung und (Weiter-)Entwicklung von IT-Systemen ausgerichtet, umfasst aber auch die Konzeption betrieblicher Aufgaben und die anfängliche Koordinierung der verantwortlichen Stellen für die Pflege und Weiterentwicklung. Die weitere Organisation und Durchführung dieser Aufgaben wird vom V-Modell nicht abgedeckt.\n\nDas V-Modell XT Bund beschränkt sich gegenüber dem V-Modell XT auf die für Bundesbehörden relevante Durchführung von Auftraggeber-seitigen Projekten und Eigenentwicklungen von Softwaresystemen. Es überlässt die Durchführung reiner Auftragnehmer-Projekte dem allgemeinen V-Modell XT und seinen Varianten wie dem V-Modell XT ITZBund, einer Spezialisierung für den IT-Dienstleister des Bundes. Die Entwicklung von Hardware (Elektronik, Mechanik, eingebettete Systeme) wird vom V-Modell XT Bund ebenfalls nicht abgedeckt.\n\nAgile Vorgehensweisen wie Scrum oder Kanban können je nach Projektkontext gut mit dem V-Modell kombiniert werden und insbesondere dabei helfen, den \"Sockel des Vs\" auszugestalten. Eine detaillierte Diskussion und konkrete Vorschläge finden sich beispielsweise in SKB14 und BIT13 .",
+    "tableEntries": []
+  },
+  {
+    "id": 13,
+    "menuEntryId": 13,
+    "header": "Grundkonzepte",
+    "descriptionText": "Das V-Modell ist auf die Planung und (Weiter-)Entwicklung von IT-Systemen ausgerichtet, umfasst aber auch die Konzeption betrieblicher Aufgaben und die anfängliche Koordinierung der verantwortlichen Stellen für die Pflege und Weiterentwicklung. Die weitere Organisation und Durchführung dieser Aufgaben wird vom V-Modell nicht abgedeckt.\n\nDas V-Modell XT Bund beschränkt sich gegenüber dem V-Modell XT auf die für Bundesbehörden relevante Durchführung von Auftraggeber-seitigen Projekten und Eigenentwicklungen von Softwaresystemen. Es überlässt die Durchführung reiner Auftragnehmer-Projekte dem allgemeinen V-Modell XT und seinen Varianten wie dem V-Modell XT ITZBund, einer Spezialisierung für den IT-Dienstleister des Bundes. Die Entwicklung von Hardware (Elektronik, Mechanik, eingebettete Systeme) wird vom V-Modell XT Bund ebenfalls nicht abgedeckt.\n\nAgile Vorgehensweisen wie Scrum oder Kanban können je nach Projektkontext gut mit dem V-Modell kombiniert werden und insbesondere dabei helfen, den \"Sockel des Vs\" auszugestalten. Eine detaillierte Diskussion und konkrete Vorschläge finden sich beispielsweise in SKB14 und BIT13 .",
+    "tableEntries": []
+  },
+  {
+    "id": 14,
+    "menuEntryId": 14,
+    "header": "Inhalte des V-Modell XT Bund",
+    "descriptionText": "Das V-Modell ist auf die Planung und (Weiter-)Entwicklung von IT-Systemen ausgerichtet, umfasst aber auch die Konzeption betrieblicher Aufgaben und die anfängliche Koordinierung der verantwortlichen Stellen für die Pflege und Weiterentwicklung. Die weitere Organisation und Durchführung dieser Aufgaben wird vom V-Modell nicht abgedeckt.\n\nDas V-Modell XT Bund beschränkt sich gegenüber dem V-Modell XT auf die für Bundesbehörden relevante Durchführung von Auftraggeber-seitigen Projekten und Eigenentwicklungen von Softwaresystemen. Es überlässt die Durchführung reiner Auftragnehmer-Projekte dem allgemeinen V-Modell XT und seinen Varianten wie dem V-Modell XT ITZBund, einer Spezialisierung für den IT-Dienstleister des Bundes. Die Entwicklung von Hardware (Elektronik, Mechanik, eingebettete Systeme) wird vom V-Modell XT Bund ebenfalls nicht abgedeckt.\n\nAgile Vorgehensweisen wie Scrum oder Kanban können je nach Projektkontext gut mit dem V-Modell kombiniert werden und insbesondere dabei helfen, den \"Sockel des Vs\" auszugestalten. Eine detaillierte Diskussion und konkrete Vorschläge finden sich beispielsweise in SKB14 und BIT13 .",
+    "tableEntries": []
+  },
+  {
+    "id": 15,
+    "menuEntryId": 15,
+    "header": "Produkte",
+    "descriptionText": "Das V-Modell ist auf die Planung und (Weiter-)Entwicklung von IT-Systemen ausgerichtet, umfasst aber auch die Konzeption betrieblicher Aufgaben und die anfängliche Koordinierung der verantwortlichen Stellen für die Pflege und Weiterentwicklung. Die weitere Organisation und Durchführung dieser Aufgaben wird vom V-Modell nicht abgedeckt.\n\nDas V-Modell XT Bund beschränkt sich gegenüber dem V-Modell XT auf die für Bundesbehörden relevante Durchführung von Auftraggeber-seitigen Projekten und Eigenentwicklungen von Softwaresystemen. Es überlässt die Durchführung reiner Auftragnehmer-Projekte dem allgemeinen V-Modell XT und seinen Varianten wie dem V-Modell XT ITZBund, einer Spezialisierung für den IT-Dienstleister des Bundes. Die Entwicklung von Hardware (Elektronik, Mechanik, eingebettete Systeme) wird vom V-Modell XT Bund ebenfalls nicht abgedeckt.\n\nAgile Vorgehensweisen wie Scrum oder Kanban können je nach Projektkontext gut mit dem V-Modell kombiniert werden und insbesondere dabei helfen, den \"Sockel des Vs\" auszugestalten. Eine detaillierte Diskussion und konkrete Vorschläge finden sich beispielsweise in SKB14 und BIT13 .",
+    "tableEntries": []
+  },
+  {
+    "id": 16,
+    "menuEntryId": 16,
+    "header": "Produktabhängigkeiten",
+    "descriptionText": "Das V-Modell ist auf die Planung und (Weiter-)Entwicklung von IT-Systemen ausgerichtet, umfasst aber auch die Konzeption betrieblicher Aufgaben und die anfängliche Koordinierung der verantwortlichen Stellen für die Pflege und Weiterentwicklung. Die weitere Organisation und Durchführung dieser Aufgaben wird vom V-Modell nicht abgedeckt.\n\nDas V-Modell XT Bund beschränkt sich gegenüber dem V-Modell XT auf die für Bundesbehörden relevante Durchführung von Auftraggeber-seitigen Projekten und Eigenentwicklungen von Softwaresystemen. Es überlässt die Durchführung reiner Auftragnehmer-Projekte dem allgemeinen V-Modell XT und seinen Varianten wie dem V-Modell XT ITZBund, einer Spezialisierung für den IT-Dienstleister des Bundes. Die Entwicklung von Hardware (Elektronik, Mechanik, eingebettete Systeme) wird vom V-Modell XT Bund ebenfalls nicht abgedeckt.\n\nAgile Vorgehensweisen wie Scrum oder Kanban können je nach Projektkontext gut mit dem V-Modell kombiniert werden und insbesondere dabei helfen, den \"Sockel des Vs\" auszugestalten. Eine detaillierte Diskussion und konkrete Vorschläge finden sich beispielsweise in SKB14 und BIT13 .",
+    "tableEntries": []
+  },
+  {
+    "id": 17,
+    "menuEntryId": 17,
+    "header": "Produktindex",
+    "descriptionText": "Das V-Modell ist auf die Planung und (Weiter-)Entwicklung von IT-Systemen ausgerichtet, umfasst aber auch die Konzeption betrieblicher Aufgaben und die anfängliche Koordinierung der verantwortlichen Stellen für die Pflege und Weiterentwicklung. Die weitere Organisation und Durchführung dieser Aufgaben wird vom V-Modell nicht abgedeckt.\n\nDas V-Modell XT Bund beschränkt sich gegenüber dem V-Modell XT auf die für Bundesbehörden relevante Durchführung von Auftraggeber-seitigen Projekten und Eigenentwicklungen von Softwaresystemen. Es überlässt die Durchführung reiner Auftragnehmer-Projekte dem allgemeinen V-Modell XT und seinen Varianten wie dem V-Modell XT ITZBund, einer Spezialisierung für den IT-Dienstleister des Bundes. Die Entwicklung von Hardware (Elektronik, Mechanik, eingebettete Systeme) wird vom V-Modell XT Bund ebenfalls nicht abgedeckt.\n\nAgile Vorgehensweisen wie Scrum oder Kanban können je nach Projektkontext gut mit dem V-Modell kombiniert werden und insbesondere dabei helfen, den \"Sockel des Vs\" auszugestalten. Eine detaillierte Diskussion und konkrete Vorschläge finden sich beispielsweise in SKB14 und BIT13 .",
+    "tableEntries": []
+  },
+  {
+    "id": 18,
+    "menuEntryId": 18,
+    "header": "Anbahnung und Organisation",
+    "descriptionText": "Das V-Modell ist auf die Planung und (Weiter-)Entwicklung von IT-Systemen ausgerichtet, umfasst aber auch die Konzeption betrieblicher Aufgaben und die anfängliche Koordinierung der verantwortlichen Stellen für die Pflege und Weiterentwicklung. Die weitere Organisation und Durchführung dieser Aufgaben wird vom V-Modell nicht abgedeckt.\n\nDas V-Modell XT Bund beschränkt sich gegenüber dem V-Modell XT auf die für Bundesbehörden relevante Durchführung von Auftraggeber-seitigen Projekten und Eigenentwicklungen von Softwaresystemen. Es überlässt die Durchführung reiner Auftragnehmer-Projekte dem allgemeinen V-Modell XT und seinen Varianten wie dem V-Modell XT ITZBund, einer Spezialisierung für den IT-Dienstleister des Bundes. Die Entwicklung von Hardware (Elektronik, Mechanik, eingebettete Systeme) wird vom V-Modell XT Bund ebenfalls nicht abgedeckt.\n\nAgile Vorgehensweisen wie Scrum oder Kanban können je nach Projektkontext gut mit dem V-Modell kombiniert werden und insbesondere dabei helfen, den \"Sockel des Vs\" auszugestalten. Eine detaillierte Diskussion und konkrete Vorschläge finden sich beispielsweise in SKB14 und BIT13 .",
+    "tableEntries": []
+  },
+  {
+    "id": 19,
+    "menuEntryId": 19,
+    "header": "Planung und Steuerung",
+    "descriptionText": "Das V-Modell ist auf die Planung und (Weiter-)Entwicklung von IT-Systemen ausgerichtet, umfasst aber auch die Konzeption betrieblicher Aufgaben und die anfängliche Koordinierung der verantwortlichen Stellen für die Pflege und Weiterentwicklung. Die weitere Organisation und Durchführung dieser Aufgaben wird vom V-Modell nicht abgedeckt.\n\nDas V-Modell XT Bund beschränkt sich gegenüber dem V-Modell XT auf die für Bundesbehörden relevante Durchführung von Auftraggeber-seitigen Projekten und Eigenentwicklungen von Softwaresystemen. Es überlässt die Durchführung reiner Auftragnehmer-Projekte dem allgemeinen V-Modell XT und seinen Varianten wie dem V-Modell XT ITZBund, einer Spezialisierung für den IT-Dienstleister des Bundes. Die Entwicklung von Hardware (Elektronik, Mechanik, eingebettete Systeme) wird vom V-Modell XT Bund ebenfalls nicht abgedeckt.\n\nAgile Vorgehensweisen wie Scrum oder Kanban können je nach Projektkontext gut mit dem V-Modell kombiniert werden und insbesondere dabei helfen, den \"Sockel des Vs\" auszugestalten. Eine detaillierte Diskussion und konkrete Vorschläge finden sich beispielsweise in SKB14 und BIT13 .",
+    "tableEntries": []
+  },
+  {
+    "id": 20,
+    "menuEntryId": 20,
+    "header": "Risikomanagement",
+    "descriptionText": "Das V-Modell ist auf die Planung und (Weiter-)Entwicklung von IT-Systemen ausgerichtet, umfasst aber auch die Konzeption betrieblicher Aufgaben und die anfängliche Koordinierung der verantwortlichen Stellen für die Pflege und Weiterentwicklung. Die weitere Organisation und Durchführung dieser Aufgaben wird vom V-Modell nicht abgedeckt.\n\nDas V-Modell XT Bund beschränkt sich gegenüber dem V-Modell XT auf die für Bundesbehörden relevante Durchführung von Auftraggeber-seitigen Projekten und Eigenentwicklungen von Softwaresystemen. Es überlässt die Durchführung reiner Auftragnehmer-Projekte dem allgemeinen V-Modell XT und seinen Varianten wie dem V-Modell XT ITZBund, einer Spezialisierung für den IT-Dienstleister des Bundes. Die Entwicklung von Hardware (Elektronik, Mechanik, eingebettete Systeme) wird vom V-Modell XT Bund ebenfalls nicht abgedeckt.\n\nAgile Vorgehensweisen wie Scrum oder Kanban können je nach Projektkontext gut mit dem V-Modell kombiniert werden und insbesondere dabei helfen, den \"Sockel des Vs\" auszugestalten. Eine detaillierte Diskussion und konkrete Vorschläge finden sich beispielsweise in SKB14 und BIT13 .",
+    "tableEntries": []
+  },
+  {
+    "id": 21,
+    "menuEntryId": 21,
+    "header": "Problem- und Änderungsmanagement",
+    "descriptionText": "Das V-Modell ist auf die Planung und (Weiter-)Entwicklung von IT-Systemen ausgerichtet, umfasst aber auch die Konzeption betrieblicher Aufgaben und die anfängliche Koordinierung der verantwortlichen Stellen für die Pflege und Weiterentwicklung. Die weitere Organisation und Durchführung dieser Aufgaben wird vom V-Modell nicht abgedeckt.\n\nDas V-Modell XT Bund beschränkt sich gegenüber dem V-Modell XT auf die für Bundesbehörden relevante Durchführung von Auftraggeber-seitigen Projekten und Eigenentwicklungen von Softwaresystemen. Es überlässt die Durchführung reiner Auftragnehmer-Projekte dem allgemeinen V-Modell XT und seinen Varianten wie dem V-Modell XT ITZBund, einer Spezialisierung für den IT-Dienstleister des Bundes. Die Entwicklung von Hardware (Elektronik, Mechanik, eingebettete Systeme) wird vom V-Modell XT Bund ebenfalls nicht abgedeckt.\n\nAgile Vorgehensweisen wie Scrum oder Kanban können je nach Projektkontext gut mit dem V-Modell kombiniert werden und insbesondere dabei helfen, den \"Sockel des Vs\" auszugestalten. Eine detaillierte Diskussion und konkrete Vorschläge finden sich beispielsweise in SKB14 und BIT13 .",
+    "tableEntries": []
+  },
+  {
+    "id": 22,
+    "menuEntryId": 22,
+    "header": "Konfiguarationsmanagement",
+    "descriptionText": "Das V-Modell ist auf die Planung und (Weiter-)Entwicklung von IT-Systemen ausgerichtet, umfasst aber auch die Konzeption betrieblicher Aufgaben und die anfängliche Koordinierung der verantwortlichen Stellen für die Pflege und Weiterentwicklung. Die weitere Organisation und Durchführung dieser Aufgaben wird vom V-Modell nicht abgedeckt.\n\nDas V-Modell XT Bund beschränkt sich gegenüber dem V-Modell XT auf die für Bundesbehörden relevante Durchführung von Auftraggeber-seitigen Projekten und Eigenentwicklungen von Softwaresystemen. Es überlässt die Durchführung reiner Auftragnehmer-Projekte dem allgemeinen V-Modell XT und seinen Varianten wie dem V-Modell XT ITZBund, einer Spezialisierung für den IT-Dienstleister des Bundes. Die Entwicklung von Hardware (Elektronik, Mechanik, eingebettete Systeme) wird vom V-Modell XT Bund ebenfalls nicht abgedeckt.\n\nAgile Vorgehensweisen wie Scrum oder Kanban können je nach Projektkontext gut mit dem V-Modell kombiniert werden und insbesondere dabei helfen, den \"Sockel des Vs\" auszugestalten. Eine detaillierte Diskussion und konkrete Vorschläge finden sich beispielsweise in SKB14 und BIT13 .",
+    "tableEntries": []
+  },
+  {
+    "id": 23,
+    "menuEntryId": 23,
+    "header": "Qualitätssicherung",
+    "descriptionText": "Das V-Modell ist auf die Planung und (Weiter-)Entwicklung von IT-Systemen ausgerichtet, umfasst aber auch die Konzeption betrieblicher Aufgaben und die anfängliche Koordinierung der verantwortlichen Stellen für die Pflege und Weiterentwicklung. Die weitere Organisation und Durchführung dieser Aufgaben wird vom V-Modell nicht abgedeckt.\n\nDas V-Modell XT Bund beschränkt sich gegenüber dem V-Modell XT auf die für Bundesbehörden relevante Durchführung von Auftraggeber-seitigen Projekten und Eigenentwicklungen von Softwaresystemen. Es überlässt die Durchführung reiner Auftragnehmer-Projekte dem allgemeinen V-Modell XT und seinen Varianten wie dem V-Modell XT ITZBund, einer Spezialisierung für den IT-Dienstleister des Bundes. Die Entwicklung von Hardware (Elektronik, Mechanik, eingebettete Systeme) wird vom V-Modell XT Bund ebenfalls nicht abgedeckt.\n\nAgile Vorgehensweisen wie Scrum oder Kanban können je nach Projektkontext gut mit dem V-Modell kombiniert werden und insbesondere dabei helfen, den \"Sockel des Vs\" auszugestalten. Eine detaillierte Diskussion und konkrete Vorschläge finden sich beispielsweise in SKB14 und BIT13 .",
+    "tableEntries": []
+  },
+  {
+    "id": 24,
+    "menuEntryId": 24,
+    "header": "Messung und Analyse",
+    "descriptionText": "Das V-Modell ist auf die Planung und (Weiter-)Entwicklung von IT-Systemen ausgerichtet, umfasst aber auch die Konzeption betrieblicher Aufgaben und die anfängliche Koordinierung der verantwortlichen Stellen für die Pflege und Weiterentwicklung. Die weitere Organisation und Durchführung dieser Aufgaben wird vom V-Modell nicht abgedeckt.\n\nDas V-Modell XT Bund beschränkt sich gegenüber dem V-Modell XT auf die für Bundesbehörden relevante Durchführung von Auftraggeber-seitigen Projekten und Eigenentwicklungen von Softwaresystemen. Es überlässt die Durchführung reiner Auftragnehmer-Projekte dem allgemeinen V-Modell XT und seinen Varianten wie dem V-Modell XT ITZBund, einer Spezialisierung für den IT-Dienstleister des Bundes. Die Entwicklung von Hardware (Elektronik, Mechanik, eingebettete Systeme) wird vom V-Modell XT Bund ebenfalls nicht abgedeckt.\n\nAgile Vorgehensweisen wie Scrum oder Kanban können je nach Projektkontext gut mit dem V-Modell kombiniert werden und insbesondere dabei helfen, den \"Sockel des Vs\" auszugestalten. Eine detaillierte Diskussion und konkrete Vorschläge finden sich beispielsweise in SKB14 und BIT13 .",
+    "tableEntries": []
+  },
+  {
+    "id": 25,
+    "menuEntryId": 25,
+    "header": "Berichtswesen",
+    "descriptionText": "Das V-Modell ist auf die Planung und (Weiter-)Entwicklung von IT-Systemen ausgerichtet, umfasst aber auch die Konzeption betrieblicher Aufgaben und die anfängliche Koordinierung der verantwortlichen Stellen für die Pflege und Weiterentwicklung. Die weitere Organisation und Durchführung dieser Aufgaben wird vom V-Modell nicht abgedeckt.\n\nDas V-Modell XT Bund beschränkt sich gegenüber dem V-Modell XT auf die für Bundesbehörden relevante Durchführung von Auftraggeber-seitigen Projekten und Eigenentwicklungen von Softwaresystemen. Es überlässt die Durchführung reiner Auftragnehmer-Projekte dem allgemeinen V-Modell XT und seinen Varianten wie dem V-Modell XT ITZBund, einer Spezialisierung für den IT-Dienstleister des Bundes. Die Entwicklung von Hardware (Elektronik, Mechanik, eingebettete Systeme) wird vom V-Modell XT Bund ebenfalls nicht abgedeckt.\n\nAgile Vorgehensweisen wie Scrum oder Kanban können je nach Projektkontext gut mit dem V-Modell kombiniert werden und insbesondere dabei helfen, den \"Sockel des Vs\" auszugestalten. Eine detaillierte Diskussion und konkrete Vorschläge finden sich beispielsweise in SKB14 und BIT13 .",
+    "tableEntries": []
+  },
+  {
+    "id": 26,
+    "menuEntryId": 26,
+    "header": "Systemelemente",
+    "descriptionText": "Das V-Modell ist auf die Planung und (Weiter-)Entwicklung von IT-Systemen ausgerichtet, umfasst aber auch die Konzeption betrieblicher Aufgaben und die anfängliche Koordinierung der verantwortlichen Stellen für die Pflege und Weiterentwicklung. Die weitere Organisation und Durchführung dieser Aufgaben wird vom V-Modell nicht abgedeckt.\n\nDas V-Modell XT Bund beschränkt sich gegenüber dem V-Modell XT auf die für Bundesbehörden relevante Durchführung von Auftraggeber-seitigen Projekten und Eigenentwicklungen von Softwaresystemen. Es überlässt die Durchführung reiner Auftragnehmer-Projekte dem allgemeinen V-Modell XT und seinen Varianten wie dem V-Modell XT ITZBund, einer Spezialisierung für den IT-Dienstleister des Bundes. Die Entwicklung von Hardware (Elektronik, Mechanik, eingebettete Systeme) wird vom V-Modell XT Bund ebenfalls nicht abgedeckt.\n\nAgile Vorgehensweisen wie Scrum oder Kanban können je nach Projektkontext gut mit dem V-Modell kombiniert werden und insbesondere dabei helfen, den \"Sockel des Vs\" auszugestalten. Eine detaillierte Diskussion und konkrete Vorschläge finden sich beispielsweise in SKB14 und BIT13 .",
+    "tableEntries": []
+  },
+  {
+    "id": 27,
+    "menuEntryId": 27,
+    "header": "Systemanalyse",
+    "descriptionText": "Das V-Modell ist auf die Planung und (Weiter-)Entwicklung von IT-Systemen ausgerichtet, umfasst aber auch die Konzeption betrieblicher Aufgaben und die anfängliche Koordinierung der verantwortlichen Stellen für die Pflege und Weiterentwicklung. Die weitere Organisation und Durchführung dieser Aufgaben wird vom V-Modell nicht abgedeckt.\n\nDas V-Modell XT Bund beschränkt sich gegenüber dem V-Modell XT auf die für Bundesbehörden relevante Durchführung von Auftraggeber-seitigen Projekten und Eigenentwicklungen von Softwaresystemen. Es überlässt die Durchführung reiner Auftragnehmer-Projekte dem allgemeinen V-Modell XT und seinen Varianten wie dem V-Modell XT ITZBund, einer Spezialisierung für den IT-Dienstleister des Bundes. Die Entwicklung von Hardware (Elektronik, Mechanik, eingebettete Systeme) wird vom V-Modell XT Bund ebenfalls nicht abgedeckt.\n\nAgile Vorgehensweisen wie Scrum oder Kanban können je nach Projektkontext gut mit dem V-Modell kombiniert werden und insbesondere dabei helfen, den \"Sockel des Vs\" auszugestalten. Eine detaillierte Diskussion und konkrete Vorschläge finden sich beispielsweise in SKB14 und BIT13 .",
+    "tableEntries": []
+  },
+  {
+    "id": 28,
+    "menuEntryId": 28,
+    "header": "Systemspezifikation",
+    "descriptionText": "Das V-Modell ist auf die Planung und (Weiter-)Entwicklung von IT-Systemen ausgerichtet, umfasst aber auch die Konzeption betrieblicher Aufgaben und die anfängliche Koordinierung der verantwortlichen Stellen für die Pflege und Weiterentwicklung. Die weitere Organisation und Durchführung dieser Aufgaben wird vom V-Modell nicht abgedeckt.\n\nDas V-Modell XT Bund beschränkt sich gegenüber dem V-Modell XT auf die für Bundesbehörden relevante Durchführung von Auftraggeber-seitigen Projekten und Eigenentwicklungen von Softwaresystemen. Es überlässt die Durchführung reiner Auftragnehmer-Projekte dem allgemeinen V-Modell XT und seinen Varianten wie dem V-Modell XT ITZBund, einer Spezialisierung für den IT-Dienstleister des Bundes. Die Entwicklung von Hardware (Elektronik, Mechanik, eingebettete Systeme) wird vom V-Modell XT Bund ebenfalls nicht abgedeckt.\n\nAgile Vorgehensweisen wie Scrum oder Kanban können je nach Projektkontext gut mit dem V-Modell kombiniert werden und insbesondere dabei helfen, den \"Sockel des Vs\" auszugestalten. Eine detaillierte Diskussion und konkrete Vorschläge finden sich beispielsweise in SKB14 und BIT13 .",
+    "tableEntries": []
+  },
+  {
+    "id": 29,
+    "menuEntryId": 29,
+    "header": "Systementwurf",
+    "descriptionText": "Das V-Modell ist auf die Planung und (Weiter-)Entwicklung von IT-Systemen ausgerichtet, umfasst aber auch die Konzeption betrieblicher Aufgaben und die anfängliche Koordinierung der verantwortlichen Stellen für die Pflege und Weiterentwicklung. Die weitere Organisation und Durchführung dieser Aufgaben wird vom V-Modell nicht abgedeckt.\n\nDas V-Modell XT Bund beschränkt sich gegenüber dem V-Modell XT auf die für Bundesbehörden relevante Durchführung von Auftraggeber-seitigen Projekten und Eigenentwicklungen von Softwaresystemen. Es überlässt die Durchführung reiner Auftragnehmer-Projekte dem allgemeinen V-Modell XT und seinen Varianten wie dem V-Modell XT ITZBund, einer Spezialisierung für den IT-Dienstleister des Bundes. Die Entwicklung von Hardware (Elektronik, Mechanik, eingebettete Systeme) wird vom V-Modell XT Bund ebenfalls nicht abgedeckt.\n\nAgile Vorgehensweisen wie Scrum oder Kanban können je nach Projektkontext gut mit dem V-Modell kombiniert werden und insbesondere dabei helfen, den \"Sockel des Vs\" auszugestalten. Eine detaillierte Diskussion und konkrete Vorschläge finden sich beispielsweise in SKB14 und BIT13 .",
+    "tableEntries": []
+  },
+  {
+    "id": 30,
+    "menuEntryId": 30,
+    "header": "Logistikelemente",
+    "descriptionText": "Das V-Modell ist auf die Planung und (Weiter-)Entwicklung von IT-Systemen ausgerichtet, umfasst aber auch die Konzeption betrieblicher Aufgaben und die anfängliche Koordinierung der verantwortlichen Stellen für die Pflege und Weiterentwicklung. Die weitere Organisation und Durchführung dieser Aufgaben wird vom V-Modell nicht abgedeckt.\n\nDas V-Modell XT Bund beschränkt sich gegenüber dem V-Modell XT auf die für Bundesbehörden relevante Durchführung von Auftraggeber-seitigen Projekten und Eigenentwicklungen von Softwaresystemen. Es überlässt die Durchführung reiner Auftragnehmer-Projekte dem allgemeinen V-Modell XT und seinen Varianten wie dem V-Modell XT ITZBund, einer Spezialisierung für den IT-Dienstleister des Bundes. Die Entwicklung von Hardware (Elektronik, Mechanik, eingebettete Systeme) wird vom V-Modell XT Bund ebenfalls nicht abgedeckt.\n\nAgile Vorgehensweisen wie Scrum oder Kanban können je nach Projektkontext gut mit dem V-Modell kombiniert werden und insbesondere dabei helfen, den \"Sockel des Vs\" auszugestalten. Eine detaillierte Diskussion und konkrete Vorschläge finden sich beispielsweise in SKB14 und BIT13 .",
+    "tableEntries": []
+  },
+  {
+    "id": 31,
+    "menuEntryId": 31,
+    "header": "IT-Organisation und Betrieb",
+    "descriptionText": "Das V-Modell ist auf die Planung und (Weiter-)Entwicklung von IT-Systemen ausgerichtet, umfasst aber auch die Konzeption betrieblicher Aufgaben und die anfängliche Koordinierung der verantwortlichen Stellen für die Pflege und Weiterentwicklung. Die weitere Organisation und Durchführung dieser Aufgaben wird vom V-Modell nicht abgedeckt.\n\nDas V-Modell XT Bund beschränkt sich gegenüber dem V-Modell XT auf die für Bundesbehörden relevante Durchführung von Auftraggeber-seitigen Projekten und Eigenentwicklungen von Softwaresystemen. Es überlässt die Durchführung reiner Auftragnehmer-Projekte dem allgemeinen V-Modell XT und seinen Varianten wie dem V-Modell XT ITZBund, einer Spezialisierung für den IT-Dienstleister des Bundes. Die Entwicklung von Hardware (Elektronik, Mechanik, eingebettete Systeme) wird vom V-Modell XT Bund ebenfalls nicht abgedeckt.\n\nAgile Vorgehensweisen wie Scrum oder Kanban können je nach Projektkontext gut mit dem V-Modell kombiniert werden und insbesondere dabei helfen, den \"Sockel des Vs\" auszugestalten. Eine detaillierte Diskussion und konkrete Vorschläge finden sich beispielsweise in SKB14 und BIT13 .",
+    "tableEntries": []
+  },
+  {
+    "id": 32,
+    "menuEntryId": 32,
+    "header": "Ausschreibungswesen (Vergabeakte)",
+    "descriptionText": "Das V-Modell ist auf die Planung und (Weiter-)Entwicklung von IT-Systemen ausgerichtet, umfasst aber auch die Konzeption betrieblicher Aufgaben und die anfängliche Koordinierung der verantwortlichen Stellen für die Pflege und Weiterentwicklung. Die weitere Organisation und Durchführung dieser Aufgaben wird vom V-Modell nicht abgedeckt.\n\nDas V-Modell XT Bund beschränkt sich gegenüber dem V-Modell XT auf die für Bundesbehörden relevante Durchführung von Auftraggeber-seitigen Projekten und Eigenentwicklungen von Softwaresystemen. Es überlässt die Durchführung reiner Auftragnehmer-Projekte dem allgemeinen V-Modell XT und seinen Varianten wie dem V-Modell XT ITZBund, einer Spezialisierung für den IT-Dienstleister des Bundes. Die Entwicklung von Hardware (Elektronik, Mechanik, eingebettete Systeme) wird vom V-Modell XT Bund ebenfalls nicht abgedeckt.\n\nAgile Vorgehensweisen wie Scrum oder Kanban können je nach Projektkontext gut mit dem V-Modell kombiniert werden und insbesondere dabei helfen, den \"Sockel des Vs\" auszugestalten. Eine detaillierte Diskussion und konkrete Vorschläge finden sich beispielsweise in SKB14 und BIT13 .",
+    "tableEntries": []
+  },
+  {
+    "id": 33,
+    "menuEntryId": 33,
+    "header": "Vertragswesen",
+    "descriptionText": "Das V-Modell ist auf die Planung und (Weiter-)Entwicklung von IT-Systemen ausgerichtet, umfasst aber auch die Konzeption betrieblicher Aufgaben und die anfängliche Koordinierung der verantwortlichen Stellen für die Pflege und Weiterentwicklung. Die weitere Organisation und Durchführung dieser Aufgaben wird vom V-Modell nicht abgedeckt.\n\nDas V-Modell XT Bund beschränkt sich gegenüber dem V-Modell XT auf die für Bundesbehörden relevante Durchführung von Auftraggeber-seitigen Projekten und Eigenentwicklungen von Softwaresystemen. Es überlässt die Durchführung reiner Auftragnehmer-Projekte dem allgemeinen V-Modell XT und seinen Varianten wie dem V-Modell XT ITZBund, einer Spezialisierung für den IT-Dienstleister des Bundes. Die Entwicklung von Hardware (Elektronik, Mechanik, eingebettete Systeme) wird vom V-Modell XT Bund ebenfalls nicht abgedeckt.\n\nAgile Vorgehensweisen wie Scrum oder Kanban können je nach Projektkontext gut mit dem V-Modell kombiniert werden und insbesondere dabei helfen, den \"Sockel des Vs\" auszugestalten. Eine detaillierte Diskussion und konkrete Vorschläge finden sich beispielsweise in SKB14 und BIT13 .",
+    "tableEntries": []
+  },
+  {
+    "id": 34,
+    "menuEntryId": 34,
+    "header": "Angebots- und Auftragswesen",
+    "descriptionText": "Das V-Modell ist auf die Planung und (Weiter-)Entwicklung von IT-Systemen ausgerichtet, umfasst aber auch die Konzeption betrieblicher Aufgaben und die anfängliche Koordinierung der verantwortlichen Stellen für die Pflege und Weiterentwicklung. Die weitere Organisation und Durchführung dieser Aufgaben wird vom V-Modell nicht abgedeckt.\n\nDas V-Modell XT Bund beschränkt sich gegenüber dem V-Modell XT auf die für Bundesbehörden relevante Durchführung von Auftraggeber-seitigen Projekten und Eigenentwicklungen von Softwaresystemen. Es überlässt die Durchführung reiner Auftragnehmer-Projekte dem allgemeinen V-Modell XT und seinen Varianten wie dem V-Modell XT ITZBund, einer Spezialisierung für den IT-Dienstleister des Bundes. Die Entwicklung von Hardware (Elektronik, Mechanik, eingebettete Systeme) wird vom V-Modell XT Bund ebenfalls nicht abgedeckt.\n\nAgile Vorgehensweisen wie Scrum oder Kanban können je nach Projektkontext gut mit dem V-Modell kombiniert werden und insbesondere dabei helfen, den \"Sockel des Vs\" auszugestalten. Eine detaillierte Diskussion und konkrete Vorschläge finden sich beispielsweise in SKB14 und BIT13 .",
+    "tableEntries": []
+  },
+  {
+    "id": 35,
+    "menuEntryId": 35,
+    "header": "Lieferung und Abnahme",
+    "descriptionText": "Das V-Modell ist auf die Planung und (Weiter-)Entwicklung von IT-Systemen ausgerichtet, umfasst aber auch die Konzeption betrieblicher Aufgaben und die anfängliche Koordinierung der verantwortlichen Stellen für die Pflege und Weiterentwicklung. Die weitere Organisation und Durchführung dieser Aufgaben wird vom V-Modell nicht abgedeckt.\n\nDas V-Modell XT Bund beschränkt sich gegenüber dem V-Modell XT auf die für Bundesbehörden relevante Durchführung von Auftraggeber-seitigen Projekten und Eigenentwicklungen von Softwaresystemen. Es überlässt die Durchführung reiner Auftragnehmer-Projekte dem allgemeinen V-Modell XT und seinen Varianten wie dem V-Modell XT ITZBund, einer Spezialisierung für den IT-Dienstleister des Bundes. Die Entwicklung von Hardware (Elektronik, Mechanik, eingebettete Systeme) wird vom V-Modell XT Bund ebenfalls nicht abgedeckt.\n\nAgile Vorgehensweisen wie Scrum oder Kanban können je nach Projektkontext gut mit dem V-Modell kombiniert werden und insbesondere dabei helfen, den \"Sockel des Vs\" auszugestalten. Eine detaillierte Diskussion und konkrete Vorschläge finden sich beispielsweise in SKB14 und BIT13 .",
+    "tableEntries": []
+  },
+  {
+    "id": 36,
+    "menuEntryId": 36,
+    "header": "Projektvorstudie",
+    "descriptionText": "Eine Projektvorstudie dokumentiert die Voruntersuchungen, die vor der Genehmigung des eigentlichen Projekts durchgeführt werden. Je nachdem, wie umfangreich ein Projekt ist, kann die Projektvorstudie selbst im Rahmen eines Vorprojekts erstellt werden.\n\nSie beschreibt das eigentliche Problem, die Rahmenbedingungen sowie die unterschiedlichen Lösungsoptionen. Die unterschiedlichen Optionen werden hinsichtlich ihrer Machbarkeit bewertet; schließlich enthält die Projektvorstudie den Ansatz zur Lösung des eingangs geschilderten Problems - da die Lösung in der Regel in der Durchführung eines Projekts besteht, wird darin auch der Projektumfang skizziert.",
+    "tableEntries": [
+      {
+        "id": 1,
+        "descriptionEntry": "Verantwortlich",
+        "dataEntries": [
+          {
+            "title": "Projektauftraggeber",
+            "menuEntryId": -1
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "descriptionEntry": "Mitwirkend",
+        "dataEntries": [
+          {
+            "title": "Multi-Projektkoordination",
+            "menuEntryId": -1
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "descriptionEntry": "Hilfsmittel",
+        "dataEntries": [
+          {
+            "title": "Projektvorstudie erstellen",
+            "suffix": "(Aktivität)",
+            "menuEntryId": -1
+          },
+          {
+            "title": "Projektvorstudie(.odt|.doc)",
+            "menuEntryId": -1
+          },
+          {
+            "title": "Vorprojekt-Entscheidungsvorlage (Teil der SOS-Methode)",
+            "suffix": "(Externe Kopiervorlage)",
+            "menuEntryId": -1
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "descriptionEntry": "Inhaltlich abhängig",
+        "dataEntries": [
+          {
+            "title": "Anbahnung und Organisation",
+            "type": "bold",
+            "menuEntryId": 18
+          },
+          {
+            "title": "Projektauftrag",
+            "menuEntryId": 38
+          },
+          {
+            "title": "Projekthandbuch",
+            "menuEntryId": 37
+          },
+          {
+            "title": "Planung und Steuerung",
+            "type": "bold",
+            "menuEntryId": 19
+          },
+          {
+            "title": "Projektplan",
+            "menuEntryId": -1
+          },
+          {
+            "title": "WiBe (Vorkalkulation)",
+            "menuEntryId": -1
+          },
+          {
+            "title": "(C.2.1.9)",
+            "menuEntryId": -1
+          },
+          {
+            "title": "Systemanalyse",
+            "type": "bold",
+            "menuEntryId": 27
+          },
+          {
+            "title": "Anforderungen (Lastenheft)",
+            "menuEntryId": -1
+          },
+          {
+            "title": "Lastenheft Gesamtprojekt",
+            "menuEntryId": -1
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "descriptionEntry": "Entscheidungsrelevant bei",
+        "dataEntries": [
+          {
+            "title": "Projekt genehmigt",
+            "menuEntryId": -1
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "descriptionEntry": "Sonstiges",
+        "dataEntries": [
+          {
+            "title": "Extern"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 37,
+    "menuEntryId": 37,
+    "header": "Projekthandbuch",
+    "descriptionText": "Das V-Modell ist ein generischer Vorgehensstandard, der für ein konkretes Projekt angepasst und konkretisiert werden muss. Das Projekthandbuch legt die für Management und Entwicklung notwendigen Anpassungen und Ausgestaltungen fest. Somit dokumentiert es Art und Umfang der Anwendung des V-Modells im Projekt und ist Informationsquelle und Richtlinie für alle Projektbeteiligten.\n\nDas Projekthandbuch beinhaltet eine Kurzbeschreibung des Projekts, die Beschreibung des Tailoring-Ergebnisses, den grundlegenden Projektdurchführungsplan, die notwendige und vereinbarte Unterstützung des Auftraggebers sowie Organisation und Vorgaben für die Planung und Durchführung des Projekts und die anstehenden Entwicklungsaufgaben. Der Projektleiter muss dieses zentrale Produkt in Abstimmung mit den Schlüsselpersonen des Projekts erarbeiten.\n\nDabei werden im Projekthandbuch auch insbesondere Häufigkeit und Notwendigkeit der Erzeugung weiterführender Produkte, die für die Planung und Durchführung des Projekts, für das Ausschreibungs- und Vertragswesen sowie für die Prozessverbesserung notwendig sind, festgelegt, zum Beispiel Projektstatusberichte, Risikolisten, Verträge und Bewertungen von Vorgehensmodellen.",
+    "tableEntries": []
+  },
+  {
+    "id": 38,
+    "menuEntryId": 38,
+    "header": "Projektauftrag",
+    "descriptionText": "Der Projektauftrag ist das zentrale Produkt zur Genehmigung eines Projekts und in diesem Sinne für jedes Projekt zu erstellen. Durch ihn wird das Projekt durch den Projektauftraggeber formal eingerichtet, der Projektauftrag definiert, was im Projekt getan werden soll, wer beteiligt ist und wie vorgegangen werden soll. Dazu legt der Projektauftrag bereits die grobe Projektorganisation fest, besetzt die zentralen Projektrollen und skizziert den Projektplan, soweit es zu Projektbeginn schon möglich uns sinnvoll ist. Er beschreibt außerdem, warum das Projekt nützlich und wirtschaftlich ist und zählt mögliche Risiken sowie Chancen auf, die den Projektverlauf negativ oder positiv beeinflussen können.",
+    "tableEntries": []
+  },
+  {
+    "id": 39,
+    "menuEntryId": 39,
+    "header": "Projektmanagement-Infrastruktur",
+    "descriptionText": "Die Projektmanagement-Infrastruktur ist ein Konglomerat von Werkzeugen und Infrastrukturen, die für die Planung und Durchführung des Projektes verwendet werden, zum Beispiel das Konfigurationsmanagement-Werkzeug, das Planungswerkzeug und die Räume des Projektteams. Die Projektmanagement-Infrastruktur beinhaltet aber nicht die Werkzeuge und Infrastrukturanteile, die als Unterstützungssystem entwickelt werden (siehe auch Produktstrukturierung).",
+    "tableEntries": []
+  },
+  {
+    "id": 40,
+    "menuEntryId": 40,
+    "header": "Problemstellung",
+    "descriptionText": "In diesem Thema ist die Problemstellung detailliert darzustellen. Sie kann auf einer Ist-Analyse basieren und hat zum Ziel, den Handlungsbedarf klar darzustellen. In der Analyse der Problemstellung sind neben fachlichen Fragen auch organisatorische Fragen wie ineffizienter Personaleinsatz, hohe Hardware- oder Betriebskosten zu berücksichtigen.",
+    "tableEntries": []
+  },
+  {
+    "id": 41,
+    "menuEntryId": 41,
+    "header": "Bestehende Rahmenbedingungen",
+    "descriptionText": "In diesem Thema sind alle Rahmenbedingungen darzustellen, die bei einer Umsetzung im Projekt zu berücksichtigen sind. Dabei kann es sich insbesondere um personelle, organisatorische, rechtliche und technische Rahmenbedingungen handeln. Die Rahmenbedingungen sind so darzustellen, dass eine Erarbeitung von Lösungsalternativen und die Erstellung einer Machbarkeitsanalyse möglich ist.",
+    "tableEntries": []
+  },
+  {
+    "id": 42,
+    "menuEntryId": 42,
+    "header": "Lösungsalternativen",
+    "descriptionText": "Dieses Thema dokumentiert alle untersuchten Lösungsoptionen für das gestellte Problem. Jeder Lösungsvorschlag ist individuell und so detailliert darzustellen, dass eine anschließende, objektive Bewertung möglich ist.",
+    "tableEntries": []
+  },
+  {
+    "id": 43,
+    "menuEntryId": 43,
+    "header": "Machbarkeitsanalyse",
+    "descriptionText": "Auf Basis der Inhalte der Themen Bestehende Rahmenbedingungen und Lösungsalternativen analysiert dieses Thema die Machbarkeit. Dabei sind folgende Kriterien zu berücksichtigen:\n\norganisatorische (bzgl. Personalressourcen und Zeit),\nwirtschaftliche,\ntechnische und\nrechtliche Machbarkeit.\nBei der Bewertung der Machbarkeit, bzw. der Umsetzbarkeit, sind alle oben genannten Kriterien gleichermaßen zu berücksichtigen. Die Nachweisfindung kann z.B. auch über die Erstellung von Demonstratoren oder Prototypen erfolgen, die eine Bewertung der Kriterien erleichtern.\n\nIn diesem Thema ist die Machbarkeit für jede der zuvor benannten Lösungsalternativen zu dokumentieren. Dabei wird hier gleichzeitig festgehalten, ob eine Lösungsoption während der Überprüfung verworfen wurden. In diesem Fall ist dies hier zu begründen.\n\nAuf Basis der Ergebnisse der Analyse enthält dieses Thema auch eine Priorisierung der untersuchten Lösungsalternativen.",
+    "tableEntries": []
+  },
+  {
+    "id": 44,
+    "menuEntryId": 44,
+    "header": "Lösungsvorschlag und Projektumfang",
+    "descriptionText": "In diesem abschließenden Thema wird der bevorzugte oder zu wählende Lösungsansatz beschrieben. Da die Lösung meist in der Durchführung eines Projekts besteht, werden die Projekteckdaten (wichtigste Ziele, ungefähres Budget, Enddatum, Organisation) beschrieben. Diese grobe Skizze ist dann die Basis für die Ausarbeitung des Projektauftrags.",
+    "tableEntries": []
+  },
+  {
+    "id": 45,
+    "menuEntryId": 45,
+    "header": "Projektüberblick, Projektziele und Erfolgsfaktoren",
+    "descriptionText": "In diesem Thema ist die Problemstellung detailliert darzustellen. Sie kann auf einer Ist-Analyse basieren und hat zum Ziel, den Handlungsbedarf klar darzustellen. In der Analyse der Problemstellung sind neben fachlichen Fragen auch organisatorische Fragen wie ineffizienter Personaleinsatz, hohe Hardware- oder Betriebskosten zu berücksichtigen.",
+    "tableEntries": []
+  },
+  {
+    "id": 46,
+    "menuEntryId": 46,
+    "header": "Teilprojekte",
+    "descriptionText": "Auf der Basis einer Skizze des Lebenszyklus und der Gesamtsystemarchitektur, den Funktionale Anforderungen und den Nicht-Funktionale Anforderungen des Gesamtprojektes werden die Teilprojekte festgelegt. Die Festlegung der Teilprojekte enthält die Anzahl der Teilprojekte, eine Kurzbeschreibung der Teilprojekte, die wichtigsten Teilprojekt-Entscheidungspunkte, die Zuordnung der funktionalen und nicht-funktionalen Anforderungen zu den Teilprojekten und die Abdeckung der Elemente der Gesamtsystemarchitektur durch die Teilprojekte.\n\nDabei wird auch ein Teilprojekt Integration festgelegt, das die Ergebnisse aller anderen Teilprojekte zum Gesamtprojekt integriert.\n\nDas Teilprojekt Integration beschreibt die Reihenfolge der zu integrierenden Teilprojekte, die besonderen Verfahren oder Methoden zur Integration der Teilprojektergebnisse, die Termine, Aufwände, Verantwortliche und Ressourcen.",
+    "tableEntries": []
+  },
+  {
+    "id": 47,
+    "menuEntryId": 47,
+    "header": "Projektspezifisches V-Modell",
+    "descriptionText": "Das V-Modell ist ein generisches Vorgehensmodell. Die projektspezifische Anpassung - das so genannte Tailoring - wird in diesem Thema dokumentiert. Das dabei zu erstellende Anwendungsprofil, der resultierende Projekttyp, die zu verwendenden und zusätzlich ausgewählten Vorgehensbausteine sowie die ausgewählten Projektdurchführungsstrategien sind dabei festzuhalten. Im Rahmen dieses Themas können auch die Umstände und Konsequenzen von bereits vorhersehbarem, dynamischem Tailoring festgehalten werden. Alle diese Festlegungen sind entsprechend den Vorgaben des V-Modells zu begründen (siehe dazu auch Kapitel Projektkonstellation und Tailoring).",
+    "tableEntries": []
+  },
+  {
+    "id": 48,
+    "menuEntryId": 48,
+    "header": "Abweichungen vom V-Modell",
+    "descriptionText": "Sämtliche Abweichungen von den Vorgaben des V-Modells, wie Streichungen einzelner Produkte, Aktivitäten und Abweichung vom Tailoring-Verfahren, müssen unter Angabe von Gründen dokumentiert werden. Die Änderungen sind in diesem Thema aufzuführen.",
+    "tableEntries": []
+  },
+  {
+    "id": 49,
+    "menuEntryId": 49,
+    "header": "Projektdurchführungsplan",
+    "descriptionText": "Das V-Modell macht durch die Festlegung von Entscheidungspunkten Vorgaben zur groben Strukturierung des Projekts. Dieses Thema enthält die planerische Ausgestaltung dieser Entscheidungspunkte in Form eines Projektdurchführungsplans. Hierbei sind zumindest der Projektanfang, das Projektende und alle wichtigen Entscheidungspunkte während des Projekts einzuplanen. Es muss dokumentiert werden, welche Produkte für das Herbeibeiführen einer Projektfortschrittsentscheidung, also dem Erreichen eines Entscheidungspunktes erforderlich sind.\n\nDarüber hinaus können noch weitere projektspezifische Meilensteine festgelegt werden, soweit diese für alle Projektbeteiligten relevant sind. Meilensteine, die nur projektintern relevant sind, werden im Projektplan dokumentiert.",
+    "tableEntries": [
+      {
+        "id": 7,
+        "descriptionEntry": "Erzeugt",
+        "dataEntry": "Bestätigung eines Entscheidungspunkts:\n\nProjektfortschrittsentscheidung"
+      }
+    ]
+  },
+  {
+    "id": 50,
+    "menuEntryId": 50,
+    "header": "Organisation und Vorgaben zur Vergabe von Entwicklungsleistungen",
+    "descriptionText": "In diesem Thema ist der Vergabeprozess bis hin zur Beauftragung eines externen IT-Dienstleiters (Auftragnehmer) zu dokumentieren. Es muss festgelegt werden, welche Produkte dabei relevant sind und nach welchen Regelungen und Vorgaben diese erstellt werden. Neben einem Prozess zur Vorbereitung und Veröffentlichung der Ausschreibung ist festzuhalten, wie die Bewertung der eingegangenen Angebote und letztlich die Zuschlagserteilung erfolgen.",
+    "tableEntries": [
+      {
+        "id": 8,
+        "descriptionEntry": "Erzeugt",
+        "dataEntry": "Dokumentation des Vergabeverfahrens:\n\nVergabevermerk\n\nVeröffentlichung der Ausschreibung:\n\nAusschreibungskonzept, Bewertungsmatrix, Vergabeunterlagen (Ausschreibung)\n\nZuschlagserteilung auf ein Angebot:\n\nAngebotsbewertung, Vertrag, Vertragsübersicht"
+      }
+    ]
+  },
+  {
+    "id": 51,
+    "menuEntryId": 51,
+    "header": "Organisation und Vorgaben zur Beauftragung eines IT-Dienstleisters des Bundes",
+    "descriptionText": "In diesem Thema ist das Vorgehen zur Beauftragung eines IT-Dienstleiters des Bundes (Auftragnehmer) zu dokumentieren. Es muss festgelegt werden, welche Produkte dabei relevant sind und nach welchen Regelungen und Vorgaben diese erstellt werden.",
+    "tableEntries": [
+      {
+        "id": 9,
+        "descriptionEntry": "Erzeugt",
+        "dataEntry": "Aufforderung zur Abgabe eines Angebots:\n\nAngebotsaufforderung\n\nErteilung des Auftrags:\n\nAuftrag"
+      }
+    ]
+  },
+  {
+    "id": 52,
+    "menuEntryId": 52,
+    "header": "Organisation und Vorgaben zum Projektmanagement",
+    "descriptionText": "In diesem Thema werden die Vorgaben des V-Modells zum Projektmanagement angepasst und konkretisiert. Es werden alle internen und externen Projektbeteiligten aufgeführt. Die verantwortlichen Ansprechpartner sind dabei namentlich zu benennen. Darüber hinaus werden die Schlüsselrollen des V-Modells, wie Projektleiter, QS-Verantwortlicher und Systemarchitekt, mit Personen besetzt und deren Aufgaben und Verantwortlichkeiten entsprechend den V-Modell-Vorgaben ausgestaltet.\n\nDie grundlegende Organisation und Durchführung der Zusammenarbeit zwischen allen Projektbeteiligten wird definiert. Dabei werden beispielsweise Besprechungen, das Vorgehen für Abstimmungsrunden, das Konfliktmanagement, die Eskalationsstrategie, die Bedingungen für die Durchführung eines formalen Entscheidungsprozesses festgelegt und dokumentiert. Zusätzlich werden Schwellenwerte definiert, deren Überschreitung zur Einleitung von Steuerungsmaßnahmen führt. Ein Beispiel dafür ist die Überschreitung von Sollwerten für die Planung um mehr als 15%. Organisationsweite Vorgaben müssen dabei berücksichtigt werden.\n\nFür die im Rahmen des Projektmanagements zu erstellenden V-Modell-Produkte, wie Projektplan, Aufgabenliste und Projekttagebuch, wird festgelegt, ob und wann diese zu erstellen sind, nach welchen Methoden, Richtlinien und Standards diese Produkte auszuarbeiten sind und mit welchen Werkzeugen beziehungsweise Bestandteilen der Projektmanagement-Infrastruktur sie bearbeitet werden (siehe dazu auch Abschnitt Erzeugende Produktabhängigkeiten).\n\nProjektorganigramm\n\nDas Projektorganigramm verbildlicht die aufbauorganisatorische Projektstruktur, beispielsweise die Untergliederung eines Projekts in Teilprojekte bzw. die Zusammensetzung des Projekts aus einzelnen Teams. Dabei sollte auch die Auftraggeber/Auftragnehmer-Konstellation beachtet werden. Außerdem sollte das Projektorganigramm die Beziehungen der Führungs- und Managementrollen (beispielsweise Lenkungsausschuss, Projekteigner, Projektleiter, Projektmanagementbüro) aufzeigen.\n\nIn großen Projekten enthält es die Aufteilung des Gesamtprojekts in Verantwortungsbereiche und Teilprojekte (einschließlich Aufgabenabgrenzung zwischen den Teilprojekten) und dokumentiert, wer für welche Teile verantwortlich ist. Ggf. kann für einzelne Rollen auch deren konkrete Besetzung im Projektorganigramm dargestellt werden.\n\nDie im Projektorganigramm dokumentierte Struktur ist unabhängig von den Aufbauorganisationen der beteiligten Behörden oder Unternehmen. Die Aufteilung auf Verantwortungsbereiche und Teilprojekte orientiert sich an Projektinhalten, die in der Definition des Projektumfangs und letztendlich im Projektstrukturplan beschrieben sind und ist Basis für den Ressourcen- und Organisationsplan . Das Projektorganigramm bleibt im Projektverlauf meist relativ stabil, kann aber jederzeit an aktuelle Entwicklungen angepasst werden.\n\nRollenbeschreibungen\n\nDie Rollenbeschreibungen machen deutlich, welche Projektrolle welche Aufgaben wahrnimmt, welche Kompetenzen ihr zugeordnet sind und welche Verantwortung sie im Projektkontext hat. Die Rollenbeschreibungen stellen sicher, dass alle benötigten Aufgaben wahrgenommen werden und keine Aufgaben doppelt oder mit unklarer Verantwortung vergeben werden. Entspricht das Rollenmodell des Projekts dem Rollenmodell im V-Modell, so reichen hier meist Verweise auf die V-Modell-Dokumentation. Weicht das Rollenmodell im Projekt vom V-Modell-Rollenmodell ab, so sollte zumindest versucht werden, eine entsprechende Zuordnung zu finden.\n\nProjektmitarbeiter und Rollenbesetzung\n\nIm Projekthandbuch werden alle Projektmitarbeiter nebst ihrer Kontaktdaten aufgelistet. Außerdem wird für jeden Mitarbeiter festgelegt, welche Rollen er im Projekt einnimmt oder einnehmen kann und in welchen Teilprojekten oder Teams er eingesetzt wird.",
+    "tableEntries": [
+      {
+        "id": 10,
+        "descriptionEntry": "Erzeugt",
+        "dataEntry": "Ermittlung des Projektstatus:\n\nProjektabschlussbericht, Projektstatusbericht\n\nErstellung von Schätzungen:\n\nSchätzung\n\nErstellung von Wirtschaftlichkeitsbetrachtungen:\n\nWiBe (Fortschreibung)\n\nErteilung von Arbeitsaufträgen:\n\nAufgabenliste\n\nFührung eines Projektagebuchs:\n\nProjekttagebuch\n\nProtokollierung von Besprechungen:\n\nBesprechungsdokument\n\nWerkzeuge und Infrastrukturen des Projektmanagements:\n\nProjektmanagement-Infrastruktur"
+      }
+    ]
+  },
+  {
+    "id": 53,
+    "menuEntryId": 53,
+    "header": "Organisation und Vorgaben zum Risikomanagement",
+    "descriptionText": "Damit die Einschätzungen der Risiken innerhalb des Projekts nach denselben Maßstäben erfolgen, wird das im V-Modell bereits vorgesehene Risikomanagement in diesem Thema ausgestaltet und konkretisiert. Dabei ist die generelle Entscheidung zu treffen, ob neben Risiken auch Chancen betrachtet werden sollen. Für Chancen wird das gleiche Verfahren wie für Risiken angewendet, deshalb wird im Folgenden nicht mehr zwischen den Begriffen Chance und Risiko unterschieden.\n\nHier erfolgt die Festlegung, wann und nach welchen Kriterien Risiken in einer Risikoliste dokumentiert werden. Zusätzlich muss definiert werden, mit welchen Methoden, Richtlinien und Standards und mit welchen Werkzeugen beziehungsweise Bestandteilen der Projektmanagement-Infrastruktur das Risikomanagement durchzuführen ist.\n\nDabei sind im Einzelnen die folgenden Punkte festzulegen:\n\nRisikoklassen zur Einstufung von Risiken\nKriterien zur Risikoakzeptanz\nEskalationsstufen basierend auf den definierten Risikoklassen, entsprechend den Vorgaben des Themas Organisation und Vorgaben zum Projektmanagement\nVerfahren für die Dokumentation der identifizierten Risiken und der geplanten Maßnahmen\nZeitpunkte und Vorgehen bei der Risikoidentifizierung\nZeitpunkte für die Neubewertung von Risiken\nZeitpunkte und Verfahren für die Planung und Durchführung von Gegenmaßnahmen",
+    "tableEntries": [
+      {
+        "id": 11,
+        "descriptionEntry": "Erzeugt",
+        "dataEntry": "Führung einer Risikoliste:\n\nRisikoliste"
+      }
+    ]
+  },
+  {
+    "id": 54,
+    "menuEntryId": 54,
+    "header": "Organisation und Vorgaben zum Problem- und Änderungsmanagement",
+    "descriptionText": "In diesem Thema wird das im V-Modell bereits vorgesehene Problem- und Änderungsmanagement ausgestaltet und konkretisiert. Es erfolgt die Festlegung, ob, wann und welche Problemmeldungen und Änderungsanträge erstellt werden müssen, nach welchen Methoden, Richtlinien und Standards diese zu bearbeiten sind und mit welchen Werkzeugen beziehungsweise Bestandteilen der Projektmanagement-Infrastruktur sie weiterverarbeitet werden.\n\nDies beinhaltet beispielsweise die Definition der vorgesehenen Status von Problemmeldungen und Änderungsanträgen (erstellt, genehmigt und abgelehnt) die Besetzung der Änderungssteuerungsgruppe (Change Control Board) sowie das Konfliktmanagement und die Eskalationsstrategie. Dabei kann es erforderlich sein, mehrere Änderungsverantwortliche und Änderungssteuerungsgruppen (Change Control Boards) mit unterschiedlicher Entscheidungskompetenz und Zusammensetzung einzurichten.\n\nBei unterschiedlichen Auffassungen in einer Änderungssteuerungsgruppe (Change Control Board) werden Eskalationsstufen definiert. Beispielsweise kann eine mit größerer Entscheidungskompetenz ausgestattete Änderungssteuerungsgruppe (Change Control Board) oder ein Lenkungsausschuss als Eskalationsinstanz festgelegt werden.",
+    "tableEntries": [
+      {
+        "id": 12,
+        "descriptionEntry": "Erzeugt",
+        "dataEntry": "Umgang mit Änderungen:\n\nProblem-/Änderungsbewertung, Problemmeldung/Änderungsantrag, Änderungsentscheidung, Änderungsstatusliste"
+      }
+    ]
+  },
+  {
+    "id": 55,
+    "menuEntryId": 55,
+    "header": "Organisation und Vorgaben zum Konfigurationsmanagement",
+    "descriptionText": "In diesem Thema wird das im V-Modell bereits vorgesehene Konfigurationsmanagement ausgestaltet und konkretisiert. Es erfolgt die Festlegung, welche Produktexemplare wann nach welchen Methoden, Richtlinien und Standards vom Konfigurationsmanagement zu verwalten sind, sowie wann und in welchen Abständen Produktkonfigurationen und Releases zu erstellen sind. Zu Anzahl und Umfang der Produktkonfigurationen sind mindestens die Vorgaben zum Konfigurationsmanagement (siehe auch Produktmodell) einzuhalten.\n\nAlle Produkte, die im Rahmen eines V-Modell Projektes erstellt werden, werden entsprechend den Vorgaben im Projekthandbuch in die Produktbibliothek eingestellt und verwaltet. Hierzu muss festgelegt werden, welche Dateiablagestruktur und Namenskonventionen in der Produktbibliothek einzuhalten sind, wie die Produkte im Konfigurationsmanagement eindeutig zu bezeichnen sind, wie die Fortschreibung von Versionen und Releases erfolgt und welche Produktzustände ein Produktexemplar aus Sicht des Konfigurationsmanagements durchläuft. Die Produktzustände müssen mindestens die im Kapitel Produktprüfung und inhaltliche Produktabhängigkeiten definierten Zustände umfassen.\n\nNeben der Verwaltung der Produktbibliothek ist im Rahmen dieses Themas ein Konzept zur Datensicherung und Archivierung der Exemplare in der Produktbibliothek zu erstellen. Es werden die Verantwortlichkeiten, Termine und Verfahren zur Datensicherung festgelegt, sowie Konzepte zur Archivierung und Aufbewahrung der Daten über längere Zeiträume erstellt.\n\nDas Konfigurationsmanagement liefert zudem einen Beitrag zum Projektstatusbericht, welcher zur Fortschrittskontrolle der Produktexemplare und Produktkonfigurationen dient. Es ist festzulegen, wann, in welcher Form und an welche Personen eine KM-Auswertung zu übergeben ist.\n\nFerner wird in diesem Kapitel beschrieben, wie Eintragungen in das Änderungs- und Prüfverzeichnis von Produkten vorzunehmen sind, d.h. z.B. Häufigkeit von Einträgen und welche Einträge bei der Bearbeitung vorgenommen werden und unter welchen Bedingungen.",
+    "tableEntries": [
+      {
+        "id": 13,
+        "descriptionEntry": "Erzeugt",
+        "dataEntry": "Sicherung der Produktbibliothek:\n\nProduktkonfiguration"
+      }
+    ]
+  },
+  {
+    "id": 56,
+    "menuEntryId": 56,
+    "header": "Organisation und Vorgaben zum Projektcontrolling",
+    "descriptionText": "In diesem Thema wird das im V-Modell bereits vorgesehene Vorgehen zum Projektcontrolling ausgestaltet und konkretisiert. Hierfür werden die Projektziele, die durch Projektkennzahlen verfolgt werden sollen, die Kennzahlen selbst und die dazugehörigen Messdatentypen zusammengestellt. Die Projektkennzahlen werden dabei den Projektzielen zugeordnet. Damit ist eine quantitative oder qualitative Verfolgung dieser Ziele möglich.\n\nAbschließend erfolgt die Festlegung, ob, wann, welche und durch wen Messdaten zu erfassen und Kennzahlenauswertungen zu erstellen sind. Zusätzlich muss definiert werden, mit welchen Methoden, Richtlinien und Standards und mit welchen Werkzeugen beziehungsweise Bestandteilen der Projektmanagement-Infrastruktur dabei vorgegangen werden soll. Dabei ist insbesondere die projektspezifische Ablagestruktur der Messdaten festzulegen.",
+    "tableEntries": [
+      {
+        "id": 14,
+        "descriptionEntry": "Erzeugt",
+        "dataEntry": "Ermittlung von Projektkennzahlen:\n\nKennzahlenauswertung, Messdaten"
+      }
+    ]
+  },
+  {
+    "id": 57,
+    "menuEntryId": 57,
+    "header": "Organisation und Vorgaben zum Anforderungsmanagement",
+    "descriptionText": "Dieses Thema beschreibt die im Rahmen des Anforderungsmanagements anzuwendenden Verfahren. Dies beinhaltet Festlegungen zu folgenden Bereichen zu treffen:\n\nErmittlung von Anforderungen\nDokumentation von Anforderungen\nIdentifikation von Anforderungen\nStakeholder\nInsbesondere sind auch die Verantwortlichen für die Produkte (insb. das Produkt Anforderungen (Lastenheft)) der Anforderungserhebung zu benennen, sowohl für die Durchführung im Projekt als auch für die Betriebsphase. Zu berücksichtigen sind bei den Festlegungen auch, ob und welche Werkzeuge für die Anforderungserhebung zu verwenden sind, wie die Statuskontrolle der Anforderungen erfolgen soll und welche Metriken dafür zu verwenden sind. Eine angemessene Regelung dafür ist insbesondere für die Erstellung des Produkts Anforderungsbewertung erforderlich, dessen Erstellung ebenfalls hier zu regeln ist. Abschließend ist hier zu dokumentieren, wie die Anforderungserhebung in das Berichtswesen eingebunden werden soll.\n\nEs lassen sich drei Arten von Anforderungen unterscheiden:\n\nFunktionale Anforderungen definieren die jeweilige Funktion, die von einem System zur Verfügung gestellt werden muss und vom Benutzer erwartet wird.\nNicht-Funktionale Anforderungen definieren die Qualitätsmerkmale für ein System und seine Funktionalität, zu denen in der Regel auch Anforderungen aus dem Bereich des IT-Betriebs zählen.\nRandbedingungen leiten sich aus Rahmenbedingungen (z.B. organisatorische und technische Vorgaben) ab. Sie sind in der Regel projektextern und schränken die Art und Weise der Systemrealisierung ein bzw. geben konkrete Vorgaben für diese.\nFür jede dieser Anforderungsarten sind hier Festlegungen zu den oben aufgeführten Punkten zu treffen. Darüber hinaus ist auch die frühzeitige Einbindung des Betriebs zu regeln, um die spätere Inbetriebnahme des Systems zu erleichtern.\n\nErmittlung von Anforderungen\n\nEine Anforderung im Allgemeinen stellt eine Bedingung oder Fähigkeit dar, die von einem Benutzer zur Problemlösung oder Zielerreichung benötigt wird und die ein (Teil-)System erfüllen oder besitzen muss, um bestimmte Vorgaben (z.B. Normen, Spezifikationen) zu erfüllen. Außerdem ist die Anforderung die Dokumentation dieser Bedingung bzw. Fähigkeit.\n\nZur Ermittlung von Anforderungen können verschiedene Techniken zum Einsatz kommen, wie z.B.:\n\nKreativitätstechniken (z.B. Brainstorming, Mind-Mapping etc.) für die Sammlung erster Ideen\nBeobachtungstechniken (z.B. Feldbeobachtung) zur Ableitung von Details für die Anforderungen abzuleiten und für das Erkennen impliziter Anforderungen\nBefragungstechniken (z.B. Fragebogen, Interview) zur Erfragung von Anforderungen in beliebigem Detaillierungsgrad\nVergangenheitsorientierte Techniken (z.B. Analyse bestehender Lösungen) zur Wiederverwendung der bei früheren Systementwicklungen bereits gemachten Erfahrungen und zur Überprüfung, ob tatsächlich alle Anforderungen ermittelt wurden\nDer Einsatz der Techniken, die für die Anforderungsfestlegung verwendet werden ist hier zu dokumentieren.\n\nDokumentation von Anforderungen\n\nFunktionale Anforderungen können sowohl natürlichsprachlich als auch modellbasiert erfasst werden. Nicht-Funktionale Anforderungen werden dabei ausschließlich in Textform dokumentiert. Anforderungen sollen stets so beschrieben sein, dass ihre Erfüllung prüfbar und entscheidbar ist. Bei einer textuellen Beschreibung ist daher auf hinreichende Präzision zu achten. Bei der modellbasierten Dokumentation von Anforderungen sind insbesondere die Perspektiven zu berücksichtigen, die zur Dokumentation verwendet werden, da sie einen Einfluss auf die Art der Interpretation der Anforderungen haben. Folgende Perspektiven sind dabei üblich:\n\nStrukturperspektive: Mit ihr lassen sich z.B. Abhängigkeitsbeziehungen im Systemkontext abbilden. Hierfür können z.B. UML-Klassendiagramme oder Entity-Relationship-Diagramme verwendet werden.\nFunktionsperspektive: Sie ist die Darstellungsform zur Erläuterung der Informations- / Datenflüsse. D.h., welche Informationen / Daten bekommt das System als Input, wie verarbeitet das System diese und welche Informationen / Daten liefert das System als Output. Hierfür können z.B. UML-Aktivitätsdiagramme oder Datenflussdiagramme verwendet werden.\nVerhaltensperspektive: Mit ihr lässt sich beschreiben, wie ein System auf Ereignisse reagiert und was die Bedingungen für einen Zustandswechsel des Systems sind. Hierfür können z.B. UML-Zustandsdiagramme oder Statecharts verwendet werden.\nDie Festlegungen, wie in einem Projekt Anforderung erfasst werden, welche technischen und methodischen Hilfsmittel für die Dokumentation Verwendung finden ist hier zu dokumentieren.\n\nIdentifikation von Anforderungen\n\nAnforderungen müssen eindeutig identifizierbar sein, um eine verlässliche Anforderungsverfolgung zu ermöglichen. In diesem Thema sind daher die Festlegungen zu dokumentieren, wie die Identifikation, z.B. durch Nummerierung, im Projekt erfolgen soll.\n\nStakeholder\n\nIn diesem Thema sind alle an der Anforderungserhebung beteiligten Personen (Stakeholder) zu benennen. Dies umfasst nicht nur den Anforderungsanalytiker (AG) sondern auch weitere Personen, wie z.B. Anwendervertreter, die ein Interesse am IT-System haben. Insbesondere die Ansprechpartner des IT-Betriebs (z.B. die Rolle IT-Service-Design-Verantwortlicher) ist hier einzubinden.",
+    "tableEntries": []
+  },
+  {
+    "id": 58,
+    "menuEntryId": 58,
+    "header": "Organisation und Vorgaben zur Systemerstellung",
+    "descriptionText": "In diesem Thema wird das im V-Modell bereits vorgesehene Vorgehen zur Systemerstellung ausgestaltet und konkretisiert. Es erfolgt die Festlegung, wann und welche Produkte für die Systemerstellung zu verwenden sind, nach welchen Methoden, Richtlinien und Standards diese zu erstellen sind und mit welchen Werkzeugen beziehungsweise Bestandteilen der Projektmanagement-Infrastruktur sie zu bearbeiten sind.\n\nDies beinhaltet zumindest die Festlegung der anzuwendenden Entwicklungsmethoden, Entwicklungsumgebung, Technologien sowie Konfliktmanagement und Eskalationsstrategie.",
+    "tableEntries": []
+  },
+  {
+    "id": 59,
+    "menuEntryId": 59,
+    "header": "Abstimmung mit IT-Organisation und Betrieb",
+    "descriptionText": "Soll ein beauftragtes/erstelltes System nach dem Projektende in den Betrieb überführt werden, ist der IT-Betrieb frühzeitig in das Projekt einzubeziehen. Ist eine Übergabe in den Betrieb geplant, müssen hier die für das Projekt relevanten Regelungen zur Erstellung des Produkts Betriebliche Freigabeerklärung getroffen werden. Das Thema beschreibt ebenfalls, wie die IT-Organisation und der IT-Betrieb, insbesondere die Rollen IT-Service-Design-Verantwortlicher, IT-Service-Transition-Verantwortlicher und IT-Service-Operation-Verantwortlicher ins Projekt eingebunden werden.\n\nDarüber hinaus beschriebt das Thema die grundlegende Konstellation nach Projektende und insbesondere zwischen welchen Parteien eine Leistungsvereinbarung (SLA/OLA/UC) zu schließen ist. Die konkreten Inhalte finden sich dann in den einzelnen Leistungsvereinbarungen.\n\nSind weiterhin die Vorgehensbausteine IT-Sicherheit und Datenschutz für das Projekt relevant, so enthält das Thema außerdem die projektinternen Regelungen zur IT-Sicherheit und zum Datenschutz, sowie die Abstimmung mit der umgebenden IT-Organisation. Dies umfasst im Detail die Regelungen, wer, wann wie den Beitrag zum IT-Sicherheitskonzept und den Beitrag zum Datenschutzkonzept erstellt und wie die Abstimmung mit den Rollen IT-Sicherheitsbeauftragter (Organisation) und Datenschutzbeauftragter (Organisation) erfolgt.",
+    "tableEntries": [
+      {
+        "id": 15,
+        "descriptionEntry": "Erzeugt",
+        "dataEntry": "Abschluss von Leistunsvereinbarungen:\n\nLeistungsvereinbarung (SLA/OLA/UC)\n\nBerücksichtigung der IT-Sicherheit:\n\nBeitrag zum IT-Sicherheitskonzept\n\nBerücksichtigung des Datenschutzes:\n\nBeitrag zum Datenschutzkonzept\n\nHerbeiführung der betrieblichen Freigabe:\n\nBetriebliche Freigabeerklärung, Prüfprotokoll Inbetriebnahme, Prüfspezifikation Inbetriebnahme"
+      }
+    ]
+  },
+  {
+    "id": 60,
+    "menuEntryId": 60,
+    "header": "Vorgaben für das Projekthandbuch der Auftragnehmer",
+    "descriptionText": "In diesem Thema kann der Auftraggeber die unterschiedlichsten Vorgaben für die Planung und Durchführung des Projektes beim Auftragnehmer festlegen. Sie werden hier dokumentiert und dann in alle Ausschreibungen übernommen und gegebenenfalls angepasst. Die Vorgaben können beispielsweise den zu verwendenden Entwicklungsprozess, das Tailoring, die zu verwendende Infrastruktur und das Vorgehen bzgl. der Sicherheit umfassen.",
+    "tableEntries": []
+  },
+  {
+    "id": 61,
+    "menuEntryId": 61,
+    "header": "Berichtswesen und Kommunikationswege",
+    "descriptionText": "In den vorhergehenden Themen wurden die Organisation und Vorgaben für die unterschiedlichen Aufgaben der Planung und Durchführung von Projekten festgelegt. In diesem Thema wird ein Überblick über das dabei festgelegte Berichtswesen und die Kommunikationswege dargestellt. Dies beinhaltet beispielsweise die getroffenen Festlegungen, wer wann welche Informationen in welcher Form an wen zu liefern hat.\n\nDas Thema beschreibt sowohl die projektinterne als auch die projektexterne Kommunikation. Die Ziele des Kommunikationsmanagements werden dabei in der Zielgruppenübersicht definiert, die Umsetzung wird im Kommunikationsplan beschrieben.\n\nZielgruppenübersicht\n\nDie Zielgruppenübersicht beschreibt, welche Personen und Personenkreise welche Informationen über das Projekt erhalten müssen, sollen oder möchten. Kommunikationszielgruppen sind oft deckungsgleich mit Projektstakeholdern, und umfassen beispielsweise die Projektmitarbeiter, Lenkungsausschuss, Leitung, Anwender, aber auch Öffentlichkeit oder Medien. Ziel des Kommunikationsmanagements ist es, das Informationsbedürfnis der einzelnen Zielgruppen durch geeignete Maßnahmen zu bedienen.\n\nKommunikationsplan\n\nDer Kommunikationsplan beschreibt, wie die in der Zielgruppenübersicht definierten Informationsbedürfnisse der Kommunikationszielgruppen befriedigt werden sollen. Er legt fest, welche Information (z.B. Projektfortschritt), wann (z.B. jeweils zum Monatsende) in welcher Form und über welches Medium (z.B. schriftlicher Projektstatusbericht via E-Mail) an welche Kommunikationszielgruppe (z.B. Lenkungsausschuss und Leitung) kommuniziert wird und wer dafür verantwortlich ist (z.B. Projektleiter). Auch die projektinterne Kommunikation wird hier geplant und organisiert, beispielsweise dass alle Besprechungen protokolliert werden und an wen das Protokoll im Anschluss verteilt wird.",
+    "tableEntries": []
+  }
+]
