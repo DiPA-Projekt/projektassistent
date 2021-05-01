@@ -10,7 +10,7 @@ paths:
     $ref: "paths/status.yml"
   /modelVariants:
     $ref: "paths/modelVariants.yml"
-  /projectTypes/{metaModelId}:
+  /projectTypes/{modelVariantId}:
     $ref: "paths/projectTypes.yml"
   /projectFeatures:
     $ref: "paths/projectFeatures.yml"

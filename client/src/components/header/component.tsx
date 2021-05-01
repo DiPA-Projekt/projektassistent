@@ -2,7 +2,7 @@ import { Col, Layout, Menu, Row } from 'antd';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import { BookOutlined, DashboardOutlined } from '@ant-design/icons';
+import { HomeOutlined, FileTextOutlined, ScissorOutlined } from '@ant-design/icons';
 import { GenericComponent } from '@leanup/lib/components/generic';
 import { ReactComponent } from '@leanup/lib/components/react';
 
@@ -38,12 +38,16 @@ export class HeaderComponent extends ReactComponent<unknown, unknown> implements
           <Col span={18}>
             <Menu mode="horizontal" theme="dark">
               <Menu.Item key="1">
-                <DashboardOutlined />
-                <Link to="/"> Dashboard</Link>
+                <HomeOutlined />
+                <Link to="/"> Home</Link>
               </Menu.Item>
               <Menu.Item key="2">
-                <BookOutlined />
+                <ScissorOutlined />
                 <Link to="/projekthandbuch/projekt">Tailoring</Link>
+              </Menu.Item>
+              <Menu.Item key="3">
+                <FileTextOutlined />
+                <Link to="/projekthandbuch/dokumentation">Dokumentation</Link>
               </Menu.Item>
             </Menu>
           </Col>
