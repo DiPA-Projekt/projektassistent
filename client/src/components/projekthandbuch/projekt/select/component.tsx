@@ -12,7 +12,7 @@ const { Option } = Select;
 
 const layout = {
   labelCol: { span: 16 },
-  wrapperCol: { span: 16 },
+  wrapperCol: { span: 8 },
 };
 
 interface FeatureProps {
