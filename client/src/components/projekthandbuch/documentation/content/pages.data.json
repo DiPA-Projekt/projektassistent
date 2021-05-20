@@ -73,7 +73,7 @@
     "id": 11,
     "menuEntryId": 11,
     "header": "V-Modell XT Bund im Überblick",
-    "descriptionText": "Das V-Modell ist ein Produkt-zentriertes Vorgehensmodell; die Projektergebnisse stehen also im Mittelpunkt. Es definiert die Struktur und die Inhalte dieser Ergebnisse und beschreibt, wie die einzelnen Ergebnisse aufeinander aufbauen und voneinander abhängen. Ein Rollenmodell kapselt Kompetenzen von und Anforderungen an Projektbeteiligte und bestimmt ihre Verantwortung oder Mitwirkung bei der Erstellung der Projektergebnisse. Das V-Modell gibt eine Reihe von Entscheidungspunkten (Meilensteinen) vor, denen Projektergebnisse zugeordnet sind. Es fordert an diesen Entscheidungspunkten eine Fortschrittskontrolle und eine Entscheidung über den weiteren Projektverlauf.\n\nimages/INKON-BigPicture-Einstieg.gif\n\nAbbildung 1: V-Modell im Überblick\n\nDas Entwicklungsvorgehen (gelb-blaues \"V\" in Abbildung 1) ist eingebettet in ein Managementmodell zur Steuerung des Projekts. Neben dem eigentlichen Projektmanagement enthält es Vorgaben zur Qualitätssicherung, zum Umgang mit Problemen und Änderungen im Projektverlauf und zur Vorhaltung von Projektergebnissen (Konfigurations-Management). Das V-Modell ist dabei auf ein iteratives Vorgehen ausgelegt, bei dem der Entwicklungszyklus mehrmals durchlaufen wird. Dadurch können technische Risiken frühzeitig erkannt und die Anwenderzufriedenheit durch zeitnahe Reaktionen verbessert werden.\n\nDas V-Modell unterscheidet zwischen einem Inhouse-Projekt und einer Beauftragung Dritter samt Aufteilung in zwei getrennte Projekte - eines auf der Auftraggeber- und eines auf der Auftragnehmerseite. Hierbei legt der Auftraggeber (AG) die Anforderungen fest und prüft die Ergebnisse, die der Auftragnehmer (AN) entwickelt. Das V-Modell regelt das Zusammenspiel der beiden Projekte in der AG/AN-Schnittstelle. Inhouse-Projekte benötigen diese Regelungen nicht und kommen daher mit einem schlankeren Satz an V-Modell-Bestandteilen aus.\n\nDas V-Modell kann zu Beginn eines Projekts an die konkrete Projektsituation angepasst werden (Tailoring). Mit dem V-Modell-XT-Projektassistenten können ein Projekt-spezifisches Vorgehensmodell samt Vorlagen für die erwarteten Ergebnisse erzeugt und ein erster grober Projektplan erarbeitet werden.",
+    "descriptionText": "<p>Das V-Modell ist ein Produkt-zentriertes Vorgehensmodell; die Projektergebnisse stehen also im Mittelpunkt. Es definiert die Struktur und die Inhalte dieser Ergebnisse und beschreibt, wie die einzelnen Ergebnisse aufeinander aufbauen und voneinander abhängen. Ein Rollenmodell kapselt Kompetenzen von und Anforderungen an Projektbeteiligte und bestimmt ihre Verantwortung oder Mitwirkung bei der Erstellung der Projektergebnisse. Das V-Modell gibt eine Reihe von Entscheidungspunkten (Meilensteinen) vor, denen Projektergebnisse zugeordnet sind. Es fordert an diesen Entscheidungspunkten eine Fortschrittskontrolle und eine Entscheidung über den weiteren Projektverlauf.</p><p><figure><img src='/src/assets/INKON-BigPicture-Einstieg.gif' alt='BigPicture-Einstieg' /><figcaption>Abbildung 1: V-Modell im Überblick</figcaption></figure></p><p>Das Entwicklungsvorgehen (gelb-blaues \"V\" in Abbildung 1) ist eingebettet in ein Managementmodell zur Steuerung des Projekts. Neben dem eigentlichen Projektmanagement enthält es Vorgaben zur Qualitätssicherung, zum Umgang mit Problemen und Änderungen im Projektverlauf und zur Vorhaltung von Projektergebnissen (Konfigurations-Management). Das V-Modell ist dabei auf ein iteratives Vorgehen ausgelegt, bei dem der Entwicklungszyklus mehrmals durchlaufen wird. Dadurch können technische Risiken frühzeitig erkannt und die Anwenderzufriedenheit durch zeitnahe Reaktionen verbessert werden.</p><p>Das V-Modell unterscheidet zwischen einem Inhouse-Projekt und einer Beauftragung Dritter samt Aufteilung in zwei getrennte Projekte - eines auf der Auftraggeber- und eines auf der Auftragnehmerseite. Hierbei legt der Auftraggeber (AG) die Anforderungen fest und prüft die Ergebnisse, die der Auftragnehmer (AN) entwickelt. Das V-Modell regelt das Zusammenspiel der beiden Projekte in der AG/AN-Schnittstelle. Inhouse-Projekte benötigen diese Regelungen nicht und kommen daher mit einem schlankeren Satz an V-Modell-Bestandteilen aus.</p><p>Das V-Modell kann zu Beginn eines Projekts an die konkrete Projektsituation angepasst werden (Tailoring). Mit dem V-Modell-XT-Projektassistenten können ein Projekt-spezifisches Vorgehensmodell samt Vorlagen für die erwarteten Ergebnisse erzeugt und ein erster grober Projektplan erarbeitet werden.</p>",
     "tableEntries": []
   },
   {
@@ -253,32 +253,110 @@
       {
         "id": 1,
         "descriptionEntry": "Verantwortlich",
-        "dataEntry": "Projektauftraggeber"
+        "dataEntries": [
+          {
+            "title": "Projektauftraggeber",
+            "menuEntryId": -1
+          }
+        ]
       },
       {
         "id": 2,
         "descriptionEntry": "Mitwirkend",
-        "dataEntry": "Multi-Projektkoordination"
+        "dataEntries": [
+          {
+            "title": "Multi-Projektkoordination",
+            "menuEntryId": -1
+          }
+        ]
       },
       {
         "id": 3,
         "descriptionEntry": "Hilfsmittel",
-        "dataEntry": "Projektvorstudie erstellen (Aktivität), Projektvorstudie(.odt|.doc), Vorprojekt-Entscheidungsvorlage (Teil der SOS-Methode) (Externe Kopiervorlage)"
+        "dataEntries": [
+          {
+            "title": "Projektvorstudie erstellen",
+            "suffix": "(Aktivität)",
+            "menuEntryId": -1
+          },
+          {
+            "title": "Projektvorstudie(.odt|.doc)",
+            "menuEntryId": -1
+          },
+          {
+            "title": "Vorprojekt-Entscheidungsvorlage (Teil der SOS-Methode)",
+            "suffix": "(Externe Kopiervorlage)",
+            "menuEntryId": -1
+          }
+        ]
       },
       {
         "id": 4,
         "descriptionEntry": "Inhaltlich abhängig",
-        "dataEntry": "\t\nAnbahnung und Organisation:\n\nProjektauftrag, Projekthandbuch\n\nPlanung und Steuerung:\n\nProjektplan, WiBe (Vorkalkulation) (C.2.1.9)\n\nSystemanalyse:\n\nAnforderungen (Lastenheft), Lastenheft Gesamtprojekt"
+        "dataEntries": [
+          {
+            "title": "Anbahnung und Organisation",
+            "type": "bold",
+            "menuEntryId": 18
+          },
+          {
+            "title": "Projektauftrag",
+            "menuEntryId": 38
+          },
+          {
+            "title": "Projekthandbuch",
+            "menuEntryId": 37
+          },
+          {
+            "title": "Planung und Steuerung",
+            "type": "bold",
+            "menuEntryId": 19
+          },
+          {
+            "title": "Projektplan",
+            "menuEntryId": -1
+          },
+          {
+            "title": "WiBe (Vorkalkulation)",
+            "menuEntryId": -1
+          },
+          {
+            "title": "(C.2.1.9)",
+            "menuEntryId": -1
+          },
+          {
+            "title": "Systemanalyse",
+            "type": "bold",
+            "menuEntryId": 27
+          },
+          {
+            "title": "Anforderungen (Lastenheft)",
+            "menuEntryId": -1
+          },
+          {
+            "title": "Lastenheft Gesamtprojekt",
+            "menuEntryId": -1
+          }
+        ]
       },
       {
         "id": 5,
         "descriptionEntry": "Entscheidungsrelevant bei",
-        "dataEntry": "Projekt genehmigt"
+        "dataEntries": [
+          {
+            "title": "Projekt genehmigt",
+            "menuEntryId": -1
+          }
+        ]
       },
       {
         "id": 6,
         "descriptionEntry": "Sonstiges",
-        "dataEntry": "Extern"
+        "dataEntries": [
+          {
+            "title": "Extern"
+          }
+        ]
       }
     ]
   },

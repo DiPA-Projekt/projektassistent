@@ -10,11 +10,12 @@ TableEntry:
       description: Entry on the left side of the table
       type: string
       example: "Erzeugt"
-    dataEntry:
-      description: Entry on the right side of the table
-      type: string
-      example: "Leistungsvereinbarung (SLA/OLA/UC)"
+    dataEntries:
+      description: Entries on the right side of the table
+      type: array
+      items:
+        $ref: "./dataEntry.yml#/DataEntry"
   required:
     - id
     - descriptionEntry
-    - dataEntry
+    - dataEntries

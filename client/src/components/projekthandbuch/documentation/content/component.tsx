@@ -5,10 +5,12 @@ import { ReactComponent } from '@leanup/lib/components/react';
 
 import { ContentController } from './controller';
 
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import MENU_DATA from './../navigation/menu.data.json';
 import { Avatar, BackTop, Col, Layout, List, Row } from 'antd';
-import { MenuEntry, TableEntry } from '../../../../../openapi';
+import { DataEntry, MenuEntry, TableEntry } from '../../../../../openapi';
+
+import parse from 'html-react-parser';
 
 import 'antd/dist/antd.css';
 
@@ -49,66 +51,72 @@ function findMenuEntry(menuEntry: MenuEntry, menuEntryId: number, depth: number)
   return undefined;
 }
 
+const icons: Map<string, { color: string; icon: JSX.Element }> = new Map<
+  string,
+  { color: string; icon: JSX.Element }
+>();
+// Referenz Produkte
+icons.set('Verantwortlich', { color: '#87d068', icon: <UserOutlined /> });
+icons.set('Mitwirkend', { color: '#ff7f36', icon: <TeamOutlined /> });
+icons.set('Hilfsmittel', { color: '#689fd0', icon: <MedicineBoxOutlined /> });
+icons.set('Teil von', { color: '#689fd0', icon: <ToolOutlined /> });
+icons.set('Besteht aus', { color: '#689fd0', icon: <ToolOutlined /> });
+icons.set('Produktumfang', { color: '#689fd0', icon: <MedicineBoxOutlined /> });
+icons.set('Erzeugt', { color: '#689fd0', icon: <FolderAddOutlined /> });
+icons.set('Erzeugt durch', { color: '#689fd0', icon: <ToolOutlined /> });
+icons.set('Inhaltlich abhängig', { color: '#e71937', icon: <PartitionOutlined rotate={180} /> });
+icons.set('Entscheidungsrelevant bei', { color: '#ffd442', icon: <NotificationOutlined /> });
+icons.set('Sonstiges', { color: '#5f5f5f', icon: <TagsOutlined /> });
+// Referenz Rollen
+icons.set('Aufgaben und Befugnisse', { color: '#e71937', icon: <PartitionOutlined rotate={180} /> });
+icons.set('Fähigkeitsprofil', { color: '#e71937', icon: <PartitionOutlined rotate={180} /> });
+icons.set('Rollenbesetzung', { color: '#e71937', icon: <PartitionOutlined rotate={180} /> });
+icons.set('Verantwortlich für', { color: '#e71937', icon: <PartitionOutlined rotate={180} /> });
+icons.set('Wirkt mit bei', { color: '#e71937', icon: <PartitionOutlined rotate={180} /> });
+// Referenz Abläufe;
+icons.set('Zugeordnete Produkte', { color: '#e71937', icon: <PartitionOutlined rotate={180} /> });
+// Referenz Tailoring
+icons.set('Projektdurchführungsstrategie', { color: '#689fd0', icon: <ToolOutlined /> });
+icons.set('Projektmerkmale', { color: '#689fd0', icon: <ToolOutlined /> });
+icons.set('Ausgewählte Vorgehensbausteine', { color: '#689fd0', icon: <ToolOutlined /> });
+icons.set('Ausgewählte Ablaufbausteine', { color: '#689fd0', icon: <ToolOutlined /> });
+// Referenz Arbeitshilfen
+icons.set('Produkt', { color: '#689fd0', icon: <ToolOutlined /> });
+icons.set('Werkzeuge', { color: '#689fd0', icon: <ToolOutlined /> });
+icons.set('Arbeitsschritte', { color: '#689fd0', icon: <ToolOutlined /> });
+icons.set('Methoden', { color: '#689fd0', icon: <ToolOutlined /> });
+
 function renderSwitch(param: string) {
-  switch (param) {
-    // Referenz Produkte
-    case 'Verantwortlich':
-      return <Avatar style={{ backgroundColor: '#87d068' }} icon={<UserOutlined />} />;
-    case 'Mitwirkend':
-      return <Avatar style={{ backgroundColor: '#ff7f36' }} icon={<TeamOutlined />} />;
-    case 'Hilfsmittel':
-      return <Avatar style={{ backgroundColor: '#689fd0' }} icon={<MedicineBoxOutlined />} />;
-    case 'Teil von':
-      return <Avatar style={{ backgroundColor: '#689fd0' }} icon={<ToolOutlined />} />;
-    case 'Besteht aus':
-      return <Avatar style={{ backgroundColor: '#689fd0' }} icon={<ToolOutlined />} />;
-    case 'Produktumfang':
-      return <Avatar style={{ backgroundColor: '#689fd0' }} icon={<ToolOutlined />} />;
-    case 'Erzeugt':
-      return <Avatar style={{ backgroundColor: '#689fd0' }} icon={<FolderAddOutlined />} />;
-    case 'Erzeugt durch':
-      return <Avatar style={{ backgroundColor: '#689fd0' }} icon={<ToolOutlined />} />;
-    case 'Inhaltlich abhängig':
-      return <Avatar style={{ backgroundColor: '#e71937' }} icon={<PartitionOutlined rotate={180} />} />;
-    case 'Entscheidungsrelevant bei':
-      return <Avatar style={{ backgroundColor: '#ffd442' }} icon={<NotificationOutlined />} />;
-    case 'Sonstiges':
-      return <Avatar style={{ backgroundColor: '#5f5f5f' }} icon={<TagsOutlined />} />;
-    // Referenz Rollen
-    case 'Aufgaben und Befugnisse':
-      return <Avatar style={{ backgroundColor: '#e71937' }} icon={<PartitionOutlined rotate={180} />} />;
-    case 'Fähigkeitsprofil':
-      return <Avatar style={{ backgroundColor: '#e71937' }} icon={<PartitionOutlined rotate={180} />} />;
-    case 'Rollenbesetzung':
-      return <Avatar style={{ backgroundColor: '#e71937' }} icon={<PartitionOutlined rotate={180} />} />;
-    case 'Verantwortlich für':
-      return <Avatar style={{ backgroundColor: '#e71937' }} icon={<PartitionOutlined rotate={180} />} />;
-    case 'Wirkt mit bei':
-      return <Avatar style={{ backgroundColor: '#e71937' }} icon={<PartitionOutlined rotate={180} />} />;
-    // Referenz Abläufe
-    case 'Zugeordnete Produkte':
-      return <Avatar style={{ backgroundColor: '#e71937' }} icon={<PartitionOutlined rotate={180} />} />;
-    // Referenz Tailoring
-    case 'Projektdurchführungsstrategie':
-      return <Avatar style={{ backgroundColor: '#689fd0' }} icon={<ToolOutlined />} />;
-    case 'Projektmerkmale':
-      return <Avatar style={{ backgroundColor: '#689fd0' }} icon={<ToolOutlined />} />;
-    case 'Ausgewählte Vorgehensbausteine':
-      return <Avatar style={{ backgroundColor: '#689fd0' }} icon={<ToolOutlined />} />;
-    case 'Ausgewählte Ablaufbausteine':
-      return <Avatar style={{ backgroundColor: '#689fd0' }} icon={<ToolOutlined />} />;
-    // Referenz Arbeitshilfen
-    case 'Produkt':
-      return <Avatar style={{ backgroundColor: '#689fd0' }} icon={<ToolOutlined />} />;
-    case 'Werkzeuge':
-      return <Avatar style={{ backgroundColor: '#689fd0' }} icon={<ToolOutlined />} />;
-    case 'Arbeitsschritte':
-      return <Avatar style={{ backgroundColor: '#689fd0' }} icon={<ToolOutlined />} />;
-    case 'Methoden':
-      return <Avatar style={{ backgroundColor: '#689fd0' }} icon={<ToolOutlined />} />;
-    default:
-      return '';
-  }
+  const icon = icons.get(param);
+  return <Avatar style={{ backgroundColor: icon?.color }} icon={icon?.icon} />;
+}
+
+function getTableEntriesList(inputData: DataEntry[]): JSX.Element {
+  const entries: JSX.Element[] = [];
+
+  inputData.map((entryItem: DataEntry, index: number) => {
+    if (entryItem?.type === 'bold' && entryItem.menuEntryId) {
+      entries.push(
+        <div key={`table-item-${index}`}>
+          <Link style={{ fontWeight: 'bold' }} to={`./${entryItem.menuEntryId}`}>
+            {entryItem.title}
+          </Link>
+          {entryItem.suffix && <span style={{ marginLeft: '5px' }}>{entryItem.suffix}</span>}
+        </div>
+      );
+    } else if (entryItem?.menuEntryId) {
+      entries.push(
+        <span style={{ marginRight: '20px' }} key={`table-item-${index}`}>
+          <Link to={`./${entryItem.menuEntryId}`}>{entryItem.title}</Link>
+          {entryItem.suffix && <span style={{ marginLeft: '5px' }}>{entryItem.suffix}</span>}
+        </span>
+      );
+    } else {
+      entries.push(<span style={{ marginRight: '20px' }}>{entryItem.title}</span>);
+    }
+  });
+
+  return <>{entries}</>;
 }
 
 function DataTable(props: { data: TableEntry[] }) {
@@ -122,7 +130,7 @@ function DataTable(props: { data: TableEntry[] }) {
             <List.Item.Meta
               avatar={renderSwitch(item.descriptionEntry)}
               title={item.descriptionEntry}
-              description={item.dataEntry}
+              description={getTableEntriesList(item?.dataEntries)}
             />
           </List.Item>
         )}
@@ -160,7 +168,7 @@ function PageEntryContent(props: { ctrl: ContentController }) {
     productDataArray.push(
       <div key={product?.menuEntryId.toString()}>
         <h2 id={product?.menuEntryId.toString()}> {product?.header} </h2>
-        <p>{product?.descriptionText}</p>
+        <p>{parse(product?.descriptionText)}</p>
         <DataTable data={product?.tableEntries} />
       </div>
     );
