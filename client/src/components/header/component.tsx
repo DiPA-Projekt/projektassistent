@@ -2,7 +2,7 @@ import { Col, Layout, Menu, Row } from 'antd';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import { HomeOutlined, FileTextOutlined, ScissorOutlined } from '@ant-design/icons';
+import { BookOutlined, FileTextOutlined, HomeOutlined, ScissorOutlined } from '@ant-design/icons';
 import { GenericComponent } from '@leanup/lib/components/generic';
 import { ReactComponent } from '@leanup/lib/components/react';
 
@@ -48,6 +48,10 @@ export class HeaderComponent extends ReactComponent<unknown, unknown> implements
               <Menu.Item key="3">
                 <FileTextOutlined />
                 <Link to="/projekthandbuch/dokumentation">Dokumentation</Link>
+              </Menu.Item>
+              <Menu.Item key="4">
+                <BookOutlined />
+                <Link to="/produktvorlagen">Produktvorlagen</Link>
               </Menu.Item>
             </Menu>
           </Col>

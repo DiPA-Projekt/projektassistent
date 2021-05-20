@@ -11,6 +11,7 @@ import { DocumentationComponent } from './documentation/component';
 import { Link } from 'react-router-dom';
 import { NavigationController } from './documentation/navigation/controller';
 import { MenuEntry } from '../../../openapi';
+import { ProduktvorlagenComponent } from './produktvorlagen/component';
 
 const { Content } = Layout;
 
@@ -76,6 +77,9 @@ export class ProjekthandbuchComponent
             </Route>
             <Redirect exact path="/projekthandbuch/dokumentation" to="/projekthandbuch/dokumentation/1" />
             <Route path="/projekthandbuch/dokumentation/:id" component={DocumentationComponent} />
+            <Route exact path="/produktvorlagen">
+              <ProduktvorlagenComponent />
+            </Route>
           </Switch>
         </Content>
       </>
