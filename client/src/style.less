@@ -15,12 +15,12 @@ h2 {
 
 .ant-popover-inner {
   max-width: 500px;
-  max-height: 200px;
-  overflow-y: auto;
 }
 
 .ant-popover-inner-content {
   font-size: 14px;
+  max-height: 200px;
+  overflow-y: auto;
 }
 
 .ant-anchor {
@@ -53,6 +53,11 @@ ul.ant-menu li.ant-menu-item a {
   }
 }
 
+.normalWrap label {
+  white-space: normal;
+  height: auto;
+}
+
 .ant-menu-inline-collapsed > .ant-menu-item,
 .ant-menu-inline-collapsed > .ant-menu-submenu > .ant-menu-submenu-title {
   padding: 0 16px !important;
@@ -77,3 +82,5 @@ ul.ant-menu li.ant-menu-item a {
     overflow-y: auto;
   }
 }
+
+.hideMe .ant-tree-checkbox { display: none; }

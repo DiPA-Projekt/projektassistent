@@ -5,10 +5,13 @@ import { ReactComponent } from '@leanup/lib/components/react';
 
 import { ProduktvorlagenController } from './controller';
 
-import { BackTop, Badge, Checkbox, Col, Collapse, Layout, Popover, Row } from 'antd';
+import { BackTop, Col, Collapse, Form, Layout, Popover, Row } from 'antd';
 import { BookTwoTone, ContainerTwoTone, FileExcelTwoTone, FileTextTwoTone, InfoCircleTwoTone } from '@ant-design/icons';
-import { SelectionArea } from './selectArea/component';
-import { CheckboxChangeEvent } from 'antd/es/checkbox';
+import { SelectAreaComponent } from './selectArea/component';
+
+import { SelectTree } from './selectTree/component';
+import { DataNode } from 'antd/lib/tree';
+import { Subscription } from 'rxjs';
 
 const { Panel } = Collapse;
 
@@ -17,86 +20,23 @@ function callback(key: string | string[]) {
 }
 
 // Tiny helper interfaces till OpenApi is updated
-interface ArticleProps {
-  id: number;
-  type: string;
-  displayName: string;
-  infoText: string;
-}
-
-interface ChapterProps {
-  id: number;
-  displayName: string;
-  infoText: string;
-  articles: ArticleProps[];
-}
-
-interface FileProps {
-  id: number;
-  displayName: string;
-  type: string;
-  url: string;
-}
-
-interface SubMenuEntryProps {
-  id: number;
-  displayName: string;
-  infoText: string;
-  selectable: boolean;
-  chapters: ChapterProps[];
-  files: FileProps[];
-}
-
 interface TemplateProps {
   id: number;
+  type: string;
+  checkable: boolean;
+  checked: boolean;
+  disabled: boolean;
   displayName: string;
-  subMenuEntries: SubMenuEntryProps[];
+  infoText: string;
+  selected: boolean;
+  selectable: boolean;
+  url: string;
+  files: TemplateProps[];
+  subMenuEntries: TemplateProps[];
 }
 
-function Articles(props: { data: ArticleProps[]; selectable: boolean }): JSX.Element {
-  const articleEntries = [];
-
-  for (const article of props.data) {
-    articleEntries.push(
-      <div key={article.id.toString()} style={{ marginLeft: '30px' }}>
-        <Checkbox disabled={!props.selectable}>
-          <FileTextTwoTone twoToneColor="#cf1322" style={{ marginRight: '5px' }} />
-          {article.displayName}
-        </Checkbox>
-        <Popover destroyTooltipOnHide={true} content={article.infoText} title={article.displayName}>
-          <InfoCircleTwoTone style={{ cursor: 'help' }} />
-        </Popover>
-      </div>
-    );
-  }
-
-  return <>{articleEntries}</>;
-}
-
-function Chapters(props: { data: ChapterProps[]; selectable: boolean }): JSX.Element {
-  const chapterEntries = [];
-
-  for (const chapter of props.data) {
-    if (chapter) {
-      chapterEntries.push(
-        <div key={chapter.id.toString()} style={{ marginLeft: '30px', marginTop: '10px' }}>
-          <Checkbox disabled={!props.selectable}>
-            <BookTwoTone twoToneColor="#389e0d" style={{ marginRight: '5px' }} />
-            {chapter.displayName}
-          </Checkbox>
-          <Popover destroyTooltipOnHide={true} content={chapter.infoText} title={chapter.displayName}>
-            <InfoCircleTwoTone style={{ cursor: 'help' }} />
-          </Popover>
-          {chapter.articles && <Articles data={chapter.articles} selectable={props.selectable} />}
-        </div>
-      );
-    }
-  }
-  return <>{chapterEntries}</>;
-}
-
-function TemplatesContent(props: { showAll: boolean; ctrl: ProduktvorlagenController }) {
-  const showAll = props.showAll;
+function TemplatesContent(props: { ctrl: ProduktvorlagenController }) {
+  const showAll = props.ctrl.showAll;
 
   const templatePanels = [];
   for (const templateEntry of props.ctrl.projectTemplates as TemplateProps[]) {
@@ -106,50 +46,34 @@ function TemplatesContent(props: { showAll: boolean; ctrl: ProduktvorlagenContro
       for (const submenuEntry of templateEntry.subMenuEntries) {
         const fileEntries = [];
         if (submenuEntry.files) {
-          for (const file of submenuEntry.files) {
-            fileEntries.push(
-              <div key={file.id.toString()}>
-                <Checkbox disabled={!submenuEntry.selectable} style={{ marginTop: '10px' }}>
-                  Ressourcen
-                </Checkbox>
-                <div style={{ marginLeft: '30px', marginTop: '10px' }}>
-                  <Checkbox disabled={!submenuEntry.selectable}>
-                    <FileExcelTwoTone twoToneColor="#454545" style={{ marginRight: '5px' }} />
-                    {file.displayName}
-                  </Checkbox>
-                  <Popover destroyTooltipOnHide={true} content={file.url} title={file.displayName}>
-                    <InfoCircleTwoTone style={{ cursor: 'help' }} />
-                  </Popover>
-                </div>
-              </div>
-            );
-          }
+          fileEntries.push(
+            <SelectTree
+              key={submenuEntry.id}
+              data={getTreeData(submenuEntry.files)}
+              checkedKeys={props.ctrl.getCheckedKeys([submenuEntry])}
+              disabled={submenuEntry.disabled}
+            />
+          );
         }
 
         const header = (
-          <div style={{ color: !submenuEntry.selectable ? '#cccccc' : '' }}>
+          <div style={{ color: submenuEntry.disabled ? '#cccccc' : '' }}>
             <span style={{ marginRight: '8px' }}>{submenuEntry.displayName}</span>
             <Popover destroyTooltipOnHide={true} content={submenuEntry.infoText} title={submenuEntry.displayName}>
               <InfoCircleTwoTone style={{ cursor: 'help' }} />
             </Popover>
-            <Badge
-              count={'3/5'}
-              style={{ marginLeft: '5px', backgroundColor: !submenuEntry.selectable ? '#cccccc' : 'red' }}
-            />
           </div>
         );
 
-        if (submenuEntry.selectable || showAll) {
+        if (!submenuEntry.disabled || showAll) {
           submenuEntries.push(
             <Collapse key={submenuEntry?.id.toString()} ghost>
               <Panel key={submenuEntry?.id.toString()} header={header}>
-                <Checkbox disabled={!submenuEntry.selectable}>
-                  <ContainerTwoTone twoToneColor="#096dd9" style={{ marginRight: '5px' }} />
-                  Generierte Vorlage
-                </Checkbox>
-                {submenuEntry.chapters && (
-                  <Chapters data={submenuEntry.chapters} selectable={submenuEntry.selectable} />
-                )}
+                <SelectTree
+                  data={getTreeData([submenuEntry])}
+                  checkedKeys={props.ctrl.getCheckedKeys([submenuEntry])}
+                  disabled={submenuEntry.disabled}
+                />
                 {fileEntries}
               </Panel>
             </Collapse>
@@ -179,15 +103,6 @@ function TemplatesContent(props: { showAll: boolean; ctrl: ProduktvorlagenContro
 }
 
 const Content = (props: { ctrl: ProduktvorlagenController }) => {
-  const [showAll, setShowAll] = React.useState({ show: false });
-
-  const handleShowAllChange = (e: CheckboxChangeEvent) => {
-    setShowAll({
-      ...showAll,
-      show: e.target.checked,
-    });
-  };
-
   return (
     <>
       <Layout style={{ background: '#FFF' }}>
@@ -198,12 +113,11 @@ const Content = (props: { ctrl: ProduktvorlagenController }) => {
             lg={{ span: 16, order: 1 }}
           >
             <div style={{ padding: '24px', flex: '1 0 auto' }}>
-              <TemplatesContent showAll={showAll.show} ctrl={props.ctrl} />
+              <TemplatesContent ctrl={props.ctrl} />
             </div>
-            {/*<FooterComponent />*/}
           </Col>
           <Col xs={{ span: 24, order: 1 }} lg={{ span: 8, order: 2 }}>
-            <SelectionArea onShowAllChange={handleShowAllChange} />
+            <SelectAreaComponent />
             <BackTop />
           </Col>
         </Row>
@@ -212,12 +126,109 @@ const Content = (props: { ctrl: ProduktvorlagenController }) => {
   );
 };
 
+function getIcon(icon: string): JSX.Element {
+  switch (icon) {
+    case 'sample':
+      return <FileTextTwoTone twoToneColor="#cf1322" />;
+    case 'chapter':
+      return <BookTwoTone twoToneColor="#389e0d" />;
+    case 'submenu':
+      return <ContainerTwoTone twoToneColor="#096dd9" />;
+    case 'excel':
+      return <FileExcelTwoTone twoToneColor="#454545" />;
+    default:
+      return <></>;
+  }
+}
+
+function getTreeData(inputData: TemplateProps[]): DataNode[] {
+  const result: DataNode[] = [];
+
+  for (const entry of inputData) {
+    const header = (
+      <>
+        <span style={{ marginRight: '8px' }}>
+          {entry.type === 'submenu' ? 'Generierte Vorlage' : entry.displayName}
+        </span>
+        {entry.type !== 'submenu' && (
+          <Popover destroyTooltipOnHide={true} content={entry.infoText} title={entry.displayName}>
+            <InfoCircleTwoTone style={{ cursor: 'help' }} />
+          </Popover>
+        )}
+      </>
+    );
+
+    result.push({
+      title: header,
+      key: entry.id.toString(),
+      className: entry?.checkable === false ? 'hideMe' : '',
+      // checkable: entry?.checkable !== false,
+      // disableCheckbox: entry?.disableCheckbox === true,
+      selectable: false,
+      icon: getIcon(entry.type),
+      children: getTreeData(entry.subMenuEntries || []),
+    });
+  }
+
+  return result || [];
+}
+
 export class ProduktvorlagenComponent
   extends ReactComponent<unknown, ProduktvorlagenController>
   implements GenericComponent {
-  public ctrl: ProduktvorlagenController = new ProduktvorlagenController();
+  public readonly ctrl: ProduktvorlagenController;
+
+  public constructor(props: unknown) {
+    super(props);
+    this.ctrl = new ProduktvorlagenController(this.forceUpdate.bind(this));
+    // this.state = {checkAllProductTemplates: false};
+  }
+
+  private productTemplatesSubscription: Subscription = new Subscription();
+  private samplesSubscription: Subscription = new Subscription();
+  private showAllSubscription: Subscription = new Subscription();
+
+  public componentDidMount(): void {
+    this.productTemplatesSubscription = this.ctrl.produktvorlagenService
+      .getCheckAllProductTemplates()
+      .subscribe((checkAllProductTemplates: boolean) => {
+        this.ctrl.checkAllProductTemplates = checkAllProductTemplates;
+        this.setState({ checkAllProductTemplates: checkAllProductTemplates });
+        // this.forceUpdate();
+      });
+
+    this.samplesSubscription = this.ctrl.produktvorlagenService
+      .getCheckAllSamples()
+      .subscribe((checkAllSamples: boolean) => {
+        this.ctrl.checkAllSamples = checkAllSamples;
+        this.setState({ checkAllSamples: checkAllSamples });
+        // this.forceUpdate();
+      });
+
+    this.showAllSubscription = this.ctrl.produktvorlagenService.getShowAll().subscribe((showAll: boolean) => {
+      this.ctrl.showAll = showAll;
+      this.setState({ showAll: showAll });
+    });
+  }
+
+  public componentWillUnmount(): void {
+    this.productTemplatesSubscription?.unsubscribe();
+    this.samplesSubscription?.unsubscribe();
+    this.showAllSubscription?.unsubscribe();
+  }
+
+  private handleSubmit(event: any) {
+    console.log(event);
+    // event.preventDefault();
+  }
 
   public render(): JSX.Element {
-    return <Content ctrl={this.ctrl} />;
+    // console.log('render');
+
+    return (
+      <Form onFinish={this.handleSubmit.bind(this)}>
+        <Content ctrl={this.ctrl} />
+      </Form>
+    );
   }
 }

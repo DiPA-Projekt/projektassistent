@@ -453,7 +453,11 @@
       {
         "id": 7,
         "descriptionEntry": "Erzeugt",
-        "dataEntry": "Bestätigung eines Entscheidungspunkts:\n\nProjektfortschrittsentscheidung"
+        "dataEntries": [
+          {
+            "title": "Bestätigung eines Entscheidungspunkts:\n\nProjektfortschrittsentscheidung"
+          }
+        ]
       }
     ]
   },
@@ -466,7 +470,11 @@
       {
         "id": 8,
         "descriptionEntry": "Erzeugt",
-        "dataEntry": "Dokumentation des Vergabeverfahrens:\n\nVergabevermerk\n\nVeröffentlichung der Ausschreibung:\n\nAusschreibungskonzept, Bewertungsmatrix, Vergabeunterlagen (Ausschreibung)\n\nZuschlagserteilung auf ein Angebot:\n\nAngebotsbewertung, Vertrag, Vertragsübersicht"
+        "dataEntries": [
+          {
+            "title": "Dokumentation des Vergabeverfahrens:\n\nVergabevermerk\n\nVeröffentlichung der Ausschreibung:\n\nAusschreibungskonzept, Bewertungsmatrix, Vergabeunterlagen (Ausschreibung)\n\nZuschlagserteilung auf ein Angebot:\n\nAngebotsbewertung, Vertrag, Vertragsübersicht"
+          }
+        ]
       }
     ]
   },
@@ -479,7 +487,11 @@
       {
         "id": 9,
         "descriptionEntry": "Erzeugt",
-        "dataEntry": "Aufforderung zur Abgabe eines Angebots:\n\nAngebotsaufforderung\n\nErteilung des Auftrags:\n\nAuftrag"
+        "dataEntries": [
+          {
+            "title": "Aufforderung zur Abgabe eines Angebots:\n\nAngebotsaufforderung\n\nErteilung des Auftrags:\n\nAuftrag"
+          }
+        ]
       }
     ]
   },
@@ -492,7 +504,11 @@
       {
         "id": 10,
         "descriptionEntry": "Erzeugt",
-        "dataEntry": "Ermittlung des Projektstatus:\n\nProjektabschlussbericht, Projektstatusbericht\n\nErstellung von Schätzungen:\n\nSchätzung\n\nErstellung von Wirtschaftlichkeitsbetrachtungen:\n\nWiBe (Fortschreibung)\n\nErteilung von Arbeitsaufträgen:\n\nAufgabenliste\n\nFührung eines Projektagebuchs:\n\nProjekttagebuch\n\nProtokollierung von Besprechungen:\n\nBesprechungsdokument\n\nWerkzeuge und Infrastrukturen des Projektmanagements:\n\nProjektmanagement-Infrastruktur"
+        "dataEntries": [
+          {
+            "title": "Ermittlung des Projektstatus:\n\nProjektabschlussbericht, Projektstatusbericht\n\nErstellung von Schätzungen:\n\nSchätzung\n\nErstellung von Wirtschaftlichkeitsbetrachtungen:\n\nWiBe (Fortschreibung)\n\nErteilung von Arbeitsaufträgen:\n\nAufgabenliste\n\nFührung eines Projektagebuchs:\n\nProjekttagebuch\n\nProtokollierung von Besprechungen:\n\nBesprechungsdokument\n\nWerkzeuge und Infrastrukturen des Projektmanagements:\n\nProjektmanagement-Infrastruktur"
+          }
+        ]
       }
     ]
   },
@@ -505,7 +521,11 @@
       {
         "id": 11,
         "descriptionEntry": "Erzeugt",
-        "dataEntry": "Führung einer Risikoliste:\n\nRisikoliste"
+        "dataEntries": [
+          {
+            "title": "Führung einer Risikoliste:\n\nRisikoliste"
+          }
+        ]
       }
     ]
   },
@@ -518,7 +538,11 @@
       {
         "id": 12,
         "descriptionEntry": "Erzeugt",
-        "dataEntry": "Umgang mit Änderungen:\n\nProblem-/Änderungsbewertung, Problemmeldung/Änderungsantrag, Änderungsentscheidung, Änderungsstatusliste"
+        "dataEntries": [
+          {
+            "title": "Umgang mit Änderungen:\n\nProblem-/Änderungsbewertung, Problemmeldung/Änderungsantrag, Änderungsentscheidung, Änderungsstatusliste"
+          }
+        ]
       }
     ]
   },
@@ -531,7 +555,11 @@
       {
         "id": 13,
         "descriptionEntry": "Erzeugt",
-        "dataEntry": "Sicherung der Produktbibliothek:\n\nProduktkonfiguration"
+        "dataEntries": [
+          {
+            "title": "Sicherung der Produktbibliothek:\n\nProduktkonfiguration"
+          }
+        ]
       }
     ]
   },
@@ -544,7 +572,11 @@
       {
         "id": 14,
         "descriptionEntry": "Erzeugt",
-        "dataEntry": "Ermittlung von Projektkennzahlen:\n\nKennzahlenauswertung, Messdaten"
+        "dataEntries": [
+          {
+            "title": "Ermittlung von Projektkennzahlen:\n\nKennzahlenauswertung, Messdaten"
+          }
+        ]
       }
     ]
   },
@@ -571,7 +603,11 @@
       {
         "id": 15,
         "descriptionEntry": "Erzeugt",
-        "dataEntry": "Abschluss von Leistunsvereinbarungen:\n\nLeistungsvereinbarung (SLA/OLA/UC)\n\nBerücksichtigung der IT-Sicherheit:\n\nBeitrag zum IT-Sicherheitskonzept\n\nBerücksichtigung des Datenschutzes:\n\nBeitrag zum Datenschutzkonzept\n\nHerbeiführung der betrieblichen Freigabe:\n\nBetriebliche Freigabeerklärung, Prüfprotokoll Inbetriebnahme, Prüfspezifikation Inbetriebnahme"
+        "dataEntries": [
+          {
+            "title": "Abschluss von Leistunsvereinbarungen:\n\nLeistungsvereinbarung (SLA/OLA/UC)\n\nBerücksichtigung der IT-Sicherheit:\n\nBeitrag zum IT-Sicherheitskonzept\n\nBerücksichtigung des Datenschutzes:\n\nBeitrag zum Datenschutzkonzept\n\nHerbeiführung der betrieblichen Freigabe:\n\nBetriebliche Freigabeerklärung, Prüfprotokoll Inbetriebnahme, Prüfspezifikation Inbetriebnahme"
+          }
+        ]
       }
     ]
   },
