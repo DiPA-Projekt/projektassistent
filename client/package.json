@@ -27,7 +27,7 @@
   "dependencies": {
     "@ant-design/icons": "4.6.2",
     "@leanup/lib": "1.1.11",
-    "antd": "4.15.1",
+    "antd": "4.16.0",
     "dayjs": "1.10.4",
     "html-react-parser": "1.2.6",
     "react": "17.0.2",
