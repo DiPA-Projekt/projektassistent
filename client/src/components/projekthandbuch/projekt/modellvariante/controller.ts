@@ -1,7 +1,7 @@
+import { ModelVariant } from '@dipa-projekt/projektassistent-openapi';
 import { AbstractController } from '@leanup/lib/components/generic';
 import { DI } from '@leanup/lib/helpers/injector';
 
-import { ModelVariant } from '../../../../../openapi';
 import { ProjekthandbuchService } from '../../../../services/projekthandbuch/service';
 
 export const MODEL_VARIANTS: ModelVariant[] = [

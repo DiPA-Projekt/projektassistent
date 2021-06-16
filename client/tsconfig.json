@@ -26,6 +26,6 @@
     "jsxFactory": "React.createElement",
     "jsxFragmentFactory": "React.Fragment"
   },
-  "include": ["openapi/**/*", "src/**/*", "tests/**/*", "node_modules/@leanup/*"],
+  "include": ["src/**/*", "tests/**/*", "node_modules/@dipa-projekt/**/*", "node_modules/@leanup/**/*"],
   "exclude": ["node_modules/@leanup/**/template/**/*"]
 }

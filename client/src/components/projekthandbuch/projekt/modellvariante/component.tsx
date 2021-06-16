@@ -1,10 +1,10 @@
 import { Form, Select } from 'antd';
 import React from 'react';
 
+import { ModelVariant } from '@dipa-projekt/projektassistent-openapi';
 import { GenericComponent } from '@leanup/lib/components/generic';
 import { ReactComponent } from '@leanup/lib/components/react';
 
-import { ModelVariant } from '../../../../../openapi';
 import { MODEL_VARIANTS, ModellVarianteController } from './controller';
 
 const { Option } = Select;

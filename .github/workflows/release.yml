@@ -40,11 +40,14 @@ jobs:
           git config user.email "actions@dipa.online"
           git config user.name "DiPA GitHub Actions"
       - name: Release with Maven
-        run: mvn -s .mvn/release.settings.xml -B -DreleaseVersion=${{ github.event.inputs.release_version }} gitflow:release --file pom.xml
+        run: mvn -s .mvn/settings.xml -B -DreleaseVersion=${{ github.event.inputs.release_version }} gitflow:release --file pom.xml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DOCKER_REGISTRY_USERNAME: dipa
           DOCKER_REGISTRY_TOKEN: ${{ secrets.DOCKER_REGISTRY_TOKEN }}
+          GIT_HUB_USERNAME: ${{ secrets.GIT_HUB_USERNAME }}
+          GIT_HUB_PACKAGES_ACCESS_TOKEN: ${{ secrets.GIT_HUB_PACKAGES_ACCESS_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.GIT_HUB_PACKAGES_ACCESS_TOKEN }}
       - name: Deployment to Kubernetes
         run: |
           git checkout -f main
@@ -52,10 +55,13 @@ jobs:
           echo -e "${{ secrets.DEPLOYMENT_SSH_KEY }}" > ~/.ssh/id_rsa
           echo -e "${{ secrets.DEPLOYMENT_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
           chmod 600 ~/.ssh/id_rsa
-          mvn -s .mvn/release.settings.xml -P production-ci -B -DskipTests clean install --file pom.xml
+          mvn -s .mvn/settings.xml -P production-ci -B -DskipTests clean install --file pom.xml
           scp server/target/deployment/*.yaml dipa-deployment@dipa.rz-housing.tu-clausthal.de:pa-deployment/main
           ssh dipa-deployment@dipa.rz-housing.tu-clausthal.de kubectl apply -k pa-deployment/main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DOCKER_REGISTRY_USERNAME: dipa
           DOCKER_REGISTRY_TOKEN: ${{ secrets.DOCKER_REGISTRY_TOKEN }}
+          GIT_HUB_USERNAME: ${{ secrets.GIT_HUB_USERNAME }}
+          GIT_HUB_PACKAGES_ACCESS_TOKEN: ${{ secrets.GIT_HUB_PACKAGES_ACCESS_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.GIT_HUB_PACKAGES_ACCESS_TOKEN }}

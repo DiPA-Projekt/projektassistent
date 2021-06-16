@@ -1,11 +1,11 @@
 import { Cascader, Form } from 'antd';
+import { CascaderValueType } from 'antd/es/cascader';
 import React from 'react';
 
 import { GenericComponent } from '@leanup/lib/components/generic';
 import { ReactComponent } from '@leanup/lib/components/react';
 
 import { PROJECT_TYPE_VARIANTS, ProjekttypvarianteController } from './controller';
-import { CascaderValueType } from 'antd/es/cascader';
 
 const layout = {
   labelCol: { span: 8 },
