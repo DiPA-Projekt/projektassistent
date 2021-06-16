@@ -9,6 +9,7 @@ import { HomeComponent } from '../home/component';
 import { HeaderComponent } from '../header/component';
 import { ProjekthandbuchComponent } from '../projekthandbuch/component';
 import { AppController } from './controller';
+import { ProduktvorlagenComponent } from '../projekthandbuch/produktvorlagen/component';
 
 export class AppComponent extends ReactComponent<unknown, AppController> implements GenericComponent {
   public ctrl: AppController = new AppController();
@@ -25,6 +26,9 @@ export class AppComponent extends ReactComponent<unknown, AppController> impleme
               </Route>
               <Route path="/projekthandbuch">
                 <ProjekthandbuchComponent />
+              </Route>
+              <Route path="/produktvorlagen">
+                <ProduktvorlagenComponent />
               </Route>
             </Switch>
           </Layout>

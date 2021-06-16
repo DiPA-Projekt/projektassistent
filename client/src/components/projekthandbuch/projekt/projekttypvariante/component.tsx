@@ -9,7 +9,7 @@ import { PROJECT_TYPE_VARIANTS, ProjekttypvarianteController } from './controlle
 
 const layout = {
   labelCol: { span: 8 },
-  wrapperCol: { span: 16 },
+  wrapperCol: { span: 8 },
 };
 
 export class ProjekttypvarianteComponent
