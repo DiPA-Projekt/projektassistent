@@ -49,7 +49,7 @@
     "@types/react-router-dom": "5.1.7",
     "chromedriver": "90.0.0",
     "copy-webpack-plugin": "8.1.1",
-    "cssnano": "5.0.1",
+    "cssnano": "5.0.6",
     "npm-check-updates": "11.5.1",
     "selenium-server": "3.141.59",
     "tslib": "2.2.0",
