@@ -1,7 +1,7 @@
+import { TableEntry } from '@dipa-projekt/projektassistent-openapi';
 import { AbstractController } from '@leanup/lib/components/generic';
 
 import PAGES_DATA from './pages.data.json';
-import { TableEntry } from '../../../../../openapi';
 
 // Tiny helper interface
 interface PageEntry {

@@ -1,7 +1,8 @@
 import { Anchor } from 'antd';
 import React from 'react';
 
-import { MenuEntry } from '../../../../../openapi';
+import { MenuEntry } from '@dipa-projekt/projektassistent-openapi';
+
 import { menuEntryFound } from '../content/component';
 
 const handleClick = (e: MouseEvent) => {

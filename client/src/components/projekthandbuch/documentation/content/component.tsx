@@ -1,31 +1,22 @@
-import React from 'react';
+import 'antd/dist/antd.css';
 
+import { Avatar, BackTop, Col, Layout, List, Row } from 'antd';
+import parse from 'html-react-parser';
+import React from 'react';
+import { Link, useParams } from 'react-router-dom';
+
+import {
+    FolderAddOutlined, MedicineBoxOutlined, NotificationOutlined, PartitionOutlined, TagsOutlined,
+    TeamOutlined, ToolOutlined, UserOutlined
+} from '@ant-design/icons';
+import { DataEntry, MenuEntry, TableEntry } from '@dipa-projekt/projektassistent-openapi';
 import { GenericComponent } from '@leanup/lib/components/generic';
 import { ReactComponent } from '@leanup/lib/components/react';
 
-import { ContentController } from './controller';
-
-import { Link, useParams } from 'react-router-dom';
-import MENU_DATA from './../navigation/menu.data.json';
-import { Avatar, BackTop, Col, Layout, List, Row } from 'antd';
-import { DataEntry, MenuEntry, TableEntry } from '../../../../../openapi';
-
-import parse from 'html-react-parser';
-
-import 'antd/dist/antd.css';
-
-import {
-  FolderAddOutlined,
-  MedicineBoxOutlined,
-  NotificationOutlined,
-  PartitionOutlined,
-  TagsOutlined,
-  TeamOutlined,
-  ToolOutlined,
-  UserOutlined,
-} from '@ant-design/icons';
 import { FooterComponent } from '../../../footer/component';
 import { AnchorList } from '../anchorList/component';
+import MENU_DATA from '../navigation/menu.data.json';
+import { ContentController } from './controller';
 
 // Tiny helper interface
 interface MenuEntryDepth {

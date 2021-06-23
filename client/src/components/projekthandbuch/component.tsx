@@ -1,17 +1,17 @@
 import { Breadcrumb, Layout } from 'antd';
 import React from 'react';
 import { Redirect, Route, Switch, withRouter } from 'react-router';
+import { Link } from 'react-router-dom';
 
+import { MenuEntry } from '@dipa-projekt/projektassistent-openapi';
 import { GenericComponent } from '@leanup/lib/components/generic';
 import { ReactComponent } from '@leanup/lib/components/react';
 
 import { ProjekthandbuchController } from './controller';
-import { ProjektComponent } from './projekt/component';
 import { DocumentationComponent } from './documentation/component';
-import { Link } from 'react-router-dom';
 import { NavigationController } from './documentation/navigation/controller';
-import { MenuEntry } from '../../../openapi';
 import { ProduktvorlagenComponent } from './produktvorlagen/component';
+import { ProjektComponent } from './projekt/component';
 
 const { Content } = Layout;
 
@@ -62,7 +62,8 @@ const Breadcrumbs = withRouter((props) => {
 
 export class ProjekthandbuchComponent
   extends ReactComponent<unknown, ProjekthandbuchController>
-  implements GenericComponent {
+  implements GenericComponent
+{
   public readonly ctrl: ProjekthandbuchController = new ProjekthandbuchController();
 
   public render(): JSX.Element {
