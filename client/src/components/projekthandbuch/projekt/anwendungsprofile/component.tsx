@@ -8,7 +8,8 @@ import { SelectComponent } from '../select/component';
 
 export class AnwendungsprofileComponent
   extends ReactComponent<unknown, AnwendungsprofileController>
-  implements GenericComponent {
+  implements GenericComponent
+{
   public ctrl: AnwendungsprofileController;
 
   public constructor(props: unknown) {

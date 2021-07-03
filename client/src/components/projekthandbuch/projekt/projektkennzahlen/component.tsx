@@ -7,7 +7,8 @@ import { ProjektkennzahlenController } from './controller';
 
 export class ProjektkennzahlenComponent
   extends ReactComponent<unknown, ProjektkennzahlenController>
-  implements GenericComponent {
+  implements GenericComponent
+{
   public readonly ctrl: ProjektkennzahlenController;
 
   public constructor(props: unknown) {

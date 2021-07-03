@@ -175,7 +175,8 @@ function getTreeData(inputData: TemplateProps[]): DataNode[] {
 
 export class ProduktvorlagenComponent
   extends ReactComponent<unknown, ProduktvorlagenController>
-  implements GenericComponent {
+  implements GenericComponent
+{
   public readonly ctrl: ProduktvorlagenController;
 
   public constructor(props: unknown) {

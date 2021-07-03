@@ -6,8 +6,14 @@ import React from 'react';
 import { Link, useParams } from 'react-router-dom';
 
 import {
-    FolderAddOutlined, MedicineBoxOutlined, NotificationOutlined, PartitionOutlined, TagsOutlined,
-    TeamOutlined, ToolOutlined, UserOutlined
+  FolderAddOutlined,
+  MedicineBoxOutlined,
+  NotificationOutlined,
+  PartitionOutlined,
+  TagsOutlined,
+  TeamOutlined,
+  ToolOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
 import { DataEntry, MenuEntry, TableEntry } from '@dipa-projekt/projektassistent-openapi';
 import { GenericComponent } from '@leanup/lib/components/generic';

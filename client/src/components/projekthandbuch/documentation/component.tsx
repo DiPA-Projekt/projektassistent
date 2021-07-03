@@ -10,7 +10,8 @@ import { Layout } from 'antd';
 
 export class DocumentationComponent
   extends ReactComponent<unknown, DocumentationController>
-  implements GenericComponent {
+  implements GenericComponent
+{
   public ctrl: DocumentationController = new DocumentationController();
 
   public render(): JSX.Element {

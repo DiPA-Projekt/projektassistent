@@ -4,8 +4,14 @@ import React, { useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 
 import {
-    FileProtectOutlined, HomeOutlined, OrderedListOutlined, PaperClipOutlined, ScissorOutlined,
-    ShoppingOutlined, TeamOutlined, ToolOutlined
+  FileProtectOutlined,
+  HomeOutlined,
+  OrderedListOutlined,
+  PaperClipOutlined,
+  ScissorOutlined,
+  ShoppingOutlined,
+  TeamOutlined,
+  ToolOutlined,
 } from '@ant-design/icons';
 import { MenuEntry } from '@dipa-projekt/projektassistent-openapi';
 import { GenericComponent } from '@leanup/lib/components/generic';

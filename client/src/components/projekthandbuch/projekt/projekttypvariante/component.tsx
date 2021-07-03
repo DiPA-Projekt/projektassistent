@@ -14,7 +14,8 @@ const layout = {
 
 export class ProjekttypvarianteComponent
   extends ReactComponent<unknown, ProjekttypvarianteController>
-  implements GenericComponent {
+  implements GenericComponent
+{
   public readonly ctrl: ProjekttypvarianteController;
 
   public constructor(props: unknown) {

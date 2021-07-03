@@ -7,7 +7,8 @@ import { SelectTreeController } from './controller';
 
 export class SelectTree
   extends ReactComponent<{ data: DataNode[]; checkedKeys: Key[]; disabled: boolean }, any>
-  implements Component {
+  implements Component
+{
   public ctrl: SelectTreeController;
 
   public constructor(props: { data: DataNode[]; checkedKeys: Key[]; disabled: boolean }) {

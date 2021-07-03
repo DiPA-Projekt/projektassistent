@@ -16,7 +16,8 @@ const layout = {
 
 export class ModellVarianteComponent
   extends ReactComponent<unknown, ModellVarianteController>
-  implements GenericComponent {
+  implements GenericComponent
+{
   public ctrl: ModellVarianteController = new ModellVarianteController();
 
   public render(): JSX.Element {
