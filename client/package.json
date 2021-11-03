@@ -40,7 +40,7 @@
   },
   "devDependencies": {
     "@leanup/stack": "1.1.21",
-    "@leanup/stack-react": "1.1.16",
+    "@leanup/stack-react": "1.2.8",
     "@leanup/stack-vite": "1.1.21",
     "@leanup/stack-webpack": "1.1.16",
     "@types/react": "17.0.3",
