@@ -42,7 +42,7 @@
     "@leanup/stack": "1.1.21",
     "@leanup/stack-react": "1.1.16",
     "@leanup/stack-vite": "1.1.21",
-    "@leanup/stack-webpack": "1.1.16",
+    "@leanup/stack-webpack": "1.2.14",
     "@types/react": "17.0.3",
     "@types/react-dom": "17.0.3",
     "@types/react-router": "5.1.13",
