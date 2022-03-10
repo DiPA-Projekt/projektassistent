@@ -33,8 +33,8 @@ function createBreadcrumbMap(menuItems: MenuEntry[]) {
 }
 
 function setBreadcrumbNameMap() {
-  const ctrl2: NavigationController = new NavigationController();
-  createBreadcrumbMap(ctrl2.getMenuEntries());
+  // const ctrl2: NavigationController = new NavigationController();
+  // createBreadcrumbMap(ctrl2.getMenuEntries());
 }
 
 const Breadcrumbs = withRouter((props) => {

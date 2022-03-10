@@ -1,70 +1,140 @@
 import { Subscription } from 'rxjs';
 
-import { ProjectTypeVariant } from '@dipa-projekt/projektassistent-openapi';
+import { ProjectFeature, ProjectType, ProjectTypeVariant } from '@dipa-projekt/projektassistent-openapi';
 import { AbstractController } from '@leanup/lib/components/generic';
 import { DI } from '@leanup/lib/helpers/injector';
 
 import { ProjekthandbuchService } from '../../../../services/projekthandbuch/service';
+import axios from 'axios';
 
-export const PROJECT_TYPE_VARIANTS: {
-  id: number;
-  name: string;
-  children: ProjectTypeVariant[];
-}[] = [
-  {
-    id: 1,
-    name: 'AG-Projekt',
-    children: [
-      { id: 1, name: 'mit einem Auftragnehmer' },
-      { id: 2, name: 'mit mehreren Auftragnehmern' },
-    ],
-  },
-  {
-    id: 2,
-    name: 'AN-Projekt',
-    children: [
-      { id: 3, name: 'mit Entwicklung, Weiterentwicklung oder Migration' },
-      { id: 4, name: 'mit Wartung und Pflege' },
-    ],
-  },
-  {
-    id: 3,
-    name: 'AG-AN-Projekt',
-    children: [
-      { id: 5, name: 'mit Entwicklung, Weiterentwicklung oder Migration' },
-      { id: 6, name: 'mit Wartung und Pflege' },
-    ],
-  },
-];
+//xml file reader
+import XMLParser from 'react-xml-parser';
 
 export class ProjekttypvarianteController extends AbstractController {
   private readonly projekthandbuchService: ProjekthandbuchService = DI.get<ProjekthandbuchService>('Projekthandbuch');
 
-  private metaModelSubscription: Subscription = new Subscription();
+  private metaModelVariantSubscription: Subscription = new Subscription();
 
-  public projectTypeVariants: ProjectTypeVariant[] = [];
+  private modelVariantsId = '';
+  private projectTypeIdsMap = new Map(); //: { projectTypeVariantId: string; projectTypeId: string }[] = [];
+
+  public projectTypeVariants: {
+    id: number;
+    name: string;
+    children: ProjectTypeVariant[];
+  }[] = [];
 
   public onInit(): void {
-    this.metaModelSubscription = this.projekthandbuchService.getMetaModelId().subscribe((metaModelId: number) => {
-      this.projectTypeVariants = this.getProjectTypeVariants(metaModelId);
-      this.onUpdate();
-    });
+    // this.metaModelSubscription = this.projekthandbuchService.getMetaModelId().subscribe((metaModelId: number) => {
+
+    this.metaModelVariantSubscription = this.projekthandbuchService
+      .getModelVariantId()
+      .subscribe((modelVariantsId: string) => {
+        this.modelVariantsId = modelVariantsId;
+
+        this.projectTypeIdsMap.clear();
+
+        axios
+          .get(
+            'https://vmxt-api.vom-dach.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+              modelVariantsId +
+              '/Projekttypvariante'
+          )
+          .then((response) => {
+            const jsonDataFromXml = new XMLParser().parseFromString(response.data, 'application/xml') as Document;
+
+            const projectTypeVariants: ProjectTypeVariant[] = jsonDataFromXml
+              .getElementsByTagName('Projekttypvariante')
+              .map((variante) => {
+                return variante.attributes as ProjectTypeVariant;
+              });
+
+            this.projectTypeVariants = [];
+
+            projectTypeVariants.forEach((projectTypeVariant) => {
+              // TODO: nicht bei ' ' trennen -> z.B. Internes Projekt
+              const key = projectTypeVariant.name.substr(0, projectTypeVariant.name.indexOf(' '));
+              const value = projectTypeVariant.name.substr(projectTypeVariant.name.indexOf(' ') + 1);
+
+              let pos = this.projectTypeVariants.find((x) => x.name === key);
+
+              if (pos == null) {
+                this.projectTypeVariants.push({ id: this.projectTypeVariants.length, name: key, children: [] });
+                // TODO: schöner machen
+                pos = this.projectTypeVariants.find((x) => x.name === key);
+              }
+              pos.children.push({ id: projectTypeVariant.id, version: projectTypeVariant.version, name: value });
+            });
+
+            this.projekthandbuchService.setProjectTypeVariantsData(projectTypeVariants);
+          });
+        // .catch((e) => 'obligatory catch');
+
+        this.onUpdate();
+      });
   }
 
   public onDestroy(): void {
-    this.metaModelSubscription.unsubscribe();
+    this.metaModelVariantSubscription.unsubscribe();
   }
 
-  public setProjectTypeVariantId(projectTypeVariantId: number): void {
+  public changeProjectTypeVariant(projectTypeVariantId: string): void {
     this.projekthandbuchService.setProjectTypeVariantId(projectTypeVariantId);
+
+    const url =
+      'https://vmxt-api.vom-dach.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      this.modelVariantsId +
+      '/Projekttypvariante/' +
+      projectTypeVariantId;
+
+    // get projectTypeId, projectFeaturesDataFromProjectType and projectFeaturesDataFromProjectTypeVariant
+    axios
+      .get(url)
+      .then((response) => {
+        const jsonDataFromXml = new XMLParser().parseFromString(response.data, 'application/xml') as Document;
+
+        const projectType: ProjectType = jsonDataFromXml.getElementsByTagName('ProjekttypRef')[0]
+          ?.attributes as ProjectType;
+
+        this.projekthandbuchService.setProjectTypeId(projectType.id);
+
+        ////////////////////////////////////////////////////////////////
+
+        const projectFeatures: ProjectFeature[] = jsonDataFromXml
+          .getElementsByTagName('ProjektmerkmalRef')
+          .map((feature) => {
+            return feature.attributes as ProjectFeature;
+          });
+
+        this.projekthandbuchService.setProjectFeaturesDataFromProjectTypeVariant(projectFeatures);
+
+        ////////////////////////////////////////////////////////////////
+
+        this.setProjectFeaturesDataFromProjectType(projectType.id);
+      })
+      .catch(() => 'obligatory catch');
   }
 
-  // for now the type variants are shown if any meta model is selected
-  public getProjectTypeVariants(metaModelId: number): ProjectTypeVariant[] {
-    return PROJECT_TYPE_VARIANTS.find(() => metaModelId > 0)?.children || [];
-  }
+  public setProjectFeaturesDataFromProjectType(projectTypeId: string): void {
+    // get projectTypeId, projectFeaturesDataFromProjectType and projectFeaturesDataFromProjectTypeVariant
+    axios
+      .get(
+        'https://vmxt-api.vom-dach.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+          this.modelVariantsId +
+          '/Projekttyp/' +
+          projectTypeId
+      )
+      .then((response) => {
+        const jsonDataFromXml = new XMLParser().parseFromString(response.data, 'application/xml') as Document;
 
-  public changeProjectTypeVariant(projectTypeVariantId: number): void {
-    this.projekthandbuchService.setProjectTypeVariantId(projectTypeVariantId);
+        const projectFeatures: ProjectFeature[] = jsonDataFromXml
+          .getElementsByTagName('ProjektmerkmalRef')
+          .map((feature) => {
+            return feature.attributes as ProjectFeature;
+          });
+
+        this.projekthandbuchService.setProjectFeaturesDataFromProjectType(projectFeatures);
+      })
+      .catch(() => 'obligatory catch');
   }
 }

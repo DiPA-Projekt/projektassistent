@@ -3,17 +3,16 @@ ModelVariant:
   properties:
     id:
       description: Unique identifier of the model variant
-      type: integer
-      format: int64
-      example: 1
+      type: string
+      example: "fc3fc9d51ffd42"
+    version:
+      description: Version of the model variant
+      type: string
+      example: "1504"
     name:
       description: Name of the model variant
       type: string
-      example: "VMXT ITZ Bund"
-    description:
-      description: Short description text for the model variant
-      type: string
-      example: "V-Modell XT des ITZ Bund"
+      example: "V-Modell XT"
   required:
     - id
     - name

@@ -3,9 +3,12 @@ ProjectTypeVariant:
   properties:
     id:
       description: Unique identifier of the project type variant
-      type: integer
-      format: int64
-      example: 1
+      type: string
+      example: "da34fa7cd44399"
+    version:
+      description: Version of the project type variant
+      type: string
+      example: "101"
     name:
       description: Name of the project type variant
       type: string

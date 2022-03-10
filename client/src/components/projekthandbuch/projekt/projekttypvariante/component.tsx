@@ -5,7 +5,7 @@ import React from 'react';
 import { GenericComponent } from '@leanup/lib/components/generic';
 import { ReactComponent } from '@leanup/lib/components/react';
 
-import { PROJECT_TYPE_VARIANTS, ProjekttypvarianteController } from './controller';
+import { ProjekttypvarianteController } from './controller';
 
 const layout = {
   labelCol: { span: 8 },
@@ -40,9 +40,9 @@ export class ProjekttypvarianteComponent
             <Form.Item {...layout}>
               <Cascader
                 fieldNames={{ label: 'name', value: 'id', children: 'children' }}
-                options={PROJECT_TYPE_VARIANTS}
+                options={this.ctrl.projectTypeVariants.filter((x) => x.children?.length > 0)}
                 onChange={(value: CascaderValueType) => {
-                  this.ctrl.setProjectTypeVariantId(value[1] as number);
+                  this.ctrl.changeProjectTypeVariant(value[1] as string);
                 }}
                 placeholder="Bitte wählen"
               />

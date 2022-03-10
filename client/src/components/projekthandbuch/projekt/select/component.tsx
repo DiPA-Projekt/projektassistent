@@ -7,6 +7,8 @@ import { SelectValue } from 'antd/es/select';
 import { PopoverComponent } from '../popover/component';
 
 import { ExtendedProjectFeature } from '../anwendungsprofile/controller';
+import parse from 'html-react-parser';
+import { decodeXml } from '../../../../shares/utils';
 
 const { Option } = Select;
 
@@ -51,15 +53,12 @@ export class SelectComponent extends ReactComponent<FeatureProps, any> implement
         >
           {this.props.projectFeature.values.possibleValues.map((value: { key: string; title: string }) => (
             // wir müssen als Key in der API einen anderen Datentype wählen / oder mappen
-            <Option
-              key={`${this.props.projectFeature.name}-${this.props.projectFeature.id}-${value.key}`}
-              value={value.key}
-            >
+            <Option key={value.key} value={value.key}>
               {value.title}
             </Option>
           ))}
         </Select>
-        <div style={{ fontWeight: 500, marginTop: '5px' }}>{this.state?.value}</div>
+        <div style={{ fontWeight: 500, marginTop: '5px' }}>{parse(decodeXml(this?.state.value))}</div>
       </Form.Item>
     );
   }

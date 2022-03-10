@@ -1,4 +1,4 @@
-import Form from 'antd/lib/form/Form';
+import { Form } from 'antd';
 import React from 'react';
 
 import { GenericComponent } from '@leanup/lib/components/generic';

@@ -1,8 +1,7 @@
 import 'antd/dist/antd.css';
 
 import { Avatar, BackTop, Col, Layout, List, Row } from 'antd';
-import parse from 'html-react-parser';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
 import {
@@ -15,14 +14,25 @@ import {
   ToolOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { DataEntry, MenuEntry, TableEntry } from '@dipa-projekt/projektassistent-openapi';
+import { MenuEntry } from '@dipa-projekt/projektassistent-openapi';
 import { GenericComponent } from '@leanup/lib/components/generic';
 import { ReactComponent } from '@leanup/lib/components/react';
 
 import { FooterComponent } from '../../../footer/component';
 import { AnchorList } from '../anchorList/component';
-import MENU_DATA from '../navigation/menu.data.json';
 import { ContentController } from './controller';
+
+import { ProductContentComponent } from './products/component';
+
+// import { productMenuEntryFound } from './products/component';
+
+import { RolesContentComponent } from './roles/component';
+import { ProcessContentComponent } from './processes/component';
+import { TailoringContentComponent } from './tailoring/component';
+import { withRouter } from 'react-router';
+import parse from 'html-react-parser';
+import { DataEntry, PageEntry, TableEntry } from '../../../../../openapi';
+import { ProductContentController } from './products/controller';
 
 // Tiny helper interface
 interface MenuEntryDepth {
@@ -31,22 +41,6 @@ interface MenuEntryDepth {
 }
 
 export let menuEntryFound: MenuEntryDepth;
-
-function findMenuEntry(menuEntry: MenuEntry, menuEntryId: number, depth: number): MenuEntryDepth | undefined {
-  if (menuEntry.id === menuEntryId) {
-    return { menuEntry, depth };
-  }
-
-  if (menuEntry.subMenuEntries) {
-    for (const subMenuEntry of menuEntry.subMenuEntries) {
-      const menuEntryWithDepth = findMenuEntry(subMenuEntry, menuEntryId, depth + 1);
-      if (menuEntryWithDepth !== undefined) {
-        return menuEntryWithDepth;
-      }
-    }
-  }
-  return undefined;
-}
 
 const icons: Map<string, { color: string; icon: JSX.Element }> = new Map<
   string,
@@ -109,7 +103,7 @@ function getTableEntriesList(inputData: DataEntry[]): JSX.Element {
         </span>
       );
     } else {
-      entries.push(<span style={{ marginRight: '20px' }}>{entryItem.title}</span>);
+      entries.push(<span style={{ marginRight: '20px' }}>{parse(entryItem.title)}</span>);
     }
   });
 
@@ -117,7 +111,7 @@ function getTableEntriesList(inputData: DataEntry[]): JSX.Element {
 }
 
 function DataTable(props: { data: TableEntry[] }) {
-  if (props.data?.length > 0) {
+  if (props && props.data?.length > 0) {
     return (
       <List
         itemLayout="horizontal"
@@ -139,50 +133,100 @@ function DataTable(props: { data: TableEntry[] }) {
   }
 }
 
+function delayed_render(async_fun, deps = []) {
+  const [output, setOutput] = useState();
+
+  // setOutput(undefined);
+
+  // console.log('delayed_output', output);
+
+  useEffect(async () => setOutput(await async_fun()), deps);
+  return output === undefined ? null : output;
+}
+
+function SubEntries(props: { data: PageEntry; ctrl: ContentController }) {
+  return delayed_render(async () => {
+    const productDataArray = [];
+    // console.log('delayed_render');
+
+    if (props.data?.subPageEntries && props.data.subPageEntries.length > 0) {
+      for (const menuEntryChildren of props.data?.subPageEntries) {
+        const subEntries = await props.ctrl.getThemaContent(menuEntryChildren?.menuEntryId);
+
+        // console.log('subEntries', menuEntryChildren?.menuEntryId.toString());
+
+        productDataArray.push(
+          <div key={menuEntryChildren?.menuEntryId.toString()} style={{ marginTop: '40px' }}>
+            <h3 id={menuEntryChildren?.menuEntryId.toString()}> {menuEntryChildren.displayName} </h3>
+            {parse(subEntries)}
+            {/*<p>{props.ctrl.getThemaContent(menuEntryChildren?.menuEntryId)}</p>*/}
+            {/*<DataTable data={productChild?.tableEntries} />*/}
+          </div>
+        );
+      }
+    }
+
+    // const resp = await fetch(props.targetURL); // await here is OK!
+    // const json = await resp.json();
+
+    return <div>{productDataArray}</div>;
+
+    // return <Child data={json} />;
+  }, [props.data]);
+}
+
 function PageEntryContent(props: { ctrl: ContentController }) {
   const { id } = useParams<{ id: string }>();
-  const product = props.ctrl.getPageEntryContent(parseInt(id, 10));
 
-  menuEntryFound = {
-    // empty dummy entry
-    menuEntry: { id: -1, displayName: '' },
-    depth: 0,
-  };
+  props.ctrl.setId(id);
 
-  for (const menuEntry of MENU_DATA) {
-    const menu = findMenuEntry(menuEntry, parseInt(id, 10), 0);
-    if (menu !== undefined) {
-      menuEntryFound = menu;
-      break;
-    }
-  }
+  // menuEntryFound = productMenuEntryFound;
+  // console.log('11111111 update menuEntryFound', menuEntryFound, props.ctrl.get);
+
+  // function cbFunc(value: MenuEntryDepth) {
+  //   console.log('callback', value);
+  //   menuEntryFound = value;
+  // }
+
+  // const searchBarProps = {
+  //   // make sure all required component's inputs/Props keys&types match
+  //   callback: cbFunc,
+  // };
+
+  // const renderedContent = (
+  //   <>
+  //     {/*<ProductContentComponent />*/}
+  //     {/*<RolesContentComponent callback={callback} />*/}
+  //     {/*<ProcessContentComponent callback={callback} />*/}
+  //     {/*<TailoringContentComponent callback={callback} />*/}
+  //     <ProductContentComponent />
+  //     <RolesContentComponent />
+  //     <ProcessContentComponent />
+  //     <TailoringContentComponent />
+  //   </>
+  // );
+  //
+  // return renderedContent;
+
+  menuEntryFound = props.ctrl.getPageEntryContent2();
 
   let productData;
 
   const productDataArray = [];
 
-  if (product || menuEntryFound.menuEntry.id > -1) {
+  // console.log('key menuEntryFound', menuEntryFound);
+
+  if (menuEntryFound && menuEntryFound?.menuEntryId) {
     productDataArray.push(
-      <div key={product?.menuEntryId.toString()}>
-        <h2 id={product?.menuEntryId.toString()}> {product?.header} </h2>
-        <p>{parse(product?.descriptionText)}</p>
-        <DataTable data={product?.tableEntries} />
+      <div key={menuEntryFound?.menuEntryId.toString()}>
+        <h2 id={menuEntryFound?.menuEntryId.toString()}> {menuEntryFound?.header} </h2>
+        {parse(menuEntryFound?.descriptionText)}
+        <DataTable data={menuEntryFound?.tableEntries} />
       </div>
     );
 
-    if (menuEntryFound?.depth >= 3 && menuEntryFound.menuEntry?.subMenuEntries) {
-      for (const menuEntryChildren of menuEntryFound.menuEntry.subMenuEntries) {
-        const productChild = props.ctrl.getPageEntryContent(menuEntryChildren.id);
+    productDataArray.push(<SubEntries data={menuEntryFound} ctrl={props.ctrl}></SubEntries>);
 
-        productDataArray.push(
-          <div key={productChild?.menuEntryId.toString()} style={{ marginTop: '40px' }}>
-            <h3 id={productChild?.menuEntryId.toString()}> {productChild.header} </h3>
-            <p>{productChild?.descriptionText}</p>
-            <DataTable data={productChild?.tableEntries} />
-          </div>
-        );
-      }
-    }
     productData = productDataArray;
   } else {
     productData = <h2> Sorry. Product doesn't exist </h2>;
@@ -195,48 +239,62 @@ function PageEntryContent(props: { ctrl: ContentController }) {
   );
 }
 
+@withRouter
 export class ContentComponent extends ReactComponent<unknown, ContentController> implements GenericComponent {
   public ctrl: ContentController = new ContentController();
 
   public constructor(props: unknown) {
     super(props);
     this.ctrl = new ContentController(this.forceUpdate.bind(this));
+
+    // this.handler = this.handler.bind(this)
+    this.ctrl.onInit();
   }
 
-  public componentWillMount(): void {
-    this.ctrl.onInit();
+  public componentDidMount(): void {
+    // this.ctrl.onInit();
   }
 
   public componentWillUnmount(): void {
     this.ctrl.onDestroy();
   }
 
+  public async componentDidUpdate(prevProps): void {
+    if (this.props.location !== prevProps.location) {
+      // menuEntryFound =
+      this.ctrl.onRouteChanged(this.props.match.params.id);
+      // console.log('documentation content componentDidUpdate', this.menuEntryFound);
+
+      // this.setState({ content: menuEntryFound });
+    }
+  }
+
   public render(): JSX.Element {
     return (
+      // <>
+      //   {this.ctrl.pageEntry && (
       <>
-        {this.ctrl.pageEntry && (
-          <>
-            <Layout style={{ background: '#FFF' }}>
-              <Row>
-                <Col
-                  style={{ display: 'flex', flexDirection: 'column' }}
-                  xs={{ span: 24, order: 2 }}
-                  lg={{ span: 16, order: 1 }}
-                >
-                  <div style={{ padding: '24px', flex: '1 0 auto' }}>
-                    <PageEntryContent ctrl={this.ctrl} />
-                  </div>
-                  <FooterComponent />
-                </Col>
-                <Col xs={{ span: 24, order: 1 }} lg={{ span: 8, order: 2 }}>
-                  <AnchorList />
-                  <BackTop />
-                </Col>
-              </Row>
-            </Layout>
-          </>
-        )}
+        <Layout style={{ background: '#FFF' }}>
+          <Row>
+            <Col
+              style={{ display: 'flex', flexDirection: 'column' }}
+              xs={{ span: 24, order: 2 }}
+              lg={{ span: 16, order: 1 }}
+            >
+              <div style={{ padding: '24px', flex: '1 0 auto' }}>
+                <PageEntryContent ctrl={this.ctrl} />
+              </div>
+              <FooterComponent />
+            </Col>
+            <Col xs={{ span: 24, order: 1 }} lg={{ span: 8, order: 2 }}>
+              <AnchorList />
+              <BackTop />
+            </Col>
+          </Row>
+        </Layout>
       </>
+      //   )}
+      // </>
     );
   }
 }

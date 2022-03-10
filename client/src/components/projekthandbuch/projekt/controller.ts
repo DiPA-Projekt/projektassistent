@@ -5,7 +5,6 @@ import { DI } from '@leanup/lib/helpers/injector';
 import { ProjekthandbuchService } from '../../../services/projekthandbuch/service';
 import PROJECT_FEATURES from './project.features.json';
 
-// Tiny helper interface
 interface ContainsProductFeatures {
   projectFeatures: ProjectFeature[];
   projectTypeId: number;

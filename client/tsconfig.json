@@ -26,6 +26,7 @@
     "jsxFactory": "React.createElement",
     "jsxFragmentFactory": "React.Fragment"
   },
+//  "files": ["src/types/react-xml-parser.d.ts"],
   "include": ["src/**/*", "tests/**/*", "node_modules/@dipa-projekt/**/*", "node_modules/@leanup/**/*"],
   "exclude": ["node_modules/@leanup/**/template/**/*"]
 }
