@@ -1,9 +1,8 @@
 import 'antd/dist/antd.css';
 
 import { Avatar, BackTop, Col, Layout, List, Row } from 'antd';
-import parse from 'html-react-parser';
-import React from 'react';
-import { Link, useParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 import {
   FolderAddOutlined,
@@ -15,38 +14,18 @@ import {
   ToolOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { DataEntry, MenuEntry, TableEntry } from '@dipa-projekt/projektassistent-openapi';
+import { PageEntry, TableEntry, DataEntry } from '@dipa-projekt/projektassistent-openapi';
 import { GenericComponent } from '@leanup/lib/components/generic';
 import { ReactComponent } from '@leanup/lib/components/react';
 
 import { FooterComponent } from '../../../footer/component';
 import { AnchorList } from '../anchorList/component';
-import MENU_DATA from '../navigation/menu.data.json';
 import { ContentController } from './controller';
 
-// Tiny helper interface
-interface MenuEntryDepth {
-  menuEntry: MenuEntry;
-  depth: number;
-}
+import { withRouter } from 'react-router';
+import parse from 'html-react-parser';
 
-export let menuEntryFound: MenuEntryDepth;
-
-function findMenuEntry(menuEntry: MenuEntry, menuEntryId: number, depth: number): MenuEntryDepth | undefined {
-  if (menuEntry.id === menuEntryId) {
-    return { menuEntry, depth };
-  }
-
-  if (menuEntry.subMenuEntries) {
-    for (const subMenuEntry of menuEntry.subMenuEntries) {
-      const menuEntryWithDepth = findMenuEntry(subMenuEntry, menuEntryId, depth + 1);
-      if (menuEntryWithDepth !== undefined) {
-        return menuEntryWithDepth;
-      }
-    }
-  }
-  return undefined;
-}
+export let pageEntryFound: PageEntry;
 
 const icons: Map<string, { color: string; icon: JSX.Element }> = new Map<
   string,
@@ -91,25 +70,26 @@ function renderSwitch(param: string) {
 function getTableEntriesList(inputData: DataEntry[]): JSX.Element {
   const entries: JSX.Element[] = [];
 
-  inputData.map((entryItem: DataEntry, index: number) => {
-    if (entryItem?.type === 'bold' && entryItem.menuEntryId) {
+  inputData.map((entryItem) => {
+    // if (entryItem?.type === 'bold' && entryItem.id) {
+    //   entries.push(
+    //     <div key={`table-item-${index}`}>
+    //       <Link style={{ fontWeight: 'bold' }} to={`./${entryItem.id}`}>
+    //         {entryItem.title}
+    //       </Link>
+    //       {entryItem.suffix && <span style={{ marginLeft: '5px' }}>{entryItem.suffix}</span>}
+    //     </div>
+    //   );
+    // } else
+    if (entryItem?.id) {
       entries.push(
-        <div key={`table-item-${index}`}>
-          <Link style={{ fontWeight: 'bold' }} to={`./${entryItem.menuEntryId}`}>
-            {entryItem.title}
-          </Link>
-          {entryItem.suffix && <span style={{ marginLeft: '5px' }}>{entryItem.suffix}</span>}
-        </div>
-      );
-    } else if (entryItem?.menuEntryId) {
-      entries.push(
-        <span style={{ marginRight: '20px' }} key={`table-item-${index}`}>
-          <Link to={`./${entryItem.menuEntryId}`}>{entryItem.title}</Link>
+        <span style={{ marginRight: '20px' }} key={`table-item-${entryItem.id}`}>
+          <Link to={`./${entryItem.id}`}>{entryItem.title}</Link>
           {entryItem.suffix && <span style={{ marginLeft: '5px' }}>{entryItem.suffix}</span>}
         </span>
       );
     } else {
-      entries.push(<span style={{ marginRight: '20px' }}>{entryItem.title}</span>);
+      entries.push(<span style={{ marginRight: '20px' }}>{parse(entryItem.title)}</span>);
     }
   });
 
@@ -117,7 +97,7 @@ function getTableEntriesList(inputData: DataEntry[]): JSX.Element {
 }
 
 function DataTable(props: { data: TableEntry[] }) {
-  if (props.data?.length > 0) {
+  if (props && props.data?.length > 0) {
     return (
       <List
         itemLayout="horizontal"
@@ -139,50 +119,57 @@ function DataTable(props: { data: TableEntry[] }) {
   }
 }
 
-function PageEntryContent(props: { ctrl: ContentController }) {
-  const { id } = useParams<{ id: string }>();
-  const product = props.ctrl.getPageEntryContent(parseInt(id, 10));
+function delayed_render(
+  async_fun: {
+    (): Promise<JSX.Element>;
+    (): React.SetStateAction<undefined> | PromiseLike<React.SetStateAction<undefined>>;
+  },
+  deps = []
+) {
+  const [output, setOutput] = useState();
 
-  menuEntryFound = {
-    // empty dummy entry
-    menuEntry: { id: -1, displayName: '' },
-    depth: 0,
-  };
+  useEffect(async () => setOutput(await async_fun()), deps);
+  return output === undefined ? null : output;
+}
 
-  for (const menuEntry of MENU_DATA) {
-    const menu = findMenuEntry(menuEntry, parseInt(id, 10), 0);
-    if (menu !== undefined) {
-      menuEntryFound = menu;
-      break;
+function SubEntries(props: { data: PageEntry; ctrl: ContentController }) {
+  return delayed_render(async () => {
+    const productDataArray = [];
+
+    if (props.data?.subPageEntries && props.data.subPageEntries.length > 0) {
+      for (const menuEntryChildren of props.data?.subPageEntries) {
+        const subEntries = await props.ctrl.getThemaContent(menuEntryChildren?.id);
+
+        productDataArray.push(
+          <div key={menuEntryChildren?.id} style={{ marginTop: '40px' }}>
+            <h3 id={menuEntryChildren?.id}> {menuEntryChildren.header} </h3>
+            {parse(subEntries)}
+          </div>
+        );
+      }
     }
-  }
+    return <div>{productDataArray}</div>;
+  }, [props.data]);
+}
+
+function PageEntryContent(props: { ctrl: ContentController }) {
+  pageEntryFound = props.ctrl.getSelectedPageEntry();
 
   let productData;
 
   const productDataArray = [];
 
-  if (product || menuEntryFound.menuEntry.id > -1) {
+  if (pageEntryFound && pageEntryFound?.id) {
     productDataArray.push(
-      <div key={product?.menuEntryId.toString()}>
-        <h2 id={product?.menuEntryId.toString()}> {product?.header} </h2>
-        <p>{parse(product?.descriptionText)}</p>
-        <DataTable data={product?.tableEntries} />
+      <div key={pageEntryFound?.id}>
+        <h2 id={pageEntryFound?.id}> {pageEntryFound?.header} </h2>
+        {parse(pageEntryFound?.descriptionText)}
+        <DataTable data={pageEntryFound?.tableEntries} />
       </div>
     );
 
-    if (menuEntryFound?.depth >= 3 && menuEntryFound.menuEntry?.subMenuEntries) {
-      for (const menuEntryChildren of menuEntryFound.menuEntry.subMenuEntries) {
-        const productChild = props.ctrl.getPageEntryContent(menuEntryChildren.id);
+    productDataArray.push(<SubEntries data={pageEntryFound} ctrl={props.ctrl} />);
 
-        productDataArray.push(
-          <div key={productChild?.menuEntryId.toString()} style={{ marginTop: '40px' }}>
-            <h3 id={productChild?.menuEntryId.toString()}> {productChild.header} </h3>
-            <p>{productChild?.descriptionText}</p>
-            <DataTable data={productChild?.tableEntries} />
-          </div>
-        );
-      }
-    }
     productData = productDataArray;
   } else {
     productData = <h2> Sorry. Product doesn't exist </h2>;
@@ -195,47 +182,53 @@ function PageEntryContent(props: { ctrl: ContentController }) {
   );
 }
 
+@withRouter
 export class ContentComponent extends ReactComponent<unknown, ContentController> implements GenericComponent {
   public ctrl: ContentController = new ContentController();
 
   public constructor(props: unknown) {
     super(props);
     this.ctrl = new ContentController(this.forceUpdate.bind(this));
+
+    // this.handler = this.handler.bind(this)
+    this.ctrl.onInit();
   }
 
-  public componentWillMount(): void {
-    this.ctrl.onInit();
+  public componentDidMount(): void {
+    // this.ctrl.onInit();
   }
 
   public componentWillUnmount(): void {
     this.ctrl.onDestroy();
   }
 
+  public componentDidUpdate(prevProps: { location: any }): void {
+    if (this.props.location !== prevProps.location) {
+      this.ctrl.onRouteChanged(this.props.match.params.id);
+    }
+  }
+
   public render(): JSX.Element {
     return (
       <>
-        {this.ctrl.pageEntry && (
-          <>
-            <Layout style={{ background: '#FFF' }}>
-              <Row>
-                <Col
-                  style={{ display: 'flex', flexDirection: 'column' }}
-                  xs={{ span: 24, order: 2 }}
-                  lg={{ span: 16, order: 1 }}
-                >
-                  <div style={{ padding: '24px', flex: '1 0 auto' }}>
-                    <PageEntryContent ctrl={this.ctrl} />
-                  </div>
-                  <FooterComponent />
-                </Col>
-                <Col xs={{ span: 24, order: 1 }} lg={{ span: 8, order: 2 }}>
-                  <AnchorList />
-                  <BackTop />
-                </Col>
-              </Row>
-            </Layout>
-          </>
-        )}
+        <Layout style={{ background: '#FFF' }}>
+          <Row>
+            <Col
+              style={{ display: 'flex', flexDirection: 'column' }}
+              xs={{ span: 24, order: 2 }}
+              lg={{ span: 16, order: 1 }}
+            >
+              <div style={{ padding: '24px', flex: '1 0 auto' }}>
+                <PageEntryContent ctrl={this.ctrl} />
+              </div>
+              <FooterComponent />
+            </Col>
+            <Col xs={{ span: 24, order: 1 }} lg={{ span: 8, order: 2 }}>
+              <AnchorList />
+              <BackTop />
+            </Col>
+          </Row>
+        </Layout>
       </>
     );
   }

@@ -31,24 +31,18 @@ export class ProduktvorlagenController extends AbstractController {
   public getCheckedKeys(inputData: TemplateProps[]): Key[] {
     let result: Key[] = [];
 
-    // console.log(`selectAllProductTemplates: ${this.checkAllProductTemplates?.toString()}`);
-    // console.log(`selectAllSamples: ${this.checkAllSamples?.toString()}`);
-
     if (!this.checkAllProductTemplates) {
       return result;
     }
 
     for (const entry of inputData) {
-      // console.log(entry);
       if (entry.type === 'submenu' && this.checkAllProductTemplates && entry.checked) {
         result.push(entry.id.toString());
       }
       if (entry.type === 'chapter') {
         result.push(entry.id.toString());
       }
-      // console.log('sample', entry);
       if (entry.type === 'sample' && this.checkAllSamples && entry.checked) {
-        // console.log('sample', entry);
         result.push(entry.id.toString());
       }
 
@@ -56,7 +50,6 @@ export class ProduktvorlagenController extends AbstractController {
         result = result.concat(this.getCheckedKeys(entry.subMenuEntries));
       }
     }
-    // console.log('getCheckedKeys', result);
 
     return result || [];
   }

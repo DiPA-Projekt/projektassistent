@@ -224,8 +224,6 @@ export class ProduktvorlagenComponent
   }
 
   public render(): JSX.Element {
-    // console.log('render');
-
     return (
       <Form onFinish={this.handleSubmit.bind(this)}>
         <Content ctrl={this.ctrl} />

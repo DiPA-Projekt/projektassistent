@@ -1,9 +1,8 @@
 import { Anchor } from 'antd';
 import React from 'react';
 
-import { MenuEntry } from '@dipa-projekt/projektassistent-openapi';
-
-import { menuEntryFound } from '../content/component';
+import { PageEntry } from '@dipa-projekt/projektassistent-openapi';
+import { pageEntryFound } from '../content/component';
 
 const handleClick = (e: MouseEvent) => {
   e.preventDefault();
@@ -13,18 +12,15 @@ export function AnchorList(): JSX.Element {
   return (
     <Anchor affix={false} onClick={(e) => handleClick(e.nativeEvent)}>
       <h3 style={{ paddingLeft: '16px' }}>Seitenübersicht</h3>
-      <Anchor.Link href={`#${menuEntryFound?.menuEntry?.id}`} title={menuEntryFound?.menuEntry?.displayName}>
-        {menuEntryFound?.depth >= 3 &&
-          menuEntryFound.menuEntry.subMenuEntries?.map((productChild: MenuEntry) => {
-            return (
-              <Anchor.Link
-                key={productChild.id.toString()}
-                href={`#${productChild.id}`}
-                title={productChild.displayName}
-              />
-            );
-          })}
-      </Anchor.Link>
+      <>
+        {pageEntryFound && (
+          <Anchor.Link href={`#${pageEntryFound?.id}`} title={pageEntryFound?.header}>
+            {pageEntryFound.subPageEntries?.map((productChild: PageEntry) => {
+              return <Anchor.Link key={productChild.id} href={`#${productChild.id}`} title={productChild.header} />;
+            })}
+          </Anchor.Link>
+        )}
+      </>
     </Anchor>
   );
 }
