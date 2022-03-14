@@ -1,3 +1,4 @@
+import { MenuEntry } from '@dipa-projekt/projektassistent-openapi';
 import { AbstractController } from '@leanup/lib/components/generic';
 import { ProjekthandbuchService } from '../../../../services/projekthandbuch/service';
 import { DI } from '@leanup/lib/helpers/injector';
@@ -5,15 +6,7 @@ import { ProductsNavigationController } from './products/controller';
 import { TailoringNavigationController } from './tailoring/controller';
 import { RolesNavigationController } from './roles/controller';
 import { ProcessNavigationController } from './processes/controller';
-
-// Tiny helper interface
-interface MenuEntry {
-  id: string;
-  parentId: string;
-  displayName: string;
-  displayIcon?: string;
-  subMenuEntries: MenuEntry[];
-}
+import { findIdInMenuEntry } from '../../../../shares/utils';
 
 export class NavigationController extends AbstractController {
   public readonly projekthandbuchService: ProjekthandbuchService = DI.get<ProjekthandbuchService>('Projekthandbuch');
@@ -43,22 +36,8 @@ export class NavigationController extends AbstractController {
   }
 
   public onRouteChanged(menuEntryId: string): void {
-    function findId(id, arr) {
-      return arr.reduce((a, item) => {
-        if (a) {
-          return a;
-        }
-        if (item.id === id) {
-          return item;
-        }
-        if (item.subMenuEntries) {
-          return findId(id, item.subMenuEntries);
-        }
-      }, null);
-    }
-
     this.menuEntries.forEach((menu) => {
-      const foundMenuEntry = findId(menuEntryId, menu.entries) as MenuEntry;
+      const foundMenuEntry = findIdInMenuEntry(menuEntryId, menu.entries) as MenuEntry;
       if (foundMenuEntry) {
         switch (menu.title) {
           case 'products':

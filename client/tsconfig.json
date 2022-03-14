@@ -7,7 +7,7 @@
     "preserveConstEnums": true,
     "sourceMap": true,
     "moduleResolution": "node",
-    "lib": ["es2017", "dom"],
+    "lib": ["es2019", "dom"],
     "types": ["mocha", "node", "react", "react-dom"],
     "typeRoots": ["node_modules/@types", "src/types"],
     "noUnusedLocals": true,
@@ -26,7 +26,6 @@
     "jsxFactory": "React.createElement",
     "jsxFragmentFactory": "React.Fragment"
   },
-//  "files": ["src/types/react-xml-parser.d.ts"],
   "include": ["src/**/*", "tests/**/*", "node_modules/@dipa-projekt/**/*", "node_modules/@leanup/**/*"],
   "exclude": ["node_modules/@leanup/**/template/**/*"]
 }

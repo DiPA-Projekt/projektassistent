@@ -41,12 +41,12 @@ export class ProjekttypvarianteController extends AbstractController {
               '/Projekttypvariante'
           )
           .then((response) => {
-            const jsonDataFromXml = new XMLParser().parseFromString(response.data, 'application/xml') as Document;
-
+            const jsonDataFromXml = new XMLParser().parseFromString(response.data);
             const projectTypeVariants: ProjectTypeVariant[] = jsonDataFromXml
               .getElementsByTagName('Projekttypvariante')
               .map((variante) => {
-                return variante.attributes as ProjectTypeVariant;
+                const currentAttributes = variante.attributes;
+                return { id: currentAttributes.id, name: currentAttributes.name };
               });
 
             this.projectTypeVariants = [];
@@ -67,8 +67,8 @@ export class ProjekttypvarianteController extends AbstractController {
             });
 
             this.projekthandbuchService.setProjectTypeVariantsData(projectTypeVariants);
-          });
-        // .catch((e) => 'obligatory catch');
+          })
+          .catch(() => 'obligatory catch');
 
         this.onUpdate();
       });
@@ -91,7 +91,7 @@ export class ProjekttypvarianteController extends AbstractController {
     axios
       .get(url)
       .then((response) => {
-        const jsonDataFromXml = new XMLParser().parseFromString(response.data, 'application/xml') as Document;
+        const jsonDataFromXml = new XMLParser().parseFromString(response.data);
 
         const projectType: ProjectType = jsonDataFromXml.getElementsByTagName('ProjekttypRef')[0]
           ?.attributes as ProjectType;
@@ -125,7 +125,7 @@ export class ProjekttypvarianteController extends AbstractController {
           projectTypeId
       )
       .then((response) => {
-        const jsonDataFromXml = new XMLParser().parseFromString(response.data, 'application/xml') as Document;
+        const jsonDataFromXml = new XMLParser().parseFromString(response.data);
 
         const projectFeatures: ProjectFeature[] = jsonDataFromXml
           .getElementsByTagName('ProjektmerkmalRef')

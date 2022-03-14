@@ -6,8 +6,6 @@ import { GenericComponent } from '@leanup/lib/components/generic';
 import { ReactComponent } from '@leanup/lib/components/react';
 
 import { ModellVarianteController } from './controller';
-import axios from 'axios';
-import XMLParser from 'react-xml-parser';
 import { Subscription } from 'rxjs';
 
 const { Option } = Select;
@@ -32,7 +30,7 @@ export class ModellVarianteComponent
   public componentDidMount(): void {
     this.modelVariantsSubscription = this.ctrl.projekthandbuchService
       .getModelVariantsData()
-      .subscribe((modelVariants: any) => {
+      .subscribe((modelVariants: ModelVariant[]) => {
         this.ctrl.modelVariants = modelVariants;
         this.setState({ modelVariants: modelVariants });
       });

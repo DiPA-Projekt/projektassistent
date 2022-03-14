@@ -3,13 +3,11 @@ import React from 'react';
 import { Redirect, Route, Switch, withRouter } from 'react-router';
 import { Link } from 'react-router-dom';
 
-import { MenuEntry } from '@dipa-projekt/projektassistent-openapi';
 import { GenericComponent } from '@leanup/lib/components/generic';
 import { ReactComponent } from '@leanup/lib/components/react';
 
 import { ProjekthandbuchController } from './controller';
 import { DocumentationComponent } from './documentation/component';
-import { NavigationController } from './documentation/navigation/controller';
 import { ProduktvorlagenComponent } from './produktvorlagen/component';
 import { ProjektComponent } from './projekt/component';
 
@@ -21,16 +19,16 @@ const breadcrumbNameMap: { [key: string]: string } = {
   '/projekthandbuch/dokumentation': 'Dokumentation',
 };
 
-function createBreadcrumbMap(menuItems: MenuEntry[]) {
-  menuItems.map((menuItem: MenuEntry) => {
-    const position = `/projekthandbuch/dokumentation/${menuItem.id}`;
-    breadcrumbNameMap[position] = menuItem.displayName;
-
-    if (menuItem.subMenuEntries?.length) {
-      createBreadcrumbMap(menuItem.subMenuEntries);
-    }
-  });
-}
+// function createBreadcrumbMap(menuItems: MenuEntry[]) {
+//   menuItems.map((menuItem: MenuEntry) => {
+//     const position = `/projekthandbuch/dokumentation/${menuItem.id}`;
+//     breadcrumbNameMap[position] = menuItem.displayName;
+//
+//     if (menuItem.subMenuEntries?.length) {
+//       createBreadcrumbMap(menuItem.subMenuEntries);
+//     }
+//   });
+// }
 
 function setBreadcrumbNameMap() {
   // const ctrl2: NavigationController = new NavigationController();

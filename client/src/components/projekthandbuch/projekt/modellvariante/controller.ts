@@ -33,12 +33,13 @@ export class ModellVarianteController extends AbstractController {
     axios
       .get('https://vmxt-api.vom-dach.de/V-Modellmetamodell/mm_2021/V-Modellvariante')
       .then((response) => {
-        const jsonDataFromXml = new XMLParser().parseFromString(response.data, 'application/xml') as Document;
+        const jsonDataFromXml = new XMLParser().parseFromString(response.data);
 
         const modelVariants: ModelVariant[] = jsonDataFromXml
           .getElementsByTagName('V-Modellvariante')
           .map((variante) => {
-            return variante.attributes as ModelVariant;
+            const currentAttributes = variante.attributes;
+            return { id: currentAttributes.id, name: currentAttributes.name };
           });
 
         this.modelVariants = modelVariants;

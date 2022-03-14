@@ -21,7 +21,7 @@ import {
 import { NavigationController } from './controller';
 import { withRouter } from 'react-router';
 
-import { MenuEntry } from '../../../../../openapi';
+import { MenuEntry } from '@dipa-projekt/projektassistent-openapi';
 import { Subscription } from 'rxjs';
 
 const { Sider } = Layout;
@@ -125,7 +125,7 @@ export class NavigationComponent extends ReactComponent<unknown, NavigationContr
   }
 
   public componentDidMount(): void {
-    this.ctrl.getData().then((values) => {
+    this.ctrl.getData().then(() => {
       // this.ctrl.getMenuEntries();
       console.log('componentDidMount', this.ctrl.getMenuEntries());
 
@@ -145,7 +145,7 @@ export class NavigationComponent extends ReactComponent<unknown, NavigationContr
     this.ctrl.onDestroy();
   }
 
-  public componentDidUpdate(prevProps): void {
+  public componentDidUpdate(prevProps: { location: any }): void {
     if (this.props.location !== prevProps.location) {
       this.ctrl.onRouteChanged(this.props.match.params.id);
     }

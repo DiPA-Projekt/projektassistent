@@ -7,21 +7,10 @@ import XMLParser from 'react-xml-parser';
 
 import { Subscription } from 'rxjs';
 import { DI } from '@leanup/lib/helpers/injector';
-import { PageEntry } from '../../../../../../openapi';
-
-// Tiny helper interface
-interface MenuEntry {
-  id: string;
-  parentId: string;
-  displayName: string;
-  displayIcon?: string;
-  subMenuEntries: MenuEntry[];
-}
+import { MenuEntry, ProjectFeature } from '@dipa-projekt/projektassistent-openapi';
 
 export class ProcessNavigationController extends AbstractController {
   public readonly projekthandbuchService: ProjekthandbuchService = DI.get<ProjekthandbuchService>('Projekthandbuch');
-
-  public collapsed = false;
 
   public state = { navigation: [] };
 
@@ -35,9 +24,9 @@ export class ProcessNavigationController extends AbstractController {
   private modelVariantsId = '';
   private projectTypeId = '';
   private projectTypeVariantId = '';
-  private projectFeatures = [];
+  private projectFeatures: ProjectFeature[] = [];
 
-  private idCounter = 3000;
+  // private idCounter = 3000;
 
   public onInit(): void {
     this.metaModelVariantSubscription = this.projekthandbuchService
@@ -58,7 +47,7 @@ export class ProcessNavigationController extends AbstractController {
 
     this.projectFeaturesSubscription = this.projekthandbuchService
       .getProjectFeatureValues()
-      .subscribe((projectFeatures: []) => {
+      .subscribe((projectFeatures: ProjectFeature[]) => {
         this.projectFeatures = projectFeatures;
       });
 
@@ -87,7 +76,7 @@ export class ProcessNavigationController extends AbstractController {
     // console.log(urlReferenceProcesses);
 
     return axios.get(urlReferenceProcesses).then((response) => {
-      const jsonDataFromXml = new XMLParser().parseFromString(response.data, 'application/xml') as Document;
+      const jsonDataFromXml = new XMLParser().parseFromString(response.data);
 
       const navigation: MenuEntry[] = jsonDataFromXml
         .getElementsByTagName('Entscheidungspunkt')
@@ -128,40 +117,14 @@ export class ProcessNavigationController extends AbstractController {
     this.projectFeaturesSubscription.unsubscribe();
   }
 
-  public toggleCollapse(): void {
-    this.collapsed = !this.collapsed;
-  }
-
-  public onRouteChanged(menuEntryId: string): PageEntry {
-    function findId(id, arr) {
-      return arr.reduce((a, item) => {
-        if (a) {
-          return a;
-        }
-        if (item.id === id) {
-          return item;
-        }
-        if (item.subMenuEntries) {
-          return findId(id, item.subMenuEntries);
-        }
-      }, null);
-    }
-
-    const pageEntry = findId(menuEntryId, this.menuEntries);
-    if (pageEntry) {
-      // this.projekthandbuchService.setDisciplineId(pageEntry?.parentId);
-      this.projekthandbuchService.setDecisionPointId(pageEntry?.id);
-    }
-  }
-
   public getMenuEntries(): MenuEntry[] {
-    return this.menuEntries as MenuEntry[];
+    return this.menuEntries;
   }
 
   private getProjectFeaturesString(): string {
     return this.projectFeatures
-      .map((feature) => {
-        return feature.id + '=' + feature.values.selectedValue;
+      .map((feature: ProjectFeature) => {
+        return `${feature.id}=${feature.values?.selectedValue}`;
       })
       .join('&');
   }

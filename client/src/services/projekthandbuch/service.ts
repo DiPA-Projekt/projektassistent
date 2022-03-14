@@ -1,8 +1,14 @@
 import { BehaviorSubject, Observable } from 'rxjs';
+import { MenuEntry, ModelVariant, ProjectFeature } from '@dipa-projekt/projektassistent-openapi';
+
+interface NavigationMenuEntry {
+  title: string;
+  entries: MenuEntry[];
+}
 
 export class ProjekthandbuchService {
   public metaModelId = new BehaviorSubject<string>('');
-  public modelVariantsData = new BehaviorSubject<any[]>([]);
+  public modelVariantsData = new BehaviorSubject<ModelVariant[]>([]);
   public modelVariantsId = new BehaviorSubject<string>('');
   public projectTypeVariantsData = new BehaviorSubject<any[]>([]);
   public projectTypeVariantId = new BehaviorSubject<string>('');
@@ -14,12 +20,12 @@ export class ProjekthandbuchService {
   public decisionPointId = new BehaviorSubject<string>('');
   public processBuildingBlockId = new BehaviorSubject<string>('');
 
-  public projectFeaturesDataFromProjectType = new BehaviorSubject<any[]>([]);
-  public projectFeaturesDataFromProjectTypeVariant = new BehaviorSubject<any[]>([]);
+  public projectFeaturesDataFromProjectType = new BehaviorSubject<ProjectFeature[]>([]);
+  public projectFeaturesDataFromProjectTypeVariant = new BehaviorSubject<ProjectFeature[]>([]);
 
-  public projectFeatureValues = new BehaviorSubject<any[]>([]);
+  public projectFeatureValues = new BehaviorSubject<ProjectFeature[]>([]);
 
-  public navigationData = new BehaviorSubject<any[]>([]);
+  public navigationData = new BehaviorSubject<NavigationMenuEntry[]>([]);
 
   public getMetaModelId(): Observable<string> {
     return this.metaModelId;
@@ -29,11 +35,11 @@ export class ProjekthandbuchService {
     this.metaModelId.next(value);
   }
 
-  public getModelVariantsData(): Observable<any> {
+  public getModelVariantsData(): Observable<ModelVariant[]> {
     return this.modelVariantsData;
   }
 
-  public setModelVariantsData(value: any[]): void {
+  public setModelVariantsData(value: ModelVariant[]): void {
     this.modelVariantsData.next(value);
   }
 
@@ -109,31 +115,31 @@ export class ProjekthandbuchService {
     this.processBuildingBlockId.next(value);
   }
 
-  public getProjectFeaturesDataFromProjectType(): Observable<any> {
+  public getProjectFeaturesDataFromProjectType(): Observable<ProjectFeature[]> {
     return this.projectFeaturesDataFromProjectType;
   }
 
-  public setProjectFeaturesDataFromProjectType(value: any[]): void {
+  public setProjectFeaturesDataFromProjectType(value: ProjectFeature[]): void {
     this.projectFeaturesDataFromProjectType.next(value);
   }
 
-  public getProjectFeaturesDataFromProjectTypeVariant(): Observable<any> {
+  public getProjectFeaturesDataFromProjectTypeVariant(): Observable<ProjectFeature[]> {
     return this.projectFeaturesDataFromProjectTypeVariant;
   }
 
-  public setProjectFeaturesDataFromProjectTypeVariant(value: any[]): void {
+  public setProjectFeaturesDataFromProjectTypeVariant(value: ProjectFeature[]): void {
     this.projectFeaturesDataFromProjectTypeVariant.next(value);
   }
 
-  public getProjectFeatureValues(): Observable<any> {
+  public getProjectFeatureValues(): Observable<ProjectFeature[]> {
     return this.projectFeatureValues;
   }
 
-  public setProjectFeatureValues(value: any[]): void {
+  public setProjectFeatureValues(value: ProjectFeature[]): void {
     this.projectFeatureValues.next(value);
   }
 
-  public getNavigationData(): Observable<any> {
+  public getNavigationData(): Observable<NavigationMenuEntry[]> {
     return this.navigationData;
   }
 

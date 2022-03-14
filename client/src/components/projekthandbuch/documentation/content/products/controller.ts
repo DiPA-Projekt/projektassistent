@@ -1,6 +1,6 @@
 import { AbstractController } from '@leanup/lib/components/generic';
 
-import { PageEntry } from '../../../../../../openapi';
+import { PageEntry, TableEntry, ProjectFeature } from '@dipa-projekt/projektassistent-openapi';
 import { Subscription } from 'rxjs';
 import axios from 'axios';
 //xml file reader
@@ -11,9 +11,6 @@ import { replaceUmlaute, decodeXml } from '../../../../../shares/utils';
 
 export class ProductContentController extends AbstractController {
   public readonly projekthandbuchService: ProjekthandbuchService = DI.get<ProjekthandbuchService>('Projekthandbuch');
-  public collapsed = false;
-
-  public pageEntry: PageEntry | undefined;
 
   private metaModelVariantSubscription: Subscription = new Subscription();
   private projectTypeSubscription: Subscription = new Subscription();
@@ -28,24 +25,14 @@ export class ProductContentController extends AbstractController {
   private projectTypeVariantId = '';
   private disciplineId = '';
   private productId = '';
-  private projectFeatures = [];
-
-  private menuEntries = [];
+  private projectFeatures: ProjectFeature[] = [];
 
   public onInit(): void {
-    const paramId = this.pageEntry?.id || '1';
-
-    this.pageEntry = this.getPageEntryContent(paramId);
-
     this.metaModelVariantSubscription = this.projekthandbuchService
       .getModelVariantId()
       .subscribe((modelVariantsId: string) => {
         this.modelVariantsId = modelVariantsId;
       });
-
-    this.navigationSubscription = this.projekthandbuchService.getNavigationData().subscribe((menuEntries: []) => {
-      this.menuEntries = menuEntries;
-    });
 
     this.projectTypeSubscription = this.projekthandbuchService.getProjectTypeId().subscribe((projectTypeId: string) => {
       this.projectTypeId = projectTypeId;
@@ -69,12 +56,12 @@ export class ProductContentController extends AbstractController {
 
     this.projectFeaturesSubscription = this.projekthandbuchService
       .getProjectFeatureValues()
-      .subscribe((projectFeatures: []) => {
+      .subscribe((projectFeatures: ProjectFeature[]) => {
         this.projectFeatures = projectFeatures;
       });
   }
 
-  public async getContent(): Promise<any> {
+  public async getContent(): Promise<PageEntry> {
     const url =
       'https://vmxt-api.vom-dach.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
       this.modelVariantsId +
@@ -89,27 +76,28 @@ export class ProductContentController extends AbstractController {
       '?' +
       this.getProjectFeaturesString();
 
+    console.log(url);
+
     let idCounter = 2000;
 
+    if (!this.disciplineId) {
+      // TODO: nicht unbedingt reject
+      return Promise.reject(Error('no discipline id set'));
+    }
+
     return axios.get(url).then((response) => {
-      const jsonDataFromXml = new XMLParser().parseFromString(
-        replaceUmlaute(response.data),
-        'application/xml'
-      ) as Document;
+      console.log(response.data);
+      const jsonDataFromXml = new XMLParser().parseFromString(replaceUmlaute(response.data));
 
-      const sinnUndZweck: any = decodeXml(jsonDataFromXml.getElementsByTagName('Sinn_und_Zweck')[0]?.value);
-      const rolleVerantwortetProduktRef: any = jsonDataFromXml.getElementsByTagName('RolleVerantwortetProduktRef');
-      const rolleWirktMitBeiProduktRef: any = jsonDataFromXml.getElementsByTagName('RolleWirktMitBeiProduktRef');
-      const produktZuEntscheidungspunktRef: any = jsonDataFromXml.getElementsByTagName(
-        'ProduktZuEntscheidungspunktRef'
-      );
-      const themaZuProduktRef: any = jsonDataFromXml.getElementsByTagName('ThemaZuProduktRef');
-      const aktivitaetRef: any = jsonDataFromXml.getElementsByTagName('AktivitaetZuProduktRef');
-      const externeKopiervorlageZuProduktRef: any = jsonDataFromXml.getElementsByTagName(
-        'ExterneKopiervorlageZuProduktRef'
-      );
+      const sinnUndZweck = decodeXml(jsonDataFromXml.getElementsByTagName('Sinn_und_Zweck')[0]?.value);
+      const rolleVerantwortetProduktRef = jsonDataFromXml.getElementsByTagName('RolleVerantwortetProduktRef');
+      const rolleWirktMitBeiProduktRef = jsonDataFromXml.getElementsByTagName('RolleWirktMitBeiProduktRef');
+      const produktZuEntscheidungspunktRef = jsonDataFromXml.getElementsByTagName('ProduktZuEntscheidungspunktRef');
+      const themaZuProduktRef = jsonDataFromXml.getElementsByTagName('ThemaZuProduktRef');
+      const aktivitaetRef = jsonDataFromXml.getElementsByTagName('AktivitaetZuProduktRef');
+      const externeKopiervorlageZuProduktRef = jsonDataFromXml.getElementsByTagName('ExterneKopiervorlageZuProduktRef');
 
-      const tableEntries = [];
+      const tableEntries: TableEntry[] = [];
       // const subPageEntries = [];
 
       //////////////////////////////////////////////
@@ -117,7 +105,7 @@ export class ProductContentController extends AbstractController {
       const rolesInCharge = rolleVerantwortetProduktRef.flatMap((entry) => {
         return entry.getElementsByTagName('RolleRef').map((roleRef) => {
           return {
-            menuEntryId: roleRef.attributes.id,
+            id: roleRef.attributes.id,
             title: roleRef.attributes.name,
           };
         });
@@ -125,7 +113,7 @@ export class ProductContentController extends AbstractController {
 
       if (rolesInCharge.length > 0) {
         tableEntries.push({
-          id: idCounter++,
+          id: (idCounter++).toString(),
           descriptionEntry: 'Verantwortlich', //rolleVerantwortetProduktRef[0]?.attributes.name,
           dataEntries: rolesInCharge,
         });
@@ -136,7 +124,7 @@ export class ProductContentController extends AbstractController {
       const rolesTakePart = rolleWirktMitBeiProduktRef.flatMap((entry) => {
         return entry.getElementsByTagName('RolleRef').map((roleRef) => {
           return {
-            menuEntryId: roleRef.attributes.id,
+            id: roleRef.attributes.id,
             title: roleRef.attributes.name,
           };
         });
@@ -144,7 +132,7 @@ export class ProductContentController extends AbstractController {
 
       if (rolesTakePart.length > 0) {
         tableEntries.push({
-          id: idCounter++,
+          id: (idCounter++).toString(),
           descriptionEntry: 'Mitwirkend', //rolleWirktMitBeiProduktRef[0]?.attributes.name,
           dataEntries: rolesTakePart,
         });
@@ -156,7 +144,7 @@ export class ProductContentController extends AbstractController {
         return entry.getElementsByTagName('AktivitaetRef').map((activityRef) => {
           return {
             id: activityRef.attributes.id,
-            menuEntryId: activityRef.attributes.id,
+            // menuEntryId: activityRef.attributes.id,
             title: activityRef.attributes.name,
             suffix: '(Aktivität)',
           };
@@ -166,7 +154,8 @@ export class ProductContentController extends AbstractController {
       const products = externeKopiervorlageZuProduktRef.flatMap((entry) => {
         return entry.getElementsByTagName('ExterneKopiervorlageRef').map((productRef) => {
           return {
-            menuEntryId: productRef.attributes.id,
+            id: productRef.attributes.id,
+            // menuEntryId: productRef.attributes.id,
             title: productRef.attributes.name,
             suffix: '(Externe Kopiervorlage)',
           };
@@ -178,7 +167,7 @@ export class ProductContentController extends AbstractController {
 
       if (tools.length > 0) {
         tableEntries.push({
-          id: idCounter++,
+          id: (idCounter++).toString(),
           descriptionEntry: 'Hilfsmittel', //produktZuEntscheidungspunktRef[0]?.attributes.name,
           dataEntries: tools,
         });
@@ -189,7 +178,7 @@ export class ProductContentController extends AbstractController {
       const decisionPoints = produktZuEntscheidungspunktRef.flatMap((entry) => {
         return entry.getElementsByTagName('EntscheidungspunktRef').map((decisionPointRef) => {
           return {
-            menuEntryId: decisionPointRef.attributes.id,
+            id: decisionPointRef.attributes.id,
             title: decisionPointRef.attributes.name,
           };
         });
@@ -197,7 +186,7 @@ export class ProductContentController extends AbstractController {
 
       if (decisionPoints.length > 0) {
         tableEntries.push({
-          id: idCounter++,
+          id: (idCounter++).toString(),
           descriptionEntry: 'Entscheidungsrelevant bei', //produktZuEntscheidungspunktRef[0]?.attributes.name,
           dataEntries: decisionPoints,
         });
@@ -209,8 +198,8 @@ export class ProductContentController extends AbstractController {
       const subPageEntries = themaZuProduktRef.flatMap((entry) => {
         return entry.getElementsByTagName('ThemaRef').map((subjectRef) => {
           return {
-            menuEntryId: subjectRef.attributes.id,
-            displayName: subjectRef.attributes.name,
+            id: subjectRef.attributes.id,
+            header: subjectRef.attributes.name,
           };
         });
       });
@@ -219,26 +208,19 @@ export class ProductContentController extends AbstractController {
       // +++++++++++++++++++++++++++++++++++++++++++
       //////////////////////////////////////////////
 
-      this.pageEntry = {
+      return {
         id: jsonDataFromXml.attributes.id,
-        menuEntryId: jsonDataFromXml.attributes.id,
         header: jsonDataFromXml.attributes.name,
         descriptionText: sinnUndZweck,
         tableEntries: tableEntries,
         subPageEntries: subPageEntries,
       };
 
-      return this.pageEntry;
-
-      //
-      // TODO: check if needed
-      // this.projekthandbuchService.setNavigationData(this.menuEntries);
-
       // this.onUpdate();
     });
   }
 
-  public async getThemaContent(themaId: string): Promise<string | HTMLCollectionOf<Element>> {
+  public async getThemaContent(themaId: string): Promise<string> {
     const urlThema =
       'https://vmxt-api.vom-dach.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
       this.modelVariantsId +
@@ -256,7 +238,7 @@ export class ProductContentController extends AbstractController {
       this.getProjectFeaturesString();
 
     return axios.get(urlThema).then((response) => {
-      const jsonThemaDataFromXml = new XMLParser().parseFromString(response.data, 'application/xml') as Document;
+      const jsonThemaDataFromXml = new XMLParser().parseFromString(response.data);
 
       const description = jsonThemaDataFromXml.getElementsByTagName('Beschreibung')[0]?.value;
       return decodeXml(description);
@@ -273,47 +255,10 @@ export class ProductContentController extends AbstractController {
     this.navigationSubscription.unsubscribe();
   }
 
-  public toggleCollapse(): void {
-    this.collapsed = !this.collapsed;
-  }
-
-  public getPageEntryContent2(): PageEntry {
-    return this.pageEntry;
-  }
-
-  public getPageEntryContent(menuEntryId: string): PageEntry {
-    // console.log('asfsadfasdf');
-
-    function findId(id, arr) {
-      return arr.reduce((a, item) => {
-        if (a) {
-          return a;
-        }
-        if (item.id === id) {
-          return item;
-        }
-        if (item.subMenuEntries) {
-          return findId(id, item.subMenuEntries);
-        }
-      }, null);
-    }
-
-    // this.projectTypeSubscription = this.projekthandbuchService.getNavigationData().subscribe((menuEntries: []) => {
-    // menuEntries = menuEntries;
-
-    // });
-
-    return findId(menuEntryId, this.menuEntries);
-
-    // const { id } = useParams();
-    // const pageEntry = PAGES_DATA.find((item) => item.menuEntryId === menuEntryId);
-    // return pageEntry as PageEntry;
-  }
-
   private getProjectFeaturesString(): string {
     return this.projectFeatures
-      .map((feature) => {
-        return feature.id + '=' + feature.values.selectedValue;
+      .map((feature: ProjectFeature) => {
+        return `${feature.id}=${feature.values?.selectedValue}`;
       })
       .join('&');
   }

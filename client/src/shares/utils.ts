@@ -1,4 +1,5 @@
 import he from 'he';
+import { MenuEntry } from '@dipa-projekt/projektassistent-openapi';
 
 export function typeIt<T>(json: Object): T {
   const typed = JSON.parse(JSON.stringify(json)) as { default: T };
@@ -32,4 +33,19 @@ export function replaceUmlaute(html: string): string {
 
 export function decodeXml(xml: string): string {
   return xml ? he.decode(he.decode(xml)) : '';
+}
+
+export function findIdInMenuEntry(id: string, arr: MenuEntry[]): MenuEntry | null {
+  return arr.reduce<MenuEntry>((prev: MenuEntry, current: MenuEntry) => {
+    // console.log('find', prev, current);
+    if (prev) {
+      return prev;
+    }
+    if (current.id === id) {
+      return current;
+    }
+    if (current.subMenuEntries) {
+      return findIdInMenuEntry(id, current.subMenuEntries);
+    }
+  }, null);
 }
