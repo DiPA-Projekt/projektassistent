@@ -70,7 +70,7 @@ function renderSwitch(param: string) {
 function getTableEntriesList(inputData: DataEntry[]): JSX.Element {
   const entries: JSX.Element[] = [];
 
-  inputData.map(entryItem => {
+  inputData.map((entryItem) => {
     // if (entryItem?.type === 'bold' && entryItem.id) {
     //   entries.push(
     //     <div key={`table-item-${index}`}>
