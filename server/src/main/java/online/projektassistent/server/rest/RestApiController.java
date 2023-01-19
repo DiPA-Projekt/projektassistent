@@ -31,7 +31,11 @@ public @interface RestApiController {
      * @return the suggested component name, if any (or empty String otherwise)
      * @since 4.0.1
      */
+    @RequestMapping("/test")
     @AliasFor(annotation = Controller.class)
-    String value() default "";
+    String test() default "";
 
+    @RequestMapping("/example")
+    @AliasFor(annotation = Controller.class)
+    String generateExample() default "";
 }
