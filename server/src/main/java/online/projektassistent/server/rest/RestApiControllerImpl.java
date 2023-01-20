@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -25,15 +26,24 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFHyperlinkRun;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
+import org.apache.xmlbeans.XmlCursor;
 import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STOnOff;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSimpleField;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.ResourceUtils;
 
 
 @Controller
 public class RestApiControllerImpl implements RestApiController {
+
+    public static final String CONTENT = "Das ist Blindtext blub blub blub. Das ist Blindtext blub blub blub. Das ist Blindtext blub blub blub. Das ist Blindtext blub blub blub."
+            + " Das ist Blindtext blub blub blub. Das ist Blindtext blub blub blub. Das ist Blindtext blub blub blub. Das ist Blindtext blub blub blub."
+            + " Das ist Blindtext blub blub blub.";
+    public static final String STYLE_HEADER = "berschrift1";
+    public static final String STYLE_BODY = "Textkrper";
+    public static final String COLOR_CHAPTERS = "0000CD";
 
     public String generateExample() {
         try (XWPFDocument doc = new XWPFDocument()) {
@@ -138,14 +148,39 @@ public class RestApiControllerImpl implements RestApiController {
 
     @Override
     public String test() {
-        try (XWPFDocument doc = new XWPFDocument(new FileInputStream(ResourceUtils.getFile("classpath:project_template.docx")))) {
+        try (XWPFDocument doc = new XWPFDocument(new FileInputStream(ResourceUtils.getFile("classpath:project_template2.docx")))) {
             Map<String, String> dataParams = new HashMap<>();
             dataParams.put("{product.name}", "Geheimdokument");
             dataParams.put("{project.name}", "Reise zum Mars");
             dataParams.put("{responsibles}", String.join("; ", List.of("Huber", "Müller", "Sepp")));
             dataParams.put("{date}", SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.SHORT, SimpleDateFormat.LONG, Locale.GERMANY).format(new Date()));
 
+            List<Pair<String, String>> chapters = new ArrayList<>();
+            chapters.add(Pair.of("Erstes Kapitel", CONTENT));
+            chapters.add(Pair.of("Zweites Kapitel", CONTENT));
+            chapters.add(Pair.of("Drittes Kapitel", CONTENT));
+
             replacePlaceholdersInDocument(dataParams, doc);
+
+            Optional<XWPFRun> firstChapter = doc.getParagraphs().stream().flatMap(paragraph -> paragraph.getRuns().stream())
+                    .filter(run -> "{FIRST_CHAPTER}".equals(run.text()))
+                    .findFirst();
+
+            if (firstChapter.isPresent()) {
+                XWPFParagraph para = (XWPFParagraph) firstChapter.get().getParent();
+                XmlCursor cur = para.getCTP().newCursor();
+                cur.toNextSibling();
+
+                doc.removeBodyElement(doc.getPosOfParagraph(para));
+                //para.setNumID(numID);
+                //para.setStyle("Heading1");
+
+                XWPFDocument document = para.getDocument();
+                for (Pair<String, String> chapter : chapters) {
+                    createChapter(cur, document, chapter.getFirst(), chapter.getSecond());
+                    setCursorToNextStartToken(cur);
+                }
+            }
 
             createTableOfContents(doc);
 
@@ -156,6 +191,43 @@ public class RestApiControllerImpl implements RestApiController {
             throw new RuntimeException(e);
         }
         return "success";
+    }
+
+    private void createChapter(XmlCursor cur, XWPFDocument document, String title, String content) {
+
+        XWPFParagraph para = document.insertNewParagraph(cur);
+        para.setStyle(STYLE_HEADER);
+        XWPFRun run = para.createRun();
+        run.setText(title);
+        run.setStyle(STYLE_HEADER);
+
+        cur.toNextToken();
+        para = document.insertNewParagraph(cur);
+        para.setAlignment(ParagraphAlignment.BOTH);
+        para.setStyle(STYLE_BODY);
+
+        run = para.createRun();
+        run.setText(content);
+        run.setColor(COLOR_CHAPTERS);
+
+        cur.toNextToken();
+        para = document.insertNewParagraph(cur);
+        para.setAlignment(ParagraphAlignment.BOTH);
+        run = para.createRun();
+        run.setText("[Hier Ihren Text einfügen...]");
+
+        /*cur.toNextToken();
+        para = document.insertNewParagraph(cur);
+        run = para.createRun();
+        run.addBreak(BreakType.PAGE);*/
+    }
+
+    private XmlCursor setCursorToNextStartToken(XmlCursor cursor) {
+        cursor.toEndToken(); //Now we are at end of the XmlObject.
+        //There always must be a next start token.
+        while (cursor.hasNextToken() && cursor.toNextToken() != org.apache.xmlbeans.XmlCursor.TokenType.START) ;
+        //Now we are at the next start token and can insert new things here.
+        return cursor;
     }
 
     private void createTableOfContents(XWPFDocument doc) {
