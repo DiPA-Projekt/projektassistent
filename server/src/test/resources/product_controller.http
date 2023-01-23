@@ -1,0 +1,23 @@
+###
+POST http://localhost:9081/api/v1/test
+Content-Type: application/json
+
+{
+  "productName": "SHIELD Protocol",
+  "responsible": "die anderen",
+  "projectName": "SHIELD Initiative",
+  "participants": [
+    "Da Huaba",
+    "Da Seppe"
+  ],
+  "chapters": [
+    {
+      "title": "Erstes Kapitel",
+      "text": "Hier könnte ihre Werbung stehen..."
+    },
+    {
+      "title": "Zweites Kapitel",
+      "text": "Hier steht nur sinnloser Blindtext. Hier steht nur sinnloser Blindtext. Hier steht nur sinnloser Blindtext. Hier steht nur sinnloser Blindtext. Hier steht nur sinnloser Blindtext. Hier steht nur sinnloser Blindtext."
+    }
+  ]
+}

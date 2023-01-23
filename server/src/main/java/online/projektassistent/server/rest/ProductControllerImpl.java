@@ -3,9 +3,7 @@ package online.projektassistent.server.rest;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.annotation.Annotation;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -30,20 +28,23 @@ import org.apache.xmlbeans.XmlCursor;
 import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STOnOff;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSimpleField;
-import org.springframework.data.util.Pair;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.ResourceUtils;
 
+import online.projektassistent.server.model.Chapter;
+import online.projektassistent.server.model.Placeholders;
+import online.projektassistent.server.model.Product;
+
 
 @Controller
-public class RestApiControllerImpl implements RestApiController {
+public class ProductControllerImpl implements ProductController, Placeholders {
 
-    public static final String CONTENT = "Das ist Blindtext blub blub blub. Das ist Blindtext blub blub blub. Das ist Blindtext blub blub blub. Das ist Blindtext blub blub blub."
-            + " Das ist Blindtext blub blub blub. Das ist Blindtext blub blub blub. Das ist Blindtext blub blub blub. Das ist Blindtext blub blub blub."
-            + " Das ist Blindtext blub blub blub.";
+    public static final String PROJECT_TEMPLATE = "project_template2.docx";
     public static final String STYLE_HEADER = "berschrift1";
     public static final String STYLE_BODY = "Textkrper";
     public static final String COLOR_CHAPTERS = "0000CD";
+    public static final String INSERT_TEXT = "[Hier Ihren Text einfügen...]";
 
     public String generateExample() {
         try (XWPFDocument doc = new XWPFDocument()) {
@@ -147,23 +148,21 @@ public class RestApiControllerImpl implements RestApiController {
     }
 
     @Override
-    public String test() {
-        try (XWPFDocument doc = new XWPFDocument(new FileInputStream(ResourceUtils.getFile("classpath:project_template2.docx")))) {
+    public String test(@NonNull Product product) {
+        try (XWPFDocument doc = new XWPFDocument(new FileInputStream(ResourceUtils.getFile("classpath:" + PROJECT_TEMPLATE)))) {
             Map<String, String> dataParams = new HashMap<>();
-            dataParams.put("{product.name}", "Geheimdokument");
-            dataParams.put("{project.name}", "Reise zum Mars");
-            dataParams.put("{responsibles}", String.join("; ", List.of("Huber", "Müller", "Sepp")));
-            dataParams.put("{date}", SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.SHORT, SimpleDateFormat.LONG, Locale.GERMANY).format(new Date()));
+            dataParams.put(PRODUCT_NAME, product.getProductName());
+            dataParams.put(PROJECT_NAME, product.getProjectName());
+            dataParams.put(RESPONSIBLE, product.getResponsible());
+            dataParams.put(PARTICIPANTS, String.join("; ", product.getParticipants()));
+            dataParams.put(DATE, SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.SHORT, SimpleDateFormat.LONG, Locale.GERMANY).format(new Date()));
 
-            List<Pair<String, String>> chapters = new ArrayList<>();
-            chapters.add(Pair.of("Erstes Kapitel", CONTENT));
-            chapters.add(Pair.of("Zweites Kapitel", CONTENT));
-            chapters.add(Pair.of("Drittes Kapitel", CONTENT));
+            List<Chapter> chapters = product.getChapters();
 
             replacePlaceholdersInDocument(dataParams, doc);
 
             Optional<XWPFRun> firstChapter = doc.getParagraphs().stream().flatMap(paragraph -> paragraph.getRuns().stream())
-                    .filter(run -> "{FIRST_CHAPTER}".equals(run.text()))
+                    .filter(run -> FIRST_CHAPTER.equals(run.text()))
                     .findFirst();
 
             if (firstChapter.isPresent()) {
@@ -176,8 +175,8 @@ public class RestApiControllerImpl implements RestApiController {
                 //para.setStyle("Heading1");
 
                 XWPFDocument document = para.getDocument();
-                for (Pair<String, String> chapter : chapters) {
-                    createChapter(cur, document, chapter.getFirst(), chapter.getSecond());
+                for (Chapter chapter : chapters) {
+                    createChapter(cur, document, chapter.getTitle(), chapter.getText());
                     setCursorToNextStartToken(cur);
                 }
             }
@@ -214,7 +213,7 @@ public class RestApiControllerImpl implements RestApiController {
         para = document.insertNewParagraph(cur);
         para.setAlignment(ParagraphAlignment.BOTH);
         run = para.createRun();
-        run.setText("[Hier Ihren Text einfügen...]");
+        run.setText(INSERT_TEXT);
 
         /*cur.toNextToken();
         para = document.insertNewParagraph(cur);
@@ -232,7 +231,7 @@ public class RestApiControllerImpl implements RestApiController {
 
     private void createTableOfContents(XWPFDocument doc) {
         Optional<XWPFRun> tocRun = doc.getParagraphs().stream().flatMap(paragraph -> paragraph.getRuns().stream())
-                .filter(run -> "{TOC}".equals(run.text()))
+                .filter(run -> TOC.equals(run.text()))
                 .findFirst();
 
         if (tocRun.isPresent()) {
@@ -254,7 +253,6 @@ public class RestApiControllerImpl implements RestApiController {
     private void replacePlaceholdersInDocument(Map<String, String> dataParams, XWPFDocument document) {
         replacePlaceholdersInParagraphs(dataParams, document.getParagraphs());
         replacePlaceholderInTables(dataParams, document);
-
     }
 
     /**
@@ -285,17 +283,11 @@ public class RestApiControllerImpl implements RestApiController {
     private boolean textContainsPlaceholder(String text, Map.Entry<String, String> entry) {
         return Strings.isNotBlank(text)
                 && text.contains(entry.getKey())
-                && entry.getValue() != null
-                && !entry.getValue().isEmpty();
+                && entry.getValue() != null;
     }
 
     private void replaceText(XWPFRun run, String text, Map.Entry<String, String> entry) {
         text = text.replace(entry.getKey(), entry.getValue());
         run.setText(text, 0);
-    }
-
-    @Override
-    public Class<? extends Annotation> annotationType() {
-        return Controller.class;
     }
 }
