@@ -1,5 +1,6 @@
 package online.projektassistent.server.rest;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -28,6 +29,11 @@ import org.apache.xmlbeans.XmlCursor;
 import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STOnOff;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSimpleField;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.ResourceUtils;
@@ -148,7 +154,7 @@ public class ProductControllerImpl implements ProductController, Placeholders {
     }
 
     @Override
-    public String test(@NonNull Product product) {
+    public ResponseEntity<Resource> test(@NonNull Product product) {
         try (XWPFDocument doc = new XWPFDocument(new FileInputStream(ResourceUtils.getFile("classpath:" + PROJECT_TEMPLATE)))) {
             Map<String, String> dataParams = new HashMap<>();
             dataParams.put(PRODUCT_NAME, product.getProductName());
@@ -183,13 +189,27 @@ public class ProductControllerImpl implements ProductController, Placeholders {
 
             createTableOfContents(doc);
 
-            try (FileOutputStream out = new FileOutputStream("test.docx")) {
+            try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
                 doc.write(out);
+                byte[] productDoc = out.toByteArray();
+
+                HttpHeaders header = new HttpHeaders();
+                header.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=product.docx");
+                header.add("Cache-Control", "no-cache, no-store, must-revalidate");
+                header.add("Pragma", "no-cache");
+                header.add("Expires", "0");
+
+                ByteArrayResource resource = new ByteArrayResource(productDoc);
+
+                return ResponseEntity.ok()
+                        .headers(header)
+                        .contentLength(productDoc.length)
+                        .contentType(MediaType.parseMediaType("application/octet-stream"))
+                        .body(resource);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return "success";
     }
 
     private void createChapter(XmlCursor cur, XWPFDocument document, String title, String content) {

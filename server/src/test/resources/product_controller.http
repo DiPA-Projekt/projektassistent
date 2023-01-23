@@ -4,11 +4,11 @@ Content-Type: application/json
 
 {
   "productName": "SHIELD Protocol",
-  "responsible": "die anderen",
-  "projectName": "SHIELD Initiative",
+  "responsible": "SHIELD Initiative",
+  "projectName": "Avengers",
   "participants": [
-    "Da Huaba",
-    "Da Seppe"
+    "Nick Fury",
+    "Black Widow"
   ],
   "chapters": [
     {
