@@ -9,13 +9,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import online.projektassistent.server.model.Product;
+import online.projektassistent.server.model.SingleProduct;
 
 @RestApiController
 public interface ProductController {
 
-    @PostMapping("/test")
-    ResponseEntity<Resource> test(@RequestBody @Valid @NonNull Product product);
+    @PostMapping("/product")
+    ResponseEntity<Resource> product(@RequestBody @Valid @NonNull SingleProduct singleProduct);
 
     @GetMapping("/example")
     String generateExample();

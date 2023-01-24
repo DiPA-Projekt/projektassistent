@@ -47,7 +47,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import online.projektassistent.server.model.Chapter;
 import online.projektassistent.server.model.Placeholders;
-import online.projektassistent.server.model.Product;
+import online.projektassistent.server.model.SingleProduct;
 
 
 @Controller
@@ -161,64 +161,103 @@ public class ProductControllerImpl implements ProductController, Placeholders {
     }
 
     @Override
-    public ResponseEntity<Resource> test(@Valid @NonNull Product product) {
+    public ResponseEntity<Resource> product(@Valid @NonNull SingleProduct singleProduct) {
         try (XWPFDocument doc = new XWPFDocument(new FileInputStream(ResourceUtils.getFile("classpath:" + PROJECT_TEMPLATE)))) {
             Map<String, String> dataParams = new HashMap<>();
-            dataParams.put(PRODUCT_NAME, product.getProductName());
-            dataParams.put(PROJECT_NAME, product.getProjectName());
-            dataParams.put(RESPONSIBLE, product.getResponsible());
-            dataParams.put(PARTICIPANTS, String.join("; ", product.getParticipants()));
+            dataParams.put(PRODUCT_NAME, singleProduct.getProductName());
+            dataParams.put(PROJECT_NAME, singleProduct.getProjectName());
+            dataParams.put(RESPONSIBLE, singleProduct.getResponsible());
+            dataParams.put(PARTICIPANTS, String.join("; ", singleProduct.getParticipants()));
             dataParams.put(DATE, SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.SHORT, SimpleDateFormat.LONG, Locale.GERMANY).format(new Date()));
 
-            List<Chapter> chapters = product.getChapters();
+            List<Chapter> chapters = singleProduct.getChapters();
 
             replacePlaceholdersInDocument(dataParams, doc);
-
-            Optional<XWPFRun> firstChapter = doc.getParagraphs().stream().flatMap(paragraph -> paragraph.getRuns().stream())
-                    .filter(run -> FIRST_CHAPTER.equals(run.text()))
-                    .findFirst();
-
-            if (firstChapter.isPresent()) {
-                XWPFParagraph para = (XWPFParagraph) firstChapter.get().getParent();
-                XmlCursor cur = para.getCTP().newCursor();
-                cur.toNextSibling();
-
-                doc.removeBodyElement(doc.getPosOfParagraph(para));
-                //para.setNumID(numID);
-                //para.setStyle("Heading1");
-
-                XWPFDocument document = para.getDocument();
-                for (Chapter chapter : chapters) {
-                    createChapter(cur, document, chapter.getTitle(), chapter.getText());
-                    setCursorToNextStartToken(cur);
-                }
-            }
-
+            createChapters(doc, chapters);
             createTableOfContents(doc);
 
-            try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-                doc.write(out);
-                byte[] productDoc = out.toByteArray();
-
-                HttpHeaders header = new HttpHeaders();
-                header.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=product.docx");
-                header.add("Cache-Control", "no-cache, no-store, must-revalidate");
-                header.add("Pragma", "no-cache");
-                header.add("Expires", "0");
-
-                ByteArrayResource resource = new ByteArrayResource(productDoc);
-
-                return ResponseEntity.ok()
-                        .headers(header)
-                        .contentLength(productDoc.length)
-                        .contentType(MediaType.parseMediaType("application/octet-stream"))
-                        .body(resource);
-            }
+            return createResponse(doc);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
+    /**
+     * Replaces docx placeholders with given data parameters in every paragraph and all tables
+     *
+     * @param dataParams given data to be replaced with template placeholders
+     * @param document   docx template document
+     **/
+    private void replacePlaceholdersInDocument(Map<String, String> dataParams, XWPFDocument document) {
+        replacePlaceholdersInParagraphs(dataParams, document.getParagraphs());
+        replacePlaceholderInTables(dataParams, document);
+    }
+
+    /**
+     * Replaces docx placeholders with given data parameters in all tables
+     *
+     * @param dataParams given data to be replaced with template placeholders
+     * @param document   docx template document
+     **/
+    private void replacePlaceholderInTables(Map<String, String> dataParams, XWPFDocument document) {
+
+        document.getTables().stream()
+                .flatMap(table -> table.getRows().stream())
+                .flatMap(row -> row.getTableCells().stream())
+                .forEach(cell -> replacePlaceholdersInParagraphs(dataParams, cell.getParagraphs()));
+    }
+
+    /**
+     * Replaces docx placeholders with given data parameters in list of paragraphs
+     *
+     * @param dataParams given data to be replaced with template placeholders
+     * @param paragraphs list of paragraphs
+     **/
+    private void replacePlaceholdersInParagraphs(Map<String, String> dataParams, List<XWPFParagraph> paragraphs) {
+        paragraphs.stream().flatMap(paragraph -> paragraph.getRuns().stream())
+                .forEach(run -> {
+                    final String text = run.text();
+
+                    dataParams.entrySet().stream()
+                            .filter(entry -> textContainsPlaceholder(text, entry))
+                            .forEach(entry -> replaceText(run, text, entry));
+                });
+    }
+
+    /**
+     * Writes multiple chapters at the position of a placeholder
+     *
+     * @param document docx template document
+     * @param chapters list of chapters to create
+     */
+    private void createChapters(XWPFDocument document, List<Chapter> chapters) {
+        Optional<XWPFRun> firstChapter = document.getParagraphs().stream().flatMap(paragraph -> paragraph.getRuns().stream())
+                .filter(run -> FIRST_CHAPTER.equals(run.text()))
+                .findFirst();
+
+        if (firstChapter.isPresent()) {
+            XWPFParagraph para = (XWPFParagraph) firstChapter.get().getParent();
+            XmlCursor cur = para.getCTP().newCursor();
+            cur.toNextSibling();
+
+            document.removeBodyElement(document.getPosOfParagraph(para));
+
+            XWPFDocument doc = para.getDocument();
+            for (Chapter chapter : chapters) {
+                createChapter(cur, doc, chapter.getTitle(), chapter.getText());
+                setCursorToNextStartToken(cur);
+            }
+        }
+    }
+
+    /**
+     * Creates a single chapter at the position of the cursor
+     *
+     * @param cur      cursor pointing to position in document
+     * @param document docx template document
+     * @param title    title of chapter
+     * @param content  content of chapter
+     */
     private void createChapter(XmlCursor cur, XWPFDocument document, String title, String content) {
 
         XWPFParagraph para = document.insertNewParagraph(cur);
@@ -241,23 +280,22 @@ public class ProductControllerImpl implements ProductController, Placeholders {
         para.setAlignment(ParagraphAlignment.BOTH);
         run = para.createRun();
         run.setText(INSERT_TEXT);
-
-        /*cur.toNextToken();
-        para = document.insertNewParagraph(cur);
-        run = para.createRun();
-        run.addBreak(BreakType.PAGE);*/
     }
 
     private XmlCursor setCursorToNextStartToken(XmlCursor cursor) {
-        cursor.toEndToken(); //Now we are at end of the XmlObject.
-        //There always must be a next start token.
+        cursor.toEndToken(); // set cursor to end of the XmlObject
+        // there always must be a next start token
         while (cursor.hasNextToken() && cursor.toNextToken() != org.apache.xmlbeans.XmlCursor.TokenType.START) ;
-        //Now we are at the next start token and can insert new things here.
+        // cursor is now at the next start token and new things can be inserted here
         return cursor;
     }
 
-    private void createTableOfContents(XWPFDocument doc) {
-        Optional<XWPFRun> tocRun = doc.getParagraphs().stream().flatMap(paragraph -> paragraph.getRuns().stream())
+    /**
+     * Creates a table of contents which will be updated by words on first opening of the document
+     * @param document docx template document
+     */
+    private void createTableOfContents(XWPFDocument document) {
+        Optional<XWPFRun> tocRun = document.getParagraphs().stream().flatMap(paragraph -> paragraph.getRuns().stream())
                 .filter(run -> TOC.equals(run.text()))
                 .findFirst();
 
@@ -272,39 +310,31 @@ public class ProductControllerImpl implements ProductController, Placeholders {
     }
 
     /**
-     * Method for replacing docx placeholders with given data parameters in every docx paragraph
+     * Writes document to a new resource and creates response
      *
-     * @param dataParams given data to be replaced with template placeholders
-     * @param document   docx template document
-     **/
-    private void replacePlaceholdersInDocument(Map<String, String> dataParams, XWPFDocument document) {
-        replacePlaceholdersInParagraphs(dataParams, document.getParagraphs());
-        replacePlaceholderInTables(dataParams, document);
-    }
+     * @param document docx for the response
+     * @return response
+     * @throws IOException something went wrong
+     */
+    private ResponseEntity<Resource> createResponse(XWPFDocument document) throws IOException {
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            document.write(out);
+            byte[] productDoc = out.toByteArray();
 
-    /**
-     * Method for replacing docx placeholders with given data parameters in docx table
-     *
-     * @param dataParams given data to be replaced with template placeholders
-     * @param document   docx template document
-     **/
-    private void replacePlaceholderInTables(Map<String, String> dataParams, XWPFDocument document) {
+            HttpHeaders header = new HttpHeaders();
+            header.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=product.docx");
+            header.add("Cache-Control", "no-cache, no-store, must-revalidate");
+            header.add("Pragma", "no-cache");
+            header.add("Expires", "0");
 
-        document.getTables().stream()
-                .flatMap(table -> table.getRows().stream())
-                .flatMap(row -> row.getTableCells().stream())
-                .forEach(cell -> replacePlaceholdersInParagraphs(dataParams, cell.getParagraphs()));
-    }
+            ByteArrayResource resource = new ByteArrayResource(productDoc);
 
-    private void replacePlaceholdersInParagraphs(Map<String, String> dataParams, List<XWPFParagraph> paragraphs) {
-        paragraphs.stream().flatMap(paragraph -> paragraph.getRuns().stream())
-                .forEach(run -> {
-                    final String text = run.text();
-
-                    dataParams.entrySet().stream()
-                            .filter(entry -> textContainsPlaceholder(text, entry))
-                            .forEach(entry -> replaceText(run, text, entry));
-                });
+            return ResponseEntity.ok()
+                    .headers(header)
+                    .contentLength(productDoc.length)
+                    .contentType(MediaType.parseMediaType("application/octet-stream"))
+                    .body(resource);
+        }
     }
 
     private boolean textContainsPlaceholder(String text, Map.Entry<String, String> entry) {
@@ -318,6 +348,11 @@ public class ProductControllerImpl implements ProductController, Placeholders {
         run.setText(text, 0);
     }
 
+    /**
+     * Handle validation exceptions to create error response
+     * @param ex validation exception
+     * @return map containing invalid field names and error messages
+     */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {

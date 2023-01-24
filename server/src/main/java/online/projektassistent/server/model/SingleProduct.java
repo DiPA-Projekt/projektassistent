@@ -6,7 +6,7 @@ import java.util.Objects;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 
-public class Product {
+public class SingleProduct {
 
     @NotBlank(message = "productName is mandatory")
     private String productName;
@@ -66,13 +66,13 @@ public class Product {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Product product = (Product) o;
+        SingleProduct singleProduct = (SingleProduct) o;
 
-        if (!Objects.equals(productName, product.productName)) return false;
-        if (!Objects.equals(responsible, product.responsible)) return false;
-        if (!Objects.equals(projectName, product.projectName)) return false;
-        if (!Objects.equals(participants, product.participants)) return false;
-        return Objects.equals(chapters, product.chapters);
+        if (!Objects.equals(productName, singleProduct.productName)) return false;
+        if (!Objects.equals(responsible, singleProduct.responsible)) return false;
+        if (!Objects.equals(projectName, singleProduct.projectName)) return false;
+        if (!Objects.equals(participants, singleProduct.participants)) return false;
+        return Objects.equals(chapters, singleProduct.chapters);
     }
 
     @Override
