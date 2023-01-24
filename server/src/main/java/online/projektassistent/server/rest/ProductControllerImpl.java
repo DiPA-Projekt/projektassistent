@@ -46,8 +46,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import online.projektassistent.server.model.Chapter;
+import online.projektassistent.server.model.MultiProducts;
 import online.projektassistent.server.model.Placeholders;
+import online.projektassistent.server.model.ProductOfProject;
 import online.projektassistent.server.model.SingleProduct;
+import online.projektassistent.server.util.FileUtil;
 
 
 @Controller
@@ -176,7 +179,34 @@ public class ProductControllerImpl implements ProductController, Placeholders {
             createChapters(doc, chapters);
             createTableOfContents(doc);
 
-            return createResponse(doc);
+            return createResponse(doc, FileUtil.sanitizeFilename(singleProduct.getProductName()) + ".docx");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public ResponseEntity<Resource> products(MultiProducts multiProducts) {
+        try (XWPFDocument doc = new XWPFDocument(new FileInputStream(ResourceUtils.getFile("classpath:" + PROJECT_TEMPLATE)))) {
+            List<ProductOfProject> products = multiProducts.getProducts();
+            Map<String, String> dataParams = new HashMap<>();
+            dataParams.put(PROJECT_NAME, multiProducts.getProjectName());
+            dataParams.put(DATE, SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.SHORT, SimpleDateFormat.LONG, Locale.GERMANY).format(new Date()));
+
+            for (ProductOfProject product : products) {
+                dataParams.put(PRODUCT_NAME, product.getProductName());
+                dataParams.put(RESPONSIBLE, product.getResponsible());
+                dataParams.put(PARTICIPANTS, String.join("; ", product.getParticipants()));
+
+                List<Chapter> chapters = product.getChapters();
+
+                replacePlaceholdersInDocument(dataParams, doc);
+                createChapters(doc, chapters);
+                createTableOfContents(doc);
+                // TODO docs in dateien umwandeln und zippen
+            }
+
+            return createResponse(doc, FileUtil.sanitizeFilename(multiProducts.getProjectName()) + "_products.zip");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -292,6 +322,7 @@ public class ProductControllerImpl implements ProductController, Placeholders {
 
     /**
      * Creates a table of contents which will be updated by words on first opening of the document
+     *
      * @param document docx template document
      */
     private void createTableOfContents(XWPFDocument document) {
@@ -316,13 +347,13 @@ public class ProductControllerImpl implements ProductController, Placeholders {
      * @return response
      * @throws IOException something went wrong
      */
-    private ResponseEntity<Resource> createResponse(XWPFDocument document) throws IOException {
+    private ResponseEntity<Resource> createResponse(XWPFDocument document, String filename) throws IOException {
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             document.write(out);
             byte[] productDoc = out.toByteArray();
 
             HttpHeaders header = new HttpHeaders();
-            header.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=product.docx");
+            header.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename);
             header.add("Cache-Control", "no-cache, no-store, must-revalidate");
             header.add("Pragma", "no-cache");
             header.add("Expires", "0");
@@ -350,6 +381,7 @@ public class ProductControllerImpl implements ProductController, Placeholders {
 
     /**
      * Handle validation exceptions to create error response
+     *
      * @param ex validation exception
      * @return map containing invalid field names and error messages
      */

@@ -1,5 +1,5 @@
 ###
-POST http://localhost:9081/api/v1/test
+POST http://localhost:9081/api/v1/product
 Content-Type: application/json
 
 {

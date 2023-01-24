@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import javax.validation.constraints.NotBlank;
 
+@SuppressWarnings("unused")
 public class Chapter {
 
     @NotBlank(message = "title is mandatory")
@@ -14,16 +15,8 @@ public class Chapter {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getText() {
         return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
     }
 
     @Override

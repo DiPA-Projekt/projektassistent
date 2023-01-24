@@ -7,7 +7,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 
 @SuppressWarnings("unused")
-public class SingleProduct {
+public class ProductOfProject {
 
     @NotBlank(message = "productName is mandatory")
     private String productName;
@@ -15,8 +15,6 @@ public class SingleProduct {
     @NotBlank(message = "responsible is mandatory")
     private String responsible;
 
-    @NotBlank(message = "projectName is mandatory")
-    private String projectName;
     private List<String> participants;
 
     @NotEmpty(message = "at least one chapter is mandatory")
@@ -28,10 +26,6 @@ public class SingleProduct {
 
     public String getResponsible() {
         return responsible;
-    }
-
-    public String getProjectName() {
-        return projectName;
     }
 
     public List<String> getParticipants() {
@@ -47,11 +41,10 @@ public class SingleProduct {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        SingleProduct singleProduct = (SingleProduct) o;
+        ProductOfProject singleProduct = (ProductOfProject) o;
 
         if (!Objects.equals(productName, singleProduct.productName)) return false;
         if (!Objects.equals(responsible, singleProduct.responsible)) return false;
-        if (!Objects.equals(projectName, singleProduct.projectName)) return false;
         if (!Objects.equals(participants, singleProduct.participants)) return false;
         return Objects.equals(chapters, singleProduct.chapters);
     }
@@ -60,7 +53,6 @@ public class SingleProduct {
     public int hashCode() {
         int result = productName != null ? productName.hashCode() : 0;
         result = 31 * result + (responsible != null ? responsible.hashCode() : 0);
-        result = 31 * result + (projectName != null ? projectName.hashCode() : 0);
         result = 31 * result + (participants != null ? participants.hashCode() : 0);
         result = 31 * result + (chapters != null ? chapters.hashCode() : 0);
         return result;

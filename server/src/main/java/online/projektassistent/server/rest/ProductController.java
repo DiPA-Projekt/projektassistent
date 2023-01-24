@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import online.projektassistent.server.model.MultiProducts;
 import online.projektassistent.server.model.SingleProduct;
 
 @RestApiController
@@ -16,6 +17,9 @@ public interface ProductController {
 
     @PostMapping("/product")
     ResponseEntity<Resource> product(@RequestBody @Valid @NonNull SingleProduct singleProduct);
+
+    @PostMapping("/products")
+    ResponseEntity<Resource> products(@RequestBody @Valid @NonNull MultiProducts multiProducts);
 
     @GetMapping("/example")
     String generateExample();
