@@ -2,8 +2,11 @@ package online.projektassistent.server.model;
 
 import java.util.Objects;
 
+import javax.validation.constraints.NotBlank;
+
 public class Chapter {
 
+    @NotBlank(message = "title is mandatory")
     private String title;
     private String text;
 

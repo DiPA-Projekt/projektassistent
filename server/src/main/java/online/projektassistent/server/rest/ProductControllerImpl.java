@@ -12,6 +12,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.xwpf.usermodel.Borders;
 import org.apache.poi.xwpf.usermodel.BreakClear;
@@ -32,11 +34,16 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSimpleField;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.ResourceUtils;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import online.projektassistent.server.model.Chapter;
 import online.projektassistent.server.model.Placeholders;
@@ -154,7 +161,7 @@ public class ProductControllerImpl implements ProductController, Placeholders {
     }
 
     @Override
-    public ResponseEntity<Resource> test(@NonNull Product product) {
+    public ResponseEntity<Resource> test(@Valid @NonNull Product product) {
         try (XWPFDocument doc = new XWPFDocument(new FileInputStream(ResourceUtils.getFile("classpath:" + PROJECT_TEMPLATE)))) {
             Map<String, String> dataParams = new HashMap<>();
             dataParams.put(PRODUCT_NAME, product.getProductName());
@@ -309,5 +316,17 @@ public class ProductControllerImpl implements ProductController, Placeholders {
     private void replaceText(XWPFRun run, String text, Map.Entry<String, String> entry) {
         text = text.replace(entry.getKey(), entry.getValue());
         run.setText(text, 0);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        return errors;
     }
 }

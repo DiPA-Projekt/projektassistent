@@ -1,5 +1,7 @@
 package online.projektassistent.server.rest;
 
+import javax.validation.Valid;
+
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
@@ -13,7 +15,7 @@ import online.projektassistent.server.model.Product;
 public interface ProductController {
 
     @PostMapping("/test")
-    ResponseEntity<Resource> test(@RequestBody @NonNull Product product);
+    ResponseEntity<Resource> test(@RequestBody @Valid @NonNull Product product);
 
     @GetMapping("/example")
     String generateExample();

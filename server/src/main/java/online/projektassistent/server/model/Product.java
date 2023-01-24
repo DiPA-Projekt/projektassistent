@@ -3,12 +3,22 @@ package online.projektassistent.server.model;
 import java.util.List;
 import java.util.Objects;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+
 public class Product {
 
+    @NotBlank(message = "productName is mandatory")
     private String productName;
+
+    @NotBlank(message = "responsible is mandatory")
     private String responsible;
+
+    @NotBlank(message = "projectName is mandatory")
     private String projectName;
     private List<String> participants;
+
+    @NotEmpty(message = "at least one chapter is mandatory")
     private List<Chapter> chapters;
 
     public String getProductName() {
