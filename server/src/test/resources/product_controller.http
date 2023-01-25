@@ -21,3 +21,54 @@ Content-Type: application/json
     }
   ]
 }
+
+###
+POST http://localhost:9081/api/v1/products
+Content-Type: application/json
+
+{
+  "projectName": "Avengers",
+  "products": [
+    {
+      "productName": "SHIELD Protocol",
+      "responsible": "SHIELD Initiative",
+      "participants": [
+        "Nick Fury",
+        "Black Widow"
+      ],
+      "chapters": [
+        {
+          "title": "Erstes Kapitel",
+          "text": "Hier könnte ihre Werbung stehen..."
+        },
+        {
+          "title": "Zweites Kapitel",
+          "text": "Hier steht nur sinnloser Blindtext. Hier steht nur sinnloser Blindtext. Hier steht nur sinnloser Blindtext. Hier steht nur sinnloser Blindtext. Hier steht nur sinnloser Blindtext. Hier steht nur sinnloser Blindtext."
+        }
+      ]
+    },
+    {
+      "productName": "Heli Carrier",
+      "responsible": "SHIELD",
+      "participants": [
+        "Iron Man",
+        "Nick Fury",
+        "Hawkeye"
+      ],
+      "chapters": [
+        {
+          "title": "Antrieb",
+          "text": "Damit das Ding fliegt werden vier gigantische Propeller benutzt. Jeweils zwei rechts und zwei links."
+        },
+        {
+          "title": "Tarnung",
+          "text": "Die Unterseite wird durch einen Tarnschild geschützt, der das Licht bricht und den Carrier somit so gut wie unsichtbar macht."
+        },
+        {
+          "title": "Größe",
+          "text": "Je größer desto besser. Der Carrier soll mindestens so groß sein wie ein Sternenzerstörer aus Star Wars! Oder noch größer!"
+        }
+      ]
+    }
+  ]
+}
