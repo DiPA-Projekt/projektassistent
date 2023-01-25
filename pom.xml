@@ -158,7 +158,7 @@
                 <plugin>
                     <groupId>com.amashchenko.maven.plugin</groupId>
                     <artifactId>gitflow-maven-plugin</artifactId>
-                    <version>1.16.0</version>
+                    <version>1.19.0</version>
                     <configuration>
                         <argLine>-s .mvn/release.settings.xml -DskipTests -P production-ci</argLine>
                         <gitFlowConfig>
