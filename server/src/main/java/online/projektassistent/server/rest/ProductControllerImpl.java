@@ -1,13 +1,20 @@
 package online.projektassistent.server.rest;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
 import javax.validation.Valid;
 
+import org.apache.poi.common.usermodel.PictureType;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.util.Units;
 import org.apache.poi.xwpf.usermodel.Borders;
 import org.apache.poi.xwpf.usermodel.BreakClear;
 import org.apache.poi.xwpf.usermodel.BreakType;
@@ -29,6 +36,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.ResourceUtils;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -135,10 +143,19 @@ public class ProductControllerImpl implements ProductController {
             r5.setText("The pangs of despised love, the law's delay, "
                     + "The insolence of office and the spurns " + ".......");
 
+            File file = ResourceUtils.getFile("classpath:snowboarder.jpg");
+            try (FileInputStream fileInputStream = new FileInputStream(file)) {
+                XWPFRun imageRun = p3.createRun();
+                BufferedImage bimg1 = ImageIO.read(file);
+                int width = bimg1.getWidth();
+                int height = bimg1.getHeight();
+                imageRun.addPicture(fileInputStream, PictureType.JPEG, "snowboarder.jpg", Units.toEMU(width), Units.toEMU(height));
+            }
+
             try (FileOutputStream out = new FileOutputStream("example.docx")) {
                 doc.write(out);
             }
-        } catch (IOException e) {
+        } catch (IOException | InvalidFormatException e) {
             throw new RuntimeException(e);
         }
         return "success";
