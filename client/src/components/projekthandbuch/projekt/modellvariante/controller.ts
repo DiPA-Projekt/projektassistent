@@ -31,7 +31,7 @@ export class ModellVarianteController extends AbstractController {
 
   public fetchData(): any {
     axios
-      .get('https://vmxt-api.vom-dach.de/V-Modellmetamodell/mm_2021/V-Modellvariante')
+      .get('https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante')
       .then((response) => {
         const jsonDataFromXml = new XMLParser().parseFromString(response.data);
 

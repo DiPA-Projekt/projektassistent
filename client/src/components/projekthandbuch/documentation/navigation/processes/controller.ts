@@ -64,7 +64,7 @@ export class ProcessNavigationController extends AbstractController {
 
   public getReferenceProcesses(): Promise<MenuEntry[]> {
     const urlReferenceProcesses =
-      'https://vmxt-api.vom-dach.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
       this.modelVariantsId +
       '/Projekttyp/' +
       this.projectTypeId +

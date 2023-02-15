@@ -64,7 +64,7 @@ export class ProductsNavigationController extends AbstractController {
 
   public getReferenceProducts(): Promise<MenuEntry[]> {
     const urlReferenceProducts =
-      'https://vmxt-api.vom-dach.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
       this.modelVariantsId +
       '/Projekttyp/' +
       this.projectTypeId +

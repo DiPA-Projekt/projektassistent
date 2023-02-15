@@ -31,6 +31,7 @@
     "@leanup/lib": "1.1.24",
     "antd": "4.16.3",
     "axios": "^0.25.0",
+    "caniuse-lite": "^1.0.30001452",
     "dayjs": "1.10.4",
     "fast-xml-parser": "^4.0.3",
     "he": "^1.2.0",

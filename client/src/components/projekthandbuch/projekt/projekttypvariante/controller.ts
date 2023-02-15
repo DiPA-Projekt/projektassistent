@@ -36,7 +36,7 @@ export class ProjekttypvarianteController extends AbstractController {
 
         axios
           .get(
-            'https://vmxt-api.vom-dach.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+            'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
               modelVariantsId +
               '/Projekttypvariante'
           )
@@ -82,7 +82,7 @@ export class ProjekttypvarianteController extends AbstractController {
     this.projekthandbuchService.setProjectTypeVariantId(projectTypeVariantId);
 
     const url =
-      'https://vmxt-api.vom-dach.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
       this.modelVariantsId +
       '/Projekttypvariante/' +
       projectTypeVariantId;
@@ -119,7 +119,7 @@ export class ProjekttypvarianteController extends AbstractController {
     // get projectTypeId, projectFeaturesDataFromProjectType and projectFeaturesDataFromProjectTypeVariant
     axios
       .get(
-        'https://vmxt-api.vom-dach.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+        'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
           this.modelVariantsId +
           '/Projekttyp/' +
           projectTypeId

@@ -48,7 +48,7 @@ export class AnwendungsprofileController extends AbstractController {
 
     values.forEach((value) => {
       const valueUrl =
-        'https://vmxt-api.vom-dach.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+        'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
         this.modelVariantsId +
         '/Projektmerkmal/' +
         feature.id +
@@ -83,7 +83,7 @@ export class AnwendungsprofileController extends AbstractController {
   private getProjectFeatureDetails(projectFeatures: ProjectFeature[]): void {
     projectFeatures.forEach((feature) => {
       const projectFeatureUrl =
-        'https://vmxt-api.vom-dach.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+        'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
         this.modelVariantsId +
         '/Projektmerkmal/' +
         feature.id;

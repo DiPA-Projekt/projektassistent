@@ -59,7 +59,7 @@ export class RolesContentController extends AbstractController {
 
   public async getContent(): Promise<PageEntry> {
     const url =
-      'https://vmxt-api.vom-dach.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
       this.modelVariantsId +
       '/Projekttyp/' +
       this.projectTypeId +

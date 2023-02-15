@@ -70,7 +70,7 @@ export class RolesNavigationController extends AbstractController {
 
   public getReferenceRolls(): Promise<MenuEntry[]> {
     const urlReferenceRolls =
-      'https://vmxt-api.vom-dach.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
       this.modelVariantsId +
       '/Projekttyp/' +
       this.projectTypeId +
