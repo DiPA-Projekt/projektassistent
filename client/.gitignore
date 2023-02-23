@@ -1,7 +1,6 @@
-.reports/
-dist/
-hint-report/
-node/
-node_modules/
-openapi/
+/.husky
+/.reports
+/dist
+/hint-report
+/node_modules
 *.log

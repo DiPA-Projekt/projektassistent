@@ -1,5 +1,5 @@
 import { StatusApi } from '@dipa-projekt/projektassistent-openapi';
-import { DI } from '@leanup/lib/helpers/injector';
+import { DI } from '@leanup/lib';
 
 import { ProjekthandbuchService } from '../services/projekthandbuch/service';
 import { ProduktvorlagenService } from '../services/projekthandbuch/produktvorlagen/service';

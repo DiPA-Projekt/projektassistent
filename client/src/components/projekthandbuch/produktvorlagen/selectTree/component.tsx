@@ -2,13 +2,10 @@ import React, { Component, Key } from 'react';
 import { Tree } from 'antd';
 import { DataNode } from 'antd/lib/tree';
 import { DownOutlined } from '@ant-design/icons';
-import { ReactComponent } from '@leanup/lib/components/react';
+// import { ReactComponent } from '@leanup/lib';
 import { SelectTreeController } from './controller';
 
-export class SelectTree
-  extends ReactComponent<{ data: DataNode[]; checkedKeys: Key[]; disabled: boolean }, any>
-  implements Component
-{
+export class SelectTree extends Component<{ data: DataNode[]; checkedKeys: Key[]; disabled: boolean }, any> {
   public ctrl: SelectTreeController;
 
   public constructor(props: { data: DataNode[]; checkedKeys: Key[]; disabled: boolean }) {

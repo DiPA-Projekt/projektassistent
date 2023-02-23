@@ -1,5 +1,7 @@
 import he from 'he';
 import { MenuEntry } from '@dipa-projekt/projektassistent-openapi';
+import axios from 'axios';
+import XMLParser, { XMLElement } from 'react-xml-parser';
 
 export function typeIt<T>(json: Object): T {
   const typed = JSON.parse(JSON.stringify(json)) as { default: T };
@@ -48,4 +50,63 @@ export function findIdInMenuEntry(id: string, arr: MenuEntry[]): MenuEntry | nul
       return findIdInMenuEntry(id, current.subMenuEntries);
     }
   }, null);
+}
+
+export function getMenuItemByAttributeValue(menuItems: any[], attribute: string, key: string) {
+  if (menuItems) {
+    for (const item of menuItems) {
+      // if (item[attribute]) {
+      //   console.log('getMenuItemByAttributeValue', attribute, key);
+      // }
+
+      if (item[attribute] === key) {
+        return item;
+      }
+      const found: any = getMenuItemByAttributeValue(item.children, attribute, key);
+      if (found) {
+        return found;
+      }
+    }
+  }
+}
+
+export function findInNavigatinMenu(id: string, arr: MenuEntry[]): MenuEntry | null {
+  return arr.reduce<MenuEntry>((prev: MenuEntry, current: MenuEntry) => {
+    // console.log('find', prev, current);
+    if (prev) {
+      return prev;
+    }
+    if (current.id === id) {
+      return current;
+    }
+    if (current.subMenuEntries) {
+      return findIdInMenuEntry(id, current.subMenuEntries);
+    }
+  }, null);
+}
+
+export async function getJsonDataFromXml(url: string): Promise<string | XMLElement> {
+  return axios
+    .get(url)
+    .then((response) => {
+      return new XMLParser().parseFromString(response.data);
+    })
+    .catch(() => 'obligatory catch');
+}
+
+export function clean(obj: any) {
+  for (const propName in obj) {
+    if (obj[propName] === null || obj[propName] === undefined) {
+      delete obj[propName];
+    }
+  }
+  return obj;
+}
+
+export function removeEmptyParams(paramsObject: any): any {
+  if (paramsObject == null) {
+    return null;
+  } else {
+    return Object.keys(paramsObject).forEach((k) => paramsObject[k] == null && delete paramsObject[k]);
+  }
 }

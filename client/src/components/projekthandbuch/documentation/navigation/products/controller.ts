@@ -1,4 +1,4 @@
-import { AbstractController } from '@leanup/lib/components/generic';
+import { AbstractController } from '@leanup/lib';
 
 import { ProjekthandbuchService } from '../../../../../services/projekthandbuch/service';
 import axios from 'axios';
@@ -6,7 +6,7 @@ import axios from 'axios';
 import XMLParser from 'react-xml-parser';
 
 import { Subscription } from 'rxjs';
-import { DI } from '@leanup/lib/helpers/injector';
+import { DI } from '@leanup/lib';
 import { MenuEntry, ProjectFeature } from '@dipa-projekt/projektassistent-openapi';
 
 export class ProductsNavigationController extends AbstractController {

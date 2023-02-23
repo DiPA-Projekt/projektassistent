@@ -1,4 +1,4 @@
-import { AbstractController } from '@leanup/lib/components/generic';
+import { AbstractController } from '@leanup/lib';
 
 import { PageEntry, TableEntry, ProjectFeature } from '@dipa-projekt/projektassistent-openapi';
 import { Subscription } from 'rxjs';
@@ -6,7 +6,7 @@ import axios from 'axios';
 //xml file reader
 import XMLParser from 'react-xml-parser';
 import { ProjekthandbuchService } from '../../../../../services/projekthandbuch/service';
-import { DI } from '@leanup/lib/helpers/injector';
+import { DI } from '@leanup/lib';
 import { decodeXml, replaceUmlaute } from '../../../../../shares/utils';
 
 export class TailoringContentController extends AbstractController {

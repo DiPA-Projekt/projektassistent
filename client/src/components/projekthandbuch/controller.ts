@@ -1,3 +1,3 @@
-import { AbstractController } from '@leanup/lib/components/generic';
+import { AbstractController } from '@leanup/lib';
 
 export class ProjekthandbuchController extends AbstractController {}

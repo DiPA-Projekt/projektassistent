@@ -1,7 +1,7 @@
 import { MenuEntry } from '@dipa-projekt/projektassistent-openapi';
-import { AbstractController } from '@leanup/lib/components/generic';
+import { AbstractController } from '@leanup/lib';
 import { ProjekthandbuchService } from '../../../../services/projekthandbuch/service';
-import { DI } from '@leanup/lib/helpers/injector';
+import { DI } from '@leanup/lib';
 import { ProductsNavigationController } from './products/controller';
 import { TailoringNavigationController } from './tailoring/controller';
 import { RolesNavigationController } from './roles/controller';

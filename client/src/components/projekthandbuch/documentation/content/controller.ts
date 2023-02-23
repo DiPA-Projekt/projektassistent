@@ -1,10 +1,10 @@
-import { AbstractController } from '@leanup/lib/components/generic';
+import { AbstractController } from '@leanup/lib';
 
 import { PageEntry, MenuEntry } from '@dipa-projekt/projektassistent-openapi';
 import { Subscription } from 'rxjs';
 
 import { ProjekthandbuchService } from '../../../../services/projekthandbuch/service';
-import { DI } from '@leanup/lib/helpers/injector';
+import { DI } from '@leanup/lib';
 import { ProductContentController } from './products/controller';
 import { ProcessContentController } from './processes/controller';
 import { RolesContentController } from './roles/controller';

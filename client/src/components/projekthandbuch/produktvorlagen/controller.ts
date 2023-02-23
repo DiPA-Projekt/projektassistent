@@ -1,8 +1,7 @@
-import { AbstractController } from '@leanup/lib/components/generic';
+import { AbstractController, DI } from '@leanup/lib';
 
 import TEMPLATE_DATA from './project.templates.json';
 import { ProduktvorlagenService } from '../../../services/projekthandbuch/produktvorlagen/service';
-import { DI } from '@leanup/lib/helpers/injector';
 import { Key } from 'react';
 
 interface TemplateProps {

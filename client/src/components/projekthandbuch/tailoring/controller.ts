@@ -1,4 +1,4 @@
-import { AbstractController } from '@leanup/lib/components/generic';
+import { AbstractController } from '@leanup/lib';
 
 import ORGANISATION_ROLES from './organisation.roles.json';
 import PROJECT_ROLES from './project.roles.json';

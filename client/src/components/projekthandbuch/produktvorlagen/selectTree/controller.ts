@@ -1,6 +1,6 @@
-import { AbstractController } from '@leanup/lib/components/generic';
+import { AbstractController } from '@leanup/lib';
 
-import { DI } from '@leanup/lib/helpers/injector';
+import { DI } from '@leanup/lib';
 import { ProduktvorlagenService } from '../../../../services/projekthandbuch/produktvorlagen/service';
 import React, { Key } from 'react';
 import { DataNode } from 'antd/lib/tree';

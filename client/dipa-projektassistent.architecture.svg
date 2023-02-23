@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="802px" preserveAspectRatio="none" style="width:6964px;height:802px;" version="1.1" viewBox="0 0 6964 802" width="6964px" zoomAndPan="magnify"><defs><filter height="300%" id="fqy6bcnlbnmh4" width="300%" x="-1" y="-1"><feGaussianBlur result="blurOut" stdDeviation="2.0"/><feColorMatrix in="blurOut" result="blurOut2" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .4 0"/><feOffset dx="4.0" dy="4.0" in="blurOut2" result="blurOut3"/><feBlend in="SourceGraphic" in2="blurOut3" mode="normal"/></filter></defs><g><!--MD5=[06d3d6878cbab9075ad3d44875ae37e6]
-cluster proj/components/app/component.tsx--><polygon fill="#FFFFFF" filter="url(#fqy6bcnlbnmh4)" points="3207.5,50.5,3512.5,50.5,3519.5,72.7969,3522.5,72.7969,3522.5,175.5,3207.5,175.5,3207.5,50.5" style="stroke:#000000;stroke-width:1.5;"/><line style="stroke:#000000;stroke-width:1.5;" x1="3207.5" x2="3519.5" y1="72.7969" y2="72.7969"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="299" x="3211.5" y="65.4951">proj/components/app/component.tsx</text><!--MD5=[e33ba2c3bfa1c59913da32efdfc4be2b]
-cluster proj/components/dashboard/component.tsx--><polygon fill="#FFFFFF" filter="url(#fqy6bcnlbnmh4)" points="1354.5,50.5,1715.5,50.5,1722.5,72.7969,1725.5,72.7969,1725.5,175.5,1354.5,175.5,1354.5,50.5" style="stroke:#000000;stroke-width:1.5;"/><line style="stroke:#000000;stroke-width:1.5;" x1="1354.5" x2="1722.5" y1="72.7969" y2="72.7969"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="355" x="1358.5" y="65.4951">proj/components/dashboard/component.tsx</text><!--MD5=[9b9c46923cf05a31a9e3ef1691d5a847]
+cluster proj/components/app/App.tsx--><polygon fill="#FFFFFF" filter="url(#fqy6bcnlbnmh4)" points="3207.5,50.5,3512.5,50.5,3519.5,72.7969,3522.5,72.7969,3522.5,175.5,3207.5,175.5,3207.5,50.5" style="stroke:#000000;stroke-width:1.5;"/><line style="stroke:#000000;stroke-width:1.5;" x1="3207.5" x2="3519.5" y1="72.7969" y2="72.7969"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="299" x="3211.5" y="65.4951">proj/components/app/App.tsx</text><!--MD5=[e33ba2c3bfa1c59913da32efdfc4be2b]
+cluster proj/components/dashboard/App.tsx--><polygon fill="#FFFFFF" filter="url(#fqy6bcnlbnmh4)" points="1354.5,50.5,1715.5,50.5,1722.5,72.7969,1725.5,72.7969,1725.5,175.5,1354.5,175.5,1354.5,50.5" style="stroke:#000000;stroke-width:1.5;"/><line style="stroke:#000000;stroke-width:1.5;" x1="1354.5" x2="1722.5" y1="72.7969" y2="72.7969"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="355" x="1358.5" y="65.4951">proj/components/dashboard/App.tsx</text><!--MD5=[9b9c46923cf05a31a9e3ef1691d5a847]
 cluster proj/components/dashboard/controller.ts--><polygon fill="#FFFFFF" filter="url(#fqy6bcnlbnmh4)" points="1098.5,301.5,1439.5,301.5,1446.5,323.7969,1449.5,323.7969,1449.5,400.5,1098.5,400.5,1098.5,301.5" style="stroke:#000000;stroke-width:1.5;"/><line style="stroke:#000000;stroke-width:1.5;" x1="1098.5" x2="1446.5" y1="323.7969" y2="323.7969"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="335" x="1102.5" y="316.4951">proj/components/dashboard/controller.ts</text><!--MD5=[a05b7245988e9c56c94418a7e3dbcbe0]
-cluster proj/components/footer/component.tsx--><polygon fill="#FFFFFF" filter="url(#fqy6bcnlbnmh4)" points="994.5,50.5,1320.5,50.5,1327.5,72.7969,1330.5,72.7969,1330.5,175.5,994.5,175.5,994.5,50.5" style="stroke:#000000;stroke-width:1.5;"/><line style="stroke:#000000;stroke-width:1.5;" x1="994.5" x2="1327.5" y1="72.7969" y2="72.7969"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="320" x="998.5" y="65.4951">proj/components/footer/component.tsx</text><!--MD5=[dc0f5e236ae00325a4832fee34da1fab]
+cluster proj/components/footer/App.tsx--><polygon fill="#FFFFFF" filter="url(#fqy6bcnlbnmh4)" points="994.5,50.5,1320.5,50.5,1327.5,72.7969,1330.5,72.7969,1330.5,175.5,994.5,175.5,994.5,50.5" style="stroke:#000000;stroke-width:1.5;"/><line style="stroke:#000000;stroke-width:1.5;" x1="994.5" x2="1327.5" y1="72.7969" y2="72.7969"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="320" x="998.5" y="65.4951">proj/components/footer/App.tsx</text><!--MD5=[dc0f5e236ae00325a4832fee34da1fab]
 cluster proj/components/footer/controller.ts--><polygon fill="#FFFFFF" filter="url(#fqy6bcnlbnmh4)" points="758.5,288.5,1064.5,288.5,1071.5,310.7969,1074.5,310.7969,1074.5,413.5,758.5,413.5,758.5,288.5" style="stroke:#000000;stroke-width:1.5;"/><line style="stroke:#000000;stroke-width:1.5;" x1="758.5" x2="1071.5" y1="310.7969" y2="310.7969"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="300" x="762.5" y="303.4951">proj/components/footer/controller.ts</text><!--MD5=[d2ae87bb46664b184a2131a923ed1391]
-cluster proj/components/header/component.tsx--><polygon fill="#FFFFFF" filter="url(#fqy6bcnlbnmh4)" points="630.5,50.5,960.5,50.5,967.5,72.7969,970.5,72.7969,970.5,175.5,630.5,175.5,630.5,50.5" style="stroke:#000000;stroke-width:1.5;"/><line style="stroke:#000000;stroke-width:1.5;" x1="630.5" x2="967.5" y1="72.7969" y2="72.7969"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="324" x="634.5" y="65.4951">proj/components/header/component.tsx</text><!--MD5=[dfcaf1bca3135fb979679d38f0ac22a2]
+cluster proj/components/header/App.tsx--><polygon fill="#FFFFFF" filter="url(#fqy6bcnlbnmh4)" points="630.5,50.5,960.5,50.5,967.5,72.7969,970.5,72.7969,970.5,175.5,630.5,175.5,630.5,50.5" style="stroke:#000000;stroke-width:1.5;"/><line style="stroke:#000000;stroke-width:1.5;" x1="630.5" x2="967.5" y1="72.7969" y2="72.7969"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="324" x="634.5" y="65.4951">proj/components/header/App.tsx</text><!--MD5=[dfcaf1bca3135fb979679d38f0ac22a2]
 cluster proj/components/header/controller.ts--><polygon fill="#FFFFFF" filter="url(#fqy6bcnlbnmh4)" points="414.5,288.5,724.5,288.5,731.5,310.7969,734.5,310.7969,734.5,413.5,414.5,413.5,414.5,288.5" style="stroke:#000000;stroke-width:1.5;"/><line style="stroke:#000000;stroke-width:1.5;" x1="414.5" x2="731.5" y1="310.7969" y2="310.7969"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="304" x="418.5" y="303.4951">proj/components/header/controller.ts</text><!--MD5=[34d2cc937482c2aaec68c9da908c9dad]
-cluster proj/components/navigation/component.tsx--><polygon fill="#FFFFFF" filter="url(#fqy6bcnlbnmh4)" points="1749.5,50.5,2111.5,50.5,2118.5,72.7969,2121.5,72.7969,2121.5,175.5,1749.5,175.5,1749.5,50.5" style="stroke:#000000;stroke-width:1.5;"/><line style="stroke:#000000;stroke-width:1.5;" x1="1749.5" x2="2118.5" y1="72.7969" y2="72.7969"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="356" x="1753.5" y="65.4951">proj/components/navigation/component.tsx</text><!--MD5=[d604537f46958ad45df67d174b948604]
+cluster proj/components/navigation/App.tsx--><polygon fill="#FFFFFF" filter="url(#fqy6bcnlbnmh4)" points="1749.5,50.5,2111.5,50.5,2118.5,72.7969,2121.5,72.7969,2121.5,175.5,1749.5,175.5,1749.5,50.5" style="stroke:#000000;stroke-width:1.5;"/><line style="stroke:#000000;stroke-width:1.5;" x1="1749.5" x2="2118.5" y1="72.7969" y2="72.7969"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="356" x="1753.5" y="65.4951">proj/components/navigation/App.tsx</text><!--MD5=[d604537f46958ad45df67d174b948604]
 cluster proj/components/navigation/controller.ts--><polygon fill="#FFFFFF" filter="url(#fqy6bcnlbnmh4)" points="1473.5,288.5,1815.5,288.5,1822.5,310.7969,1825.5,310.7969,1825.5,413.5,1473.5,413.5,1473.5,288.5" style="stroke:#000000;stroke-width:1.5;"/><line style="stroke:#000000;stroke-width:1.5;" x1="1473.5" x2="1822.5" y1="310.7969" y2="310.7969"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="336" x="1477.5" y="303.4951">proj/components/navigation/controller.ts</text><!--MD5=[21dff9d316a9a3922523ded259733203]
-cluster proj/components/projekthandbuch/component.tsx--><polygon fill="#FFFFFF" filter="url(#fqy6bcnlbnmh4)" points="2145.5,50.5,2557.5,50.5,2564.5,72.7969,2567.5,72.7969,2567.5,175.5,2145.5,175.5,2145.5,50.5" style="stroke:#000000;stroke-width:1.5;"/><line style="stroke:#000000;stroke-width:1.5;" x1="2145.5" x2="2564.5" y1="72.7969" y2="72.7969"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="406" x="2149.5" y="65.4951">proj/components/projekthandbuch/component.tsx</text><!--MD5=[df85cb3cb82925b14da96fef3ccf0282]
+cluster proj/components/projekthandbuch/App.tsx--><polygon fill="#FFFFFF" filter="url(#fqy6bcnlbnmh4)" points="2145.5,50.5,2557.5,50.5,2564.5,72.7969,2567.5,72.7969,2567.5,175.5,2145.5,175.5,2145.5,50.5" style="stroke:#000000;stroke-width:1.5;"/><line style="stroke:#000000;stroke-width:1.5;" x1="2145.5" x2="2564.5" y1="72.7969" y2="72.7969"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="406" x="2149.5" y="65.4951">proj/components/projekthandbuch/App.tsx</text><!--MD5=[df85cb3cb82925b14da96fef3ccf0282]
 cluster proj/components/projekthandbuch/controller.ts--><polygon fill="#FFFFFF" filter="url(#fqy6bcnlbnmh4)" points="1849.5,301.5,2241.5,301.5,2248.5,323.7969,2251.5,323.7969,2251.5,400.5,1849.5,400.5,1849.5,301.5" style="stroke:#000000;stroke-width:1.5;"/><line style="stroke:#000000;stroke-width:1.5;" x1="1849.5" x2="2248.5" y1="323.7969" y2="323.7969"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="386" x="1853.5" y="316.4951">proj/components/projekthandbuch/controller.ts</text><!--MD5=[1d3eb51b30268ce9f60ae568cfb66439]
-cluster proj/components/projekthandbuch/projekt/component.tsx--><polygon fill="#FFFFFF" filter="url(#fqy6bcnlbnmh4)" points="3546.5,50.5,4021.5,50.5,4028.5,72.7969,4031.5,72.7969,4031.5,175.5,3546.5,175.5,3546.5,50.5" style="stroke:#000000;stroke-width:1.5;"/><line style="stroke:#000000;stroke-width:1.5;" x1="3546.5" x2="4028.5" y1="72.7969" y2="72.7969"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="469" x="3550.5" y="65.4951">proj/components/projekthandbuch/projekt/component.tsx</text><!--MD5=[1b5c82ae65b7f8307981d2c4679c9c62]
-cluster proj/components/projekthandbuch/projekt/anwendungsprofile/component.tsx--><polygon fill="#FFFFFF" filter="url(#fqy6bcnlbnmh4)" points="5321.5,6,5955.5,6,5962.5,28.2969,5965.5,28.2969,5965.5,220,5321.5,220,5321.5,6" style="stroke:#000000;stroke-width:1.5;"/><line style="stroke:#000000;stroke-width:1.5;" x1="5321.5" x2="5962.5" y1="28.2969" y2="28.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="628" x="5325.5" y="20.9951">proj/components/projekthandbuch/projekt/anwendungsprofile/component.tsx</text><!--MD5=[a6ef2a78140e59309f15d2a7ac74811e]
+cluster proj/components/projekthandbuch/projekt/App.tsx--><polygon fill="#FFFFFF" filter="url(#fqy6bcnlbnmh4)" points="3546.5,50.5,4021.5,50.5,4028.5,72.7969,4031.5,72.7969,4031.5,175.5,3546.5,175.5,3546.5,50.5" style="stroke:#000000;stroke-width:1.5;"/><line style="stroke:#000000;stroke-width:1.5;" x1="3546.5" x2="4028.5" y1="72.7969" y2="72.7969"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="469" x="3550.5" y="65.4951">proj/components/projekthandbuch/projekt/App.tsx</text><!--MD5=[1b5c82ae65b7f8307981d2c4679c9c62]
+cluster proj/components/projekthandbuch/projekt/anwendungsprofile/App.tsx--><polygon fill="#FFFFFF" filter="url(#fqy6bcnlbnmh4)" points="5321.5,6,5955.5,6,5962.5,28.2969,5965.5,28.2969,5965.5,220,5321.5,220,5321.5,6" style="stroke:#000000;stroke-width:1.5;"/><line style="stroke:#000000;stroke-width:1.5;" x1="5321.5" x2="5962.5" y1="28.2969" y2="28.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="628" x="5325.5" y="20.9951">proj/components/projekthandbuch/projekt/anwendungsprofile/App.tsx</text><!--MD5=[a6ef2a78140e59309f15d2a7ac74811e]
 cluster proj/components/projekthandbuch/projekt/anwendungsprofile/controller.ts--><polygon fill="#FFFFFF" filter="url(#fqy6bcnlbnmh4)" points="5567.5,288.5,6181.5,288.5,6188.5,310.7969,6237.5,310.7969,6237.5,645,5567.5,645,5567.5,288.5" style="stroke:#000000;stroke-width:1.5;"/><line style="stroke:#000000;stroke-width:1.5;" x1="5567.5" x2="6188.5" y1="310.7969" y2="310.7969"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="608" x="5571.5" y="303.4951">proj/components/projekthandbuch/projekt/anwendungsprofile/controller.ts</text><!--MD5=[994be106ec728fff08be48e52878ef46]
 cluster proj/services/projekthandbuch/service.ts--><polygon fill="#FFFFFF" filter="url(#fqy6bcnlbnmh4)" points="4225.5,482,4560.5,482,4567.5,504.2969,4570.5,504.2969,4570.5,696,4225.5,696,4225.5,482" style="stroke:#000000;stroke-width:1.5;"/><line style="stroke:#000000;stroke-width:1.5;" x1="4225.5" x2="4567.5" y1="504.2969" y2="504.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="329" x="4229.5" y="496.9951">proj/services/projekthandbuch/service.ts</text><!--MD5=[5c1dccb04abc31b15ef11d9579cdb880]
 cluster proj/components/projekthandbuch/projekt/controller.ts--><polygon fill="#FFFFFF" filter="url(#fqy6bcnlbnmh4)" points="3654.5,282.5,4109.5,282.5,4116.5,304.7969,4270.5,304.7969,4270.5,419.5,3654.5,419.5,3654.5,282.5" style="stroke:#000000;stroke-width:1.5;"/><line style="stroke:#000000;stroke-width:1.5;" x1="3654.5" x2="4116.5" y1="304.7969" y2="304.7969"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="449" x="3658.5" y="297.4951">proj/components/projekthandbuch/projekt/controller.ts</text><!--MD5=[ac16e345e90d15a5c085dfddac51303d]
-cluster proj/components/projekthandbuch/projekt/meta-modell/component.tsx--><polygon fill="#FFFFFF" filter="url(#fqy6bcnlbnmh4)" points="2591.5,50.5,3173.5,50.5,3180.5,72.7969,3183.5,72.7969,3183.5,175.5,2591.5,175.5,2591.5,50.5" style="stroke:#000000;stroke-width:1.5;"/><line style="stroke:#000000;stroke-width:1.5;" x1="2591.5" x2="3180.5" y1="72.7969" y2="72.7969"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="576" x="2595.5" y="65.4951">proj/components/projekthandbuch/projekt/meta-modell/component.tsx</text><!--MD5=[654d0e22dca8bef2c55a7312ce83fdae]
+cluster proj/components/projekthandbuch/projekt/meta-modell/App.tsx--><polygon fill="#FFFFFF" filter="url(#fqy6bcnlbnmh4)" points="2591.5,50.5,3173.5,50.5,3180.5,72.7969,3183.5,72.7969,3183.5,175.5,2591.5,175.5,2591.5,50.5" style="stroke:#000000;stroke-width:1.5;"/><line style="stroke:#000000;stroke-width:1.5;" x1="2591.5" x2="3180.5" y1="72.7969" y2="72.7969"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="576" x="2595.5" y="65.4951">proj/components/projekthandbuch/projekt/meta-modell/App.tsx</text><!--MD5=[654d0e22dca8bef2c55a7312ce83fdae]
 cluster proj/components/projekthandbuch/projekt/meta-modell/controller.ts--><polygon fill="#FFFFFF" filter="url(#fqy6bcnlbnmh4)" points="2275.5,288.5,2837.5,288.5,2844.5,310.7969,2847.5,310.7969,2847.5,413.5,2275.5,413.5,2275.5,288.5" style="stroke:#000000;stroke-width:1.5;"/><line style="stroke:#000000;stroke-width:1.5;" x1="2275.5" x2="2844.5" y1="310.7969" y2="310.7969"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="556" x="2279.5" y="303.4951">proj/components/projekthandbuch/projekt/meta-modell/controller.ts</text><!--MD5=[80b79be97635e740809623edd0e6c598]
-cluster proj/components/projekthandbuch/projekt/projekttyp/component.tsx--><polygon fill="#FFFFFF" filter="url(#fqy6bcnlbnmh4)" points="4055.5,31.5,4620.5,31.5,4627.5,53.7969,4630.5,53.7969,4630.5,194.5,4055.5,194.5,4055.5,31.5" style="stroke:#000000;stroke-width:1.5;"/><line style="stroke:#000000;stroke-width:1.5;" x1="4055.5" x2="4627.5" y1="53.7969" y2="53.7969"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="559" x="4059.5" y="46.4951">proj/components/projekthandbuch/projekt/projekttyp/component.tsx</text><!--MD5=[8e1bec33b8a57a3e6c969a1ed4d34b30]
+cluster proj/components/projekthandbuch/projekt/projekttyp/App.tsx--><polygon fill="#FFFFFF" filter="url(#fqy6bcnlbnmh4)" points="4055.5,31.5,4620.5,31.5,4627.5,53.7969,4630.5,53.7969,4630.5,194.5,4055.5,194.5,4055.5,31.5" style="stroke:#000000;stroke-width:1.5;"/><line style="stroke:#000000;stroke-width:1.5;" x1="4055.5" x2="4627.5" y1="53.7969" y2="53.7969"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="559" x="4059.5" y="46.4951">proj/components/projekthandbuch/projekt/projekttyp/App.tsx</text><!--MD5=[8e1bec33b8a57a3e6c969a1ed4d34b30]
 cluster proj/components/projekthandbuch/projekt/projekttyp/controller.ts--><polygon fill="#FFFFFF" filter="url(#fqy6bcnlbnmh4)" points="4294.5,244,4839.5,244,4846.5,266.2969,4849.5,266.2969,4849.5,458,4294.5,458,4294.5,244" style="stroke:#000000;stroke-width:1.5;"/><line style="stroke:#000000;stroke-width:1.5;" x1="4294.5" x2="4846.5" y1="266.2969" y2="266.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="539" x="4298.5" y="258.9951">proj/components/projekthandbuch/projekt/projekttyp/controller.ts</text><!--MD5=[9808ef3f1b4c16a608ab839c0e918f3e]
-cluster proj/components/projekthandbuch/projekt/projekttypvariante/component.tsx--><polygon fill="#FFFFFF" filter="url(#fqy6bcnlbnmh4)" points="4654.5,31.5,5287.5,31.5,5294.5,53.7969,5297.5,53.7969,5297.5,194.5,4654.5,194.5,4654.5,31.5" style="stroke:#000000;stroke-width:1.5;"/><line style="stroke:#000000;stroke-width:1.5;" x1="4654.5" x2="5294.5" y1="53.7969" y2="53.7969"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="627" x="4658.5" y="46.4951">proj/components/projekthandbuch/projekt/projekttypvariante/component.tsx</text><!--MD5=[b6c34a00e6ced5a6f3d1d9c73d4c3db2]
+cluster proj/components/projekthandbuch/projekt/projekttypvariante/App.tsx--><polygon fill="#FFFFFF" filter="url(#fqy6bcnlbnmh4)" points="4654.5,31.5,5287.5,31.5,5294.5,53.7969,5297.5,53.7969,5297.5,194.5,4654.5,194.5,4654.5,31.5" style="stroke:#000000;stroke-width:1.5;"/><line style="stroke:#000000;stroke-width:1.5;" x1="4654.5" x2="5294.5" y1="53.7969" y2="53.7969"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="627" x="4658.5" y="46.4951">proj/components/projekthandbuch/projekt/projekttypvariante/App.tsx</text><!--MD5=[b6c34a00e6ced5a6f3d1d9c73d4c3db2]
 cluster proj/components/projekthandbuch/projekt/projekttypvariante/controller.ts--><polygon fill="#FFFFFF" filter="url(#fqy6bcnlbnmh4)" points="4873.5,244,5486.5,244,5493.5,266.2969,5496.5,266.2969,5496.5,458,4873.5,458,4873.5,244" style="stroke:#000000;stroke-width:1.5;"/><line style="stroke:#000000;stroke-width:1.5;" x1="4873.5" x2="5493.5" y1="266.2969" y2="266.2969"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="607" x="4877.5" y="258.9951">proj/components/projekthandbuch/projekt/projekttypvariante/controller.ts</text><!--MD5=[c14ac416f32099d11e808729aca75246]
 cluster proj/components/projekthandbuch/tailoricomponent.tsx--><polygon fill="#FFFFFF" filter="url(#fqy6bcnlbnmh4)" points="5989.5,44.5,6451.5,44.5,6458.5,66.7969,6461.5,66.7969,6461.5,181.5,5989.5,181.5,5989.5,44.5" style="stroke:#000000;stroke-width:1.5;"/><line style="stroke:#000000;stroke-width:1.5;" x1="5989.5" x2="6458.5" y1="66.7969" y2="66.7969"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="456" x="5993.5" y="59.4951">proj/components/projekthandbuch/tailoricomponent.tsx</text><!--MD5=[d570b5b8124e103f0cf984dc676fdfb2]
 cluster proj/components/projekthandbuch/tailoricontroller.ts--><polygon fill="#FFFFFF" filter="url(#fqy6bcnlbnmh4)" points="6308.5,269.5,6750.5,269.5,6757.5,291.7969,6778.5,291.7969,6778.5,651.5,6308.5,651.5,6308.5,269.5" style="stroke:#000000;stroke-width:1.5;"/><line style="stroke:#000000;stroke-width:1.5;" x1="6308.5" x2="6757.5" y1="291.7969" y2="291.7969"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="436" x="6312.5" y="284.4951">proj/components/projekthandbuch/tailoricontroller.ts</text><!--MD5=[09c302b203bc89744c1cf08bd00fa4b1]
@@ -159,14 +159,14 @@ package proj/app.run.ts {
 package proj/shares/utils.ts {
 
 }
-package proj/components/app/component.tsx {
+package proj/components/app/App.tsx {
 class AppComponent {
 +ctrl: AppController: AppController
 +render(): JSX.Element
 }
 }
 
-package proj/components/dashboard/component.tsx {
+package proj/components/dashboard/App.tsx {
 class DashboardComponent {
 +ctrl: DashboardController: DashboardController
 +render(): JSX.Element
@@ -177,7 +177,7 @@ package proj/components/dashboard/controller.ts {
 class DashboardController {
 }
 }
-package proj/components/footer/component.tsx {
+package proj/components/footer/App.tsx {
 class FooterComponent {
 +ctrl: FooterController: FooterController
 +render(): JSX.Element
@@ -187,7 +187,7 @@ class FooterComponent {
 package proj/components/footer/controller.ts {
 class FooterController {
 +currentDate: Date: Date
-+application: 
++application:
 }
 }
 
@@ -195,7 +195,7 @@ package proj/shares/constant.ts {
 
 
 }
-package proj/components/header/component.tsx {
+package proj/components/header/App.tsx {
 class HeaderComponent {
 +ctrl: HeaderController: HeaderController
 +render(): JSX.Element
@@ -205,10 +205,10 @@ class HeaderComponent {
 package proj/components/header/controller.ts {
 class HeaderController {
 +currentDate: Date: Date
-+application: 
++application:
 }
 }
-package proj/components/navigation/component.tsx {
+package proj/components/navigation/App.tsx {
 class NavigationComponent {
 +ctrl: NavigationController: NavigationController
 +render(): JSX.Element
@@ -221,7 +221,7 @@ class NavigationController {
 +toggleCollapse(): void
 }
 }
-package proj/components/projekthandbuch/component.tsx {
+package proj/components/projekthandbuch/App.tsx {
 class ProjekthandbuchComponent {
 +ctrl: ProjekthandbuchController: ProjekthandbuchController
 +render(): JSX.Element
@@ -232,14 +232,14 @@ package proj/components/projekthandbuch/controller.ts {
 class ProjekthandbuchController {
 }
 }
-package proj/components/projekthandbuch/projekt/component.tsx {
+package proj/components/projekthandbuch/projekt/App.tsx {
 class ProjektComponent {
 +ctrl: ProjektController: ProjektController
 +render(): JSX.Element
 }
 }
 
-package proj/components/projekthandbuch/projekt/anwendungsprofile/component.tsx {
+package proj/components/projekthandbuch/projekt/anwendungsprofile/App.tsx {
 class AnwendungsprofileComponent {
 +ctrl: AnwendungsprofileController: AnwendungsprofileController
 -projectTypeSubscription: Subscription: Subscription
@@ -255,7 +255,7 @@ class AnwendungsprofileComponent {
 
 package proj/components/projekthandbuch/projekt/anwendungsprofile/controller.ts {
 interface ExtendedProjectFeature {
-values: 
+values:
 }
 class AnwendungsprofileController {
 +projekthandbuchService: ProjekthandbuchService
@@ -283,7 +283,7 @@ class ProjektController {
 +getProjectFeatures(projectTypeId: number, projectTypeVariantId: number): Array<ProjectFeature>
 }
 }
-package proj/components/projekthandbuch/projekt/meta-modell/component.tsx {
+package proj/components/projekthandbuch/projekt/meta-modell/App.tsx {
 class MetaModellComponent {
 +ctrl: MetaModellController: MetaModellController
 +render(): JSX.Element
@@ -297,7 +297,7 @@ class MetaModellController {
 +changeMetaModel(mataModelId: number): void
 }
 }
-package proj/components/projekthandbuch/projekt/projekttyp/component.tsx {
+package proj/components/projekthandbuch/projekt/projekttyp/App.tsx {
 class ProjekttypComponent {
 +ctrl: ProjekttypController
 +constructor(props: unknown)
@@ -321,7 +321,7 @@ class ProjekttypController {
 +changeProjectType(projectTypeId: number): void
 }
 }
-package proj/components/projekthandbuch/projekt/projekttypvariante/component.tsx {
+package proj/components/projekthandbuch/projekt/projekttypvariante/App.tsx {
 class ProjekttypvarianteComponent {
 +ctrl: ProjekttypvarianteController
 +constructor(props: unknown)
