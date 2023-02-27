@@ -12,7 +12,7 @@ export function removeHtmlTags(html: string): string {
   return html.replace(/(<([^>]+)>)/gi, '');
 }
 
-const umlautMap = {
+const umlautMap: { [key: string]: string } = {
   '\u00dc': 'UE',
   '\u00c4': 'AE',
   '\u00d6': 'OE',

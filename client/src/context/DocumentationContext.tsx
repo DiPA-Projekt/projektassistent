@@ -1,8 +1,7 @@
 import { PageEntry } from '@dipa-projekt/projektassistent-openapi';
 import React, { useEffect, useState } from 'react';
-import { useTailoring } from './TailoringContext';
 import { NavMenuItem, NavTypeEnum, Section } from '../components/projekthandbuch/documentation/navigation/navigation';
-import { getJsonDataFromXml, getMenuItemByAttributeValue } from '../shares/utils';
+import { getMenuItemByAttributeValue } from '../shares/utils';
 
 type DocumentationSession = {
   selectedPageEntry: PageEntry;
@@ -14,6 +13,13 @@ type DocumentationSession = {
   setNavigationData: Function;
   disciplineId: string | null;
   productId: string | null;
+  roleId: string | null;
+  processModuleId: string | null;
+  decisionPointId: string | null;
+  processBuildingBlockId: string | null;
+  methodReferenceId: string | null;
+  toolReferenceId: string | null;
+  entryId: string | null;
 };
 
 type DocumentationSessionProviderProps = { children: React.ReactNode };
@@ -29,6 +35,13 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
 
   const [disciplineId, setDisciplineId] = useState<string | null>(null);
   const [productId, setProductId] = useState<string | null>(null);
+  const [roleId, setRoleId] = useState<string | null>(null);
+  const [processModuleId, setProcessModuleId] = useState<string | null>(null);
+  const [decisionPointId, setDecisionPointId] = useState<string | null>(null);
+  const [processBuildingBlockId, setProcessBuildingBlockId] = useState<string | null>(null);
+  const [methodReferenceId, setMethodReferenceId] = useState<string | null>(null);
+  const [toolReferenceId, setToolReferenceId] = useState<string | null>(null);
+  const [entryId, setEntryId] = useState<string | null>(null);
 
   const value: DocumentationSession = {
     selectedPageEntry,
@@ -40,15 +53,22 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
     setNavigationData,
     disciplineId,
     productId,
+    roleId,
+    processModuleId,
+    decisionPointId,
+    processBuildingBlockId,
+    methodReferenceId,
+    toolReferenceId,
+    entryId,
   };
 
-  const {
-    modelVariantId,
-    // projectFeaturesDetails,
-    // setProjectFeaturesDetails,
-    // projectFeaturesDataFromProjectType,
-    // projectFeaturesDataFromProjectTypeVariant,
-  } = useTailoring();
+  // const {
+  //   modelVariantId,
+  //   // projectFeaturesDetails,
+  //   // setProjectFeaturesDetails,
+  //   // projectFeaturesDataFromProjectType,
+  //   // projectFeaturesDataFromProjectTypeVariant,
+  // } = useTailoring();
 
   useEffect(() => {
     // async function mount() {
@@ -72,13 +92,30 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
     console.log('gefunden:', gefunden);
 
     if (gefunden !== undefined) {
-      if (gefunden.type === NavTypeEnum.PRODUCT) {
+      if (gefunden.dataType === NavTypeEnum.PRODUCT) {
         setDisciplineId(gefunden.parentId);
         setProductId(gefunden.key);
+      } else if (gefunden.dataType === NavTypeEnum.ROLE) {
+        setRoleId(gefunden.key);
+      } else if (gefunden.dataType === NavTypeEnum.PROCESS_MODULE) {
+        setProcessModuleId(gefunden.key);
+        console.log('setProcessModuleId');
+      } else if (gefunden.dataType === NavTypeEnum.DECISION_POINT) {
+        setDecisionPointId(gefunden.key);
+        console.log('setDecisionPointId');
+      } else if (gefunden.dataType === NavTypeEnum.PROCESS_BUILDING_BLOCK) {
+        setProcessBuildingBlockId(gefunden.key);
+        console.log('setProcessBuildingBlockId');
+      } else if (gefunden.dataType === NavTypeEnum.METHOD_REFERENCE) {
+        setMethodReferenceId(gefunden.key);
+        console.log('setMethodReferenceId');
+      } else if (gefunden.dataType === NavTypeEnum.TOOL_REFERENCE) {
+        setToolReferenceId(gefunden.key);
+        console.log('setToolReferenceId');
+      } else {
+        setEntryId(gefunden.key);
       }
     }
-
-    void fetchSectionContentData(menuEntryId);
 
     // this.projectTypeSubscription = this.projekthandbuchService
     //   .getNavigationData()
@@ -119,26 +156,24 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
     // this.projectTypeSubscription.unsubscribe();
   }
 
-  async function fetchSectionContentData(sectionId: string): Promise<void> {
-    const sectionContentUrl =
-      'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      modelVariantId +
-      '/Kapitel/' +
-      sectionId;
-
-    const jsonDataFromXml: any = await getJsonDataFromXml(sectionContentUrl);
-
-    // console.log("jsonDataFromXml.getElementsByTagName('Kapitel')", jsonDataFromXml.getElementsByTagName('Kapitel'));
-
-    // const xmlDataWithParent = addParentRecursive([jsonDataFromXml]);
-    // console.log('xmlDataWithParent', xmlDataWithParent);
-
-    // const sections: Section[] = jsonDataFromXml.getElementsByTagName('Kapitel').map((section: any) => {
-    //   return section.attributes as Section;
-    // });
-
-    // setSectionsDetailsData(xmlDataWithParent);
-  }
+  // async function fetchSectionContentData(sectionId: string): Promise<any> {
+  //   const sectionContentUrl =
+  //     'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+  //     modelVariantId +
+  //     '/Kapitel/' +
+  //     sectionId;
+  //
+  //   const jsonDataFromXml: any = await getJsonDataFromXml(sectionContentUrl);
+  //   const textPart = jsonDataFromXml.children.find((child: any) => child.name === 'Text')?.value;
+  //
+  //   return {
+  //     id: jsonDataFromXml.attributes.id,
+  //     header: jsonDataFromXml.attributes.name,
+  //     descriptionText: textPart,
+  //     tableEntries: [],
+  //     subPageEntries: [],
+  //   };
+  // }
 
   return (
     // the Provider gives access to the context to its children

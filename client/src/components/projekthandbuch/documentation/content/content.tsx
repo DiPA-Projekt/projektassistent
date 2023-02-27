@@ -16,13 +16,13 @@ import {
 import { DataEntry, PageEntry, TableEntry } from '@dipa-projekt/projektassistent-openapi';
 // import { GenericComponent } from '@leanup/lib';
 // import { ReactComponent } from '@leanup/lib';
-import { FooterComponent } from '../../../footer/component';
-
 import parse from 'html-react-parser';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useDocumentation } from '../../../../context/DocumentationContext';
-import { decodeXml, getJsonDataFromXml } from '../../../../shares/utils';
+import { decodeXml, getJsonDataFromXml, replaceUmlaute } from '../../../../shares/utils';
 import { AnchorLinkItemProps } from 'antd/es/anchor/Anchor';
+import axios from 'axios';
+import XMLParser, { XMLElement } from 'react-xml-parser';
 
 // export let pageEntryFound: PageEntry;
 
@@ -82,7 +82,19 @@ export function Content() {
     }
   });
 
-  const { selectedPageEntry, setSelectedPageEntry, disciplineId, productId } = useDocumentation();
+  const {
+    selectedPageEntry,
+    setSelectedPageEntry,
+    disciplineId,
+    productId,
+    roleId,
+    decisionPointId,
+    processModuleId,
+    methodReferenceId,
+    toolReferenceId,
+    processBuildingBlockId,
+    entryId,
+  } = useDocumentation();
 
   useEffect(() => {
     async function mount() {
@@ -99,6 +111,118 @@ export function Content() {
     mount().then();
     //eslint-disable-next-line
   }, [productId]);
+
+  useEffect(() => {
+    async function mount() {
+      // TODO: noch schauen wo das genau hinkommt
+      if (roleId) {
+        const content = await getRoleContent();
+        setSelectedPageEntry(content);
+        console.log('setSelectedPageEntry', content);
+      } else {
+        console.log('no roleId');
+      }
+    }
+
+    mount().then();
+    //eslint-disable-next-line
+  }, [roleId]);
+
+  useEffect(() => {
+    async function mount() {
+      // TODO: noch schauen wo das genau hinkommt
+      if (processBuildingBlockId) {
+        const content = await getTailoringProcessBuildingBlocksContent();
+        setSelectedPageEntry(content);
+        console.log('setSelectedPageEntry', content);
+      } else {
+        console.log('no processBuildingBlockId');
+      }
+    }
+
+    mount().then();
+    //eslint-disable-next-line
+  }, [processBuildingBlockId]);
+
+  useEffect(() => {
+    async function mount() {
+      // TODO: noch schauen wo das genau hinkommt
+      if (decisionPointId) {
+        const content = await getDecisionPointContent();
+        setSelectedPageEntry(content);
+        console.log('setSelectedPageEntry', content);
+      } else {
+        console.log('no decisionPointId');
+      }
+    }
+
+    mount().then();
+    //eslint-disable-next-line
+  }, [decisionPointId]);
+
+  useEffect(() => {
+    async function mount() {
+      // TODO: noch schauen wo das genau hinkommt
+      if (processModuleId) {
+        const content = await getProcessModuleContent();
+        setSelectedPageEntry(content);
+        console.log('setSelectedPageEntry', content);
+      } else {
+        console.log('no processModuleId');
+      }
+    }
+
+    mount().then();
+    //eslint-disable-next-line
+  }, [processModuleId]);
+
+  useEffect(() => {
+    async function mount() {
+      // TODO: noch schauen wo das genau hinkommt
+      if (methodReferenceId) {
+        const content = await getMethodReferenceContent();
+        setSelectedPageEntry(content);
+        console.log('setSelectedPageEntry', content);
+      } else {
+        console.log('no methodReferenceId');
+      }
+    }
+
+    mount().then();
+    //eslint-disable-next-line
+  }, [methodReferenceId]);
+
+  useEffect(() => {
+    async function mount() {
+      // TODO: noch schauen wo das genau hinkommt
+      if (toolReferenceId) {
+        const content = await getToolReferenceContent();
+        setSelectedPageEntry(content);
+        console.log('setSelectedPageEntry', content);
+      } else {
+        console.log('no toolReferenceId');
+      }
+    }
+
+    mount().then();
+    //eslint-disable-next-line
+  }, [toolReferenceId]);
+
+  useEffect(() => {
+    async function mount() {
+      // TODO: noch schauen wo das genau hinkommt
+      if (entryId) {
+        const content = await fetchSectionDetailsData(entryId);
+        setSelectedPageEntry(content);
+        console.log('setSelectedPageEntry', content);
+      } else {
+        console.log('no productId && disciplineId');
+      }
+    }
+
+    mount().then();
+    //eslint-disable-next-line
+  }, [entryId]);
 
   function renderSwitch(param: string) {
     const icon = icons.get(param);
@@ -264,6 +388,58 @@ export function Content() {
         return `${key}=${projectFeatureIdsSearchParam[key]}`;
       })
       .join('&');
+  }
+
+  function replaceUrlInText(testString: string): string {
+    //vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/fc3fc9d51ffd42/
+    // Projekttyp/1369cfd47f59793/Projekttypvariante/c3cdfb31207000/
+    // Grafik/images/VB_11340f6a5201855.gif?bee411a076e64a5=5acd11a076eaf06&be9c11a076f10fa=faaf11a076f5da4&ca2711ba30b787e=17af711ba30b787e&cd7015dbcc3dcdf=105b315dbcc3dcdf&7a0a11a076fa61b=a36711a0771b07e&de9d11a07700334=47bd11a07723bec&1261411a077061c3=547611a07727f2d&559a15dc26b0e8a=2dc715dc26b0e8a&cd5511a07709e6b=1600811a0772cdb4&25f211a0770d36d=47a111a0772f0e4&10f4e11a07712fb9=aa7811a07736a7c
+
+    const imageUrl =
+      'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      modelVariantId +
+      '/Projekttyp/' +
+      projectTypeId +
+      '/Projekttypvariante/' +
+      projectTypeVariantId +
+      '/Grafik/images/$2?' +
+      getProjectFeaturesString();
+
+    // testString.replace(/<img([^>]*)\ssrc=(['"])(?:[^\2\/]*\/)*([^\2]+)\2/gi, '<img$1 src=$2newPath/$3$2');
+
+    testString.replace(/(<img *src=")(.*?)"/, imageUrl);
+
+    return testString.replace(
+      /src=['"](?:[^"'\/]*\/)*([^'"]+)['"]/g,
+      'src="https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+        modelVariantId +
+        '/Projekttyp/' +
+        projectTypeId +
+        '/Projekttypvariante/' +
+        projectTypeVariantId +
+        '/Grafik/images/$1?' +
+        getProjectFeaturesString() +
+        '"'
+    );
+  }
+
+  async function fetchSectionDetailsData(sectionId: string): Promise<any> {
+    const sectionDetailUrl =
+      'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      modelVariantId +
+      '/Kapitel/' +
+      sectionId;
+
+    const jsonDataFromXml: any = await getJsonDataFromXml(sectionDetailUrl);
+    const textPart = decodeXml(jsonDataFromXml.children.find((child: any) => child.name === 'Text')?.value);
+
+    return {
+      id: jsonDataFromXml.attributes.id,
+      header: jsonDataFromXml.attributes.titel,
+      descriptionText: replaceUrlInText(textPart),
+      tableEntries: [],
+      subPageEntries: [],
+    };
   }
 
   async function getProductContent(): Promise<PageEntry> {
@@ -443,6 +619,341 @@ export function Content() {
     return [anchorList];
   }
 
+  ////////////////////////////////////
+
+  async function getRoleContent(): Promise<PageEntry> {
+    const url =
+      'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      modelVariantId +
+      '/Projekttyp/' +
+      projectTypeId +
+      '/Projekttypvariante/' +
+      projectTypeVariantId +
+      '/Rolle/' +
+      roleId +
+      '?' +
+      getProjectFeaturesString();
+
+    let idCounter = 2000;
+
+    return axios.get(url).then((response) => {
+      console.log(response.data);
+      const jsonDataFromXml = new XMLParser().parseFromString(replaceUmlaute(response.data));
+
+      const description = decodeXml(jsonDataFromXml.getElementsByTagName('Beschreibung')[0]?.value);
+      const tasksAndAuthorities = jsonDataFromXml.getElementsByTagName('Aufgaben_und_Befugnisse')[0]?.value;
+      const skillProfile = jsonDataFromXml.getElementsByTagName('Faehigkeitsprofil')[0]?.value;
+      const cast = jsonDataFromXml.getElementsByTagName('Rollenbesetzung')[0]?.value;
+
+      const rolleVerantwortetProduktRefs: XMLElement[] =
+        jsonDataFromXml.getElementsByTagName('RolleVerantwortetProduktRefs');
+      const rolleWirktMitBeiProduktRefs: XMLElement[] =
+        jsonDataFromXml.getElementsByTagName('RolleWirktMitBeiProduktRefs');
+
+      const tableEntries: TableEntry[] = [];
+
+      if (tasksAndAuthorities) {
+        tableEntries.push({
+          id: (idCounter++).toString(),
+          descriptionEntry: 'Aufgaben und Befugnisse',
+          dataEntries: [{ title: decodeXml(tasksAndAuthorities) }],
+        });
+      }
+      if (skillProfile) {
+        tableEntries.push({
+          id: (idCounter++).toString(),
+          descriptionEntry: 'Fähigkeitsprofil',
+          dataEntries: [{ title: decodeXml(skillProfile) }],
+        });
+      }
+      if (cast) {
+        tableEntries.push({
+          id: (idCounter++).toString(),
+          descriptionEntry: 'Rollenbesetzung',
+          dataEntries: [{ title: decodeXml(cast) }],
+        });
+      }
+
+      // //////////////////////////////////////////////
+      //
+      const rolesInCharge = rolleVerantwortetProduktRefs.flatMap((entry: XMLElement) => {
+        return entry.getElementsByTagName('ProduktRef').map((productRef) => {
+          return {
+            id: productRef.attributes.id,
+            title: productRef.attributes.name,
+          };
+        });
+      });
+
+      if (rolesInCharge.length > 0) {
+        tableEntries.push({
+          id: (idCounter++).toString(),
+          descriptionEntry: 'Verantwortlich für',
+          dataEntries: rolesInCharge,
+        });
+      }
+
+      // //////////////////////////////////////////////
+
+      const rolesTakePart = rolleWirktMitBeiProduktRefs.flatMap((entry) => {
+        return entry.getElementsByTagName('ProduktRef').map((productRef) => {
+          return {
+            id: productRef.attributes.id,
+            title: productRef.attributes.name,
+          };
+        });
+      });
+
+      if (rolesTakePart.length > 0) {
+        tableEntries.push({
+          id: (idCounter++).toString(),
+          descriptionEntry: 'Wirkt mit bei',
+          dataEntries: rolesTakePart,
+        });
+      }
+
+      //////////////////////////////////////////////
+
+      // console.log('this.pageEntry roles', this.pageEntry);
+
+      return {
+        id: jsonDataFromXml.attributes.id,
+        // menuEntryId: jsonDataFromXml.attributes.id,
+        header: jsonDataFromXml.attributes.name,
+        descriptionText: description,
+        tableEntries: tableEntries,
+        // subPageEntries: subPageEntries,
+      };
+    });
+  }
+
+  async function getDecisionPointContent(): Promise<PageEntry> {
+    const tailoringProcessBuildingBlocksUrl =
+      'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      modelVariantId +
+      '/Projekttyp/' +
+      projectTypeId +
+      '/Projekttypvariante/' +
+      projectTypeVariantId +
+      '/Entscheidungspunkt/' +
+      decisionPointId +
+      '?' +
+      getProjectFeaturesString();
+
+    // let idCounter = 2000;
+
+    const jsonDataFromXml: any = await getJsonDataFromXml(tailoringProcessBuildingBlocksUrl);
+
+    let idCounter = 2000;
+
+    // TODO
+    const sinnUndZweck = decodeXml(jsonDataFromXml.getElementsByTagName('Sinn_und_Zweck')[0]?.value);
+
+    const entscheidungspunktZuProduktRef = jsonDataFromXml.getElementsByTagName('EntscheidungspunktZuProduktRef');
+
+    const tableEntries: TableEntry[] = [];
+
+    const products = entscheidungspunktZuProduktRef.flatMap((entry) => {
+      return entry.getElementsByTagName('ProduktRef').map((productRef) => {
+        return {
+          id: productRef.attributes.id,
+          title: productRef.attributes.name,
+        };
+      });
+    });
+
+    if (products.length > 0) {
+      tableEntries.push({
+        id: (idCounter++).toString(),
+        descriptionEntry: 'Zugeordnete Produkte',
+        dataEntries: products,
+      });
+    }
+
+    return {
+      id: jsonDataFromXml.attributes.id,
+      header: jsonDataFromXml.attributes.name,
+      descriptionText: sinnUndZweck,
+      tableEntries: tableEntries,
+      // subPageEntries: subPageEntries,
+    };
+  }
+
+  async function getProcessModuleContent(): Promise<PageEntry> {
+    const processModuleUrl =
+      'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      modelVariantId +
+      '/Projekttyp/' +
+      projectTypeId +
+      '/Projekttypvariante/' +
+      projectTypeVariantId +
+      '/Ablaufbaustein/' +
+      processModuleId +
+      '?' +
+      getProjectFeaturesString();
+
+    // let idCounter = 2000;
+
+    const jsonDataFromXml: any = await getJsonDataFromXml(processModuleUrl);
+
+    console.log('getProcessModuleContent', jsonDataFromXml);
+
+    const description = decodeXml(jsonDataFromXml.getElementsByTagName('Beschreibung')[0]?.value);
+
+    // let idCounter = 2000;
+    //
+    // const sinnUndZweck = decodeXml(jsonDataFromXml.getElementsByTagName('Sinn_und_Zweck')[0]?.value);
+    //
+    // const entscheidungspunktZuProduktRef = jsonDataFromXml.getElementsByTagName('EntscheidungspunktZuProduktRef');
+
+    const tableEntries: TableEntry[] = [];
+
+    // const products = entscheidungspunktZuProduktRef.flatMap((entry) => {
+    //   return entry.getElementsByTagName('ProduktRef').map((productRef) => {
+    //     return {
+    //       id: productRef.attributes.id,
+    //       title: productRef.attributes.name,
+    //     };
+    //   });
+    // });
+
+    // if (products.length > 0) {
+    //   tableEntries.push({
+    //     id: (idCounter++).toString(),
+    //     descriptionEntry: 'Zugeordnete Produkte',
+    //     dataEntries: products,
+    //   });
+    // }
+
+    //////////////////////////////////////////////
+
+    return {
+      id: jsonDataFromXml.attributes.id,
+      // menuEntryId: jsonDataFromXml.attributes.id,
+      header: jsonDataFromXml.attributes.name,
+      descriptionText: description,
+      tableEntries: tableEntries,
+      // subPageEntries: subPageEntries,
+    };
+  }
+
+  async function getTailoringProcessBuildingBlocksContent(): Promise<PageEntry> {
+    const tailoringProcessBuildingBlocksUrl =
+      'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      modelVariantId +
+      '/Projekttyp/' +
+      projectTypeId +
+      '/Projekttypvariante/' +
+      projectTypeVariantId +
+      '/Vorgehensbaustein/' +
+      processBuildingBlockId +
+      '?' +
+      getProjectFeaturesString();
+
+    // let idCounter = 2000;
+
+    const jsonDataFromXml: any = await getJsonDataFromXml(tailoringProcessBuildingBlocksUrl);
+
+    const sinnUndZweck = decodeXml(jsonDataFromXml.getElementsByTagName('Sinn_und_Zweck')[0]?.value);
+
+    const tableEntries: TableEntry[] = [];
+
+    return {
+      id: jsonDataFromXml.attributes.id,
+      header: jsonDataFromXml.attributes.name,
+      descriptionText: sinnUndZweck,
+      tableEntries: tableEntries,
+      // subPageEntries: subPageEntries,
+    };
+  }
+
+  async function getMethodReferenceContent(): Promise<PageEntry> {
+    const methodReferenceUrl =
+      'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      modelVariantId +
+      '/Methodenreferenz/' +
+      methodReferenceId;
+
+    // const jsonDataFromXml: any = await getJsonDataFromXml(methodReferenceUrl);
+
+    let idCounter = 2000;
+
+    return axios.get(methodReferenceUrl).then((response) => {
+      console.log(response.data);
+      const jsonDataFromXml = new XMLParser().parseFromString(replaceUmlaute(response.data));
+
+      const sinnUndZweck = decodeXml(jsonDataFromXml.getElementsByTagName('Sinn_und_Zweck')[0]?.value);
+
+      const quelleRefs: XMLElement[] = jsonDataFromXml.getElementsByTagName('QuelleRefs');
+
+      const tableEntries: TableEntry[] = [];
+
+      // //////////////////////////////////////////////
+      //
+      const quellen = quelleRefs.flatMap((entry: XMLElement) => {
+        return entry.getElementsByTagName('QuelleRef').map((productRef) => {
+          return {
+            id: productRef.attributes.id,
+            title: productRef.attributes.name,
+          };
+        });
+      });
+
+      if (quellen.length > 0) {
+        tableEntries.push({
+          id: (idCounter++).toString(),
+          descriptionEntry: 'Quellen',
+          dataEntries: quellen,
+        });
+      }
+
+      //////////////////////////////////////////////
+
+      // console.log('this.pageEntry roles', this.pageEntry);
+
+      return {
+        id: jsonDataFromXml.attributes.id,
+        // menuEntryId: jsonDataFromXml.attributes.id,
+        header: jsonDataFromXml.attributes.name,
+        descriptionText: sinnUndZweck,
+        tableEntries: tableEntries,
+        // subPageEntries: subPageEntries,
+      };
+    });
+  }
+
+  async function getToolReferenceContent(): Promise<PageEntry> {
+    const toolReferenceUrl =
+      'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      modelVariantId +
+      '/Werkzeugreferenz/' +
+      toolReferenceId;
+
+    // const jsonDataFromXml: any = await getJsonDataFromXml(methodReferenceUrl);
+
+    return axios.get(toolReferenceUrl).then((response) => {
+      console.log(response.data);
+      const jsonDataFromXml = new XMLParser().parseFromString(replaceUmlaute(response.data));
+
+      const sinnUndZweck = decodeXml(jsonDataFromXml.getElementsByTagName('Sinn_und_Zweck')[0]?.value);
+
+      const tableEntries: TableEntry[] = [];
+
+      //////////////////////////////////////////////
+
+      // console.log('this.pageEntry roles', this.pageEntry);
+
+      return {
+        id: jsonDataFromXml.attributes.id,
+        // menuEntryId: jsonDataFromXml.attributes.id,
+        header: jsonDataFromXml.attributes.name,
+        descriptionText: sinnUndZweck,
+        tableEntries: tableEntries,
+        // subPageEntries: subPageEntries,
+      };
+    });
+  }
+
   return (
     <>
       <Layout style={{ background: '#FFF' }}>
@@ -453,7 +964,7 @@ export function Content() {
             lg={{ span: 16, order: 1 }}
           >
             <div style={{ padding: '24px', flex: '1 0 auto' }}>{<PageEntryContent />}</div>
-            <FooterComponent />
+            {/*<FooterComponent />*/}
           </Col>
           <Col xs={{ span: 24, order: 1 }} lg={{ span: 8, order: 2 }}>
             {selectedPageEntry && (

@@ -46,21 +46,12 @@ export function ApplicationProfile() {
 
   useEffect(() => {
     // async function mount() {
-    getProjectFeatureDetails(projectFeaturesDataFromProjectType);
+    getProjectFeatureDetails([...projectFeaturesDataFromProjectType, ...projectFeaturesDataFromProjectTypeVariant]);
     // }
 
     // mount().then();
     //eslint-disable-next-line
-  }, [projectFeaturesDataFromProjectType]);
-
-  useEffect(() => {
-    // async function mount() {
-    getProjectFeatureDetails(projectFeaturesDataFromProjectTypeVariant);
-    // }
-
-    // mount().then();
-    //eslint-disable-next-line
-  }, [projectFeaturesDataFromProjectTypeVariant]);
+  }, [projectFeaturesDataFromProjectType, projectFeaturesDataFromProjectTypeVariant]);
 
   useEffect(() => {
     console.log('useEffect projectFeaturesDetails', projectFeaturesDetails);

@@ -18,6 +18,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/tailoring" element={<Project />} />
             <Route path="/documentation" element={<Documentation />} />
+            <Route path="/documentation/:id" element={<Documentation />} />
             <Route path="/projekthandbuch" element={<ProjekthandbuchComponent />} />
             <Route path="/produktvorlagen" element={<ProduktvorlagenComponent />} />
             {/*<Route path="*" element={<HomeComponent />} />*/}
