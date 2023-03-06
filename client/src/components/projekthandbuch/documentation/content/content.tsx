@@ -1,6 +1,6 @@
 // import 'antd/dist/antd.css';
 
-import { Anchor, Avatar, Col, FloatButton, Layout, List, Row } from 'antd';
+import { Anchor, Avatar, Col, FloatButton, Layout, List, Row, Table, TableProps, Tag } from 'antd';
 import React, { useEffect, useState } from 'react';
 
 import {
@@ -19,10 +19,12 @@ import { DataEntry, PageEntry, TableEntry } from '@dipa-projekt/projektassistent
 import parse from 'html-react-parser';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useDocumentation } from '../../../../context/DocumentationContext';
-import { decodeXml, getJsonDataFromXml, replaceUmlaute } from '../../../../shares/utils';
+import { decodeXml, getJsonDataFromXml } from '../../../../shares/utils';
 import { AnchorLinkItemProps } from 'antd/es/anchor/Anchor';
 import axios from 'axios';
 import XMLParser, { XMLElement } from 'react-xml-parser';
+import { IndexTypeEnum } from '../navigation/navigation';
+import { ColumnsType } from 'antd/es/table';
 
 // export let pageEntryFound: PageEntry;
 
@@ -71,16 +73,21 @@ export function Content() {
 
   const [searchParams, setSearchParams] = useSearchParams();
   // TODO: just temporary from search params
-  const modelVariantId = searchParams.get('mV');
-  const projectTypeVariantId = searchParams.get('ptV');
-  const projectTypeId = searchParams.get('pt');
-  const projectFeatureIdsSearchParam: MyType = {};
+  const tailoringModelVariantId = searchParams.get('mV');
+  const tailoringProjectTypeVariantId = searchParams.get('ptV');
+  const tailoringProjectTypeId = searchParams.get('pt');
+  const tailoringProjectFeatureIdsSearchParam: MyType = {};
 
   searchParams.forEach((value, key) => {
     if (!['mV', 'ptV', 'pt'].includes(key)) {
-      projectFeatureIdsSearchParam[key] = value;
+      tailoringProjectFeatureIdsSearchParam[key] = value;
     }
   });
+
+  const QUESTION_HEADER =
+    '<div style="margin-top: 40px;"><h3 id="questionHeader"> Frage (im Projektassistenten) </h3></div>';
+
+  const sorter = (a, b) => (isNaN(a) && isNaN(b) ? (a || '').localeCompare(b || '') : a - b);
 
   const {
     selectedPageEntry,
@@ -93,7 +100,12 @@ export function Content() {
     methodReferenceId,
     toolReferenceId,
     processBuildingBlockId,
+    projectCharacteristicId,
+    projectTypeId,
+    projectTypeVariantId,
+    activityId,
     entryId,
+    selectedIndexType,
   } = useDocumentation();
 
   useEffect(() => {
@@ -111,6 +123,26 @@ export function Content() {
     mount().then();
     //eslint-disable-next-line
   }, [productId]);
+
+  useEffect(() => {
+    async function mount() {
+      // TODO: noch schauen wo das genau hinkommt
+      if (selectedIndexType) {
+        switch (selectedIndexType) {
+          case IndexTypeEnum.ROLE:
+            const content = await getRoleIndexContent();
+            setSelectedPageEntry(content);
+            console.log('setSelectedPageEntry', content);
+            break;
+        }
+      } else {
+        console.log('no selectedIndexType');
+      }
+    }
+
+    mount().then();
+    //eslint-disable-next-line
+  }, [selectedIndexType]);
 
   useEffect(() => {
     async function mount() {
@@ -207,6 +239,70 @@ export function Content() {
     mount().then();
     //eslint-disable-next-line
   }, [toolReferenceId]);
+
+  useEffect(() => {
+    async function mount() {
+      // TODO: noch schauen wo das genau hinkommt
+      if (projectCharacteristicId) {
+        const content = await getProjectCharacteristicContent();
+        setSelectedPageEntry(content);
+        console.log('setSelectedPageEntry', content);
+      } else {
+        console.log('no toolReferenceId');
+      }
+    }
+
+    mount().then();
+    //eslint-disable-next-line
+  }, [projectCharacteristicId]);
+
+  useEffect(() => {
+    async function mount() {
+      // TODO: noch schauen wo das genau hinkommt
+      if (projectTypeId) {
+        const content = await getProjectTypeContent();
+        setSelectedPageEntry(content);
+        console.log('setSelectedPageEntry', content);
+      } else {
+        console.log('no toolReferenceId');
+      }
+    }
+
+    mount().then();
+    //eslint-disable-next-line
+  }, [projectTypeId]);
+
+  useEffect(() => {
+    async function mount() {
+      // TODO: noch schauen wo das genau hinkommt
+      if (projectTypeVariantId) {
+        const content = await getProjectTypeVariantContent();
+        setSelectedPageEntry(content);
+        console.log('setSelectedPageEntry', content);
+      } else {
+        console.log('no toolReferenceId');
+      }
+    }
+
+    mount().then();
+    //eslint-disable-next-line
+  }, [projectTypeVariantId]);
+
+  useEffect(() => {
+    async function mount() {
+      // TODO: noch schauen wo das genau hinkommt
+      if (activityId) {
+        const content = await getActivityContent();
+        setSelectedPageEntry(content);
+        console.log('setSelectedPageEntry', content);
+      } else {
+        console.log('no activityId');
+      }
+    }
+
+    mount().then();
+    //eslint-disable-next-line
+  }, [activityId]);
 
   useEffect(() => {
     async function mount() {
@@ -317,11 +413,11 @@ export function Content() {
   async function getTopicContent(topicId: string): Promise<string> {
     const topicUrl =
       'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      modelVariantId +
+      tailoringModelVariantId +
       '/Projekttyp/' +
-      projectTypeId +
+      tailoringProjectTypeId +
       '/Projekttypvariante/' +
-      projectTypeVariantId +
+      tailoringProjectTypeVariantId +
       '/Disziplin/' +
       disciplineId +
       '/Produkt/' +
@@ -350,12 +446,26 @@ export function Content() {
 
     const productDataArray = [];
 
+    const onChange: TableProps<any>['onChange'] = (pagination, filters, sorter, extra) => {
+      console.log('params', pagination, filters, sorter, extra);
+    };
+
     if (selectedPageEntry && selectedPageEntry?.id) {
       productDataArray.push(
         <div key={selectedPageEntry?.id}>
           <h2 id={selectedPageEntry?.id}> {selectedPageEntry?.header} </h2>
           {parse(selectedPageEntry?.descriptionText)}
           <DataTable data={selectedPageEntry?.tableEntries} />
+
+          {selectedPageEntry && selectedPageEntry?.dataSource && (
+            <Table
+              columns={selectedPageEntry?.columns}
+              dataSource={selectedPageEntry?.dataSource}
+              pagination={false}
+              onChange={onChange}
+              scroll={{ y: '60vh' }} // TODO: schauen ob das so erwünscht ist
+            />
+          )}
         </div>
       );
 
@@ -383,9 +493,9 @@ export function Content() {
   ///////////////////////////////
 
   function getProjectFeaturesString(): string {
-    return Object.keys(projectFeatureIdsSearchParam)
+    return Object.keys(tailoringProjectFeatureIdsSearchParam)
       .map((key: string) => {
-        return `${key}=${projectFeatureIdsSearchParam[key]}`;
+        return `${key}=${tailoringProjectFeatureIdsSearchParam[key]}`;
       })
       .join('&');
   }
@@ -397,11 +507,11 @@ export function Content() {
 
     const imageUrl =
       'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      modelVariantId +
+      tailoringModelVariantId +
       '/Projekttyp/' +
-      projectTypeId +
+      tailoringProjectTypeId +
       '/Projekttypvariante/' +
-      projectTypeVariantId +
+      tailoringProjectTypeVariantId +
       '/Grafik/images/$2?' +
       getProjectFeaturesString();
 
@@ -412,11 +522,11 @@ export function Content() {
     return testString.replace(
       /src=['"](?:[^"'\/]*\/)*([^'"]+)['"]/g,
       'src="https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-        modelVariantId +
+        tailoringModelVariantId +
         '/Projekttyp/' +
-        projectTypeId +
+        tailoringProjectTypeId +
         '/Projekttypvariante/' +
-        projectTypeVariantId +
+        tailoringProjectTypeVariantId +
         '/Grafik/images/$1?' +
         getProjectFeaturesString() +
         '"'
@@ -426,7 +536,7 @@ export function Content() {
   async function fetchSectionDetailsData(sectionId: string): Promise<any> {
     const sectionDetailUrl =
       'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      modelVariantId +
+      tailoringModelVariantId +
       '/Kapitel/' +
       sectionId;
 
@@ -445,11 +555,11 @@ export function Content() {
   async function getProductContent(): Promise<PageEntry> {
     const productUrl =
       'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      modelVariantId +
+      tailoringModelVariantId +
       '/Projekttyp/' +
-      projectTypeId +
+      tailoringProjectTypeId +
       '/Projekttypvariante/' +
-      projectTypeVariantId +
+      tailoringProjectTypeVariantId +
       '/Disziplin/' +
       disciplineId +
       '/Produkt/' +
@@ -473,7 +583,7 @@ export function Content() {
     const rolleWirktMitBeiProduktRef = jsonDataFromXml.getElementsByTagName('RolleWirktMitBeiProduktRef');
     const produktZuEntscheidungspunktRef = jsonDataFromXml.getElementsByTagName('ProduktZuEntscheidungspunktRef');
     const themaZuProduktRef = jsonDataFromXml.getElementsByTagName('ThemaZuProduktRef');
-    const aktivitaetRef = jsonDataFromXml.getElementsByTagName('AktivitaetZuProduktRef');
+    const aktivitaetRef = jsonDataFromXml.getElementsByTagName('AktivitätZuProduktRef');
     const externeKopiervorlageZuProduktRef = jsonDataFromXml.getElementsByTagName('ExterneKopiervorlageZuProduktRef');
 
     const tableEntries: TableEntry[] = [];
@@ -520,7 +630,7 @@ export function Content() {
     //////////////////////////////////////////////
 
     const activities = aktivitaetRef.flatMap((entry) => {
-      return entry.getElementsByTagName('AktivitaetRef').map((activityRef) => {
+      return entry.getElementsByTagName('AktivitätRef').map((activityRef) => {
         return {
           id: activityRef.attributes.id,
           // menuEntryId: activityRef.attributes.id,
@@ -624,11 +734,11 @@ export function Content() {
   async function getRoleContent(): Promise<PageEntry> {
     const url =
       'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      modelVariantId +
+      tailoringModelVariantId +
       '/Projekttyp/' +
-      projectTypeId +
+      tailoringProjectTypeId +
       '/Projekttypvariante/' +
-      projectTypeVariantId +
+      tailoringProjectTypeVariantId +
       '/Rolle/' +
       roleId +
       '?' +
@@ -638,7 +748,7 @@ export function Content() {
 
     return axios.get(url).then((response) => {
       console.log(response.data);
-      const jsonDataFromXml = new XMLParser().parseFromString(replaceUmlaute(response.data));
+      const jsonDataFromXml = new XMLParser().parseFromString(response.data);
 
       const description = decodeXml(jsonDataFromXml.getElementsByTagName('Beschreibung')[0]?.value);
       const tasksAndAuthorities = jsonDataFromXml.getElementsByTagName('Aufgaben_und_Befugnisse')[0]?.value;
@@ -727,14 +837,94 @@ export function Content() {
     });
   }
 
+  async function getRoleIndexContent(): Promise<PageEntry> {
+    const roleIndexUrl =
+      'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      tailoringModelVariantId +
+      '/Projekttyp/' +
+      tailoringProjectTypeId +
+      '/Projekttypvariante/' +
+      tailoringProjectTypeVariantId +
+      '/Rollenkategorie?' +
+      getProjectFeaturesString();
+
+    const jsonDataFromXml: any = await getJsonDataFromXml(roleIndexUrl);
+
+    const data: any[] = jsonDataFromXml.getElementsByTagName('Rollenkategorie').flatMap((roleCategoryValue: any) => {
+      const roleCategoryName = roleCategoryValue.attributes.name;
+
+      return roleCategoryValue.getElementsByTagName('RolleRef').map((roleValue: any): any => {
+        return {
+          modelElement: roleValue.attributes.name,
+          roleType: [roleCategoryName],
+        };
+      });
+    });
+
+    const columns: ColumnsType<any> = [
+      {
+        title: 'Modellelement',
+        dataIndex: 'modelElement',
+        key: 'modelElement',
+        defaultSortOrder: 'ascend',
+        sorter: {
+          compare: (a, b) => sorter(a.modelElement, b.modelElement),
+        },
+        render: (text: string) => <a>{text}</a>, // TODO
+      },
+      {
+        title: 'Typ',
+        dataIndex: 'roleType',
+        key: 'roleType',
+        filters: [...new Set(data.map((item) => item.roleType[0]))].map((item) => ({ text: item, value: item })),
+        onFilter: (value: string | number | boolean, record: any) => record.roleType.indexOf(value) === 0,
+        sorter: {
+          compare: (a, b) => sorter(a.roleType[0], b.roleType[0]),
+        },
+        render: (tags: string[]) => (
+          <span>
+            {tags?.map((tag) => {
+              let color;
+              if (tag === 'Projektrolle') {
+                color = 'geekblue';
+              }
+              if (tag === 'Projektteamrolle') {
+                color = 'green';
+              }
+              if (tag === 'Organisationsrolle') {
+                color = 'volcano';
+              }
+              return (
+                <Tag color={color} key={tag}>
+                  {tag}
+                </Tag>
+              );
+            })}
+          </span>
+        ),
+      },
+    ];
+
+    return {
+      id: 'roleIndexContent', //jsonDataFromXml.attributes.id,
+      // menuEntryId: jsonDataFromXml.attributes.id,
+      header: 'Rollenindex', //jsonDataFromXml.attributes.name,
+      descriptionText: '',
+      tableEntries: [],
+      dataSource: data, // TODO: Daten besser gleich ins richtige Format und nicht extra über flatMap
+      columns: columns,
+      //subPageEntries: subPageEntries, // TODO
+    };
+  }
+
   async function getDecisionPointContent(): Promise<PageEntry> {
     const tailoringProcessBuildingBlocksUrl =
       'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      modelVariantId +
+      tailoringModelVariantId +
       '/Projekttyp/' +
-      projectTypeId +
+      tailoringProjectTypeId +
       '/Projekttypvariante/' +
-      projectTypeVariantId +
+      tailoringProjectTypeVariantId +
       '/Entscheidungspunkt/' +
       decisionPointId +
       '?' +
@@ -782,11 +972,11 @@ export function Content() {
   async function getProcessModuleContent(): Promise<PageEntry> {
     const processModuleUrl =
       'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      modelVariantId +
+      tailoringModelVariantId +
       '/Projekttyp/' +
-      projectTypeId +
+      tailoringProjectTypeId +
       '/Projekttypvariante/' +
-      projectTypeVariantId +
+      tailoringProjectTypeVariantId +
       '/Ablaufbaustein/' +
       processModuleId +
       '?' +
@@ -840,11 +1030,11 @@ export function Content() {
   async function getTailoringProcessBuildingBlocksContent(): Promise<PageEntry> {
     const tailoringProcessBuildingBlocksUrl =
       'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      modelVariantId +
+      tailoringModelVariantId +
       '/Projekttyp/' +
-      projectTypeId +
+      tailoringProjectTypeId +
       '/Projekttypvariante/' +
-      projectTypeVariantId +
+      tailoringProjectTypeVariantId +
       '/Vorgehensbaustein/' +
       processBuildingBlockId +
       '?' +
@@ -870,7 +1060,7 @@ export function Content() {
   async function getMethodReferenceContent(): Promise<PageEntry> {
     const methodReferenceUrl =
       'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      modelVariantId +
+      tailoringModelVariantId +
       '/Methodenreferenz/' +
       methodReferenceId;
 
@@ -880,7 +1070,7 @@ export function Content() {
 
     return axios.get(methodReferenceUrl).then((response) => {
       console.log(response.data);
-      const jsonDataFromXml = new XMLParser().parseFromString(replaceUmlaute(response.data));
+      const jsonDataFromXml = new XMLParser().parseFromString(response.data);
 
       const sinnUndZweck = decodeXml(jsonDataFromXml.getElementsByTagName('Sinn_und_Zweck')[0]?.value);
 
@@ -925,7 +1115,7 @@ export function Content() {
   async function getToolReferenceContent(): Promise<PageEntry> {
     const toolReferenceUrl =
       'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      modelVariantId +
+      tailoringModelVariantId +
       '/Werkzeugreferenz/' +
       toolReferenceId;
 
@@ -933,9 +1123,187 @@ export function Content() {
 
     return axios.get(toolReferenceUrl).then((response) => {
       console.log(response.data);
-      const jsonDataFromXml = new XMLParser().parseFromString(replaceUmlaute(response.data));
+      const jsonDataFromXml = new XMLParser().parseFromString(response.data);
 
       const sinnUndZweck = decodeXml(jsonDataFromXml.getElementsByTagName('Sinn_und_Zweck')[0]?.value);
+
+      const tableEntries: TableEntry[] = [];
+
+      //////////////////////////////////////////////
+
+      // console.log('this.pageEntry roles', this.pageEntry);
+
+      return {
+        id: jsonDataFromXml.attributes.id,
+        // menuEntryId: jsonDataFromXml.attributes.id,
+        header: jsonDataFromXml.attributes.name,
+        descriptionText: sinnUndZweck,
+        tableEntries: tableEntries,
+        // subPageEntries: subPageEntries,
+      };
+    });
+  }
+
+  async function getProjectCharacteristicContent(): Promise<PageEntry> {
+    const projectCharacteristicUrl =
+      'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      tailoringModelVariantId +
+      '/Projektmerkmal/' +
+      projectCharacteristicId;
+
+    // const jsonDataFromXml: any = await getJsonDataFromXml(methodReferenceUrl);
+
+    const jsonDataFromXml: any = await getJsonDataFromXml(projectCharacteristicUrl, true);
+
+    const sinnUndZweck = decodeXml(jsonDataFromXml.getElementsByTagName('Sinn_und_Zweck')[0]?.value);
+
+    const question = decodeXml(jsonDataFromXml.getElementsByTagName('Frage')[0]?.value);
+    const description = decodeXml(jsonDataFromXml.getElementsByTagName('Beschreibung')[0]?.value);
+    const values = jsonDataFromXml.getElementsByTagName('Wert');
+
+    const data = [];
+
+    for (const value of values) {
+      const valueUrl =
+        'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+        tailoringModelVariantId +
+        '/Projektmerkmal/' +
+        projectCharacteristicId +
+        '/Wert/' +
+        value.attributes.id;
+
+      const result: { key: string; title: string; answer: string } = await axios.get(valueUrl).then((valueResponse) => {
+        const valueJsonDataFromXml = new XMLParser().parseFromString(valueResponse.data);
+        const valueDescription = decodeXml(valueJsonDataFromXml.getElementsByTagName('Beschreibung')[0]?.value);
+
+        return {
+          key: value.attributes.id,
+          answer: value.attributes.name,
+          explanation: valueDescription,
+        };
+      });
+      data.push(result);
+    }
+
+    const tableEntries: TableEntry[] = [];
+
+    //////////////////////////////////////////////
+
+    const columns = [
+      {
+        title: 'Antwort',
+        dataIndex: 'answer',
+        key: 'answer',
+        // render: (text) => <a>{text}</a>,
+      },
+      {
+        title: 'Erläuterung',
+        dataIndex: 'explanation',
+        key: 'explanation',
+        render: (html: string) => <span dangerouslySetInnerHTML={{ __html: html }} />,
+      },
+    ];
+
+    return {
+      id: jsonDataFromXml.attributes.id,
+      // menuEntryId: jsonDataFromXml.attributes.id,
+      header: jsonDataFromXml.attributes.name,
+      descriptionText: description + QUESTION_HEADER + question,
+      tableEntries: tableEntries,
+      dataSource: data,
+      columns: columns,
+      //subPageEntries: subPageEntries, // TODO
+    };
+    // });
+  }
+
+  async function getProjectTypeContent(): Promise<PageEntry> {
+    const projectTypeUrl =
+      'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      tailoringModelVariantId +
+      '/Projekttyp/' +
+      projectTypeId;
+
+    // const jsonDataFromXml: any = await getJsonDataFromXml(methodReferenceUrl);
+
+    return axios.get(projectTypeUrl).then((response) => {
+      console.log(response.data);
+      const jsonDataFromXml = new XMLParser().parseFromString(response.data);
+
+      // const sinnUndZweck = decodeXml(jsonDataFromXml.getElementsByTagName('Sinn_und_Zweck')[0]?.value);
+      const description = decodeXml(jsonDataFromXml.getElementsByTagName('Beschreibung')[0]?.value);
+
+      const tableEntries: TableEntry[] = [];
+
+      //////////////////////////////////////////////
+
+      // console.log('this.pageEntry roles', this.pageEntry);
+
+      return {
+        id: jsonDataFromXml.attributes.id,
+        // menuEntryId: jsonDataFromXml.attributes.id,
+        header: jsonDataFromXml.attributes.name,
+        descriptionText: description,
+        tableEntries: tableEntries,
+        // subPageEntries: subPageEntries,
+      };
+    });
+  }
+
+  async function getProjectTypeVariantContent(): Promise<PageEntry> {
+    const projectTypeVariantUrl =
+      'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      tailoringModelVariantId +
+      '/Projekttypvariante/' +
+      projectTypeVariantId;
+
+    // const jsonDataFromXml: any = await getJsonDataFromXml(methodReferenceUrl);
+
+    return axios.get(projectTypeVariantUrl).then((response) => {
+      console.log(response.data);
+      const jsonDataFromXml = new XMLParser().parseFromString(response.data);
+
+      // const sinnUndZweck = decodeXml(jsonDataFromXml.getElementsByTagName('Sinn_und_Zweck')[0]?.value);
+      const description = decodeXml(jsonDataFromXml.getElementsByTagName('Beschreibung')[0]?.value);
+
+      const tableEntries: TableEntry[] = [];
+
+      //////////////////////////////////////////////
+
+      // console.log('this.pageEntry roles', this.pageEntry);
+
+      return {
+        id: jsonDataFromXml.attributes.id,
+        // menuEntryId: jsonDataFromXml.attributes.id,
+        header: jsonDataFromXml.attributes.name,
+        descriptionText: description,
+        tableEntries: tableEntries,
+        // subPageEntries: subPageEntries,
+      };
+    });
+  }
+
+  async function getActivityContent(): Promise<PageEntry> {
+    const workAidsActivityUrl =
+      'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      tailoringModelVariantId +
+      '/Projekttyp/' +
+      tailoringProjectTypeId +
+      '/Projekttypvariante/' +
+      tailoringProjectTypeVariantId +
+      '/Aktivitaet/' +
+      activityId +
+      '?' +
+      getProjectFeaturesString();
+
+    // const jsonDataFromXml: any = await getJsonDataFromXml(methodReferenceUrl);
+
+    return axios.get(workAidsActivityUrl).then((response) => {
+      console.log(response.data);
+      const jsonDataFromXml = new XMLParser().parseFromString(response.data);
+
+      const sinnUndZweck = decodeXml(jsonDataFromXml.getElementsByTagName('Sinn_und_Zweck')[0]?.value);
+      // const description = decodeXml(jsonDataFromXml.getElementsByTagName('Beschreibung')[0]?.value);
 
       const tableEntries: TableEntry[] = [];
 

@@ -12,26 +12,26 @@ export function removeHtmlTags(html: string): string {
   return html.replace(/(<([^>]+)>)/gi, '');
 }
 
-const umlautMap: { [key: string]: string } = {
-  '\u00dc': 'UE',
-  '\u00c4': 'AE',
-  '\u00d6': 'OE',
-  '\u00fc': 'ue',
-  '\u00e4': 'ae',
-  '\u00f6': 'oe',
-  '\u00df': 'ss',
-};
-
-export function replaceUmlaute(html: string): string {
-  // const pattern = /(\G(?!^)|<)([^<>]*?)([üöä])/;
-
-  return html
-    .replace(/[\u00dc|\u00c4|\u00d6][a-z]/g, (a) => {
-      const big = umlautMap[a.slice(0, 1)];
-      return big.charAt(0) + big.charAt(1).toLowerCase() + a.slice(1);
-    })
-    .replace(new RegExp('[' + Object.keys(umlautMap).join('|') + ']', 'g'), (a) => umlautMap[a]);
-}
+// const umlautMap: { [key: string]: string } = {
+//   '\u00dc': 'UE',
+//   '\u00c4': 'AE',
+//   '\u00d6': 'OE',
+//   '\u00fc': 'ue',
+//   '\u00e4': 'ae',
+//   '\u00f6': 'oe',
+//   '\u00df': 'ss',
+// };
+//
+// export function replaceUmlaute(html: string): string {
+//   // const pattern = /(\G(?!^)|<)([^<>]*?)([üöä])/;
+//
+//   return html
+//     .replace(/[\u00dc|\u00c4|\u00d6][a-z]/g, (a) => {
+//       const big = umlautMap[a.slice(0, 1)];
+//       return big.charAt(0) + big.charAt(1).toLowerCase() + a.slice(1);
+//     })
+//     .replace(new RegExp('[' + Object.keys(umlautMap).join('|') + ']', 'g'), (a) => umlautMap[a]);
+// }
 
 export function decodeXml(xml: string): string {
   return xml ? he.decode(he.decode(xml)) : '';
@@ -85,13 +85,17 @@ export function findInNavigatinMenu(id: string, arr: MenuEntry[]): MenuEntry | n
   }, null);
 }
 
-export async function getJsonDataFromXml(url: string): Promise<string | XMLElement> {
+export async function getJsonDataFromXml(url: string, convertUmlauts: boolean = false): Promise<string | XMLElement> {
   return axios
     .get(url)
     .then((response) => {
-      return new XMLParser().parseFromString(response.data);
+      if (convertUmlauts) {
+        return new XMLParser().parseFromString(replaceUmlaute(response.data));
+      } else {
+        return new XMLParser().parseFromString(response.data);
+      }
     })
-    .catch(() => 'obligatory catch');
+    .catch((e) => console.log('obligatory catch', e));
 }
 
 export function clean(obj: any) {

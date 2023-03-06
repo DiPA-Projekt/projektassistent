@@ -1,12 +1,19 @@
 import { PageEntry } from '@dipa-projekt/projektassistent-openapi';
 import React, { useEffect, useState } from 'react';
-import { NavMenuItem, NavTypeEnum, Section } from '../components/projekthandbuch/documentation/navigation/navigation';
+import {
+  IndexTypeEnum,
+  NavMenuItem,
+  NavTypeEnum,
+  Section,
+} from '../components/projekthandbuch/documentation/navigation/navigation';
 import { getMenuItemByAttributeValue } from '../shares/utils';
 
 type DocumentationSession = {
-  selectedPageEntry: PageEntry;
+  selectedPageEntry: PageEntry | undefined;
   setSelectedPageEntry: Function;
   setSelectedItemKey: Function;
+  selectedIndexType: IndexTypeEnum | undefined;
+  setSelectedIndexType: Function;
   sectionsData: Section[];
   setSectionsData: Function;
   navigationData: NavMenuItem[];
@@ -19,6 +26,10 @@ type DocumentationSession = {
   processBuildingBlockId: string | null;
   methodReferenceId: string | null;
   toolReferenceId: string | null;
+  projectCharacteristicId: string | null;
+  projectTypeId: string | null;
+  projectTypeVariantId: string | null;
+  activityId: string | null;
   entryId: string | null;
 };
 
@@ -29,6 +40,7 @@ const DocumentationSessionContext = React.createContext<DocumentationSession | u
 const DocumentationSessionContextProvider = ({ children }: DocumentationSessionProviderProps) => {
   const [selectedPageEntry, setSelectedPageEntry] = React.useState<PageEntry>();
   const [selectedItemKey, setSelectedItemKey] = React.useState<string>();
+  const [selectedIndexType, setSelectedIndexType] = React.useState<IndexTypeEnum>();
 
   const [sectionsData, setSectionsData] = useState<Section[]>([]);
   const [navigationData, setNavigationData] = useState<NavMenuItem[]>([]);
@@ -41,12 +53,18 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
   const [processBuildingBlockId, setProcessBuildingBlockId] = useState<string | null>(null);
   const [methodReferenceId, setMethodReferenceId] = useState<string | null>(null);
   const [toolReferenceId, setToolReferenceId] = useState<string | null>(null);
+  const [projectCharacteristicId, setProjectCharacteristicId] = useState<string | null>(null);
+  const [projectTypeId, setProjectTypeId] = useState<string | null>(null);
+  const [projectTypeVariantId, setProjectTypeVariantId] = useState<string | null>(null);
+  const [activityId, setActivityId] = useState<string | null>(null);
   const [entryId, setEntryId] = useState<string | null>(null);
 
   const value: DocumentationSession = {
     selectedPageEntry,
     setSelectedPageEntry,
     setSelectedItemKey,
+    selectedIndexType,
+    setSelectedIndexType,
     sectionsData,
     setSectionsData,
     navigationData,
@@ -59,6 +77,10 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
     processBuildingBlockId,
     methodReferenceId,
     toolReferenceId,
+    projectCharacteristicId,
+    projectTypeId,
+    projectTypeVariantId,
+    activityId,
     entryId,
   };
 
@@ -79,7 +101,20 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
 
     // mount().then();
     //eslint-disable-next-line
-  }, [selectedItemKey]);
+  }, [selectedItemKey]); // TODO selectedIndexType
+
+  useEffect(() => {
+    // async function mount() {
+    if (selectedIndexType) {
+      onIndexPageSelected(selectedIndexType);
+    }
+    // }
+
+    // mount().then();
+    //eslint-disable-next-line
+  }, [selectedIndexType]); // TODO selectedIndexType
+
+  // TODO: onIndexPageChanged
 
   function onRouteChanged(menuEntryId: string): void {
     console.log('onRouteChanged content', menuEntryId);
@@ -112,6 +147,18 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
       } else if (gefunden.dataType === NavTypeEnum.TOOL_REFERENCE) {
         setToolReferenceId(gefunden.key);
         console.log('setToolReferenceId');
+      } else if (gefunden.dataType === NavTypeEnum.PROJECT_CHARACTERISTIC) {
+        setProjectCharacteristicId(gefunden.key);
+        console.log('setProjectCharacteristicId');
+      } else if (gefunden.dataType === NavTypeEnum.PROJECT_TYPE) {
+        setProjectTypeId(gefunden.key);
+        console.log('setProjectTypeId');
+      } else if (gefunden.dataType === NavTypeEnum.PROJECT_TYPE_VARIANT) {
+        setProjectTypeVariantId(gefunden.key);
+        console.log('setProjectTypeVariantId');
+      } else if (gefunden.dataType === NavTypeEnum.ACTIVITY) {
+        setActivityId(gefunden.key);
+        console.log('setActivityId');
       } else {
         setEntryId(gefunden.key);
       }
@@ -154,6 +201,11 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
     //   });
     //
     // this.projectTypeSubscription.unsubscribe();
+  }
+
+  function onIndexPageSelected(indexPageType: IndexTypeEnum): void {
+    console.log('onIndexPageSelected content', indexPageType);
+    setSelectedIndexType(indexPageType);
   }
 
   // async function fetchSectionContentData(sectionId: string): Promise<any> {

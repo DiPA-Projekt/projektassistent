@@ -24,8 +24,23 @@ export enum NavTypeEnum {
   DECISION_POINT = 'decisionPoint',
   PROCESS_MODULE = 'processModule',
   PROCESS_BUILDING_BLOCK = 'processBuildingBlock',
+  ACTIVITY = 'activity',
   METHOD_REFERENCE = 'methodReference',
   TOOL_REFERENCE = 'toolReference',
+  PROJECT_TYPE_VARIANT = 'projectTypeVaraint',
+  PROJECT_TYPE = 'projectType',
+  PROJECT_CHARACTERISTIC = 'projectCharacteristic',
+}
+
+export enum IndexTypeEnum {
+  PRODUCT = 'productIndex',
+  ROLE = 'roleIndex',
+  PROCESS = 'processIndex',
+  TAILORING = 'tailoringIndex',
+  WORK_AIDS = 'workAidsIndex',
+  GLOSSARY = 'glossaryIndex',
+  ABBREVIATIONS = 'abbreviationsIndex',
+  LITERATURE = 'literatureIndex',
 }
 //
 // const OPEN_KEYS: React.Key[] = [];
@@ -142,7 +157,8 @@ interface MyType {
 
 // @withRouter
 export function Navigation() {
-  const { setSelectedItemKey, /*sectionsData,*/ navigationData, setNavigationData } = useDocumentation();
+  const { setSelectedItemKey, setSelectedIndexType, /*sectionsData,*/ navigationData, setNavigationData } =
+    useDocumentation();
 
   const [searchParams /*, setSearchParams*/] = useSearchParams();
   // TODO: just temporary from search params
@@ -244,66 +260,78 @@ export function Navigation() {
 
         let i = 0;
         for (let child of item.children) {
-          let foundInGeneratedChildren = false;
+          // TODO: cleanup
+          if (child.name !== 'Kapitel') {
+            // const removed = item.children.splice(i, 1);
+            // console.log('removed', removed);
+            // delete item.children[i];
+          } else {
+            let foundInGeneratedChildren = false;
 
-          if (currentGeneratedChildren.length > 0) {
-            console.log(currentGeneratedChildren);
+            if (currentGeneratedChildren.length > 0) {
+              console.log(currentGeneratedChildren);
 
-            const gefunden = getMenuItemByAttributeValue(currentGeneratedChildren, 'key', child.attributes?.id);
-            if (gefunden) {
-              item.children[i] = gefunden;
-              // child = gefunden;
-              foundInGeneratedChildren = true;
-            }
-          }
-
-          if (!foundInGeneratedChildren && child.attributes?.id) {
-            child.parentId = item.attributes.id;
-            child.parent = item;
-            if (!child.parentId) {
-              console.log('child.parentId null', item);
-            }
-            child.key = child.attributes.id;
-            //child.label = <Link to={child.attributes.id}>{child.attributes.titel}</Link>;
-            child.label = child.attributes.titel;
-            child.onTitleClick = (item: any) => setSelectedItemKey(item.key);
-            // console.log('child.attributes.id', child.attributes.id, child.attributes.titel, child.attributes);
-
-            // setSelectedItemKey(child.attributes.id);
-
-            const test = await fetchSectionDetailsData(child);
-            if (test.replacedContent) {
-              item.children = test.replacedContent;
-              console.log('ersetze', test);
-              child = test;
-            } else if (test.mergedChildren) {
-              // item.children = test.replacedContent;
-              // child = test;
-              // ermittle child Einträge!
-              currentGeneratedChildren = test.mergedChildren;
-
-              // TODO: für das erste muss das auch gemacht werden... vllt sollte man es daher rausziehen
               const gefunden = getMenuItemByAttributeValue(currentGeneratedChildren, 'key', child.attributes?.id);
               if (gefunden) {
                 item.children[i] = gefunden;
                 // child = gefunden;
-                // foundInGeneratedChildren = true;
+                foundInGeneratedChildren = true;
+              }
+            }
+
+            if (!foundInGeneratedChildren && child.attributes?.id) {
+              child.parentId = item.attributes.id;
+              child.parent = item;
+              if (!child.parentId) {
+                console.log('child.parentId null', item);
+              }
+              child.key = child.attributes.id;
+              //child.label = <Link to={child.attributes.id}>{child.attributes.titel}</Link>;
+              child.label = child.attributes.titel;
+              child.onTitleClick = (item: any) => setSelectedItemKey(item.key);
+              // console.log('child.attributes.id', child.attributes.id, child.attributes.titel, child.attributes);
+
+              // setSelectedItemKey(child.attributes.id);
+
+              const test = await fetchSectionDetailsData(child);
+              if (test.replacedContent) {
+                item.children = test.replacedContent;
+                console.log('ersetze', test);
+                child = test;
+              } else if (test.mergedChildren) {
+                // item.children = test.replacedContent;
+                // child = test;
+                // ermittle child Einträge!
+                currentGeneratedChildren = test.mergedChildren;
+
+                // TODO: für das erste muss das auch gemacht werden... vllt sollte man es daher rausziehen
+                const gefunden = getMenuItemByAttributeValue(currentGeneratedChildren, 'key', child.attributes?.id);
+                if (gefunden) {
+                  item.children[i] = gefunden;
+                  // child = gefunden;
+                  // foundInGeneratedChildren = true;
+                }
+
+                console.log('generatedContent', test.generatedContent);
+              } else if (test.addedChildren) {
+                child.children = test.addedChildren;
+                console.log('addedChildren', test.addedChildren);
+              } else if (test.indexItem) {
+                // item.children[i] = test.indexItem;
+                console.log('indexItem', test);
+                item.children[i] = test.indexItem;
               }
 
-              console.log('generatedContent', test.generatedContent);
-            } else if (test.addedChildren) {
-              child.children = test.addedChildren;
-              console.log('addedChildren', test.addedChildren);
+              if (test.categoryIcon) {
+                item.icon = test.categoryIcon;
+              }
+              // console.log(test);
+              // if (child.attributes.GenerierterInhalt) {
+              //   console.log('GenerierterInhalt', child.attributes.id, child.attributes.titel, child.attributes);
+              // }
             }
-            if (test.categoryIcon) {
-              item.icon = test.categoryIcon;
-            }
-            // console.log(test);
-            // if (child.attributes.GenerierterInhalt) {
-            //   console.log('GenerierterInhalt', child.attributes.id, child.attributes.titel, child.attributes);
-            // }
+            i++;
           }
-          i++;
         }
 
         await addParentRecursive(item.children);
@@ -336,6 +364,9 @@ export function Navigation() {
     let addedChildren; // for adding children
     let categoryIcon;
 
+    // TODO: anders lösen
+    let indexItem;
+
     // TODO: generatedContent = Elemente:Projektrollen
     // TODO: generatedContent = Elemente:Organisationsrollen
     // TODO: generatedContent = Elemente:Projektteamrollen
@@ -348,6 +379,19 @@ export function Navigation() {
         categoryIcon = <ShoppingOutlined />;
       } else {
         console.log('muss noch ersetzt werden', jsonDataFromXml);
+      }
+    }
+
+    if (generatedContent) {
+      switch (generatedContent) {
+        case 'Index:Rollen': {
+          indexItem = {
+            key: childItem.attributes.id,
+            parentId: childItem.parent.key, // roleCategory has no id
+            label: childItem.attributes.titel,
+            onClick: () => setSelectedIndexType(IndexTypeEnum.ROLE),
+          };
+        }
       }
     }
 
@@ -365,23 +409,43 @@ export function Navigation() {
       addedChildren = await getTailoringProcessBuildingBlocks(childItem);
       //// TODO
       categoryIcon = <ScissorOutlined />;
-      console.log('Referenz Tailoring', addedChildren);
+      console.log('Referenz Tailoring -> Vorgehensbausteine', addedChildren);
+    }
+
+    // TODO: sollte direkt gehen, nicht unbedingt über die Referenz
+    if (childItem.parent.label === 'Referenz Tailoring' && childItem.label === 'Projekttypen und Projekttypvarianten') {
+      addedChildren = await getProductTypesAndProductTypeVariants(childItem);
+      //// TODO
+      // categoryIcon = <ScissorOutlined />;
+      console.log('Referenz Tailoring -> Projekttypen und Projekttypvarianten', addedChildren);
+    }
+
+    // TODO: sollte direkt gehen, nicht unbedingt über die Referenz
+    if (childItem.parent.label === 'Referenz Tailoring' && childItem.label === 'Projektmerkmale') {
+      addedChildren = await getProjectCharacteristics(childItem);
+      //// TODO
+      // categoryIcon = <ScissorOutlined />;
+      console.log('Referenz Tailoring -> Projektmerkmale', addedChildren);
+    }
+
+    // TODO: sollte direkt gehen, nicht unbedingt über die Referenz
+    if (childItem.parent.label === 'Referenz Arbeitshilfen' && childItem.label === 'Aktivitäten') {
+      addedChildren = await getWorkAidsActivities(childItem);
+      //// TODO
+      categoryIcon = <ToolOutlined />;
+      console.log('Referenz Arbeitshilfen -> Aktivitäten', addedChildren);
     }
 
     // TODO: sollte direkt gehen, nicht unbedingt über die Referenz
     if (childItem.parent.label === 'Methoden und Werkzeuge' && childItem.label === 'Methodenreferenzen') {
       addedChildren = await getWorkAidsMethodReferences(childItem);
-      //// TODO
-      categoryIcon = <ToolOutlined />;
-      console.log('Referenz Arbeitshilfen Methodenreferenzen', addedChildren);
+      console.log('Referenz Arbeitshilfen -> Methodenreferenzen', addedChildren);
     }
 
     // TODO: sollte direkt gehen, nicht unbedingt über die Referenz
     if (childItem.parent.label === 'Methoden und Werkzeuge' && childItem.label === 'Werkzeugreferenzen') {
       addedChildren = await getWorkAidsToolReferences(childItem);
-      //// TODO
-      // categoryIcon = <ScissorOutlined />;
-      console.log('Referenz Arbeitshilfen Werkzeugreferenzen', addedChildren);
+      console.log('Referenz Arbeitshilfen -> Werkzeugreferenzen', addedChildren);
     }
 
     // TODO: sollte direkt gehen, nicht unbedingt über die Referenz
@@ -413,6 +477,7 @@ export function Navigation() {
       mergedChildren: mergedChildren,
       addedChildren: addedChildren,
       categoryIcon: categoryIcon,
+      indexItem: indexItem,
     };
     // setSectionsDetailsData(xmlDataWithParent);
   }
@@ -642,6 +707,32 @@ export function Navigation() {
     return navigation;
   }
 
+  async function getWorkAidsActivities(target: any): Promise<NavMenuItem[]> {
+    const workAidsActivitiesUrl =
+      'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      modelVariantId +
+      '/Projekttyp/' +
+      projectTypeId +
+      '/Projekttypvariante/' +
+      projectTypeVariantId +
+      '/Aktivitaet?' +
+      getProjectFeaturesString();
+
+    const jsonDataFromXml: any = await getJsonDataFromXml(workAidsActivitiesUrl);
+
+    const navigation: NavMenuItem[] = jsonDataFromXml.getElementsByTagName('Aktivität').map((methodReference: any) => {
+      return {
+        key: methodReference.attributes.id,
+        parentId: target.key,
+        label: methodReference.attributes.name,
+        dataType: NavTypeEnum.ACTIVITY,
+        onClick: (item: any) => setSelectedItemKey(item.key),
+      };
+    });
+
+    return navigation;
+  }
+
   async function getWorkAidsMethodReferences(target: any): Promise<NavMenuItem[]> {
     const workAidsMethodReferencesUrl =
       'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
@@ -683,6 +774,68 @@ export function Navigation() {
           dataType: NavTypeEnum.TOOL_REFERENCE,
           onClick: (item: any) => setSelectedItemKey(item.key),
         };
+      });
+
+    return navigation;
+  }
+
+  async function getProjectCharacteristics(target: any): Promise<NavMenuItem[]> {
+    const projectCharacteristicsUrl =
+      'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' + modelVariantId + '/Projektmerkmal';
+
+    const jsonDataFromXml: any = await getJsonDataFromXml(projectCharacteristicsUrl);
+
+    const navigation: NavMenuItem[] = jsonDataFromXml
+      .getElementsByTagName('Projektmerkmal')
+      .map((methodReference: any) => {
+        return {
+          key: methodReference.attributes.id,
+          parentId: target.key,
+          label: methodReference.attributes.name,
+          dataType: NavTypeEnum.PROJECT_CHARACTERISTIC,
+          onClick: (item: any) => setSelectedItemKey(item.key),
+        };
+      });
+
+    return navigation;
+  }
+
+  async function getProductTypesAndProductTypeVariants(target: any): Promise<NavMenuItem[]> {
+    const projectTypeVariantsUrl =
+      'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      modelVariantId +
+      '/Projekttypvariante';
+
+    const jsonDataFromXmlProjectTypeVariants: any = await getJsonDataFromXml(projectTypeVariantsUrl);
+
+    const navigation: NavMenuItem[] = [];
+
+    jsonDataFromXmlProjectTypeVariants
+      .getElementsByTagName('Projekttypvariante')
+      .map((projectTypeVariantValue: any) => {
+        const projectTypeValue = projectTypeVariantValue.getElementsByTagName('ProjekttypRef')[0];
+
+        let projectType = getMenuItemByAttributeValue(navigation, 'key', projectTypeValue.attributes.id);
+        if (projectType === undefined) {
+          projectType = {
+            key: projectTypeValue.attributes.id,
+            parentId: target.key,
+            label: projectTypeValue.attributes.name,
+            dataType: NavTypeEnum.PROJECT_TYPE,
+            onTitleClick: (item: any) => setSelectedItemKey(item.key),
+            children: [],
+          };
+
+          navigation.push(projectType);
+        }
+
+        projectType.children.push({
+          key: projectTypeVariantValue.attributes.id,
+          parentId: projectTypeValue.attributes.id,
+          label: projectTypeVariantValue.attributes.name,
+          dataType: NavTypeEnum.PROJECT_TYPE_VARIANT,
+          onClick: (item: any) => setSelectedItemKey(item.key), // TODO: different Types
+        });
       });
 
     return navigation;
