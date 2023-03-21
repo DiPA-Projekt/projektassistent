@@ -5,9 +5,11 @@ import React, { useEffect, useState } from 'react';
 
 import {
   FolderAddOutlined,
+  LinkOutlined,
   MedicineBoxOutlined,
   NotificationOutlined,
   PartitionOutlined,
+  ShoppingOutlined,
   TagsOutlined,
   TeamOutlined,
   ToolOutlined,
@@ -17,14 +19,15 @@ import { DataEntry, PageEntry, TableEntry } from '@dipa-projekt/projektassistent
 // import { GenericComponent } from '@leanup/lib';
 // import { ReactComponent } from '@leanup/lib';
 import parse from 'html-react-parser';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import { useDocumentation } from '../../../../context/DocumentationContext';
-import { decodeXml, getJsonDataFromXml } from '../../../../shares/utils';
+import { decodeXml, flatten, getJsonDataFromXml } from '../../../../shares/utils';
 import { AnchorLinkItemProps } from 'antd/es/anchor/Anchor';
 import axios from 'axios';
 import XMLParser, { XMLElement } from 'react-xml-parser';
-import { IndexTypeEnum } from '../navigation/navigation';
+import { IndexTypeEnum, NavTypeEnum } from '../navigation/navigation';
 import { ColumnsType } from 'antd/es/table';
+import { useTranslation } from 'react-i18next';
 
 // export let pageEntryFound: PageEntry;
 
@@ -58,10 +61,12 @@ icons.set('Projektmerkmale', { color: '#689fd0', icon: <ToolOutlined /> });
 icons.set('Ausgewählte Vorgehensbausteine', { color: '#689fd0', icon: <ToolOutlined /> });
 icons.set('Ausgewählte Ablaufbausteine', { color: '#689fd0', icon: <ToolOutlined /> });
 // Referenz Arbeitshilfen
-icons.set('Produkt', { color: '#689fd0', icon: <ToolOutlined /> });
+icons.set('Produkt', { color: '#689fd0', icon: <ShoppingOutlined /> });
 icons.set('Werkzeuge', { color: '#689fd0', icon: <ToolOutlined /> });
 icons.set('Arbeitsschritte', { color: '#689fd0', icon: <ToolOutlined /> });
 icons.set('Methoden', { color: '#689fd0', icon: <ToolOutlined /> });
+icons.set('Aktivitäten', { color: '#689fd0', icon: <ToolOutlined /> });
+icons.set('Quellen', { color: '#689fd0', icon: <LinkOutlined /> });
 
 interface MyType {
   [key: string]: string;
@@ -71,12 +76,16 @@ interface MyType {
 export function Content() {
   // public ctrl: ContentController = new ContentController();
 
+  const location = useLocation();
+
   const [searchParams, setSearchParams] = useSearchParams();
   // TODO: just temporary from search params
   const tailoringModelVariantId = searchParams.get('mV');
   const tailoringProjectTypeVariantId = searchParams.get('ptV');
   const tailoringProjectTypeId = searchParams.get('pt');
   const tailoringProjectFeatureIdsSearchParam: MyType = {};
+
+  const { t } = useTranslation();
 
   searchParams.forEach((value, key) => {
     if (!['mV', 'ptV', 'pt'].includes(key)) {
@@ -90,6 +99,7 @@ export function Content() {
   const sorter = (a, b) => (isNaN(a) && isNaN(b) ? (a || '').localeCompare(b || '') : a - b);
 
   const {
+    navigationData,
     selectedPageEntry,
     setSelectedPageEntry,
     disciplineId,
@@ -128,13 +138,25 @@ export function Content() {
     async function mount() {
       // TODO: noch schauen wo das genau hinkommt
       if (selectedIndexType) {
+        let content;
         switch (selectedIndexType) {
+          case IndexTypeEnum.PRODUCT:
+            content = await getProductIndexContent();
+            break;
           case IndexTypeEnum.ROLE:
-            const content = await getRoleIndexContent();
-            setSelectedPageEntry(content);
-            console.log('setSelectedPageEntry', content);
+            content = await getRoleIndexContent();
+            break;
+          case IndexTypeEnum.PROCESS:
+            content = await getProcessIndexContent();
+            break;
+          case IndexTypeEnum.TAILORING:
+            content = await getTailoringIndexContent();
+            break;
+          case IndexTypeEnum.WORK_AIDS:
+            content = await getWorkAidsIndexContent();
             break;
         }
+        setSelectedPageEntry(content);
       } else {
         console.log('no selectedIndexType');
       }
@@ -312,7 +334,7 @@ export function Content() {
         setSelectedPageEntry(content);
         console.log('setSelectedPageEntry', content);
       } else {
-        console.log('no productId && disciplineId');
+        console.log('no entryId');
       }
     }
 
@@ -339,15 +361,41 @@ export function Content() {
       //     </div>
       //   );
       // } else
-      if (entryItem?.id) {
-        entries.push(
-          <span style={{ marginRight: '20px' }} key={`table-item-${entryItem.id}`}>
-            <Link to={`./${entryItem.id}`}>{entryItem.title}</Link>
-            {entryItem.suffix && <span style={{ marginLeft: '5px' }}>{entryItem.suffix}</span>}
-          </span>
-        );
+
+      if (Array.isArray(entryItem)) {
+        for (const entrySubItem of entryItem) {
+          entries.push(
+            <span style={{ fontWeight: 'bold', display: 'block' }} key={`table-sub-header-${entrySubItem.subheader}`}>
+              {entrySubItem.subheader}
+            </span>
+          );
+
+          entrySubItem.dataEntries.map((innerEntryItem) => {
+            if (innerEntryItem?.id) {
+              entries.push(
+                <span style={{ marginRight: '20px', display: 'inline-flex' }} key={`table-item-${innerEntryItem.id}`}>
+                  <Link to={`/documentation/${innerEntryItem.id}${location.search}`}>{innerEntryItem.title}</Link>
+                  {innerEntryItem.suffix && <span style={{ marginLeft: '5px' }}>{innerEntryItem.suffix}</span>}
+                </span>
+              );
+            } else {
+              entries.push(
+                <span style={{ marginRight: '20px', display: 'inline-flex' }}>{parse(innerEntryItem.title)}</span>
+              );
+            }
+          });
+        }
       } else {
-        entries.push(<span style={{ marginRight: '20px' }}>{parse(entryItem.title)}</span>);
+        if (entryItem?.id) {
+          entries.push(
+            <span style={{ marginRight: '20px', display: 'inline-flex' }} key={`table-item-${entryItem.id}`}>
+              <Link to={`/documentation/${entryItem.id}${location.search}`}>{entryItem.title}</Link>
+              {entryItem.suffix && <span style={{ marginLeft: '5px' }}>{entryItem.suffix}</span>}
+            </span>
+          );
+        } else {
+          entries.push(<span style={{ marginRight: '20px', display: 'inline-flex' }}>{parse(entryItem.title)}</span>);
+        }
       }
     });
 
@@ -396,12 +444,13 @@ export function Content() {
 
       if (props.data?.subPageEntries && props.data.subPageEntries.length > 0) {
         for (const menuEntryChildren of props.data?.subPageEntries) {
-          const subEntries = await getTopicContent(menuEntryChildren?.id);
+          const subPageEntries = await getTopicContent(menuEntryChildren?.id);
 
           productDataArray.push(
             <div key={menuEntryChildren?.id} style={{ marginTop: '40px' }}>
               <h3 id={menuEntryChildren?.id}> {menuEntryChildren.header} </h3>
-              {parse(subEntries)}
+              {parse(subPageEntries.descriptionText)}
+              <DataTable data={subPageEntries?.tableEntries} />
             </div>
           );
         }
@@ -410,7 +459,7 @@ export function Content() {
     }, [props.data]);
   }
 
-  async function getTopicContent(topicId: string): Promise<string> {
+  async function getTopicContent(topicId: string): Promise<PageEntry> {
     const topicUrl =
       'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
       tailoringModelVariantId +
@@ -428,8 +477,65 @@ export function Content() {
       getProjectFeaturesString();
 
     const jsonDataFromXml: any = await getJsonDataFromXml(topicUrl);
+
+    let idCounter = 2000;
+
     const description = jsonDataFromXml.getElementsByTagName('Beschreibung')[0]?.value;
-    return decodeXml(description);
+
+    // get table
+    const generatingDependencies = await getGeneratingDependenciesData();
+    const tableEntries = [];
+    const dataEntries = [];
+
+    for (const generatingDependency of generatingDependencies) {
+      const generatingDependencyTitle = generatingDependency.attributes.name;
+      const generatingDependenciesData = [];
+
+      const topics = generatingDependency.getElementsByTagName('ThemaRef');
+      for (const topic of topics) {
+        if (topic.attributes.id === topicId) {
+          console.log('topic', topic.attributes.name);
+          const products = generatingDependency.getElementsByTagName('ProduktRef');
+          const productsToTopics = [];
+
+          for (const product of products) {
+            console.log('topic product', product.attributes.name);
+            productsToTopics.push({
+              id: product.attributes.id,
+              title: product.attributes.name,
+            });
+          }
+
+          generatingDependenciesData.push({
+            subheader: generatingDependencyTitle,
+            dataEntries: productsToTopics,
+          });
+        }
+      }
+      if (generatingDependenciesData.length > 0) {
+        dataEntries.push(generatingDependenciesData);
+      }
+    }
+    if (dataEntries.length > 0) {
+      tableEntries.push({
+        id: (idCounter++).toString(),
+        descriptionEntry: 'Erzeugt',
+        dataEntries: dataEntries,
+      });
+      console.log('generatingDependenciesData', tableEntries);
+    }
+
+    // const products = generatingDependencies.getElementsByTagName('ProduktRef');
+    // const topic = generatingDependencies.getElementsByTagName('ThemaRef');
+
+    const textPart = decodeXml(description);
+
+    return {
+      id: jsonDataFromXml.attributes.id,
+      header: jsonDataFromXml.attributes.name,
+      descriptionText: fixLinksInText(replaceUrlInText(textPart)),
+      tableEntries: tableEntries,
+    };
   }
 
   // useEffect(() => {
@@ -437,6 +543,22 @@ export function Content() {
   //
   //   pageEntryFound = selectedPageEntry;
   // }, [selectedPageEntry]);
+
+  async function getGeneratingDependenciesData(): Promise<XMLElement[]> {
+    const generatingDependenciesUrl =
+      'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      tailoringModelVariantId +
+      '/Projekttyp/' +
+      tailoringProjectTypeId +
+      '/Projekttypvariante/' +
+      tailoringProjectTypeVariantId +
+      '/ErzeugendeAbhaengigkeit?' +
+      getProjectFeaturesString();
+
+    const jsonDataFromXml: any = await getJsonDataFromXml(generatingDependenciesUrl);
+
+    return jsonDataFromXml.getElementsByTagName('ErzeugendeAbhängigkeit');
+  }
 
   function PageEntryContent() {
     // pageEntryFound = selectedPageEntry;
@@ -500,11 +622,7 @@ export function Content() {
       .join('&');
   }
 
-  function replaceUrlInText(testString: string): string {
-    //vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/fc3fc9d51ffd42/
-    // Projekttyp/1369cfd47f59793/Projekttypvariante/c3cdfb31207000/
-    // Grafik/images/VB_11340f6a5201855.gif?bee411a076e64a5=5acd11a076eaf06&be9c11a076f10fa=faaf11a076f5da4&ca2711ba30b787e=17af711ba30b787e&cd7015dbcc3dcdf=105b315dbcc3dcdf&7a0a11a076fa61b=a36711a0771b07e&de9d11a07700334=47bd11a07723bec&1261411a077061c3=547611a07727f2d&559a15dc26b0e8a=2dc715dc26b0e8a&cd5511a07709e6b=1600811a0772cdb4&25f211a0770d36d=47a111a0772f0e4&10f4e11a07712fb9=aa7811a07736a7c
-
+  function replaceUrlInText(text: string): string {
     const imageUrl =
       'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
       tailoringModelVariantId +
@@ -515,11 +633,24 @@ export function Content() {
       '/Grafik/images/$2?' +
       getProjectFeaturesString();
 
-    // testString.replace(/<img([^>]*)\ssrc=(['"])(?:[^\2\/]*\/)*([^\2]+)\2/gi, '<img$1 src=$2newPath/$3$2');
+    console.log('before', text);
+    console.log(
+      'after',
+      text.replace(
+        /src=['"](?:[^"'\/]*\/)*([^'"]+)['"]/g,
+        'src="https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+          tailoringModelVariantId +
+          '/Projekttyp/' +
+          tailoringProjectTypeId +
+          '/Projekttypvariante/' +
+          tailoringProjectTypeVariantId +
+          '/Grafik/images/$1?' +
+          getProjectFeaturesString() +
+          '"'
+      )
+    );
 
-    testString.replace(/(<img *src=")(.*?)"/, imageUrl);
-
-    return testString.replace(
+    return text.replace(
       /src=['"](?:[^"'\/]*\/)*([^'"]+)['"]/g,
       'src="https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
         tailoringModelVariantId +
@@ -531,6 +662,14 @@ export function Content() {
         getProjectFeaturesString() +
         '"'
     );
+  }
+
+  function fixLinksInText(testString: string): string {
+    // setPathSnippets(location.pathname.split('/').filter((i) => i));
+    const url = '#/documentation/'; // TODO
+
+    return testString.replace(/href=['"]#(?:[^"'\/]*\/)*([^'"]+)['"]/g, 'href="' + url + '$1' + location.search + '"');
+    // return testString.replace(
   }
 
   async function fetchSectionDetailsData(sectionId: string): Promise<any> {
@@ -546,7 +685,7 @@ export function Content() {
     return {
       id: jsonDataFromXml.attributes.id,
       header: jsonDataFromXml.attributes.titel,
-      descriptionText: replaceUrlInText(textPart),
+      descriptionText: fixLinksInText(replaceUrlInText(textPart)),
       tableEntries: [],
       subPageEntries: [],
     };
@@ -583,8 +722,11 @@ export function Content() {
     const rolleWirktMitBeiProduktRef = jsonDataFromXml.getElementsByTagName('RolleWirktMitBeiProduktRef');
     const produktZuEntscheidungspunktRef = jsonDataFromXml.getElementsByTagName('ProduktZuEntscheidungspunktRef');
     const themaZuProduktRef = jsonDataFromXml.getElementsByTagName('ThemaZuProduktRef');
-    const aktivitaetRef = jsonDataFromXml.getElementsByTagName('AktivitätZuProduktRef');
+    const activitiesRef = jsonDataFromXml.getElementsByTagName('AktivitätZuProduktRef');
     const externeKopiervorlageZuProduktRef = jsonDataFromXml.getElementsByTagName('ExterneKopiervorlageZuProduktRef');
+    const erzeugendeAbhaengigkeitzuProduktRef = jsonDataFromXml.getElementsByTagName(
+      'ErzeugendeAbhängigkeitzuProduktRef'
+    );
 
     const tableEntries: TableEntry[] = [];
     // const subPageEntries = [];
@@ -622,14 +764,14 @@ export function Content() {
     if (rolesTakePart.length > 0) {
       tableEntries.push({
         id: (idCounter++).toString(),
-        descriptionEntry: 'Mitwirkend', //rolleWirktMitBeiProduktRef[0]?.attributes.name,
+        descriptionEntry: 'Mitwirkend',
         dataEntries: rolesTakePart,
       });
     }
 
     //////////////////////////////////////////////
 
-    const activities = aktivitaetRef.flatMap((entry) => {
+    const activities = activitiesRef.flatMap((entry) => {
       return entry.getElementsByTagName('AktivitätRef').map((activityRef) => {
         return {
           id: activityRef.attributes.id,
@@ -657,9 +799,124 @@ export function Content() {
     if (tools.length > 0) {
       tableEntries.push({
         id: (idCounter++).toString(),
-        descriptionEntry: 'Hilfsmittel', //produktZuEntscheidungspunktRef[0]?.attributes.name,
+        descriptionEntry: 'Hilfsmittel',
         dataEntries: tools,
       });
+    }
+
+    //////////////////////////////////////////////
+
+    const generatingDependenciesToProduct = erzeugendeAbhaengigkeitzuProduktRef.flatMap((entry) => {
+      return entry.getElementsByTagName('ErzeugendeAbhängigkeitRef').map((generatingDependencyRef) => {
+        return {
+          id: generatingDependencyRef.attributes.id,
+          title: generatingDependencyRef.attributes.name,
+        };
+      });
+    });
+
+    if (generatingDependenciesToProduct.length > 0) {
+      const generatingDependenciesToProductId = generatingDependenciesToProduct[0].id;
+
+      const generatingDependencies = (await getGeneratingDependenciesData()).filter(
+        (data) => data.attributes.id === generatingDependenciesToProductId
+      );
+
+      const dataEntries = [];
+
+      for (const generatingDependency of generatingDependencies) {
+        const generatingDependenciesData = [];
+
+        //////////////
+        // get discipline and product for topic
+        const filterDisciplineDataTypes = flatten(navigationData).filter((item: any) =>
+          [NavTypeEnum.DISCIPLINE].includes(item.dataType)
+        );
+
+        const topicsMap = new Map<
+          string,
+          { discipline: { id: string; title: string }; product: { id: string; title: string } }
+        >();
+
+        for (const discipline of filterDisciplineDataTypes) {
+          const productsUrl =
+            'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+            tailoringModelVariantId +
+            '/Projekttyp/' +
+            tailoringProjectTypeId +
+            '/Projekttypvariante/' +
+            tailoringProjectTypeVariantId +
+            '/Disziplin/' +
+            discipline.key +
+            '/Produkt/?' +
+            getProjectFeaturesString();
+
+          const jsonDataFromXml: any = await getJsonDataFromXml(productsUrl);
+
+          const productEntries = jsonDataFromXml.getElementsByTagName('Produkt');
+
+          for (const product of productEntries) {
+            const productTopicEntries = product.getElementsByTagName('ThemaRef');
+
+            // .map((subjectRef) => {
+            //   return {
+            //     modelElement: subjectRef.attributes.name,
+            //     dataTypes: [NavTypeEnum.TOPIC],
+            //   };
+            // });
+
+            for (const topic of productTopicEntries) {
+              topicsMap.set(topic.attributes.id, {
+                discipline: { id: discipline.key, title: discipline.label },
+                product: { id: product.attributes.id, title: product.attributes.name },
+              });
+            }
+
+            // data = [...data, ...productTopicEntries];
+          }
+        }
+
+        //////////////
+
+        const topics = generatingDependency.getElementsByTagName('ThemaRef');
+        for (const topic of topics) {
+          // if (topic.attributes.id === topicId) {
+
+          console.log('topicsMap', topicsMap.get(topic.attributes.id));
+
+          console.log('topic', topic.attributes.name);
+          // const products = generatingDependency.getElementsByTagName('ProduktRef');
+          const productsToTopics = [];
+
+          // for (const product of products) {
+          //   if (product.attributes.id === productId) {
+          //     console.log('topic product', product.attributes.name);
+          productsToTopics.push({
+            id: topicsMap.get(topic.attributes.id)?.product.id,
+            title: topicsMap.get(topic.attributes.id)?.product.title,
+            suffix: '(' + topic.attributes.name + ')',
+          });
+          // }
+          // }
+
+          generatingDependenciesData.push({
+            subheader: topicsMap.get(topic.attributes.id)?.discipline.title, // TODO: nur discipline übergeben, um auch auf die id zugreifen zu können
+            dataEntries: productsToTopics,
+          });
+          // }
+        }
+        if (generatingDependenciesData.length > 0) {
+          dataEntries.push(generatingDependenciesData);
+        }
+      }
+
+      if (dataEntries.length > 0) {
+        tableEntries.push({
+          id: (idCounter++).toString(),
+          descriptionEntry: 'Erzeugt durch',
+          dataEntries: dataEntries,
+        });
+      }
     }
 
     //////////////////////////////////////////////
@@ -676,7 +933,7 @@ export function Content() {
     if (decisionPoints.length > 0) {
       tableEntries.push({
         id: (idCounter++).toString(),
-        descriptionEntry: 'Entscheidungsrelevant bei', //produktZuEntscheidungspunktRef[0]?.attributes.name,
+        descriptionEntry: 'Entscheidungsrelevant bei',
         dataEntries: decisionPoints,
       });
     }
@@ -700,7 +957,7 @@ export function Content() {
     return {
       id: jsonDataFromXml.attributes.id,
       header: jsonDataFromXml.attributes.name,
-      descriptionText: sinnUndZweck,
+      descriptionText: fixLinksInText(sinnUndZweck),
       tableEntries: tableEntries,
       subPageEntries: subPageEntries,
     };
@@ -752,7 +1009,7 @@ export function Content() {
 
       const description = decodeXml(jsonDataFromXml.getElementsByTagName('Beschreibung')[0]?.value);
       const tasksAndAuthorities = jsonDataFromXml.getElementsByTagName('Aufgaben_und_Befugnisse')[0]?.value;
-      const skillProfile = jsonDataFromXml.getElementsByTagName('Faehigkeitsprofil')[0]?.value;
+      const skillProfile = jsonDataFromXml.getElementsByTagName('Fähigkeitsprofil')[0]?.value;
       const cast = jsonDataFromXml.getElementsByTagName('Rollenbesetzung')[0]?.value;
 
       const rolleVerantwortetProduktRefs: XMLElement[] =
@@ -837,28 +1094,200 @@ export function Content() {
     });
   }
 
-  async function getRoleIndexContent(): Promise<PageEntry> {
-    const roleIndexUrl =
-      'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      tailoringModelVariantId +
-      '/Projekttyp/' +
-      tailoringProjectTypeId +
-      '/Projekttypvariante/' +
-      tailoringProjectTypeVariantId +
-      '/Rollenkategorie?' +
-      getProjectFeaturesString();
+  // async function getRoleIndexContent(): Promise<PageEntry> {
+  //   const roleIndexUrl =
+  //     'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+  //     tailoringModelVariantId +
+  //     '/Projekttyp/' +
+  //     tailoringProjectTypeId +
+  //     '/Projekttypvariante/' +
+  //     tailoringProjectTypeVariantId +
+  //     '/Rollenkategorie?' +
+  //     getProjectFeaturesString();
+  //
+  //   const jsonDataFromXml: any = await getJsonDataFromXml(roleIndexUrl);
+  //
+  //   const data: any[] = jsonDataFromXml.getElementsByTagName('Rollenkategorie').flatMap((roleCategoryValue: any) => {
+  //     const roleCategoryName = roleCategoryValue.attributes.name;
+  //
+  //     return roleCategoryValue.getElementsByTagName('RolleRef').map((roleValue: any): any => {
+  //       return {
+  //         modelElement: roleValue.attributes.name,
+  //         dataType: [roleCategoryName],
+  //       };
+  //     });
+  //   });
+  //
+  //   const columns: ColumnsType<any> = [
+  //     {
+  //       title: 'Modellelement',
+  //       dataIndex: 'modelElement',
+  //       key: 'modelElement',
+  //       defaultSortOrder: 'ascend',
+  //       sorter: {
+  //         compare: (a, b) => sorter(a.modelElement, b.modelElement),
+  //       },
+  //       render: (text: string) => <a>{text}</a>, // TODO
+  //     },
+  //     {
+  //       title: 'Typ',
+  //       dataIndex: 'dataType',
+  //       key: 'dataType',
+  //       filters: [...new Set(data.map((item) => item.dataType[0]))].map((item) => ({ text: item, value: item })),
+  //       onFilter: (value: string | number | boolean, record: any) => record.dataType.indexOf(value) === 0,
+  //       sorter: {
+  //         compare: (a, b) => sorter(a.dataType[0], b.dataType[0]),
+  //       },
+  //       render: (tags: string[]) => (
+  //         <span>
+  //           {tags?.map((tag) => {
+  //             let color;
+  //             if (tag === 'Projektrolle') {
+  //               color = 'geekblue';
+  //             }
+  //             if (tag === 'Projektteamrolle') {
+  //               color = 'green';
+  //             }
+  //             if (tag === 'Organisationsrolle') {
+  //               color = 'volcano';
+  //             }
+  //             return (
+  //               <Tag color={color} key={tag}>
+  //                 {tag}
+  //               </Tag>
+  //             );
+  //           })}
+  //         </span>
+  //       ),
+  //     },
+  //   ];
+  //
+  //   return {
+  //     id: 'roleIndexContent', //jsonDataFromXml.attributes.id,
+  //     // menuEntryId: jsonDataFromXml.attributes.id,
+  //     header: 'Rollenindex', //jsonDataFromXml.attributes.name,
+  //     descriptionText: '',
+  //     tableEntries: [],
+  //     dataSource: data,
+  //     columns: columns,
+  //     //subPageEntries: subPageEntries, // TODO
+  //   };
+  // }
 
-    const jsonDataFromXml: any = await getJsonDataFromXml(roleIndexUrl);
+  async function getProductIndexContent(): Promise<PageEntry> {
+    const filterRelevantDataTypes = flatten(navigationData).filter((item: any) =>
+      [NavTypeEnum.PRODUCT].includes(item.dataType)
+    );
 
-    const data: any[] = jsonDataFromXml.getElementsByTagName('Rollenkategorie').flatMap((roleCategoryValue: any) => {
-      const roleCategoryName = roleCategoryValue.attributes.name;
+    let data: any[] = filterRelevantDataTypes.map((navItem: any): any => {
+      return {
+        modelElement: navItem.label,
+        dataTypes: [navItem.dataType],
+      };
+    });
 
-      return roleCategoryValue.getElementsByTagName('RolleRef').map((roleValue: any): any => {
+    /////////////////
+
+    const filterDisciplineDataTypes = flatten(navigationData).filter((item: any) =>
+      [NavTypeEnum.DISCIPLINE].includes(item.dataType)
+    );
+
+    for (const discipline of filterDisciplineDataTypes) {
+      const productsUrl =
+        'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+        tailoringModelVariantId +
+        '/Projekttyp/' +
+        tailoringProjectTypeId +
+        '/Projekttypvariante/' +
+        tailoringProjectTypeVariantId +
+        '/Disziplin/' +
+        discipline.key +
+        '/Produkt/?' +
+        getProjectFeaturesString();
+
+      const jsonDataFromXml: any = await getJsonDataFromXml(productsUrl);
+
+      const productTopicEntries = jsonDataFromXml.getElementsByTagName('ThemaRef').map((subjectRef) => {
         return {
-          modelElement: roleValue.attributes.name,
-          roleType: [roleCategoryName],
+          modelElement: subjectRef.attributes.name,
+          dataTypes: [NavTypeEnum.TOPIC],
         };
       });
+
+      data = [...data, ...productTopicEntries];
+    }
+
+    /////////////////
+
+    //
+
+    const columns: ColumnsType<any> = [
+      {
+        title: 'Modellelement',
+        dataIndex: 'modelElement',
+        key: 'modelElement',
+        defaultSortOrder: 'ascend',
+        sorter: {
+          compare: (a, b) => sorter(a.modelElement, b.modelElement),
+        },
+        render: (text: string) => <a>{text}</a>, // TODO
+      },
+      {
+        title: 'Typ',
+        dataIndex: 'dataTypes',
+        key: 'dataTypes',
+        filters: [...new Set(data.map((item) => item.dataTypes[0]))].map((item) => ({
+          text: t('translation:dataType.' + item),
+          value: item,
+        })),
+        onFilter: (value: string | number | boolean, record: any) => record.dataTypes.indexOf(value) === 0,
+        sorter: {
+          compare: (a, b) => sorter(a.dataTypes[0], b.dataTypes[0]),
+        },
+        render: (tags: string[]) => (
+          <span>
+            {tags?.map((tag) => {
+              let color;
+              if (tag === 'product') {
+                color = 'geekblue';
+              }
+              if (tag === 'topic') {
+                color = 'green';
+              }
+              return (
+                <Tag color={color} key={tag}>
+                  {t('translation:dataType.' + tag)}
+                </Tag>
+              );
+            })}
+          </span>
+        ),
+      },
+    ];
+
+    return {
+      id: 'productIndexContent', //jsonDataFromXml.attributes.id,
+      // menuEntryId: jsonDataFromXml.attributes.id,
+      header: 'Produktindex', //jsonDataFromXml.attributes.name,
+      descriptionText: '',
+      tableEntries: [],
+      dataSource: data,
+      columns: columns,
+      //subPageEntries: subPageEntries, // TODO
+    };
+  }
+
+  async function getRoleIndexContent(): Promise<PageEntry> {
+    const filterRelevantDataTypes = flatten(navigationData).filter((item: any) =>
+      [NavTypeEnum.PROJECT_TEAM_ROLE, NavTypeEnum.PROJECT_ROLE, NavTypeEnum.ORGANISATION_ROLE].includes(item.dataType)
+    );
+    // TODO: fehlt noch TOPIC
+
+    const data: any[] = filterRelevantDataTypes.map((navItem: any): any => {
+      return {
+        modelElement: navItem.label,
+        dataTypes: [navItem.dataType],
+      };
     });
 
     const columns: ColumnsType<any> = [
@@ -874,29 +1303,32 @@ export function Content() {
       },
       {
         title: 'Typ',
-        dataIndex: 'roleType',
-        key: 'roleType',
-        filters: [...new Set(data.map((item) => item.roleType[0]))].map((item) => ({ text: item, value: item })),
-        onFilter: (value: string | number | boolean, record: any) => record.roleType.indexOf(value) === 0,
+        dataIndex: 'dataTypes',
+        key: 'dataTypes',
+        filters: [...new Set(data.map((item) => item.dataTypes[0]))].map((item) => ({
+          text: t('translation:dataType.' + item),
+          value: item,
+        })),
+        onFilter: (value: string | number | boolean, record: any) => record.dataTypes.indexOf(value) === 0,
         sorter: {
-          compare: (a, b) => sorter(a.roleType[0], b.roleType[0]),
+          compare: (a, b) => sorter(a.dataTypes[0], b.dataTypes[0]),
         },
         render: (tags: string[]) => (
           <span>
             {tags?.map((tag) => {
               let color;
-              if (tag === 'Projektrolle') {
+              if (tag === 'projectRole') {
                 color = 'geekblue';
               }
-              if (tag === 'Projektteamrolle') {
+              if (tag === 'projectTeamRole') {
                 color = 'green';
               }
-              if (tag === 'Organisationsrolle') {
+              if (tag === 'organisationRole') {
                 color = 'volcano';
               }
               return (
                 <Tag color={color} key={tag}>
-                  {tag}
+                  {t('translation:dataType.' + tag)}
                 </Tag>
               );
             })}
@@ -906,12 +1338,240 @@ export function Content() {
     ];
 
     return {
-      id: 'roleIndexContent', //jsonDataFromXml.attributes.id,
+      id: 'productIndexContent', //jsonDataFromXml.attributes.id,
       // menuEntryId: jsonDataFromXml.attributes.id,
-      header: 'Rollenindex', //jsonDataFromXml.attributes.name,
+      header: 'Produktindex', //jsonDataFromXml.attributes.name,
       descriptionText: '',
       tableEntries: [],
-      dataSource: data, // TODO: Daten besser gleich ins richtige Format und nicht extra über flatMap
+      dataSource: data,
+      columns: columns,
+      //subPageEntries: subPageEntries, // TODO
+    };
+  }
+
+  async function getProcessIndexContent(): Promise<PageEntry> {
+    const filterRelevantDataTypes = flatten(navigationData).filter((item: any) =>
+      [NavTypeEnum.PROCESS_MODULE, NavTypeEnum.DECISION_POINT].includes(item.dataType)
+    );
+
+    const data: any[] = filterRelevantDataTypes.map((navItem: any): any => {
+      return {
+        modelElement: navItem.label,
+        dataTypes: [navItem.dataType],
+      };
+    });
+
+    const columns: ColumnsType<any> = [
+      {
+        title: 'Modellelement',
+        dataIndex: 'modelElement',
+        key: 'modelElement',
+        defaultSortOrder: 'ascend',
+        sorter: {
+          compare: (a, b) => sorter(a.modelElement, b.modelElement),
+        },
+        render: (text: string) => <a>{text}</a>, // TODO
+      },
+      {
+        title: 'Typ',
+        dataIndex: 'dataTypes',
+        key: 'dataTypes',
+        filters: [...new Set(data.map((item) => item.dataTypes[0]))].map((item) => ({
+          text: t('translation:dataType.' + item),
+          value: item,
+        })),
+        onFilter: (value: string | number | boolean, record: any) => record.dataTypes.indexOf(value) === 0,
+        sorter: {
+          compare: (a, b) => sorter(a.dataTypes[0], b.dataTypes[0]),
+        },
+        render: (tags: string[]) => (
+          <span>
+            {tags?.map((tag) => {
+              let color;
+              if (tag === 'decisionPoint') {
+                color = 'geekblue';
+              }
+              if (tag === 'processModule') {
+                color = 'green';
+              }
+              if (tag === 'Projektdurchführungsstrategie') {
+                color = 'volcano';
+              }
+              return (
+                <Tag color={color} key={tag}>
+                  {t('translation:dataType.' + tag)}
+                </Tag>
+              );
+            })}
+          </span>
+        ),
+      },
+    ];
+
+    return {
+      id: 'processIndexContent', //jsonDataFromXml.attributes.id,
+      // menuEntryId: jsonDataFromXml.attributes.id,
+      header: 'Ablaufindex', //jsonDataFromXml.attributes.name,
+      descriptionText: '',
+      tableEntries: [],
+      dataSource: data,
+      columns: columns,
+      //subPageEntries: subPageEntries, // TODO
+    };
+  }
+
+  async function getTailoringIndexContent(): Promise<PageEntry> {
+    const filterRelevantDataTypes = flatten(navigationData).filter((item: any) =>
+      [
+        NavTypeEnum.PROJECT_TYPE_VARIANT,
+        NavTypeEnum.PROJECT_TYPE,
+        NavTypeEnum.PROJECT_CHARACTERISTIC,
+        NavTypeEnum.PROCESS_BUILDING_BLOCK,
+      ].includes(item.dataType)
+    );
+
+    const data: any[] = filterRelevantDataTypes.map((navItem: any): any => {
+      return {
+        modelElement: navItem.label,
+        dataTypes: [navItem.dataType],
+      };
+    });
+
+    const columns: ColumnsType<any> = [
+      {
+        title: 'Modellelement',
+        dataIndex: 'modelElement',
+        key: 'modelElement',
+        defaultSortOrder: 'ascend',
+        sorter: {
+          compare: (a, b) => sorter(a.modelElement, b.modelElement),
+        },
+        render: (text: string) => <a>{text}</a>, // TODO
+      },
+      {
+        title: 'Typ',
+        dataIndex: 'dataTypes',
+        key: 'dataTypes',
+        filters: [...new Set(data.map((item) => item.dataTypes[0]))].map((item) => ({
+          text: t('translation:dataType.' + item),
+          value: item,
+        })),
+        onFilter: (value: string | number | boolean, record: any) => record.dataTypes.indexOf(value) === 0,
+        sorter: {
+          compare: (a, b) => sorter(a.dataTypes[0], b.dataTypes[0]),
+        },
+        render: (tags: string[]) => (
+          <span>
+            {tags?.map((tag) => {
+              let color;
+              if (tag === 'projectType') {
+                color = 'geekblue';
+              }
+              if (tag === 'projectTypeVariant') {
+                color = 'green';
+              }
+              if (tag === 'projectCharacteristic') {
+                color = 'volcano';
+              }
+              if (tag === 'processBuildingBlock') {
+                color = '';
+              }
+              return (
+                <Tag color={color} key={tag}>
+                  {t('translation:dataType.' + tag)}
+                </Tag>
+              );
+            })}
+          </span>
+        ),
+      },
+    ];
+
+    return {
+      id: 'processIndexContent', //jsonDataFromXml.attributes.id,
+      // menuEntryId: jsonDataFromXml.attributes.id,
+      header: 'Tailoringindex', //jsonDataFromXml.attributes.name,
+      descriptionText: '',
+      tableEntries: [],
+      dataSource: data,
+      columns: columns,
+      //subPageEntries: subPageEntries, // TODO
+    };
+  }
+
+  async function getWorkAidsIndexContent(): Promise<PageEntry> {
+    const filterRelevantDataTypes = flatten(navigationData).filter((item: any) =>
+      [NavTypeEnum.ACTIVITY, NavTypeEnum.METHOD_REFERENCE, NavTypeEnum.TOOL_REFERENCE].includes(item.dataType)
+    );
+    // TODO: fehlt Externe Kopiervorlage, Generierte Produktvorlage
+
+    const data: any[] = filterRelevantDataTypes.map((navItem: any): any => {
+      return {
+        modelElement: navItem.label,
+        dataTypes: [navItem.dataType],
+      };
+    });
+
+    const columns: ColumnsType<any> = [
+      {
+        title: 'Modellelement',
+        dataIndex: 'modelElement',
+        key: 'modelElement',
+        defaultSortOrder: 'ascend',
+        sorter: {
+          compare: (a, b) => sorter(a.modelElement, b.modelElement),
+        },
+        render: (text: string) => <a>{text}</a>, // TODO
+      },
+      {
+        title: 'Typ',
+        dataIndex: 'dataTypes',
+        key: 'dataTypes',
+        filters: [...new Set(data.map((item) => item.dataTypes[0]))].map((item) => ({
+          text: t('translation:dataType.' + item),
+          value: item,
+        })),
+        onFilter: (value: string | number | boolean, record: any) => record.dataTypes.indexOf(value) === 0,
+        sorter: {
+          compare: (a, b) => sorter(a.dataTypes[0], b.dataTypes[0]),
+        },
+        render: (tags: string[]) => (
+          <span>
+            {tags?.map((tag) => {
+              let color;
+              if (tag === 'activity') {
+                color = 'geekblue';
+              }
+              if (tag === 'methodReference') {
+                color = 'green';
+              }
+              if (tag === 'toolsReference') {
+                color = 'volcano';
+              }
+              if (tag === 'Externe Kopiervorlage') {
+                color = 'green';
+              }
+              if (tag === 'Generierte Produktvorlage') {
+                color = 'volcano';
+              }
+              return (
+                <Tag color={color} key={tag}>
+                  {t('translation:dataType.' + tag)}
+                </Tag>
+              );
+            })}
+          </span>
+        ),
+      },
+    ];
+
+    return {
+      id: 'processIndexContent', //jsonDataFromXml.attributes.id,
+      // menuEntryId: jsonDataFromXml.attributes.id,
+      header: 'Arbeitshilfenindex', //jsonDataFromXml.attributes.name,
+      descriptionText: '',
+      tableEntries: [],
+      dataSource: data,
       columns: columns,
       //subPageEntries: subPageEntries, // TODO
     };
@@ -1057,6 +1717,24 @@ export function Content() {
     };
   }
 
+  /////
+
+  async function getActivitiesData(): Promise<XMLElement[]> {
+    const activitiesUrl =
+      'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      tailoringModelVariantId +
+      '/Projekttyp/' +
+      tailoringProjectTypeId +
+      '/Projekttypvariante/' +
+      tailoringProjectTypeVariantId +
+      '/Aktivitaet?' +
+      getProjectFeaturesString();
+
+    const jsonDataFromXml: any = await getJsonDataFromXml(activitiesUrl);
+
+    return jsonDataFromXml.getElementsByTagName('Aktivität');
+  }
+
   async function getMethodReferenceContent(): Promise<PageEntry> {
     const methodReferenceUrl =
       'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
@@ -1068,15 +1746,39 @@ export function Content() {
 
     let idCounter = 2000;
 
-    return axios.get(methodReferenceUrl).then((response) => {
+    return axios.get(methodReferenceUrl).then(async (response) => {
       console.log(response.data);
       const jsonDataFromXml = new XMLParser().parseFromString(response.data);
 
       const sinnUndZweck = decodeXml(jsonDataFromXml.getElementsByTagName('Sinn_und_Zweck')[0]?.value);
-
       const quelleRefs: XMLElement[] = jsonDataFromXml.getElementsByTagName('QuelleRefs');
 
       const tableEntries: TableEntry[] = [];
+
+      //////////////////////////////////////////////
+
+      const activities = await getActivitiesData();
+      const activitiesToTools = [];
+
+      for (const activity of activities) {
+        const methodReferences = activity.getElementsByTagName('MethodenreferenzRef');
+        for (const methodReference of methodReferences) {
+          if (methodReference.attributes.id === methodReferenceId) {
+            activitiesToTools.push({
+              id: activity.attributes.id,
+              title: activity.attributes.name,
+            });
+          }
+        }
+      }
+
+      if (activitiesToTools.length > 0) {
+        tableEntries.push({
+          id: (idCounter++).toString(),
+          descriptionEntry: 'Aktivitäten',
+          dataEntries: activitiesToTools,
+        });
+      }
 
       // //////////////////////////////////////////////
       //
@@ -1096,8 +1798,6 @@ export function Content() {
           dataEntries: quellen,
         });
       }
-
-      //////////////////////////////////////////////
 
       // console.log('this.pageEntry roles', this.pageEntry);
 
@@ -1121,15 +1821,60 @@ export function Content() {
 
     // const jsonDataFromXml: any = await getJsonDataFromXml(methodReferenceUrl);
 
-    return axios.get(toolReferenceUrl).then((response) => {
+    let idCounter = 2000;
+
+    return axios.get(toolReferenceUrl).then(async (response) => {
       console.log(response.data);
       const jsonDataFromXml = new XMLParser().parseFromString(response.data);
 
       const sinnUndZweck = decodeXml(jsonDataFromXml.getElementsByTagName('Sinn_und_Zweck')[0]?.value);
+      const quelleRefs: XMLElement[] = jsonDataFromXml.getElementsByTagName('QuelleRefs');
 
       const tableEntries: TableEntry[] = [];
 
       //////////////////////////////////////////////
+
+      const activities = await getActivitiesData();
+      const activitiesToTools = [];
+
+      for (const activity of activities) {
+        const toolReferences = activity.getElementsByTagName('WerkzeugreferenzRef');
+        for (const toolReference of toolReferences) {
+          if (toolReference.attributes.id === toolReferenceId) {
+            activitiesToTools.push({
+              id: activity.attributes.id,
+              title: activity.attributes.name,
+            });
+          }
+        }
+      }
+
+      if (activitiesToTools.length > 0) {
+        tableEntries.push({
+          id: (idCounter++).toString(),
+          descriptionEntry: 'Aktivitäten',
+          dataEntries: activitiesToTools,
+        });
+      }
+
+      //////////////////////////////////////////////
+
+      const quellen = quelleRefs.flatMap((entry: XMLElement) => {
+        return entry.getElementsByTagName('QuelleRef').map((productRef) => {
+          return {
+            id: productRef.attributes.id,
+            title: productRef.attributes.name,
+          };
+        });
+      });
+
+      if (quellen.length > 0) {
+        tableEntries.push({
+          id: (idCounter++).toString(),
+          descriptionEntry: 'Quellen',
+          dataEntries: quellen,
+        });
+      }
 
       // console.log('this.pageEntry roles', this.pageEntry);
 
@@ -1302,14 +2047,69 @@ export function Content() {
       console.log(response.data);
       const jsonDataFromXml = new XMLParser().parseFromString(response.data);
 
+      let idCounter = 2000;
+
       const sinnUndZweck = decodeXml(jsonDataFromXml.getElementsByTagName('Sinn_und_Zweck')[0]?.value);
+      const aktivityRef = jsonDataFromXml.getElementsByTagName('AktivitätZuProduktRef');
+      const methodsRef = jsonDataFromXml.getElementsByTagName('AktivitätZuMethodenreferenzRef');
+      const toolsRef = jsonDataFromXml.getElementsByTagName('AktivitätZuWerkzeugreferenzRef');
       // const description = decodeXml(jsonDataFromXml.getElementsByTagName('Beschreibung')[0]?.value);
 
       const tableEntries: TableEntry[] = [];
 
       //////////////////////////////////////////////
 
-      // console.log('this.pageEntry roles', this.pageEntry);
+      const products = aktivityRef.flatMap((entry) => {
+        return entry.getElementsByTagName('ProduktRef').map((productRef) => {
+          return {
+            id: productRef.attributes.id,
+            // menuEntryId: activityRef.attributes.id,
+            title: productRef.attributes.name,
+          };
+        });
+      });
+
+      tableEntries.push({
+        id: (idCounter++).toString(),
+        descriptionEntry: 'Produkt',
+        dataEntries: products,
+      });
+
+      const tools = toolsRef.flatMap((entry) => {
+        return entry.getElementsByTagName('WerkzeugreferenzRef').map((toolRef) => {
+          return {
+            id: toolRef.attributes.id,
+            // menuEntryId: activityRef.attributes.id,
+            title: toolRef.attributes.name,
+          };
+        });
+      });
+
+      if (tools.length > 0) {
+        tableEntries.push({
+          id: (idCounter++).toString(),
+          descriptionEntry: 'Werkzeuge',
+          dataEntries: tools,
+        });
+      }
+
+      const methods = methodsRef.flatMap((entry) => {
+        return entry.getElementsByTagName('MethodenreferenzRef').map((methodRef) => {
+          return {
+            id: methodRef.attributes.id,
+            // menuEntryId: activityRef.attributes.id,
+            title: methodRef.attributes.name,
+          };
+        });
+      });
+
+      if (methods.length > 0) {
+        tableEntries.push({
+          id: (idCounter++).toString(),
+          descriptionEntry: 'Methoden',
+          dataEntries: methods,
+        });
+      }
 
       return {
         id: jsonDataFromXml.attributes.id,

@@ -1,19 +1,50 @@
 import React from 'react';
-import { Route, Routes } from 'react-router';
+import { Route } from 'react-router-dom';
 import { Home } from '../../pages/Home';
-import { Layout } from 'antd';
-import { SiteHeader } from '../header/SiteHeader';
-import { ProjekthandbuchComponent } from '../projekthandbuch/component';
-import { ProduktvorlagenComponent } from '../projekthandbuch/produktvorlagen/component';
+import './../../i18n';
 import { Project } from '../projekthandbuch/projekt/project';
 import { Documentation } from '../projekthandbuch/documentation/documentation';
+import { ProjekthandbuchComponent } from '../projekthandbuch/component';
+import { ProduktvorlagenComponent } from '../projekthandbuch/produktvorlagen/component';
+import { Layout } from 'antd';
+import { SiteHeader } from '../header/SiteHeader';
+import { Routes } from 'react-router';
+import { SiteFooter } from '../footer/SiteFooter';
+import { Content } from 'antd/es/layout/layout';
+
+// const menuItems = [
+//   {
+//     key: '1',
+//     label: (
+//       <a target="_blank" rel="noopener noreferrer" href="http://www.alipay.com/">
+//         General
+//       </a>
+//     ),
+//   },
+//   {
+//     key: '2',
+//     label: (
+//       <a target="_blank" rel="noopener noreferrer" href="http://www.taobao.com/">
+//         Layout
+//       </a>
+//     ),
+//   },
+//   {
+//     key: '3',
+//     label: (
+//       <a target="_blank" rel="noopener noreferrer" href="http://www.tmall.com/">
+//         Navigation
+//       </a>
+//     ),
+//   },
+// ];
 
 function App() {
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <SiteHeader />
       <Layout>
-        <Layout style={{ backgroundColor: 'white' }}>
+        <Content style={{ padding: '0 25px' }}>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/tailoring" element={<Project />} />
@@ -23,8 +54,9 @@ function App() {
             <Route path="/produktvorlagen" element={<ProduktvorlagenComponent />} />
             {/*<Route path="*" element={<HomeComponent />} />*/}
           </Routes>
-        </Layout>
+        </Content>
       </Layout>
+      <SiteFooter />
     </Layout>
   );
 }

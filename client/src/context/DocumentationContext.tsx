@@ -7,6 +7,7 @@ import {
   Section,
 } from '../components/projekthandbuch/documentation/navigation/navigation';
 import { getMenuItemByAttributeValue } from '../shares/utils';
+import { useSearchParams } from 'react-router-dom';
 
 type DocumentationSession = {
   selectedPageEntry: PageEntry | undefined;
@@ -31,6 +32,12 @@ type DocumentationSession = {
   projectTypeVariantId: string | null;
   activityId: string | null;
   entryId: string | null;
+  getNavigationPath: Function;
+  onRouteChanged: Function;
+  currentSelectedKeys: string[];
+  setCurrentSelectedKeys: Function;
+  openKeys: string[];
+  setOpenKeys: Function;
 };
 
 type DocumentationSessionProviderProps = { children: React.ReactNode };
@@ -38,9 +45,24 @@ type DocumentationSessionProviderProps = { children: React.ReactNode };
 const DocumentationSessionContext = React.createContext<DocumentationSession | undefined>(undefined);
 
 const DocumentationSessionContextProvider = ({ children }: DocumentationSessionProviderProps) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  // TODO: just temporary from search params
+  const tailoringModelVariantId = searchParams.get('mV');
+  const tailoringProjectTypeVariantId = searchParams.get('ptV');
+  const tailoringProjectTypeId = searchParams.get('pt');
+  // const tailoringProjectFeatureIdsSearchParam: MyType = {};
+
   const [selectedPageEntry, setSelectedPageEntry] = React.useState<PageEntry>();
   const [selectedItemKey, setSelectedItemKey] = React.useState<string>();
   const [selectedIndexType, setSelectedIndexType] = React.useState<IndexTypeEnum>();
+  const [currentSelectedKeys, setCurrentSelectedKeys] = React.useState<string[]>([]);
+  const [openKeys, setOpenKeys] = useState([]);
+
+  // function setSelectedItemKey(key: string) {
+  //   const navigate = useNavigate();
+  //   navigate(`./${key}`);
+  //   _setSelectedItemKey(key);
+  // }
 
   const [sectionsData, setSectionsData] = useState<Section[]>([]);
   const [navigationData, setNavigationData] = useState<NavMenuItem[]>([]);
@@ -82,6 +104,12 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
     projectTypeVariantId,
     activityId,
     entryId,
+    getNavigationPath,
+    onRouteChanged,
+    currentSelectedKeys,
+    setCurrentSelectedKeys,
+    openKeys,
+    setOpenKeys,
   };
 
   // const {
@@ -128,9 +156,13 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
 
     if (gefunden !== undefined) {
       if (gefunden.dataType === NavTypeEnum.PRODUCT) {
-        setDisciplineId(gefunden.parentId);
+        setDisciplineId(gefunden.parent.key);
         setProductId(gefunden.key);
-      } else if (gefunden.dataType === NavTypeEnum.ROLE) {
+      } else if (
+        [NavTypeEnum.PROJECT_ROLE, NavTypeEnum.PROJECT_TEAM_ROLE, NavTypeEnum.ORGANISATION_ROLE].includes(
+          gefunden.dataType
+        )
+      ) {
         setRoleId(gefunden.key);
       } else if (gefunden.dataType === NavTypeEnum.PROCESS_MODULE) {
         setProcessModuleId(gefunden.key);
@@ -163,44 +195,27 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
         setEntryId(gefunden.key);
       }
     }
+  }
 
-    // this.projectTypeSubscription = this.projekthandbuchService
-    //   .getNavigationData()
-    //   .subscribe((menuEntries: NavigationMenuEntry[]) => {
-    //     menuEntries.forEach((menu) => {
-    //       const foundMenuEntry = findIdInMenuEntry(menuEntryId, menu.entries);
-    //       if (foundMenuEntry) {
-    //         switch (menu.title) {
-    //           case 'products':
-    //             void this.productsContentController.getContent().then((response: PageEntry) => {
-    //               this.selectedPageEntry = response;
-    //               this.onUpdate();
-    //             });
-    //             break;
-    //           case 'process':
-    //             void this.processContentController.getContent().then((response: PageEntry) => {
-    //               this.selectedPageEntry = response;
-    //               this.onUpdate();
-    //             });
-    //             break;
-    //           case 'roles':
-    //             void this.rolesContentController.getContent().then((response: PageEntry) => {
-    //               this.selectedPageEntry = response;
-    //               this.onUpdate();
-    //             });
-    //             break;
-    //           case 'tailoring':
-    //             void this.tailoringContentController.getContent().then((response: PageEntry) => {
-    //               this.selectedPageEntry = response;
-    //               this.onUpdate();
-    //             });
-    //             break;
-    //         }
-    //       }
-    //     });
-    //   });
-    //
-    // this.projectTypeSubscription.unsubscribe();
+  function getNavigationPath(menuEntryId: string): { key: string; label: string }[] {
+    let gefunden = getMenuItemByAttributeValue(navigationData, 'key', menuEntryId);
+    console.log('getNavigationPath call', gefunden, navigationData);
+
+    const parentPath = [gefunden];
+
+    while (gefunden) {
+      if (gefunden.parent) {
+        console.log(gefunden.parent.key);
+
+        const parent = gefunden.parent;
+
+        parentPath.push(parent);
+        gefunden = gefunden.parent;
+      } else {
+        gefunden = false;
+      }
+    }
+    return parentPath;
   }
 
   function onIndexPageSelected(indexPageType: IndexTypeEnum): void {

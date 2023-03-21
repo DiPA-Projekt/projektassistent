@@ -50,6 +50,10 @@ ul.ant-menu li.ant-menu-item a {
   padding: 14px 24px !important;
 }
 
+.ant-list-item-meta-title {
+  margin-block-start: 5px;
+}
+
 .content {
   height: 100vh;
   display: flex;

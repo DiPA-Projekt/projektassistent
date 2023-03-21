@@ -1,0 +1,29 @@
+{
+  "common": {
+    "No": "Nein",
+    "Yes": "Ja"
+  },
+  "dataType": {
+    "activity": "Aktivität",
+    "decisionPoint": "Entscheidungspunkt",
+    "methodReference": "Methodenreferenz",
+    "organisationRole": "Organisationsrolle",
+    "processBuildingBlock": "Vorgehensbaustein",
+    "processModule": "Ablaufbaustein",
+    "product": "Produkt",
+    "projectCharacteristic": "Projektmerkmal",
+    "projectRole": "Projektrolle",
+    "projectTeamRole": "Projektteamrolle",
+    "projectType": "Projekttyp",
+    "projectTypeVariant": "Projekttypvariante",
+    "toolsReference": "Werkzeugreferenz",
+    "topic": "Thema"
+  },
+  "format": {
+    "SimpleDate": "{{date, date}}"
+  },
+  "label": {
+  },
+  "text": {
+  }
+}
