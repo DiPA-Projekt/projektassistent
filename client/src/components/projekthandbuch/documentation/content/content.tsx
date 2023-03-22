@@ -137,6 +137,22 @@ export function Content() {
   useEffect(() => {
     async function mount() {
       // TODO: noch schauen wo das genau hinkommt
+      if (disciplineId) {
+        const content = await getDisciplineContent();
+        setSelectedPageEntry(content);
+        console.log('setSelectedPageEntry', content);
+      } else {
+        console.log('no disciplineId');
+      }
+    }
+
+    mount().then();
+    //eslint-disable-next-line
+  }, [disciplineId]);
+
+  useEffect(() => {
+    async function mount() {
+      // TODO: noch schauen wo das genau hinkommt
       if (selectedIndexType) {
         let content;
         switch (selectedIndexType) {
@@ -623,6 +639,7 @@ export function Content() {
   }
 
   function replaceUrlInText(text: string): string {
+    // TODO
     const imageUrl =
       'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
       tailoringModelVariantId +
@@ -689,6 +706,42 @@ export function Content() {
       tableEntries: [],
       subPageEntries: [],
     };
+  }
+
+  async function getDisciplineContent(): Promise<PageEntry> {
+    const projectTypeUrl =
+      'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      tailoringModelVariantId +
+      '/Projekttyp/' +
+      tailoringProjectTypeId +
+      '/Projekttypvariante/' +
+      tailoringProjectTypeVariantId +
+      '/Disziplin/' +
+      disciplineId +
+      '?' +
+      getProjectFeaturesString();
+
+    // const jsonDataFromXml: any = await getJsonDataFromXml(methodReferenceUrl);
+
+    return axios.get(projectTypeUrl).then((response) => {
+      console.log(response.data);
+      const jsonDataFromXml = new XMLParser().parseFromString(response.data);
+
+      const sinnUndZweck = decodeXml(jsonDataFromXml.getElementsByTagName('Sinn_und_Zweck')[0]?.value);
+
+      const tableEntries: TableEntry[] = [];
+
+      //////////////////////////////////////////////
+
+      return {
+        id: jsonDataFromXml.attributes.id,
+        // menuEntryId: jsonDataFromXml.attributes.id,
+        header: jsonDataFromXml.attributes.name,
+        descriptionText: sinnUndZweck,
+        tableEntries: tableEntries,
+        // subPageEntries: subPageEntries,
+      };
+    });
   }
 
   async function getProductContent(): Promise<PageEntry> {
@@ -1093,86 +1146,6 @@ export function Content() {
       };
     });
   }
-
-  // async function getRoleIndexContent(): Promise<PageEntry> {
-  //   const roleIndexUrl =
-  //     'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-  //     tailoringModelVariantId +
-  //     '/Projekttyp/' +
-  //     tailoringProjectTypeId +
-  //     '/Projekttypvariante/' +
-  //     tailoringProjectTypeVariantId +
-  //     '/Rollenkategorie?' +
-  //     getProjectFeaturesString();
-  //
-  //   const jsonDataFromXml: any = await getJsonDataFromXml(roleIndexUrl);
-  //
-  //   const data: any[] = jsonDataFromXml.getElementsByTagName('Rollenkategorie').flatMap((roleCategoryValue: any) => {
-  //     const roleCategoryName = roleCategoryValue.attributes.name;
-  //
-  //     return roleCategoryValue.getElementsByTagName('RolleRef').map((roleValue: any): any => {
-  //       return {
-  //         modelElement: roleValue.attributes.name,
-  //         dataType: [roleCategoryName],
-  //       };
-  //     });
-  //   });
-  //
-  //   const columns: ColumnsType<any> = [
-  //     {
-  //       title: 'Modellelement',
-  //       dataIndex: 'modelElement',
-  //       key: 'modelElement',
-  //       defaultSortOrder: 'ascend',
-  //       sorter: {
-  //         compare: (a, b) => sorter(a.modelElement, b.modelElement),
-  //       },
-  //       render: (text: string) => <a>{text}</a>, // TODO
-  //     },
-  //     {
-  //       title: 'Typ',
-  //       dataIndex: 'dataType',
-  //       key: 'dataType',
-  //       filters: [...new Set(data.map((item) => item.dataType[0]))].map((item) => ({ text: item, value: item })),
-  //       onFilter: (value: string | number | boolean, record: any) => record.dataType.indexOf(value) === 0,
-  //       sorter: {
-  //         compare: (a, b) => sorter(a.dataType[0], b.dataType[0]),
-  //       },
-  //       render: (tags: string[]) => (
-  //         <span>
-  //           {tags?.map((tag) => {
-  //             let color;
-  //             if (tag === 'Projektrolle') {
-  //               color = 'geekblue';
-  //             }
-  //             if (tag === 'Projektteamrolle') {
-  //               color = 'green';
-  //             }
-  //             if (tag === 'Organisationsrolle') {
-  //               color = 'volcano';
-  //             }
-  //             return (
-  //               <Tag color={color} key={tag}>
-  //                 {tag}
-  //               </Tag>
-  //             );
-  //           })}
-  //         </span>
-  //       ),
-  //     },
-  //   ];
-  //
-  //   return {
-  //     id: 'roleIndexContent', //jsonDataFromXml.attributes.id,
-  //     // menuEntryId: jsonDataFromXml.attributes.id,
-  //     header: 'Rollenindex', //jsonDataFromXml.attributes.name,
-  //     descriptionText: '',
-  //     tableEntries: [],
-  //     dataSource: data,
-  //     columns: columns,
-  //     //subPageEntries: subPageEntries, // TODO
-  //   };
-  // }
 
   async function getProductIndexContent(): Promise<PageEntry> {
     const filterRelevantDataTypes = flatten(navigationData).filter((item: any) =>
@@ -1705,6 +1678,7 @@ export function Content() {
     const jsonDataFromXml: any = await getJsonDataFromXml(tailoringProcessBuildingBlocksUrl);
 
     const sinnUndZweck = decodeXml(jsonDataFromXml.getElementsByTagName('Sinn_und_Zweck')[0]?.value);
+    // TODO Überblicksgrafik etc.
 
     const tableEntries: TableEntry[] = [];
 
@@ -1898,7 +1872,7 @@ export function Content() {
 
     // const jsonDataFromXml: any = await getJsonDataFromXml(methodReferenceUrl);
 
-    const jsonDataFromXml: any = await getJsonDataFromXml(projectCharacteristicUrl, true);
+    const jsonDataFromXml: any = await getJsonDataFromXml(projectCharacteristicUrl);
 
     const sinnUndZweck = decodeXml(jsonDataFromXml.getElementsByTagName('Sinn_und_Zweck')[0]?.value);
 

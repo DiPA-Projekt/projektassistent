@@ -55,6 +55,7 @@ export function ModelVariant() {
           placeholder="Bitte wählen"
           onChange={(value: string) => {
             setModelVariantId(value);
+            localStorage.setItem('modelVariantId', JSON.stringify(modelVariantId));
             console.log('changed modelVariantId manually');
             setSearchParams({ mV: value });
             setProjectTypeVariantId(null);

@@ -1,12 +1,15 @@
 import { Col, Layout, Menu, MenuProps, Row } from 'antd';
 import React from 'react';
 import { BookOutlined, FileTextOutlined, HomeOutlined, ScissorOutlined } from '@ant-design/icons';
+import { Link } from 'react-router-dom';
+
+import LOGO from '../../assets/logo.vmodell.xt.bund.jpg';
 
 const { Header } = Layout;
 
 const items: MenuProps['items'] = [
   {
-    label: <a href="#/home">Home</a>,
+    label: <a href="#/">Home</a>,
     key: 'home',
     icon: <HomeOutlined />,
   },
@@ -45,32 +48,40 @@ const items: MenuProps['items'] = [
 // </Menu.Item>
 
 export const SiteHeader = (props: any) => {
+  // const navigate = useNavigate();
+
+  // const handleMenuClick = ({ key: string }) => {
+  // if (key) {
+  //   navigate(key);
+  // }
+  // };
+
   return (
     <Header>
       <Row>
         <Col span={4}>
-          {/*<Link*/}
-          {/*  id="logo"*/}
-          {/*  to="/"*/}
-          {/*  title="Zurück zur Hauptseite"*/}
-          {/*  style={{*/}
-          {/*    backgroundImage: `url(${LOGO as string})`,*/}
-          {/*    margin: '4px',*/}
-          {/*    height: '56px',*/}
-          {/*    width: '56px',*/}
-          {/*    overflow: 'hidden',*/}
-          {/*    display: 'block',*/}
-          {/*    backgroundSize: 'cover',*/}
-          {/*    backgroundRepeat: 'no-repeat',*/}
-          {/*  }}*/}
-          {/*/>*/}
+          <Link
+            id="logo"
+            to="/"
+            title="Zurück zur Hauptseite"
+            style={{
+              backgroundImage: `url(${LOGO as string})`,
+              margin: '4px',
+              height: '56px',
+              width: '56px',
+              overflow: 'hidden',
+              display: 'block',
+              backgroundSize: 'cover',
+              backgroundRepeat: 'no-repeat',
+            }}
+          />
         </Col>
         <Col span={18}>
           <Menu
             mode="horizontal"
             theme="dark"
             defaultSelectedKeys={[props.selectedKey]}
-            // onClick={}
+            // onClick={handleMenuClick}
             items={items}
           ></Menu>
 

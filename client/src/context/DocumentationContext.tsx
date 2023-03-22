@@ -4,10 +4,8 @@ import {
   IndexTypeEnum,
   NavMenuItem,
   NavTypeEnum,
-  Section,
 } from '../components/projekthandbuch/documentation/navigation/navigation';
 import { getMenuItemByAttributeValue } from '../shares/utils';
-import { useSearchParams } from 'react-router-dom';
 
 type DocumentationSession = {
   selectedPageEntry: PageEntry | undefined;
@@ -15,8 +13,8 @@ type DocumentationSession = {
   setSelectedItemKey: Function;
   selectedIndexType: IndexTypeEnum | undefined;
   setSelectedIndexType: Function;
-  sectionsData: Section[];
-  setSectionsData: Function;
+  // sectionsData: Section[];
+  // setSectionsData: Function;
   navigationData: NavMenuItem[];
   setNavigationData: Function;
   disciplineId: string | null;
@@ -45,11 +43,11 @@ type DocumentationSessionProviderProps = { children: React.ReactNode };
 const DocumentationSessionContext = React.createContext<DocumentationSession | undefined>(undefined);
 
 const DocumentationSessionContextProvider = ({ children }: DocumentationSessionProviderProps) => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  // const [searchParams, setSearchParams] = useSearchParams();
   // TODO: just temporary from search params
-  const tailoringModelVariantId = searchParams.get('mV');
-  const tailoringProjectTypeVariantId = searchParams.get('ptV');
-  const tailoringProjectTypeId = searchParams.get('pt');
+  // const tailoringModelVariantId = searchParams.get('mV');
+  // const tailoringProjectTypeVariantId = searchParams.get('ptV');
+  // const tailoringProjectTypeId = searchParams.get('pt');
   // const tailoringProjectFeatureIdsSearchParam: MyType = {};
 
   const [selectedPageEntry, setSelectedPageEntry] = React.useState<PageEntry>();
@@ -64,7 +62,7 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
   //   _setSelectedItemKey(key);
   // }
 
-  const [sectionsData, setSectionsData] = useState<Section[]>([]);
+  // const [sectionsData, setSectionsData] = useState<Section[]>([]);
   const [navigationData, setNavigationData] = useState<NavMenuItem[]>([]);
 
   const [disciplineId, setDisciplineId] = useState<string | null>(null);
@@ -87,8 +85,8 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
     setSelectedItemKey,
     selectedIndexType,
     setSelectedIndexType,
-    sectionsData,
-    setSectionsData,
+    // sectionsData,
+    // setSectionsData,
     navigationData,
     setNavigationData,
     disciplineId,
@@ -144,12 +142,30 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
 
   // TODO: onIndexPageChanged
 
+  function resetSelectedMenuEntryId() {
+    setDisciplineId(null);
+    setProductId(null);
+    setRoleId(null);
+    setProcessModuleId(null);
+    setDecisionPointId(null);
+    setProcessBuildingBlockId(null);
+    setMethodReferenceId(null);
+    setToolReferenceId(null);
+    setProjectCharacteristicId(null);
+    setProjectTypeId(null);
+    setProjectTypeVariantId(null);
+    setActivityId(null);
+    setEntryId(null);
+  }
+
   function onRouteChanged(menuEntryId: string): void {
     console.log('onRouteChanged content', menuEntryId);
 
-    sectionsData.forEach((menu) => {
-      console.log('sectionsData', menu);
-    });
+    resetSelectedMenuEntryId();
+
+    // sectionsData.forEach((menu) => {
+    //   console.log('sectionsData', menu);
+    // });
 
     const gefunden = getMenuItemByAttributeValue(navigationData, 'key', menuEntryId);
     console.log('gefunden:', gefunden);
@@ -158,6 +174,9 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
       if (gefunden.dataType === NavTypeEnum.PRODUCT) {
         setDisciplineId(gefunden.parent.key);
         setProductId(gefunden.key);
+      } else if (gefunden.dataType === NavTypeEnum.DISCIPLINE) {
+        setDisciplineId(gefunden.key);
+        console.log('setDisciplineId');
       } else if (
         [NavTypeEnum.PROJECT_ROLE, NavTypeEnum.PROJECT_TEAM_ROLE, NavTypeEnum.ORGANISATION_ROLE].includes(
           gefunden.dataType
