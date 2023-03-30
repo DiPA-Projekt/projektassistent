@@ -6,6 +6,7 @@
   "dataType": {
     "activity": "Aktivität",
     "decisionPoint": "Entscheidungspunkt",
+    "externalTemplate": "Externe Kopiervorlage",
     "methodReference": "Methodenreferenz",
     "organisationRole": "Organisationsrolle",
     "processBuildingBlock": "Vorgehensbaustein",
@@ -16,7 +17,8 @@
     "projectTeamRole": "Projektteamrolle",
     "projectType": "Projekttyp",
     "projectTypeVariant": "Projekttypvariante",
-    "toolsReference": "Werkzeugreferenz",
+    "projectTypeVariantSequence": "Projektdurchführungsstrategie",
+    "toolReference": "Werkzeugreferenz",
     "topic": "Thema"
   },
   "format": {

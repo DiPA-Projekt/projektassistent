@@ -113,7 +113,9 @@ export function Content() {
     projectCharacteristicId,
     projectTypeId,
     projectTypeVariantId,
+    projectTypeVariantSequenceId,
     activityId,
+    templateDisciplineId,
     entryId,
     selectedIndexType,
   } = useDocumentation();
@@ -329,6 +331,22 @@ export function Content() {
   useEffect(() => {
     async function mount() {
       // TODO: noch schauen wo das genau hinkommt
+      if (projectTypeVariantSequenceId) {
+        const content = await getProjectTypeVariantSequenceContent();
+        setSelectedPageEntry(content);
+        console.log('setSelectedPageEntry', content);
+      } else {
+        console.log('no toolReferenceId');
+      }
+    }
+
+    mount().then();
+    //eslint-disable-next-line
+  }, [projectTypeVariantSequenceId]);
+
+  useEffect(() => {
+    async function mount() {
+      // TODO: noch schauen wo das genau hinkommt
       if (activityId) {
         const content = await getActivityContent();
         setSelectedPageEntry(content);
@@ -341,6 +359,22 @@ export function Content() {
     mount().then();
     //eslint-disable-next-line
   }, [activityId]);
+
+  useEffect(() => {
+    async function mount() {
+      // TODO: noch schauen wo das genau hinkommt
+      if (templateDisciplineId) {
+        const content = await getTemplatesContent();
+        setSelectedPageEntry(content);
+        console.log('setSelectedPageEntry', content);
+      } else {
+        console.log('no templateDisciplineId');
+      }
+    }
+
+    mount().then();
+    //eslint-disable-next-line
+  }, [templateDisciplineId]);
 
   useEffect(() => {
     async function mount() {
@@ -381,8 +415,17 @@ export function Content() {
       if (Array.isArray(entryItem)) {
         for (const entrySubItem of entryItem) {
           entries.push(
-            <span style={{ fontWeight: 'bold', display: 'block' }} key={`table-sub-header-${entrySubItem.subheader}`}>
-              {entrySubItem.subheader}
+            <span
+              style={{ fontWeight: 'bold', display: 'block' }}
+              key={`table-sub-header-${entrySubItem.subheader.id}`}
+            >
+              {entrySubItem.subheader?.id ? (
+                <Link to={`/documentation/${entrySubItem.subheader.id}${location.search}`}>
+                  {entrySubItem.subheader.title}
+                </Link>
+              ) : (
+                entrySubItem.subheader.title
+              )}
             </span>
           );
 
@@ -395,9 +438,7 @@ export function Content() {
                 </span>
               );
             } else {
-              entries.push(
-                <span style={{ marginRight: '20px', display: 'inline-flex' }}>{parse(innerEntryItem.title)}</span>
-              );
+              entries.push(<span style={{ marginRight: '20px' }}>{parse(innerEntryItem.title)}</span>);
             }
           });
         }
@@ -410,7 +451,7 @@ export function Content() {
             </span>
           );
         } else {
-          entries.push(<span style={{ marginRight: '20px', display: 'inline-flex' }}>{parse(entryItem.title)}</span>);
+          entries.push(<span style={{ marginRight: '20px' }}>{parse(entryItem.title)}</span>);
         }
       }
     });
@@ -504,6 +545,7 @@ export function Content() {
     const dataEntries = [];
 
     for (const generatingDependency of generatingDependencies) {
+      const generatingDependencyId = generatingDependency.attributes.id;
       const generatingDependencyTitle = generatingDependency.attributes.name;
       const generatingDependenciesData = [];
 
@@ -523,7 +565,7 @@ export function Content() {
           }
 
           generatingDependenciesData.push({
-            subheader: generatingDependencyTitle,
+            subheader: { title: generatingDependencyTitle },
             dataEntries: productsToTopics,
           });
         }
@@ -574,6 +616,165 @@ export function Content() {
     const jsonDataFromXml: any = await getJsonDataFromXml(generatingDependenciesUrl);
 
     return jsonDataFromXml.getElementsByTagName('ErzeugendeAbhängigkeit');
+  }
+
+  async function getResponsibleRolesForProducts(productIds: string[]): Promise<any[]> {
+    const filterProductDataTypes = flatten(navigationData).filter((item: any) =>
+      [NavTypeEnum.PRODUCT].includes(item.dataType)
+    );
+
+    // TODO: optimieren
+
+    const responsibleRoleToProductsMap = new Map<string, { id: string; title: string }[]>();
+    const responsibleRolesMap = new Map<string, string>();
+
+    const productsToRoles = [];
+
+    for (const productId of productIds) {
+      const currentProduct = filterProductDataTypes.filter((product) => product.key === productId)?.[0];
+
+      const responsibleRolesForProductsUrl =
+        'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+        tailoringModelVariantId +
+        '/Projekttyp/' +
+        tailoringProjectTypeId +
+        '/Projekttypvariante/' +
+        tailoringProjectTypeVariantId +
+        '/Disziplin/' +
+        currentProduct.parent.key +
+        '/Produkt/' +
+        currentProduct.key +
+        '?' +
+        getProjectFeaturesString();
+
+      const jsonDataFromXml: any = await getJsonDataFromXml(responsibleRolesForProductsUrl);
+
+      // products.push(jsonDataFromXml.getElementsByTagName('Produkt'));
+      //
+      // for (const product of products) {
+      // const productTitle = currentProduct.label;
+      // const productId = product.attributes.id;
+
+      if (productIds.includes(currentProduct.key)) {
+        const rolleVerantwortetProduktRef = jsonDataFromXml.getElementsByTagName('RolleVerantwortetProduktRef');
+
+        // TODO: ist immer nur eine Rolle
+        const rolesInCharge = rolleVerantwortetProduktRef.flatMap((entry) => {
+          return entry.getElementsByTagName('RolleRef').map((roleRef) => {
+            return {
+              id: roleRef.attributes.id,
+              title: roleRef.attributes.name,
+            };
+          });
+        });
+
+        if (!responsibleRolesMap.has(rolesInCharge[0].id)) {
+          responsibleRolesMap.set(rolesInCharge[0].id, rolesInCharge[0].title);
+        }
+        if (!responsibleRoleToProductsMap.has(rolesInCharge[0].id)) {
+          responsibleRoleToProductsMap.set(rolesInCharge[0].id, []);
+        }
+
+        responsibleRoleToProductsMap
+          .get(rolesInCharge[0].id)!
+          .push({ id: currentProduct.key, title: currentProduct.label });
+
+        // productsToRoles.push({
+        //   subheader: rolesInCharge[0].title,
+        //   dataEntries: rolesInCharge,
+        // });
+      }
+      // }
+    }
+
+    for (const key of responsibleRoleToProductsMap.keys()) {
+      const products = responsibleRoleToProductsMap.get(key);
+      productsToRoles.push({
+        subheader: { id: key, title: responsibleRolesMap.get(key) }, // TODO: id + key
+        dataEntries: products,
+      });
+    }
+    return productsToRoles;
+  }
+
+  async function getContributeRolesForProducts(productIds: string[]): Promise<any[]> {
+    const filterProductDataTypes = flatten(navigationData).filter((item: any) =>
+      [NavTypeEnum.PRODUCT].includes(item.dataType)
+    );
+
+    // TODO: optimieren
+
+    const contributeRoleToProductsMap = new Map<string, { id: string; title: string }[]>();
+    const contributeRolesMap = new Map<string, string>();
+
+    const productsToRoles = [];
+
+    for (const productId of productIds) {
+      const currentProduct = filterProductDataTypes.filter((product) => product.key === productId)?.[0];
+
+      const contributeRolesForProductsUrl =
+        'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+        tailoringModelVariantId +
+        '/Projekttyp/' +
+        tailoringProjectTypeId +
+        '/Projekttypvariante/' +
+        tailoringProjectTypeVariantId +
+        '/Disziplin/' +
+        currentProduct.parent.key +
+        '/Produkt/' +
+        currentProduct.key +
+        '?' +
+        getProjectFeaturesString();
+
+      const jsonDataFromXml: any = await getJsonDataFromXml(contributeRolesForProductsUrl);
+
+      // products.push(jsonDataFromXml.getElementsByTagName('Produkt'));
+      //
+      // for (const product of products) {
+      // const productTitle = currentProduct.label;
+      // const productId = product.attributes.id;
+
+      if (productIds.includes(currentProduct.key)) {
+        const rolleWirktMitBeiProduktRef = jsonDataFromXml.getElementsByTagName('RolleWirktMitBeiProduktRef');
+
+        // TODO: ist immer nur eine Rolle
+        const rolesContributers = rolleWirktMitBeiProduktRef.flatMap((entry) => {
+          return entry.getElementsByTagName('RolleRef').map((roleRef) => {
+            return {
+              id: roleRef.attributes.id,
+              title: roleRef.attributes.name,
+            };
+          });
+        });
+
+        if (rolesContributers.length > 0) {
+          if (!contributeRolesMap.has(rolesContributers[0].id)) {
+            contributeRolesMap.set(rolesContributers[0].id, rolesContributers[0].title);
+          }
+          if (!contributeRoleToProductsMap.has(rolesContributers[0].id)) {
+            contributeRoleToProductsMap.set(rolesContributers[0].id, []);
+          }
+
+          contributeRoleToProductsMap
+            .get(rolesContributers[0].id)!
+            .push({ id: currentProduct.key, title: currentProduct.label });
+        }
+        // productsToRoles.push({
+        //   subheader: rolesInCharge[0].title,
+        //   dataEntries: rolesInCharge,
+        // });
+      }
+      // }
+    }
+
+    for (const key of contributeRoleToProductsMap.keys()) {
+      const products = contributeRoleToProductsMap.get(key);
+      productsToRoles.push({
+        subheader: { id: key, title: contributeRolesMap.get(key) }, // TODO: id + key
+        dataEntries: products,
+      });
+    }
+    return productsToRoles;
   }
 
   function PageEntryContent() {
@@ -737,7 +938,7 @@ export function Content() {
         id: jsonDataFromXml.attributes.id,
         // menuEntryId: jsonDataFromXml.attributes.id,
         header: jsonDataFromXml.attributes.name,
-        descriptionText: sinnUndZweck,
+        descriptionText: replaceUrlInText(sinnUndZweck),
         tableEntries: tableEntries,
         // subPageEntries: subPageEntries,
       };
@@ -780,6 +981,10 @@ export function Content() {
     const erzeugendeAbhaengigkeitzuProduktRef = jsonDataFromXml.getElementsByTagName(
       'ErzeugendeAbhängigkeitzuProduktRef'
     );
+
+    const initial = jsonDataFromXml.attributes.Initial;
+    const extern = jsonDataFromXml.attributes.Extern;
+    const produktvorlage = jsonDataFromXml.attributes.Produktvorlage;
 
     const tableEntries: TableEntry[] = [];
     // const subPageEntries = [];
@@ -901,7 +1106,7 @@ export function Content() {
             tailoringProjectTypeVariantId +
             '/Disziplin/' +
             discipline.key +
-            '/Produkt/?' +
+            '/Produkt?' +
             getProjectFeaturesString();
 
           const jsonDataFromXml: any = await getJsonDataFromXml(productsUrl);
@@ -953,7 +1158,7 @@ export function Content() {
           // }
 
           generatingDependenciesData.push({
-            subheader: topicsMap.get(topic.attributes.id)?.discipline.title, // TODO: nur discipline übergeben, um auch auf die id zugreifen zu können
+            subheader: topicsMap.get(topic.attributes.id)?.discipline, // TODO: nur discipline übergeben, um auch auf die id zugreifen zu können
             dataEntries: productsToTopics,
           });
           // }
@@ -988,6 +1193,29 @@ export function Content() {
         id: (idCounter++).toString(),
         descriptionEntry: 'Entscheidungsrelevant bei',
         dataEntries: decisionPoints,
+      });
+    }
+
+    //////////////////////////////////////////////
+
+    const miscellaneous: string[] = [];
+
+    if (initial === 'Ja') {
+      miscellaneous.push('Initial');
+    }
+    if (extern === 'Ja') {
+      miscellaneous.push('Extern');
+    }
+
+    if (miscellaneous.length > 0) {
+      tableEntries.push({
+        id: (idCounter++).toString(),
+        descriptionEntry: 'Sonstiges',
+        dataEntries: [
+          {
+            title: miscellaneous.join(', '),
+          },
+        ],
       });
     }
 
@@ -1175,7 +1403,7 @@ export function Content() {
         tailoringProjectTypeVariantId +
         '/Disziplin/' +
         discipline.key +
-        '/Produkt/?' +
+        '/Produkt?' +
         getProjectFeaturesString();
 
       const jsonDataFromXml: any = await getJsonDataFromXml(productsUrl);
@@ -1324,7 +1552,9 @@ export function Content() {
 
   async function getProcessIndexContent(): Promise<PageEntry> {
     const filterRelevantDataTypes = flatten(navigationData).filter((item: any) =>
-      [NavTypeEnum.PROCESS_MODULE, NavTypeEnum.DECISION_POINT].includes(item.dataType)
+      [NavTypeEnum.PROCESS_MODULE, NavTypeEnum.DECISION_POINT, NavTypeEnum.PROJECT_TYPE_VARIANT_SEQUENCE].includes(
+        item.dataType
+      )
     );
 
     const data: any[] = filterRelevantDataTypes.map((navItem: any): any => {
@@ -1367,7 +1597,8 @@ export function Content() {
               if (tag === 'processModule') {
                 color = 'green';
               }
-              if (tag === 'Projektdurchführungsstrategie') {
+              if (tag === 'projectTypeVariantSequence') {
+                // Projektdurchführungsstrategie
                 color = 'volcano';
               }
               return (
@@ -1518,7 +1749,7 @@ export function Content() {
               if (tag === 'methodReference') {
                 color = 'green';
               }
-              if (tag === 'toolsReference') {
+              if (tag === 'toolReference') {
                 color = 'volcano';
               }
               if (tag === 'Externe Kopiervorlage') {
@@ -1563,11 +1794,9 @@ export function Content() {
       '?' +
       getProjectFeaturesString();
 
-    // let idCounter = 2000;
+    let idCounter = 2000;
 
     const jsonDataFromXml: any = await getJsonDataFromXml(tailoringProcessBuildingBlocksUrl);
-
-    let idCounter = 2000;
 
     // TODO
     const sinnUndZweck = decodeXml(jsonDataFromXml.getElementsByTagName('Sinn_und_Zweck')[0]?.value);
@@ -1585,11 +1814,13 @@ export function Content() {
       });
     });
 
-    if (products.length > 0) {
+    const productsToRoles = await getResponsibleRolesForProducts(products.map((product) => product.id));
+
+    if (productsToRoles.length > 0) {
       tableEntries.push({
         id: (idCounter++).toString(),
         descriptionEntry: 'Zugeordnete Produkte',
-        dataEntries: products,
+        dataEntries: [productsToRoles],
       });
     }
 
@@ -1673,19 +1904,49 @@ export function Content() {
       '?' +
       getProjectFeaturesString();
 
-    // let idCounter = 2000;
+    let idCounter = 2000;
 
     const jsonDataFromXml: any = await getJsonDataFromXml(tailoringProcessBuildingBlocksUrl);
 
-    const sinnUndZweck = decodeXml(jsonDataFromXml.getElementsByTagName('Sinn_und_Zweck')[0]?.value);
-    // TODO Überblicksgrafik etc.
+    const sinnUndZweck = decodeXml(jsonDataFromXml.getElementsByTagName('Sinn_und_Zweck')[0]?.value); // TODO: gibt es das Feld bei Vorgehensbausteinen?
 
     const tableEntries: TableEntry[] = [];
+
+    const overviewGraphicUrl =
+      'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      tailoringModelVariantId +
+      '/Projekttyp/' +
+      tailoringProjectTypeId +
+      '/Projekttypvariante/' +
+      tailoringProjectTypeVariantId +
+      '/Grafik/images/VB_' +
+      processBuildingBlockId +
+      '.gif?' +
+      getProjectFeaturesString();
+
+    const overviewGraphic = '<p><img src="' + overviewGraphicUrl + '"/></p>';
+
+    const products = jsonDataFromXml.getElementsByTagName('Produkt').map((productRef) => {
+      return {
+        id: productRef.attributes.id,
+        title: productRef.attributes.name,
+      };
+    });
+
+    const productsToRoles = await getContributeRolesForProducts(products.map((product) => product.id));
+
+    if (productsToRoles.length > 0) {
+      tableEntries.push({
+        id: (idCounter++).toString(),
+        descriptionEntry: 'Mitwirkungen',
+        dataEntries: [productsToRoles],
+      });
+    }
 
     return {
       id: jsonDataFromXml.attributes.id,
       header: jsonDataFromXml.attributes.name,
-      descriptionText: sinnUndZweck,
+      descriptionText: sinnUndZweck + overviewGraphic,
       tableEntries: tableEntries,
       // subPageEntries: subPageEntries,
     };
@@ -1707,6 +1968,145 @@ export function Content() {
     const jsonDataFromXml: any = await getJsonDataFromXml(activitiesUrl);
 
     return jsonDataFromXml.getElementsByTagName('Aktivität');
+  }
+
+  async function getTemplatesContent(): Promise<PageEntry> {
+    console.log('templateDisciplineId', templateDisciplineId);
+    const disciplineId = templateDisciplineId?.replace('td_', '');
+    // get all products with externalTemplate info for templateDisciplineId
+
+    const productsUrl =
+      'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      tailoringModelVariantId +
+      '/Projekttyp/' +
+      tailoringProjectTypeId +
+      '/Projekttypvariante/' +
+      tailoringProjectTypeVariantId +
+      '/Disziplin/' +
+      disciplineId +
+      '/Produkt?' +
+      getProjectFeaturesString();
+
+    const jsonDataFromXml: any = await getJsonDataFromXml(productsUrl);
+
+    const productEntries = jsonDataFromXml.getElementsByTagName('Produkt');
+
+    let data: any[] = [];
+
+    for (const product of productEntries) {
+      const externalTemplateEntries = product.getElementsByTagName('ExterneKopiervorlageRef');
+      console.log('externalTemplateEntries', externalTemplateEntries);
+
+      for (const externalTemplateEntry of externalTemplateEntries) {
+        // <ExterneKopiervorlageRef id="5f83148a786ca0b" name="Arbeitsauftragsliste"/>
+
+        const externalTemplateUrl =
+          'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+          tailoringModelVariantId +
+          '/Projekttyp/' +
+          tailoringProjectTypeId +
+          '/Projekttypvariante/' +
+          tailoringProjectTypeVariantId +
+          '/ExterneKopiervorlage/' +
+          externalTemplateEntry.attributes.id +
+          '?' +
+          getProjectFeaturesString();
+
+        const jsonDataFromXml: any = await getJsonDataFromXml(externalTemplateUrl);
+
+        const templateId = jsonDataFromXml.attributes.id;
+        const templateName = jsonDataFromXml.attributes.name;
+        const templateUri = jsonDataFromXml.getElementsByTagName('URI')[0]?.value;
+
+        data = [
+          ...data,
+          {
+            dataTypes: [NavTypeEnum.EXTERNAL_TEMPLATE],
+            description: { text: templateName, uri: templateUri },
+          },
+        ];
+
+        console.log('templateId', templateId);
+        console.log('templateName', templateName);
+        console.log('templateUri', templateUri);
+      }
+    }
+
+    const columns: ColumnsType<any> = [
+      {
+        title: 'Typ',
+        dataIndex: 'dataTypes',
+        key: 'dataTypes',
+        // filters: [...new Set(data.map((item) => item.dataTypes[0]))].map((item) => ({
+        //   text: t('translation:dataType.' + item),
+        //   value: item,
+        // })),
+        onFilter: (value: string | number | boolean, record: any) => record.dataTypes.indexOf(value) === 0,
+        sorter: {
+          compare: (a, b) => sorter(a.dataTypes[0], b.dataTypes[0]),
+        },
+        render: (tags: string[]) => (
+          <span>
+            {tags?.map((tag) => {
+              let color;
+              if (tag === 'product') {
+                color = 'geekblue';
+              }
+              if (tag === 'topic') {
+                color = 'green';
+              }
+              return (
+                <Tag color={color} key={tag}>
+                  {t('translation:dataType.' + tag)}
+                </Tag>
+              );
+            })}
+          </span>
+        ),
+      },
+      {
+        title: 'Beschreibung',
+        dataIndex: 'description',
+        key: 'description',
+        defaultSortOrder: 'ascend',
+        sorter: {
+          compare: (a, b) => sorter(a.description.text, b.description.text),
+        },
+        render: (object) => renderCustomCell(object),
+        // render: (text: string, uri: string) => (
+        //   <div>
+        //     {text}
+        //     <br />
+        //     <strong>URI: </strong>
+        //     <a>{uri}</a>
+        //   </div>
+        // ), // TODO
+      },
+    ];
+
+    const renderCustomCell = (object) => {
+      /** render your custom cell with object properties here */
+      const { text, uri } = object;
+      return (
+        <div>
+          {text}
+          <br />
+          <strong>URI: </strong>
+          <a>{uri}</a>
+        </div>
+      );
+    };
+
+    return {
+      id: 'externalTemplateContent', //jsonDataFromXml.attributes.id,
+      // menuEntryId: jsonDataFromXml.attributes.id,
+      header: 'Disziplin', //jsonDataFromXml.attributes.name,
+      descriptionText: '',
+      tableEntries: [],
+      dataSource: data,
+      columns: columns,
+      //subPageEntries: subPageEntries, // TODO
+    };
   }
 
   async function getMethodReferenceContent(): Promise<PageEntry> {
@@ -1996,6 +2396,44 @@ export function Content() {
         // menuEntryId: jsonDataFromXml.attributes.id,
         header: jsonDataFromXml.attributes.name,
         descriptionText: description,
+        tableEntries: tableEntries,
+        // subPageEntries: subPageEntries,
+      };
+    });
+  }
+
+  async function getProjectTypeVariantSequenceContent(): Promise<PageEntry> {
+    const projectTypeVariantId = projectTypeVariantSequenceId?.replace('pes_', '');
+
+    const projectTypeVariantUrl =
+      'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      tailoringModelVariantId +
+      '/Projekttypvariante/' +
+      projectTypeVariantId;
+
+    // const jsonDataFromXml: any = await getJsonDataFromXml(methodReferenceUrl);
+
+    return axios.get(projectTypeVariantUrl).then((response) => {
+      console.log(response.data);
+      const jsonDataFromXml = new XMLParser().parseFromString(response.data);
+
+      // const sinnUndZweck = decodeXml(jsonDataFromXml.getElementsByTagName('Sinn_und_Zweck')[0]?.value);
+      const sequence = decodeXml(jsonDataFromXml.getElementsByTagName('Ablauf')[0]?.value);
+      const projektdurchfuehrungsstrategie = decodeXml(
+        jsonDataFromXml.getElementsByTagName('Projektdurchführungsstrategie')[0]?.value
+      );
+
+      const tableEntries: TableEntry[] = [];
+
+      //////////////////////////////////////////////
+
+      // console.log('this.pageEntry roles', this.pageEntry);
+
+      return {
+        id: jsonDataFromXml.attributes.id,
+        // menuEntryId: jsonDataFromXml.attributes.id,
+        header: jsonDataFromXml.attributes.name,
+        descriptionText: replaceUrlInText(sequence),
         tableEntries: tableEntries,
         // subPageEntries: subPageEntries,
       };

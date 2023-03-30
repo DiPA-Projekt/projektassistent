@@ -27,8 +27,10 @@ export function Breadcrumbs() {
     ];
 
     if (navigationData.length > 0) {
-      const parents = getNavigationPath(itemId).filter((item) => item.key !== undefined);
-      const navigationPathKeys = parents.map((parent) => parent.key);
+      const parents = getNavigationPath(itemId).filter(
+        (item: { key: string; label: string }) => item?.key !== undefined
+      );
+      const navigationPathKeys = parents.map((parent: { key: string; label: string }) => parent.key);
 
       setCurrentSelectedKeys(navigationPathKeys);
       setOpenKeys(navigationPathKeys);
@@ -38,7 +40,7 @@ export function Breadcrumbs() {
 
       if (parents) {
         extraBreadcrumbItems = parents
-          .map((parent) => {
+          .map((parent: { key: string; label: string }) => {
             const url = '/documentation/' + parent?.key + location.search;
             return {
               key: url,

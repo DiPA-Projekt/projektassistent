@@ -25,6 +25,7 @@ const { Sider } = Layout;
 export enum NavTypeEnum {
   PRODUCT = 'product',
   TOPIC = 'topic',
+  EXTERNAL_TEMPLATE = 'externalTemplate',
   DISCIPLINE = 'discipline',
   PROJECT_ROLE = 'projectRole',
   PROJECT_TEAM_ROLE = 'projectTeamRole',
@@ -33,11 +34,14 @@ export enum NavTypeEnum {
   PROCESS_MODULE = 'processModule',
   PROCESS_BUILDING_BLOCK = 'processBuildingBlock',
   ACTIVITY = 'activity',
+  ACTIVITY_DISCIPLINE = 'activityDiscipline',
   METHOD_REFERENCE = 'methodReference',
   TOOL_REFERENCE = 'toolReference',
   PROJECT_TYPE_VARIANT = 'projectTypeVariant',
+  PROJECT_TYPE_VARIANT_SEQUENCE = 'projectTypeVariantSequence',
   PROJECT_TYPE = 'projectType',
   PROJECT_CHARACTERISTIC = 'projectCharacteristic',
+  TEMPLATE_DISCIPLINE = 'templateDiscipline',
 }
 
 export enum IndexTypeEnum {
@@ -92,7 +96,6 @@ export interface NavMenuItem {
   onClick?: Function;
   children?: NavMenuItem[];
   dataType?: NavTypeEnum;
-  // parentId: string; // TODO: rename to parentKey
   parent: NavMenuItem;
 }
 
@@ -128,6 +131,8 @@ export function Navigation() {
   });
 
   const [collapsed, setCollapsed] = useState<boolean>(false);
+
+  const productToDisciplineMap = new Map<string, { key: string; title: string }>();
 
   useEffect(() => {
     async function mount() {
@@ -301,7 +306,6 @@ export function Navigation() {
         case 'Index:Produkte': {
           indexItem = {
             key: childItem.attributes.id,
-            // parentId: childItem.parent.key, // roleCategory has no id
             label: childItem.attributes.titel,
             onClick: () => setSelectedIndexType(IndexTypeEnum.PRODUCT),
           };
@@ -310,7 +314,6 @@ export function Navigation() {
         case 'Index:Rollen': {
           indexItem = {
             key: childItem.attributes.id,
-            // parentId: childItem.parent.key, // roleCategory has no id
             label: childItem.attributes.titel,
             onClick: () => setSelectedIndexType(IndexTypeEnum.ROLE),
           };
@@ -319,7 +322,6 @@ export function Navigation() {
         case 'Index:Abläufe': {
           indexItem = {
             key: childItem.attributes.id,
-            // parentId: childItem.parent.key, // roleCategory has no id
             label: childItem.attributes.titel,
             onClick: () => setSelectedIndexType(IndexTypeEnum.PROCESS),
           };
@@ -328,7 +330,6 @@ export function Navigation() {
         case 'Index:Tailoring': {
           indexItem = {
             key: childItem.attributes.id,
-            // parentId: childItem.parent.key, // roleCategory has no id
             label: childItem.attributes.titel,
             onClick: () => setSelectedIndexType(IndexTypeEnum.TAILORING),
           };
@@ -337,7 +338,6 @@ export function Navigation() {
         case 'Index:Arbeitshilfen': {
           indexItem = {
             key: childItem.attributes.id,
-            // parentId: childItem.parent.key, // roleCategory has no id
             label: childItem.attributes.titel,
             onClick: () => setSelectedIndexType(IndexTypeEnum.WORK_AIDS),
           };
@@ -363,6 +363,12 @@ export function Navigation() {
     if (childItem.parent.label === 'Referenz Tailoring' && childItem.label === 'Projekttypen und Projekttypvarianten') {
       addedChildren = await getProductTypesAndProductTypeVariants(childItem);
       console.log('Referenz Tailoring -> Projekttypen und Projekttypvarianten', addedChildren);
+    }
+
+    // TODO: sollte direkt gehen, nicht unbedingt über die Referenz
+    if (childItem.parent.label === 'Referenz Abläufe' && childItem.label === 'Projektdurchführungsstrategien') {
+      addedChildren = await getProjectExecutionStrategies(childItem);
+      console.log('Referenz Tailoring -> Projektdurchführungsstrategien', addedChildren);
     }
 
     // TODO: sollte direkt gehen, nicht unbedingt über die Referenz
@@ -397,6 +403,11 @@ export function Navigation() {
     // TODO: sollte direkt gehen, nicht unbedingt über die Referenz
     if (childItem.parent.label === 'Referenz Abläufe' && childItem.label === 'Ablaufbausteine') {
       addedChildren = await getProcessModules(childItem);
+    }
+
+    // TODO: sollte direkt gehen, nicht unbedingt über die Referenz
+    if (childItem.parent.label === 'Produktvorlagen' && childItem.label === 'Übersicht über Produktvorlagen') {
+      addedChildren = await getTemplates(childItem);
     }
 
     // const sections: Section[] = jsonDataFromXml.getElementsByTagName('Kapitel').map((section: any) => {
@@ -454,7 +465,6 @@ export function Navigation() {
     const navigation: NavMenuItem[] = jsonDataFromXml.getElementsByTagName('Disziplin').map((disciplineValue: any) => {
       const disciplineEntry: NavMenuItem = {
         key: disciplineValue.attributes.id,
-        // parentId: target.key,
         parent: target,
         label: disciplineValue.attributes.name,
         dataType: NavTypeEnum.DISCIPLINE,
@@ -464,9 +474,14 @@ export function Navigation() {
       const products: NavMenuItem[] = disciplineValue
         .getElementsByTagName('Produkt')
         .map((productValue: any): NavMenuItem => {
+          // TODO: besser woanders?
+          productToDisciplineMap.set(productValue.attributes.id, {
+            key: disciplineValue.attributes.id,
+            title: disciplineValue.attributes.name,
+          });
+
           return {
             key: productValue.attributes.id,
-            // parentId: disciplineValue.attributes.id,
             parent: disciplineEntry,
             label: productValue.attributes.name,
             dataType: NavTypeEnum.PRODUCT,
@@ -510,7 +525,6 @@ export function Navigation() {
 
         const roleCategoryEntry: NavMenuItem = {
           key: roleCategoryNavItem.attributes.id, // roleCategory has no id
-          // parentId: target.key, // ???
           parent: target,
           label: roleCategoryNavItem.attributes.titel,
           onTitleClick: (item: any) => handleSelectedItem(item.key),
@@ -536,7 +550,6 @@ export function Navigation() {
             console.log('bliblablub', roleValue);
             return {
               key: roleValue.attributes.id,
-              // parentId: roleCategoryNavItem.attributes.id, // roleCategory has no id
               parent: roleCategoryEntry,
               label: roleValue.attributes.name,
               dataType: navTypeRole,
@@ -573,7 +586,6 @@ export function Navigation() {
       .map((decisionPointValue) => {
         return {
           key: decisionPointValue.attributes.id,
-          // parentId: target.key,
           parent: target,
           label: decisionPointValue.attributes.name,
           dataType: NavTypeEnum.DECISION_POINT,
@@ -603,7 +615,6 @@ export function Navigation() {
       .map((processModuleValue) => {
         return {
           key: processModuleValue.attributes.id,
-          // parentId: target.key,
           parent: target,
           label: processModuleValue.attributes.name,
           dataType: NavTypeEnum.PROCESS_MODULE,
@@ -631,7 +642,6 @@ export function Navigation() {
       .map((processBuildingBlockValue: any) => {
         return {
           key: processBuildingBlockValue.attributes.id,
-          // parentId: target.key,
           parent: target,
           label: processBuildingBlockValue.attributes.name,
           dataType: NavTypeEnum.PROCESS_BUILDING_BLOCK,
@@ -655,20 +665,43 @@ export function Navigation() {
 
     const jsonDataFromXml: any = await getJsonDataFromXml(workAidsActivitiesUrl);
 
-    const navigation: NavMenuItem[] = jsonDataFromXml
-      .getElementsByTagName('Aktivität')
-      .map((activityReference: any) => {
-        return {
-          key: activityReference.attributes.id,
-          // parentId: target.key,
-          parent: target,
-          label: activityReference.attributes.name,
-          dataType: NavTypeEnum.ACTIVITY,
-          onClick: (item: any) => handleSelectedItem(item.key),
-        };
-      });
+    const disciplineEntriesMap = new Map<string, NavMenuItem>();
 
-    return navigation;
+    jsonDataFromXml.getElementsByTagName('Aktivität').map((activityReference: any) => {
+      const productRef = activityReference.getElementsByTagName('ProduktRef')[0];
+
+      if (!disciplineEntriesMap.get(productToDisciplineMap.get(productRef.attributes.id)!.key)) {
+        disciplineEntriesMap.set(productToDisciplineMap.get(productRef.attributes.id)!.key, {
+          key: 'ACTIVITY_DISCIPLINE_' + productToDisciplineMap.get(productRef.attributes.id)!.key, // TODO: check !
+          parent: target,
+          children: [],
+          label: productToDisciplineMap.get(productRef.attributes.id)!.title, // TODO: check !
+          dataType: NavTypeEnum.ACTIVITY_DISCIPLINE,
+          onTitleClick: (item: any) => handleSelectedItem(item.key),
+        });
+      }
+
+      const product = {
+        key: activityReference.attributes.id,
+        parent: disciplineEntriesMap.get(productToDisciplineMap.get(productRef.attributes.id)!.key), //disciplineEntry,
+        label: activityReference.attributes.name,
+        dataType: NavTypeEnum.ACTIVITY,
+        onClick: (item: any) => handleSelectedItem(item.key),
+      };
+
+      disciplineEntriesMap.get(productToDisciplineMap.get(productRef.attributes.id)!.key)!.children.push(product);
+    });
+
+    const disciplineEntries = Array.from(disciplineEntriesMap.values());
+    for (const disciplineEntry of disciplineEntries) {
+      disciplineEntry.children = disciplineEntry.children?.sort(function (a, b) {
+        return a.label < b.label ? -1 : 1;
+      });
+    }
+
+    return disciplineEntries.sort(function (a, b) {
+      return a.label < b.label ? -1 : 1;
+    });
   }
 
   async function getWorkAidsMethodReferences(target: any): Promise<NavMenuItem[]> {
@@ -684,7 +717,6 @@ export function Navigation() {
       .map((methodReference: any) => {
         return {
           key: methodReference.attributes.id,
-          // parentId: target.key,
           parent: target,
           label: methodReference.attributes.name,
           dataType: NavTypeEnum.METHOD_REFERENCE,
@@ -708,7 +740,6 @@ export function Navigation() {
       .map((toolReference: any) => {
         return {
           key: toolReference.attributes.id,
-          // parentId: target.key,
           parent: target,
           label: toolReference.attributes.name,
           dataType: NavTypeEnum.TOOL_REFERENCE,
@@ -717,6 +748,42 @@ export function Navigation() {
       });
 
     return navigation;
+  }
+
+  async function getTemplates(target: any): Promise<NavMenuItem[]> {
+    const templatesUrl =
+      'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      modelVariantId +
+      '/Projekttyp/' +
+      projectTypeId +
+      '/Projekttypvariante/' +
+      projectTypeVariantId +
+      '/ExterneKopiervorlage?' +
+      getProjectFeaturesString();
+
+    const jsonDataFromXml: any = await getJsonDataFromXml(templatesUrl);
+
+    const disciplineEntriesMap = new Map<string, NavMenuItem>();
+
+    jsonDataFromXml.getElementsByTagName('ExterneKopiervorlage').map((externalMasterTemplate: any) => {
+      const productRef = externalMasterTemplate.getElementsByTagName('ProduktRef')[0];
+
+      if (!disciplineEntriesMap.get(productToDisciplineMap.get(productRef.attributes.id)!.key)) {
+        disciplineEntriesMap.set(productToDisciplineMap.get(productRef.attributes.id)!.key, {
+          key: 'td_' + productToDisciplineMap.get(productRef.attributes.id)!.key, // TODO: check !
+          parent: target,
+          label: productToDisciplineMap.get(productRef.attributes.id)!.title, // TODO: check !
+          dataType: NavTypeEnum.TEMPLATE_DISCIPLINE,
+          onClick: (item: any) => handleSelectedItem(item.key),
+        });
+      }
+    });
+
+    const disciplineEntries = Array.from(disciplineEntriesMap.values());
+
+    return disciplineEntries.sort(function (a, b) {
+      return a.label < b.label ? -1 : 1;
+    });
   }
 
   async function getProjectCharacteristics(target: any): Promise<NavMenuItem[]> {
@@ -730,7 +797,6 @@ export function Navigation() {
       .map((projectCharacteristic: any) => {
         return {
           key: projectCharacteristic.attributes.id,
-          // parentId: target.key,
           parent: target,
           label: projectCharacteristic.attributes.name,
           dataType: NavTypeEnum.PROJECT_CHARACTERISTIC,
@@ -760,7 +826,6 @@ export function Navigation() {
         if (projectType === undefined) {
           projectType = {
             key: projectTypeValue.attributes.id,
-            // parentId: target.key,
             parent: target,
             label: projectTypeValue.attributes.name,
             dataType: NavTypeEnum.PROJECT_TYPE,
@@ -773,10 +838,34 @@ export function Navigation() {
 
         projectType.children.push({
           key: projectTypeVariantValue.attributes.id,
-          // parentId: projectTypeValue.attributes.id,
           parent: projectTypeValue,
           label: projectTypeVariantValue.attributes.name,
           dataType: NavTypeEnum.PROJECT_TYPE_VARIANT,
+          onClick: (item: any) => handleSelectedItem(item.key), // TODO: different Types
+        });
+      });
+
+    return navigation;
+  }
+
+  async function getProjectExecutionStrategies(target: any): Promise<NavMenuItem[]> {
+    const projectTypeVariantsUrl =
+      'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      modelVariantId +
+      '/Projekttypvariante';
+
+    const jsonDataFromXmlProjectTypeVariants: any = await getJsonDataFromXml(projectTypeVariantsUrl);
+
+    const navigation: NavMenuItem[] = [];
+
+    jsonDataFromXmlProjectTypeVariants
+      .getElementsByTagName('Projekttypvariante')
+      .map((projectTypeVariantValue: any) => {
+        navigation.push({
+          key: 'pes_' + projectTypeVariantValue.attributes.id,
+          parent: target,
+          label: projectTypeVariantValue.attributes.name,
+          dataType: NavTypeEnum.PROJECT_TYPE_VARIANT_SEQUENCE, // TODO: oder auch ProjectExecutionStrategy
           onClick: (item: any) => handleSelectedItem(item.key), // TODO: different Types
         });
       });

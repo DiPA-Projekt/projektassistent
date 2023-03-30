@@ -28,7 +28,9 @@ type DocumentationSession = {
   projectCharacteristicId: string | null;
   projectTypeId: string | null;
   projectTypeVariantId: string | null;
+  projectTypeVariantSequenceId: string | null;
   activityId: string | null;
+  templateDisciplineId: string | null;
   entryId: string | null;
   getNavigationPath: Function;
   onRouteChanged: Function;
@@ -76,7 +78,9 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
   const [projectCharacteristicId, setProjectCharacteristicId] = useState<string | null>(null);
   const [projectTypeId, setProjectTypeId] = useState<string | null>(null);
   const [projectTypeVariantId, setProjectTypeVariantId] = useState<string | null>(null);
+  const [projectTypeVariantSequenceId, setProjectTypeVariantSequenceId] = useState<string | null>(null);
   const [activityId, setActivityId] = useState<string | null>(null);
+  const [templateDisciplineId, setTemplateDisciplineId] = useState<string | null>(null);
   const [entryId, setEntryId] = useState<string | null>(null);
 
   const value: DocumentationSession = {
@@ -100,7 +104,9 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
     projectCharacteristicId,
     projectTypeId,
     projectTypeVariantId,
+    projectTypeVariantSequenceId,
     activityId,
+    templateDisciplineId,
     entryId,
     getNavigationPath,
     onRouteChanged,
@@ -154,7 +160,9 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
     setProjectCharacteristicId(null);
     setProjectTypeId(null);
     setProjectTypeVariantId(null);
+    setProjectTypeVariantSequenceId(null);
     setActivityId(null);
+    setTemplateDisciplineId(null);
     setEntryId(null);
   }
 
@@ -207,9 +215,15 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
       } else if (gefunden.dataType === NavTypeEnum.PROJECT_TYPE_VARIANT) {
         setProjectTypeVariantId(gefunden.key);
         console.log('setProjectTypeVariantId');
+      } else if (gefunden.dataType === NavTypeEnum.PROJECT_TYPE_VARIANT_SEQUENCE) {
+        setProjectTypeVariantSequenceId(gefunden.key);
+        console.log('setProjectTypeVariantSequenceId');
       } else if (gefunden.dataType === NavTypeEnum.ACTIVITY) {
         setActivityId(gefunden.key);
         console.log('setActivityId');
+      } else if (gefunden.dataType === NavTypeEnum.TEMPLATE_DISCIPLINE) {
+        setTemplateDisciplineId(gefunden.key);
+        console.log('setTemplateDisciplineId');
       } else {
         setEntryId(gefunden.key);
       }
