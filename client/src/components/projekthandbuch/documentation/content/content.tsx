@@ -19,7 +19,7 @@ import { DataEntry, PageEntry, TableEntry } from '@dipa-projekt/projektassistent
 // import { GenericComponent } from '@leanup/lib';
 // import { ReactComponent } from '@leanup/lib';
 import parse from 'html-react-parser';
-import { Link, useLocation, useSearchParams } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useDocumentation } from '../../../../context/DocumentationContext';
 import { decodeXml, flatten, getJsonDataFromXml } from '../../../../shares/utils';
 import { AnchorLinkItemProps } from 'antd/es/anchor/Anchor';
@@ -28,8 +28,7 @@ import XMLParser, { XMLElement } from 'react-xml-parser';
 import { IndexTypeEnum, NavTypeEnum } from '../navigation/navigation';
 import { ColumnsType } from 'antd/es/table';
 import { useTranslation } from 'react-i18next';
-
-// export let pageEntryFound: PageEntry;
+import { useTailoring } from '../../../../context/TailoringContext';
 
 const icons: Map<string, { color: string; icon: JSX.Element }> = new Map<
   string,
@@ -47,6 +46,8 @@ icons.set('Erzeugt durch', { color: '#689fd0', icon: <ToolOutlined /> });
 icons.set('Inhaltlich abhängig', { color: '#e71937', icon: <PartitionOutlined rotate={180} /> });
 icons.set('Entscheidungsrelevant bei', { color: '#ffd442', icon: <NotificationOutlined /> });
 icons.set('Sonstiges', { color: '#5f5f5f', icon: <TagsOutlined /> });
+icons.set('Verantwortliche und Produkte', { color: '#5f5f5f', icon: <ShoppingOutlined /> }); // TODO
+
 // Referenz Rollen
 icons.set('Aufgaben und Befugnisse', { color: '#e71937', icon: <PartitionOutlined rotate={180} /> });
 icons.set('Fähigkeitsprofil', { color: '#e71937', icon: <PartitionOutlined rotate={180} /> });
@@ -55,6 +56,7 @@ icons.set('Verantwortlich für', { color: '#e71937', icon: <PartitionOutlined ro
 icons.set('Wirkt mit bei', { color: '#e71937', icon: <PartitionOutlined rotate={180} /> });
 // Referenz Abläufe;
 icons.set('Zugeordnete Produkte', { color: '#e71937', icon: <PartitionOutlined rotate={180} /> });
+icons.set('Ablaufbausteine', { color: '#e71937', icon: <PartitionOutlined rotate={180} /> });
 // Referenz Tailoring
 icons.set('Projektdurchführungsstrategie', { color: '#689fd0', icon: <ToolOutlined /> });
 icons.set('Projektmerkmale', { color: '#689fd0', icon: <ToolOutlined /> });
@@ -68,35 +70,24 @@ icons.set('Methoden', { color: '#689fd0', icon: <ToolOutlined /> });
 icons.set('Aktivitäten', { color: '#689fd0', icon: <ToolOutlined /> });
 icons.set('Quellen', { color: '#689fd0', icon: <LinkOutlined /> });
 
-interface MyType {
-  [key: string]: string;
-}
-
-// @withRouter
 export function Content() {
   // public ctrl: ContentController = new ContentController();
 
   const location = useLocation();
 
-  const [searchParams, setSearchParams] = useSearchParams();
-  // TODO: just temporary from search params
-  const tailoringModelVariantId = searchParams.get('mV');
-  const tailoringProjectTypeVariantId = searchParams.get('ptV');
-  const tailoringProjectTypeId = searchParams.get('pt');
-  const tailoringProjectFeatureIdsSearchParam: MyType = {};
+  const {
+    modelVariantId: tailoringModelVariantId,
+    projectTypeVariantId: tailoringProjectTypeVariantId,
+    projectTypeId: tailoringProjectTypeId,
+    getProjectFeaturesQueryString: getProjectFeaturesString,
+  } = useTailoring();
 
   const { t } = useTranslation();
-
-  searchParams.forEach((value, key) => {
-    if (!['mV', 'ptV', 'pt'].includes(key)) {
-      tailoringProjectFeatureIdsSearchParam[key] = value;
-    }
-  });
 
   const QUESTION_HEADER =
     '<div style="margin-top: 40px;"><h3 id="questionHeader"> Frage (im Projektassistenten) </h3></div>';
 
-  const sorter = (a, b) => (isNaN(a) && isNaN(b) ? (a || '').localeCompare(b || '') : a - b);
+  const sorter = (a: any, b: any) => (isNaN(a) && isNaN(b) ? (a || '').localeCompare(b || '') : a - b);
 
   const {
     navigationData,
@@ -288,7 +279,7 @@ export function Content() {
         setSelectedPageEntry(content);
         console.log('setSelectedPageEntry', content);
       } else {
-        console.log('no toolReferenceId');
+        console.log('no projectCharacteristicId');
       }
     }
 
@@ -304,7 +295,7 @@ export function Content() {
         setSelectedPageEntry(content);
         console.log('setSelectedPageEntry', content);
       } else {
-        console.log('no toolReferenceId');
+        console.log('no projectTypeId');
       }
     }
 
@@ -320,7 +311,7 @@ export function Content() {
         setSelectedPageEntry(content);
         console.log('setSelectedPageEntry', content);
       } else {
-        console.log('no toolReferenceId');
+        console.log('no projectTypeVariantId');
       }
     }
 
@@ -336,7 +327,7 @@ export function Content() {
         setSelectedPageEntry(content);
         console.log('setSelectedPageEntry', content);
       } else {
-        console.log('no toolReferenceId');
+        console.log('no projectTypeVariantSequenceId');
       }
     }
 
@@ -545,7 +536,7 @@ export function Content() {
     const dataEntries = [];
 
     for (const generatingDependency of generatingDependencies) {
-      const generatingDependencyId = generatingDependency.attributes.id;
+      // const generatingDependencyId = generatingDependency.attributes.id;
       const generatingDependencyTitle = generatingDependency.attributes.name;
       const generatingDependenciesData = [];
 
@@ -656,7 +647,8 @@ export function Content() {
       // const productId = product.attributes.id;
 
       if (productIds.includes(currentProduct.key)) {
-        const rolleVerantwortetProduktRef = jsonDataFromXml.getElementsByTagName('RolleVerantwortetProduktRef');
+        const rolleVerantwortetProduktRef: XMLElement[] =
+          jsonDataFromXml.getElementsByTagName('RolleVerantwortetProduktRef');
 
         // TODO: ist immer nur eine Rolle
         const rolesInCharge = rolleVerantwortetProduktRef.flatMap((entry) => {
@@ -735,7 +727,8 @@ export function Content() {
       // const productId = product.attributes.id;
 
       if (productIds.includes(currentProduct.key)) {
-        const rolleWirktMitBeiProduktRef = jsonDataFromXml.getElementsByTagName('RolleWirktMitBeiProduktRef');
+        const rolleWirktMitBeiProduktRef: XMLElement[] =
+          jsonDataFromXml.getElementsByTagName('RolleWirktMitBeiProduktRef');
 
         // TODO: ist immer nur eine Rolle
         const rolesContributers = rolleWirktMitBeiProduktRef.flatMap((entry) => {
@@ -831,42 +824,42 @@ export function Content() {
   ///////////////////////////////
   ///////////////////////////////
 
-  function getProjectFeaturesString(): string {
-    return Object.keys(tailoringProjectFeatureIdsSearchParam)
-      .map((key: string) => {
-        return `${key}=${tailoringProjectFeatureIdsSearchParam[key]}`;
-      })
-      .join('&');
-  }
+  // function getProjectFeaturesString(): string {
+  //   return Object.keys(tailoringProjectFeatureIdsSearchParam)
+  //     .map((key: string) => {
+  //       return `${key}=${tailoringProjectFeatureIdsSearchParam[key]}`;
+  //     })
+  //     .join('&');
+  // }
 
   function replaceUrlInText(text: string): string {
-    // TODO
-    const imageUrl =
-      'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      tailoringModelVariantId +
-      '/Projekttyp/' +
-      tailoringProjectTypeId +
-      '/Projekttypvariante/' +
-      tailoringProjectTypeVariantId +
-      '/Grafik/images/$2?' +
-      getProjectFeaturesString();
-
-    console.log('before', text);
-    console.log(
-      'after',
-      text.replace(
-        /src=['"](?:[^"'\/]*\/)*([^'"]+)['"]/g,
-        'src="https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-          tailoringModelVariantId +
-          '/Projekttyp/' +
-          tailoringProjectTypeId +
-          '/Projekttypvariante/' +
-          tailoringProjectTypeVariantId +
-          '/Grafik/images/$1?' +
-          getProjectFeaturesString() +
-          '"'
-      )
-    );
+    // // TODO
+    // const imageUrl =
+    //   'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+    //   tailoringModelVariantId +
+    //   '/Projekttyp/' +
+    //   tailoringProjectTypeId +
+    //   '/Projekttypvariante/' +
+    //   tailoringProjectTypeVariantId +
+    //   '/Grafik/images/$2?' +
+    //   getProjectFeaturesString();
+    //
+    // console.log('before', text);
+    // console.log(
+    //   'after',
+    //   text.replace(
+    //     /src=['"](?:[^"'\/]*\/)*([^'"]+)['"]/g,
+    //     'src="https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+    //       tailoringModelVariantId +
+    //       '/Projekttyp/' +
+    //       tailoringProjectTypeId +
+    //       '/Projekttypvariante/' +
+    //       tailoringProjectTypeVariantId +
+    //       '/Grafik/images/$1?' +
+    //       getProjectFeaturesString() +
+    //       '"'
+    //   )
+    // );
 
     return text.replace(
       /src=['"](?:[^"'\/]*\/)*([^'"]+)['"]/g,
@@ -922,8 +915,6 @@ export function Content() {
       '?' +
       getProjectFeaturesString();
 
-    // const jsonDataFromXml: any = await getJsonDataFromXml(methodReferenceUrl);
-
     return axios.get(projectTypeUrl).then((response) => {
       console.log(response.data);
       const jsonDataFromXml = new XMLParser().parseFromString(response.data);
@@ -966,19 +957,19 @@ export function Content() {
 
     let idCounter = 2000;
 
-    //   if (!this.disciplineId) {
-    //   // TODO: nicht unbedingt reject
-    //   return Promise.reject(Error('no discipline id set'));
-    // }
-
     const sinnUndZweck = decodeXml(jsonDataFromXml.getElementsByTagName('Sinn_und_Zweck')[0]?.value);
-    const rolleVerantwortetProduktRef = jsonDataFromXml.getElementsByTagName('RolleVerantwortetProduktRef');
-    const rolleWirktMitBeiProduktRef = jsonDataFromXml.getElementsByTagName('RolleWirktMitBeiProduktRef');
-    const produktZuEntscheidungspunktRef = jsonDataFromXml.getElementsByTagName('ProduktZuEntscheidungspunktRef');
-    const themaZuProduktRef = jsonDataFromXml.getElementsByTagName('ThemaZuProduktRef');
-    const activitiesRef = jsonDataFromXml.getElementsByTagName('AktivitätZuProduktRef');
-    const externeKopiervorlageZuProduktRef = jsonDataFromXml.getElementsByTagName('ExterneKopiervorlageZuProduktRef');
-    const erzeugendeAbhaengigkeitzuProduktRef = jsonDataFromXml.getElementsByTagName(
+    const rolleVerantwortetProduktRef: XMLElement[] =
+      jsonDataFromXml.getElementsByTagName('RolleVerantwortetProduktRef');
+    const rolleWirktMitBeiProduktRef: XMLElement[] = jsonDataFromXml.getElementsByTagName('RolleWirktMitBeiProduktRef');
+    const produktZuEntscheidungspunktRef: XMLElement[] = jsonDataFromXml.getElementsByTagName(
+      'ProduktZuEntscheidungspunktRef'
+    );
+    const themaZuProduktRef: XMLElement[] = jsonDataFromXml.getElementsByTagName('ThemaZuProduktRef');
+    const activitiesRef: XMLElement[] = jsonDataFromXml.getElementsByTagName('AktivitätZuProduktRef');
+    const externeKopiervorlageZuProduktRef: XMLElement[] = jsonDataFromXml.getElementsByTagName(
+      'ExterneKopiervorlageZuProduktRef'
+    );
+    const erzeugendeAbhaengigkeitzuProduktRef: XMLElement[] = jsonDataFromXml.getElementsByTagName(
       'ErzeugendeAbhängigkeitzuProduktRef'
     );
 
@@ -1029,7 +1020,7 @@ export function Content() {
 
     //////////////////////////////////////////////
 
-    const activities = activitiesRef.flatMap((entry) => {
+    const activities: DataEntry[] = activitiesRef.flatMap((entry) => {
       return entry.getElementsByTagName('AktivitätRef').map((activityRef) => {
         return {
           id: activityRef.attributes.id,
@@ -1040,7 +1031,7 @@ export function Content() {
       });
     });
 
-    const products = externeKopiervorlageZuProduktRef.flatMap((entry) => {
+    const products: DataEntry[] = externeKopiervorlageZuProduktRef.flatMap((entry) => {
       return entry.getElementsByTagName('ExterneKopiervorlageRef').map((productRef) => {
         return {
           id: productRef.attributes.id,
@@ -1051,7 +1042,28 @@ export function Content() {
       });
     });
 
-    const tools = [...activities, ...products];
+    /////////////////////////////
+
+    const activitiesData = await getActivitiesData();
+    const activitiesToTools = [];
+
+    const relevantActivitiesData = activitiesData.filter((data) =>
+      activities.map((activity: DataEntry) => activity.id).includes(data.attributes.id)
+    );
+
+    for (const activity of relevantActivitiesData) {
+      const toolReferences = activity.getElementsByTagName('WerkzeugreferenzRef');
+      for (const toolReference of toolReferences) {
+        activitiesToTools.push({
+          id: toolReference.attributes.id,
+          title: toolReference.attributes.name,
+          suffix: '(Werkzeug)',
+        });
+      }
+    }
+    /////////////////////////////
+
+    const tools = [...activities, ...products, ...activitiesToTools];
     // console.log('Tools', tools);
 
     if (tools.length > 0) {
@@ -1111,10 +1123,10 @@ export function Content() {
 
           const jsonDataFromXml: any = await getJsonDataFromXml(productsUrl);
 
-          const productEntries = jsonDataFromXml.getElementsByTagName('Produkt');
+          const productEntries: XMLElement[] = jsonDataFromXml.getElementsByTagName('Produkt');
 
           for (const product of productEntries) {
-            const productTopicEntries = product.getElementsByTagName('ThemaRef');
+            const productTopicEntries: XMLElement[] = product.getElementsByTagName('ThemaRef');
 
             // .map((subjectRef) => {
             //   return {
@@ -1249,7 +1261,7 @@ export function Content() {
 
   function getAnchorItems(): AnchorLinkItemProps[] {
     const anchorItems =
-      selectedPageEntry.subPageEntries?.map((productChild: PageEntry) => {
+      selectedPageEntry?.subPageEntries?.map((productChild: PageEntry) => {
         return {
           key: productChild.id,
           href: `#${productChild.id}`,
@@ -1408,7 +1420,8 @@ export function Content() {
 
       const jsonDataFromXml: any = await getJsonDataFromXml(productsUrl);
 
-      const productTopicEntries = jsonDataFromXml.getElementsByTagName('ThemaRef').map((subjectRef) => {
+      const themaRef: XMLElement[] = jsonDataFromXml.getElementsByTagName('ThemaRef');
+      const productTopicEntries = themaRef.map((subjectRef) => {
         return {
           modelElement: subjectRef.attributes.name,
           dataTypes: [NavTypeEnum.TOPIC],
@@ -1419,8 +1432,6 @@ export function Content() {
     }
 
     /////////////////
-
-    //
 
     const columns: ColumnsType<any> = [
       {
@@ -1482,11 +1493,10 @@ export function Content() {
     const filterRelevantDataTypes = flatten(navigationData).filter((item: any) =>
       [NavTypeEnum.PROJECT_TEAM_ROLE, NavTypeEnum.PROJECT_ROLE, NavTypeEnum.ORGANISATION_ROLE].includes(item.dataType)
     );
-    // TODO: fehlt noch TOPIC
 
     const data: any[] = filterRelevantDataTypes.map((navItem: any): any => {
       return {
-        modelElement: navItem.label,
+        modelElement: { id: navItem.key, text: navItem.label },
         dataTypes: [navItem.dataType],
       };
     });
@@ -1498,9 +1508,9 @@ export function Content() {
         key: 'modelElement',
         defaultSortOrder: 'ascend',
         sorter: {
-          compare: (a, b) => sorter(a.modelElement, b.modelElement),
+          compare: (a, b) => sorter(a.modelElement.text, b.modelElement.text),
         },
-        render: (text: string) => <a>{text}</a>, // TODO
+        render: (object) => <Link to={`/documentation/${object.id}${location.search}`}>{object.text}</Link>, // TODO
       },
       {
         title: 'Typ',
@@ -1559,7 +1569,7 @@ export function Content() {
 
     const data: any[] = filterRelevantDataTypes.map((navItem: any): any => {
       return {
-        modelElement: navItem.label,
+        modelElement: { id: navItem.key, text: navItem.label },
         dataTypes: [navItem.dataType],
       };
     });
@@ -1571,9 +1581,9 @@ export function Content() {
         key: 'modelElement',
         defaultSortOrder: 'ascend',
         sorter: {
-          compare: (a, b) => sorter(a.modelElement, b.modelElement),
+          compare: (a, b) => sorter(a.modelElement.text, b.modelElement.text),
         },
-        render: (text: string) => <a>{text}</a>, // TODO
+        render: (object) => <Link to={`/documentation/${object.id}${location.search}`}>{object.text}</Link>, // TODO
       },
       {
         title: 'Typ',
@@ -1801,7 +1811,9 @@ export function Content() {
     // TODO
     const sinnUndZweck = decodeXml(jsonDataFromXml.getElementsByTagName('Sinn_und_Zweck')[0]?.value);
 
-    const entscheidungspunktZuProduktRef = jsonDataFromXml.getElementsByTagName('EntscheidungspunktZuProduktRef');
+    const entscheidungspunktZuProduktRef: XMLElement[] = jsonDataFromXml.getElementsByTagName(
+      'EntscheidungspunktZuProduktRef'
+    );
 
     const tableEntries: TableEntry[] = [];
 
@@ -1926,7 +1938,8 @@ export function Content() {
 
     const overviewGraphic = '<p><img src="' + overviewGraphicUrl + '"/></p>';
 
-    const products = jsonDataFromXml.getElementsByTagName('Produkt').map((productRef) => {
+    const productsRef: XMLElement[] = jsonDataFromXml.getElementsByTagName('Produkt');
+    const products = productsRef.map((productRef) => {
       return {
         id: productRef.attributes.id,
         title: productRef.attributes.name,
@@ -2073,19 +2086,10 @@ export function Content() {
           compare: (a, b) => sorter(a.description.text, b.description.text),
         },
         render: (object) => renderCustomCell(object),
-        // render: (text: string, uri: string) => (
-        //   <div>
-        //     {text}
-        //     <br />
-        //     <strong>URI: </strong>
-        //     <a>{uri}</a>
-        //   </div>
-        // ), // TODO
       },
     ];
 
-    const renderCustomCell = (object) => {
-      /** render your custom cell with object properties here */
+    const renderCustomCell = (object: { text: string; uri: string }) => {
       const { text, uri } = object;
       return (
         <div>
@@ -2131,10 +2135,10 @@ export function Content() {
 
       //////////////////////////////////////////////
 
-      const activities = await getActivitiesData();
+      const activitiesData = await getActivitiesData();
       const activitiesToTools = [];
 
-      for (const activity of activities) {
+      for (const activity of activitiesData) {
         const methodReferences = activity.getElementsByTagName('MethodenreferenzRef');
         for (const methodReference of methodReferences) {
           if (methodReference.attributes.id === methodReferenceId) {
@@ -2208,10 +2212,10 @@ export function Content() {
 
       //////////////////////////////////////////////
 
-      const activities = await getActivitiesData();
+      const activitiesData = await getActivitiesData();
       const activitiesToTools = [];
 
-      for (const activity of activities) {
+      for (const activity of activitiesData) {
         const toolReferences = activity.getElementsByTagName('WerkzeugreferenzRef');
         for (const toolReference of toolReferences) {
           if (toolReference.attributes.id === toolReferenceId) {
@@ -2274,11 +2278,11 @@ export function Content() {
 
     const jsonDataFromXml: any = await getJsonDataFromXml(projectCharacteristicUrl);
 
-    const sinnUndZweck = decodeXml(jsonDataFromXml.getElementsByTagName('Sinn_und_Zweck')[0]?.value);
+    // const sinnUndZweck = decodeXml(jsonDataFromXml.getElementsByTagName('Sinn_und_Zweck')[0]?.value);
 
     const question = decodeXml(jsonDataFromXml.getElementsByTagName('Frage')[0]?.value);
     const description = decodeXml(jsonDataFromXml.getElementsByTagName('Beschreibung')[0]?.value);
-    const values = jsonDataFromXml.getElementsByTagName('Wert');
+    const values: XMLElement[] = jsonDataFromXml.getElementsByTagName('Wert');
 
     const data = [];
 
@@ -2417,13 +2421,29 @@ export function Content() {
       console.log(response.data);
       const jsonDataFromXml = new XMLParser().parseFromString(response.data);
 
-      // const sinnUndZweck = decodeXml(jsonDataFromXml.getElementsByTagName('Sinn_und_Zweck')[0]?.value);
+      let idCounter = 2000;
+
       const sequence = decodeXml(jsonDataFromXml.getElementsByTagName('Ablauf')[0]?.value);
-      const projektdurchfuehrungsstrategie = decodeXml(
-        jsonDataFromXml.getElementsByTagName('Projektdurchführungsstrategie')[0]?.value
-      );
+      const ablaufbausteinRefs: XMLElement[] = jsonDataFromXml.getElementsByTagName('AblaufbausteinRef');
+
+      const ablaufbausteine = ablaufbausteinRefs.map((ablaufbausteinRef) => {
+        return {
+          id: ablaufbausteinRef.attributes.id,
+          title: ablaufbausteinRef.attributes.name,
+        };
+      });
 
       const tableEntries: TableEntry[] = [];
+
+      if (ablaufbausteine.length > 0) {
+        tableEntries.push({
+          id: (idCounter++).toString(),
+          descriptionEntry: 'Ablaufbausteine',
+          dataEntries: ablaufbausteine,
+        });
+      }
+
+      // AblaufbausteinRef;
 
       //////////////////////////////////////////////
 
@@ -2462,9 +2482,9 @@ export function Content() {
       let idCounter = 2000;
 
       const sinnUndZweck = decodeXml(jsonDataFromXml.getElementsByTagName('Sinn_und_Zweck')[0]?.value);
-      const aktivityRef = jsonDataFromXml.getElementsByTagName('AktivitätZuProduktRef');
-      const methodsRef = jsonDataFromXml.getElementsByTagName('AktivitätZuMethodenreferenzRef');
-      const toolsRef = jsonDataFromXml.getElementsByTagName('AktivitätZuWerkzeugreferenzRef');
+      const aktivityRef: XMLElement[] = jsonDataFromXml.getElementsByTagName('AktivitätZuProduktRef');
+      const methodsRef: XMLElement[] = jsonDataFromXml.getElementsByTagName('AktivitätZuMethodenreferenzRef');
+      const toolsRef: XMLElement[] = jsonDataFromXml.getElementsByTagName('AktivitätZuWerkzeugreferenzRef');
       // const description = decodeXml(jsonDataFromXml.getElementsByTagName('Beschreibung')[0]?.value);
 
       const tableEntries: TableEntry[] = [];

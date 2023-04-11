@@ -13,8 +13,8 @@ type DocumentationSession = {
   setSelectedItemKey: Function;
   selectedIndexType: IndexTypeEnum | undefined;
   setSelectedIndexType: Function;
-  // sectionsData: Section[];
-  // setSectionsData: Function;
+  collapsed: boolean;
+  setCollapsed: Function;
   navigationData: NavMenuItem[];
   setNavigationData: Function;
   disciplineId: string | null;
@@ -65,6 +65,7 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
   // }
 
   // const [sectionsData, setSectionsData] = useState<Section[]>([]);
+  const [collapsed, setCollapsed] = useState<boolean>(false);
   const [navigationData, setNavigationData] = useState<NavMenuItem[]>([]);
 
   const [disciplineId, setDisciplineId] = useState<string | null>(null);
@@ -91,6 +92,8 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
     setSelectedIndexType,
     // sectionsData,
     // setSectionsData,
+    collapsed,
+    setCollapsed,
     navigationData,
     setNavigationData,
     disciplineId,

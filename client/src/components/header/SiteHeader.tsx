@@ -2,8 +2,8 @@ import { Col, Layout, Menu, MenuProps, Row } from 'antd';
 import React from 'react';
 import { BookOutlined, FileTextOutlined, HomeOutlined, ScissorOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
-
-import LOGO from '../../assets/logo.vmodell.xt.bund.jpg';
+import { useTailoring } from '../../context/TailoringContext';
+import useImage from '../../hooks/useImage';
 
 const { Header } = Layout;
 
@@ -48,6 +48,8 @@ const items: MenuProps['items'] = [
 // </Menu.Item>
 
 export const SiteHeader = (props: any) => {
+  const { modelVariantId } = useTailoring();
+
   // const navigate = useNavigate();
 
   // const handleMenuClick = ({ key: string }) => {
@@ -56,25 +58,35 @@ export const SiteHeader = (props: any) => {
   // }
   // };
 
+  const { error, image } = useImage(modelVariantId + '/ALLG-Logo-Farbe.gif');
+
+  if (error) {
+    console.log('error on fetching image', error);
+  }
+
+  // const logoPath = '../../assets/' + modelVariantId + '/ALLG-Logo-Farbe.gif';
+
   return (
     <Header>
       <Row>
         <Col span={4}>
-          <Link
-            id="logo"
-            to="/"
-            title="Zurück zur Hauptseite"
-            style={{
-              backgroundImage: `url(${LOGO as string})`,
-              margin: '4px',
-              height: '56px',
-              width: '56px',
-              overflow: 'hidden',
-              display: 'block',
-              backgroundSize: 'cover',
-              backgroundRepeat: 'no-repeat',
-            }}
-          />
+          {image && (
+            <Link
+              id="logo"
+              to="/"
+              title="Zurück zur Hauptseite"
+              style={{
+                backgroundImage: `url(${image})`,
+                margin: '4px',
+                height: '56px',
+                width: '56px',
+                overflow: 'hidden',
+                display: 'block',
+                backgroundSize: 'cover',
+                backgroundRepeat: 'no-repeat',
+              }}
+            />
+          )}
         </Col>
         <Col span={18}>
           <Menu

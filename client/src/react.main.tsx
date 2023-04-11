@@ -7,6 +7,7 @@ import { run } from './app.run';
 import { TailoringSessionContextProvider } from './context/TailoringContext';
 import { I18nextProvider } from 'react-i18next';
 import i18n from './i18n';
+import { TemplateSessionContextProvider } from './context/TemplateContext';
 
 run('React', version, () => {
   const htmlDivElement: HTMLDivElement | null = document.querySelector('div#dipa-projektassistent');
@@ -18,7 +19,9 @@ run('React', version, () => {
           {/*<ConfigProvider locale={deDE}>*/}
           <HashRouter>
             <TailoringSessionContextProvider>
-              <App />
+              <TemplateSessionContextProvider>
+                <App />
+              </TemplateSessionContextProvider>
             </TailoringSessionContextProvider>
           </HashRouter>
           {/*</ConfigProvider>*/}

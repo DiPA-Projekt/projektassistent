@@ -59,11 +59,3 @@ export function clean(obj: any) {
   }
   return obj;
 }
-
-// export function removeEmptyParams(paramsObject: any): any {
-//   if (paramsObject == null) {
-//     return null;
-//   } else {
-//     return Object.keys(paramsObject).forEach((k) => paramsObject[k] == null && delete paramsObject[k]);
-//   }
-// }

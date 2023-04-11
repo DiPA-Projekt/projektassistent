@@ -24,6 +24,7 @@ type TailoringSession = {
   setProjectFeatureIds: Function;
   projectFeatures: { [key: string]: string } | null;
   setProjectFeatures: Function;
+  getProjectFeaturesQueryString: Function;
 };
 
 type TailoringSessionProviderProps = { children: React.ReactNode };
@@ -41,7 +42,18 @@ const TailoringSessionContextProvider = ({ children }: TailoringSessionProviderP
     []
   );
 
-  const [modelVariantId, setModelVariantId] = useState<string | null>(null);
+  const [modelVariantId, _setModelVariantId] = useState<string | null>(null);
+
+  function setModelVariantId(newModelVariantId: string | null) {
+    _setModelVariantId(newModelVariantId);
+    _setProjectTypeVariantId(null);
+    // _setProjectTypeId(null);
+    if (newModelVariantId) {
+      setSearchParams({ mV: newModelVariantId });
+    } else {
+      setSearchParams();
+    }
+  }
 
   const [projectTypeVariantId, _setProjectTypeVariantId] = useState<string | null>(null);
   function setProjectTypeVariantId(newProjectTypeVariantId: string | null) {
@@ -82,7 +94,20 @@ const TailoringSessionContextProvider = ({ children }: TailoringSessionProviderP
     setProjectFeatureIds,
     projectFeatures,
     setProjectFeatures,
+    getProjectFeaturesQueryString,
   };
+
+  function getProjectFeaturesQueryString(): string {
+    if (projectFeatures) {
+      return Object.keys(projectFeatures || '')
+        .map((key: string) => {
+          return `${key}=${projectFeatures[key]}`;
+        })
+        .join('&');
+    } else {
+      return '';
+    }
+  }
 
   useEffect(() => {
     const modelVariantIdSearchParam = searchParams.get('mV');
@@ -92,10 +117,14 @@ const TailoringSessionContextProvider = ({ children }: TailoringSessionProviderP
     const projectFeatureIdsSearchParam: MyType = {};
 
     if (modelVariantIdSearchParam) {
-      setModelVariantId(modelVariantIdSearchParam);
+      _setModelVariantId(modelVariantIdSearchParam);
     }
-    setProjectTypeVariantId(projectTypeVariantIdSearchParam);
-    setProjectTypeId(projectTypeIdSearchParam);
+    if (projectTypeVariantIdSearchParam) {
+      _setProjectTypeVariantId(projectTypeVariantIdSearchParam);
+    }
+    if (projectTypeIdSearchParam) {
+      setProjectTypeId(projectTypeIdSearchParam);
+    }
 
     searchParams.forEach((value, key) => {
       if (!['mV', 'ptV', 'pt'].includes(key)) {
@@ -103,7 +132,9 @@ const TailoringSessionContextProvider = ({ children }: TailoringSessionProviderP
       }
     });
 
-    setProjectFeatureIds(projectFeatureIdsSearchParam);
+    if (Object.keys(projectFeatureIdsSearchParam).length > 0) {
+      setProjectFeatureIds(projectFeatureIdsSearchParam);
+    }
 
     // eslint-disable-next-line
   }, []);

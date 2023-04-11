@@ -41,6 +41,8 @@ export function ProjectTypeVariant() {
 
   useEffect(() => {
     async function getProjectTypeVariantData() {
+      console.log('getProjectTypeVariantData', modelVariantId);
+
       const projectTypeVariants = await fetchProjectTypeVariantData();
 
       setProjectTypeVariantsData(projectTypeVariants); // TODO projectTypeVariants in getCascaderDefaultArray nicht gesetzt

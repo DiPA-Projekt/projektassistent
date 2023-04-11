@@ -16,8 +16,7 @@ const layout = {
 };
 
 export function ModelVariant() {
-  const { modelVariantId, setModelVariantId, setProjectTypeVariantId, setProjectTypeId, setSearchParams } =
-    useTailoring();
+  const { modelVariantId, setModelVariantId } = useTailoring();
 
   const [modelVariantsData, setModelVariantsData] = useState<ModelVariant[]>([]);
 
@@ -55,11 +54,6 @@ export function ModelVariant() {
           placeholder="Bitte wählen"
           onChange={(value: string) => {
             setModelVariantId(value);
-            localStorage.setItem('modelVariantId', JSON.stringify(modelVariantId));
-            console.log('changed modelVariantId manually');
-            setSearchParams({ mV: value });
-            setProjectTypeVariantId(null);
-            setProjectTypeId(null);
           }}
           value={modelVariantId}
         >

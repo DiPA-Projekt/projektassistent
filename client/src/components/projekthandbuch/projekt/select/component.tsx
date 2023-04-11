@@ -56,7 +56,7 @@ export class SelectComponent extends Component<FeatureProps, any> {
         >
           {this.props.projectFeature.values?.possibleValues?.map(
             (value: { key: string; title: string; answer: string }) => (
-              // wir müssen als Key in der API einen anderen Datentype wählen / oder mappen
+              // wir müssen als Key in der API einen anderen Datentyp wählen / oder mappen
               <Option key={value.key} value={value.key}>
                 {value.title}
               </Option>

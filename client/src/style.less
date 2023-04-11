@@ -86,3 +86,24 @@ ul.ant-menu li.ant-menu-item a {
 .hideMe .ant-tree-checkbox {
   display: none;
 }
+
+ul.sideMenu > li > div {
+  position: sticky !important;
+  top: 0;
+  background-color: #fff;
+  z-index: 30000;
+}
+
+ul.sideMenu > li > ul > li > div {
+  position: sticky !important;
+  top: 40px;
+  background-color: #fafafa;
+  z-index: 20000;
+}
+
+ul.sideMenu > li > ul > li > ul > li > div {
+  position: sticky !important;
+  top: 80px;
+  background-color: #f5f5f5;
+  z-index: 10000;
+}

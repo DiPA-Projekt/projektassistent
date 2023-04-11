@@ -4,6 +4,7 @@ import { Navigation } from './navigation/navigation';
 import { Content } from './content/content';
 import { DocumentationSessionContextProvider } from '../../../context/DocumentationContext';
 import { Breadcrumbs } from '../../Breadcrumbs';
+import { SiderToggle } from '../../SiderToggle';
 
 export function Documentation() {
   //
@@ -19,9 +20,12 @@ export function Documentation() {
   return (
     <Layout>
       <DocumentationSessionContextProvider>
-        <Breadcrumbs />
+        <Navigation />
         <Layout>
-          <Navigation />
+          <Layout className="sider-toggle-breadcrumbs">
+            <SiderToggle />
+            <Breadcrumbs />
+          </Layout>
           <Content />
         </Layout>
       </DocumentationSessionContextProvider>

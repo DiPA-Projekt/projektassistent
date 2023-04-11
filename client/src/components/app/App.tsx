@@ -4,8 +4,7 @@ import { Home } from '../Home';
 import './../../i18n';
 import { Project } from '../projekthandbuch/projekt/project';
 import { Documentation } from '../projekthandbuch/documentation/documentation';
-import { ProjekthandbuchComponent } from '../projekthandbuch/component';
-import { ProduktvorlagenComponent } from '../projekthandbuch/produktvorlagen/component';
+import { Templates } from '../projekthandbuch/produktvorlagen/templates';
 import { Layout } from 'antd';
 import { SiteHeader } from '../header/SiteHeader';
 import { Routes } from 'react-router';
@@ -23,8 +22,7 @@ function App() {
             <Route path="/tailoring" element={<Project />} />
             <Route path="/documentation" element={<Documentation />} />
             <Route path="/documentation/:id" element={<Documentation />} />
-            <Route path="/projekthandbuch" element={<ProjekthandbuchComponent />} />
-            <Route path="/produktvorlagen" element={<ProduktvorlagenComponent />} />
+            <Route path="/productTemplates" element={<Templates />} />
             {/*<Route path="*" element={<HomeComponent />} />*/}
           </Routes>
         </Content>
