@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 
 const useImage = (filePath: string) => {
   const [loading, setLoading] = useState(true);
