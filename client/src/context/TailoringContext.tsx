@@ -1,6 +1,6 @@
 import { ProjectFeature } from '@dipa-projekt/projektassistent-openapi';
 import React, { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 
 interface MyType {
   [key: string]: string;
@@ -10,18 +10,16 @@ type TailoringSession = {
   setSearchParams: Function;
   projectFeaturesDetails: ProjectFeature[];
   setProjectFeaturesDetails: Function;
-  projectFeaturesDataFromProjectTypeVariant: ProjectFeature[];
-  setProjectFeaturesDataFromProjectTypeVariant: Function;
-  projectFeaturesDataFromProjectType: ProjectFeature[];
-  setProjectFeaturesDataFromProjectType: Function;
+  projectFeaturesData: { fromProjectType: ProjectFeature[]; fromProjectTypeVariant: ProjectFeature[] } | undefined;
+  setProjectFeaturesData: Function;
   modelVariantId: string | null;
   setModelVariantId: Function;
   projectTypeVariantId: string | null;
   setProjectTypeVariantId: Function;
   projectTypeId: string | null;
   setProjectTypeId: Function;
-  projectFeatureIds: { [key: string]: string } | null;
-  setProjectFeatureIds: Function;
+  // projectFeatureIds: { [key: string]: string } | null;
+  // setProjectFeatureIds: Function;
   projectFeatures: { [key: string]: string } | null;
   setProjectFeatures: Function;
   getProjectFeaturesQueryString: Function;
@@ -35,18 +33,17 @@ const TailoringSessionContextProvider = ({ children }: TailoringSessionProviderP
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [projectFeaturesDetails, setProjectFeaturesDetails] = React.useState<ProjectFeature[]>([]);
-  const [projectFeaturesDataFromProjectTypeVariant, setProjectFeaturesDataFromProjectTypeVariant] = React.useState<
-    ProjectFeature[]
-  >([]);
-  const [projectFeaturesDataFromProjectType, setProjectFeaturesDataFromProjectType] = React.useState<ProjectFeature[]>(
-    []
-  );
+  const [projectFeaturesData, setProjectFeaturesData] = React.useState<{
+    fromProjectType: ProjectFeature[];
+    fromProjectTypeVariant: ProjectFeature[];
+  }>();
 
   const [modelVariantId, _setModelVariantId] = useState<string | null>(null);
 
   function setModelVariantId(newModelVariantId: string | null) {
     _setModelVariantId(newModelVariantId);
     _setProjectTypeVariantId(null);
+    _setProjectFeatures(null);
     // _setProjectTypeId(null);
     if (newModelVariantId) {
       setSearchParams({ mV: newModelVariantId });
@@ -64,34 +61,43 @@ const TailoringSessionContextProvider = ({ children }: TailoringSessionProviderP
     // if (searchParams != null) {
     // setSearchParams(clean(searchParams));
     // }
+    console.log('setProjectTypeVariantId', newProjectTypeVariantId);
     // console.log('searchParams after', searchParams);
 
-    setProjectFeaturesDataFromProjectTypeVariant([]);
-    setProjectFeaturesDataFromProjectType([]);
+    setProjectFeaturesData(undefined);
+
     //setProjectTypeId(null); // TODO ist eigentlich nicht nötig, weil es auch
+
+    _setProjectFeatures(null);
   }
 
   const [projectTypeId, setProjectTypeId] = useState<string | null>(null);
   // TODO: projectFeatureIds
-  const [projectFeatureIds, setProjectFeatureIds] = useState<MyType | null>(null);
-  const [projectFeatures, setProjectFeatures] = useState<{ [key: string]: string } | null>(null);
+  // const [projectFeatureIds, setProjectFeatureIds] = useState<MyType | null>(null);
+  const [projectFeatures, _setProjectFeatures] = useState<{ [key: string]: string } | null>(null);
+
+  function setProjectFeatures(newProjectFeatures: { [key: string]: string } | null) {
+    _setProjectFeatures(newProjectFeatures);
+    console.log('setProjectFeatures', newProjectFeatures);
+
+    // TODO: modelVariantId, projectTypeVariantId, projectTypeId bei reload nicht gesetzt
+    setSearchParams({ mV: modelVariantId!, ptV: projectTypeVariantId!, pt: projectTypeId!, ...newProjectFeatures });
+  }
 
   const value: TailoringSession = {
     setSearchParams,
     projectFeaturesDetails,
     setProjectFeaturesDetails,
-    projectFeaturesDataFromProjectTypeVariant,
-    setProjectFeaturesDataFromProjectTypeVariant,
-    projectFeaturesDataFromProjectType,
-    setProjectFeaturesDataFromProjectType,
+    projectFeaturesData,
+    setProjectFeaturesData,
     modelVariantId,
     setModelVariantId,
     projectTypeVariantId,
     setProjectTypeVariantId,
     projectTypeId,
     setProjectTypeId,
-    projectFeatureIds,
-    setProjectFeatureIds,
+    // projectFeatureIds,
+    // setProjectFeatureIds,
     projectFeatures,
     setProjectFeatures,
     getProjectFeaturesQueryString,
@@ -133,11 +139,31 @@ const TailoringSessionContextProvider = ({ children }: TailoringSessionProviderP
     });
 
     if (Object.keys(projectFeatureIdsSearchParam).length > 0) {
-      setProjectFeatureIds(projectFeatureIdsSearchParam);
+      setProjectFeatures(projectFeatureIdsSearchParam);
     }
 
     // eslint-disable-next-line
   }, []);
+
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    console.log('Location update', pathname);
+
+    if (modelVariantId && projectTypeVariantId && projectTypeId && projectFeatures) {
+      setSearchParams({ mV: modelVariantId!, ptV: projectTypeVariantId!, pt: projectTypeId!, ...projectFeatures });
+    }
+  }, [pathname]);
+
+  // const [searchParams, setSearchParams] = useSearchParams();
+  // TODO: just temporary from search params
+  // const tailoringModelVariantId = searchParams.get('mV');
+  // const tailoringProjectTypeVariantId = searchParams.get('ptV');
+  // const tailoringProjectTypeId = searchParams.get('pt');
+
+  useEffect(() => {
+    console.log('searchParams update', searchParams);
+  }, [searchParams]);
 
   // useEffect(() => {
   //   console.log('useEffect modelVariantId', modelVariantId);

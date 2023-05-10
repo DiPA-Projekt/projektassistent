@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -14,7 +14,7 @@ import {
   TeamOutlined,
   ToolOutlined,
 } from '@ant-design/icons';
-import { Layout, Menu } from 'antd';
+import { Layout, Menu, Spin } from 'antd';
 import { getJsonDataFromXml, getMenuItemByAttributeValue } from '../../../../shares/utils';
 // import { MenuEntry } from '@dipa-projekt/projektassistent-openapi';
 import { useDocumentation } from '../../../../context/DocumentationContext';
@@ -123,6 +123,8 @@ export function Navigation() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const [loading, setLoading] = useState(false);
+
   // const [searchParams /*, setSearchParams*/] = useSearchParams();
   // TODO: just temporary from search params
   // const modelVariantId = searchParams.get('mV');
@@ -150,7 +152,9 @@ export function Navigation() {
 
   useEffect(() => {
     async function mount() {
+      setLoading(true);
       await fetchData();
+      setLoading(false);
     }
 
     mount().then();
@@ -844,36 +848,39 @@ export function Navigation() {
 
   return (
     <>
-      <Sider
-        trigger={null}
-        collapsible
-        collapsed={collapsed}
-        collapsedWidth={50}
-        // onCollapse={() => {
-        //   toggleCollapse();
-        //   // this.forceUpdate();
-        // }}
-        width={250}
-        style={{
-          overflow: 'auto',
-          height: '100vh',
-          position: 'sticky',
-          top: 0,
-          left: 0,
-        }}
-      >
-        {navigationData.length > 0 && (
-          <Menu
-            className="sideMenu"
-            mode="inline"
-            inlineIndent={12}
-            items={navigationData}
-            selectedKeys={currentSelectedKeys}
-            openKeys={openKeys} // TODO: funzt noch nicht
-          />
-        )}
-        {/*<NavMenu data={sectionsData} />*/}
-      </Sider>
+      <Spin spinning={loading}>
+        <Sider
+          trigger={null}
+          collapsible
+          collapsed={collapsed}
+          collapsedWidth={50}
+          // onCollapse={() => {
+          //   toggleCollapse();
+          //   // this.forceUpdate();
+          // }}
+          width={250}
+          style={{
+            overflow: 'auto',
+            height: '100vh',
+            position: 'sticky',
+            top: 0,
+            left: 0,
+          }}
+        >
+          {navigationData.length > 0 && (
+            <Menu
+              className="sideMenu"
+              mode="inline"
+              inlineIndent={12}
+              items={navigationData}
+              selectedKeys={currentSelectedKeys}
+              openKeys={openKeys} // TODO: funzt noch nicht
+            />
+          )}
+
+          {/*<NavMenu data={sectionsData} />*/}
+        </Sider>
+      </Spin>
     </>
   );
 }

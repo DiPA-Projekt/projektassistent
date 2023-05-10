@@ -1,6 +1,6 @@
 // import 'antd/dist/antd.css';
 
-import { Anchor, Avatar, Col, FloatButton, Layout, List, Row, Table, TableProps, Tag } from 'antd';
+import { Anchor, Avatar, Col, FloatButton, Layout, List, Row, Spin, Table, TableProps, Tag } from 'antd';
 import React, { useEffect, useState } from 'react';
 
 import {
@@ -74,6 +74,8 @@ export function Content() {
   // public ctrl: ContentController = new ContentController();
 
   const location = useLocation();
+
+  const [loading, setLoading] = useState(false);
 
   const {
     modelVariantId: tailoringModelVariantId,
@@ -371,9 +373,26 @@ export function Content() {
     async function mount() {
       // TODO: noch schauen wo das genau hinkommt
       if (entryId) {
+        setLoading(true);
         const content = await fetchSectionDetailsData(entryId);
-        setSelectedPageEntry(content);
-        console.log('setSelectedPageEntry', content);
+
+        if (content.generatedContent === 'Elemente:Abkürzungen') {
+          const content2 = await getAbbreviationsContent();
+          console.log(content2);
+          setSelectedPageEntry(content2);
+        } else if (content.generatedContent === 'Elemente:Glossar') {
+          const content2 = await getGlossaryContent();
+          console.log(content2);
+          setSelectedPageEntry(content2);
+        } else if (content.generatedContent === 'Elemente:Quellen') {
+          const content2 = await getLiteratureContent();
+          console.log(content2);
+          setSelectedPageEntry(content2);
+        } else {
+          setSelectedPageEntry(content);
+          console.log('setSelectedPageEntry', content);
+        }
+        setLoading(false);
       } else {
         console.log('no entryId');
       }
@@ -391,18 +410,7 @@ export function Content() {
   function getTableEntriesList(inputData: DataEntry[]): JSX.Element {
     const entries: JSX.Element[] = [];
 
-    inputData.map((entryItem) => {
-      // if (entryItem?.type === 'bold' && entryItem.id) {
-      //   entries.push(
-      //     <div key={`table-item-${index}`}>
-      //       <Link style={{ fontWeight: 'bold' }} to={`./${entryItem.id}`}>
-      //         {entryItem.title}
-      //       </Link>
-      //       {entryItem.suffix && <span style={{ marginLeft: '5px' }}>{entryItem.suffix}</span>}
-      //     </div>
-      //   );
-      // } else
-
+    inputData.map((entryItem: DataEntry) => {
       if (Array.isArray(entryItem)) {
         for (const entrySubItem of entryItem) {
           entries.push(
@@ -420,7 +428,7 @@ export function Content() {
             </span>
           );
 
-          entrySubItem.dataEntries.map((innerEntryItem) => {
+          entrySubItem.dataEntries.map((innerEntryItem: DataEntry) => {
             if (innerEntryItem?.id) {
               entries.push(
                 <span style={{ marginRight: '20px', display: 'inline-flex' }} key={`table-item-${innerEntryItem.id}`}>
@@ -815,52 +823,7 @@ export function Content() {
     );
   }
 
-  // public componentDidUpdate(prevProps: { location: any }): void {
-  //   // if (this.props.location !== prevProps.location) {
-  //   //   // this.ctrl.onRouteChanged(this.props.match.params.id);
-  //   // }
-  // }
-
-  ///////////////////////////////
-  ///////////////////////////////
-
-  // function getProjectFeaturesString(): string {
-  //   return Object.keys(tailoringProjectFeatureIdsSearchParam)
-  //     .map((key: string) => {
-  //       return `${key}=${tailoringProjectFeatureIdsSearchParam[key]}`;
-  //     })
-  //     .join('&');
-  // }
-
   function replaceUrlInText(text: string): string {
-    // // TODO
-    // const imageUrl =
-    //   'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-    //   tailoringModelVariantId +
-    //   '/Projekttyp/' +
-    //   tailoringProjectTypeId +
-    //   '/Projekttypvariante/' +
-    //   tailoringProjectTypeVariantId +
-    //   '/Grafik/images/$2?' +
-    //   getProjectFeaturesString();
-    //
-    // console.log('before', text);
-    // console.log(
-    //   'after',
-    //   text.replace(
-    //     /src=['"](?:[^"'\/]*\/)*([^'"]+)['"]/g,
-    //     'src="https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-    //       tailoringModelVariantId +
-    //       '/Projekttyp/' +
-    //       tailoringProjectTypeId +
-    //       '/Projekttypvariante/' +
-    //       tailoringProjectTypeVariantId +
-    //       '/Grafik/images/$1?' +
-    //       getProjectFeaturesString() +
-    //       '"'
-    //   )
-    // );
-
     return text.replace(
       /src=['"](?:[^"'\/]*\/)*([^'"]+)['"]/g,
       'src="https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
@@ -896,6 +859,7 @@ export function Content() {
     return {
       id: jsonDataFromXml.attributes.id,
       header: jsonDataFromXml.attributes.titel,
+      generatedContent: jsonDataFromXml.attributes.GenerierterInhalt,
       descriptionText: fixLinksInText(replaceUrlInText(textPart)),
       tableEntries: [],
       subPageEntries: [],
@@ -1128,21 +1092,12 @@ export function Content() {
           for (const product of productEntries) {
             const productTopicEntries: XMLElement[] = product.getElementsByTagName('ThemaRef');
 
-            // .map((subjectRef) => {
-            //   return {
-            //     modelElement: subjectRef.attributes.name,
-            //     dataTypes: [NavTypeEnum.TOPIC],
-            //   };
-            // });
-
             for (const topic of productTopicEntries) {
               topicsMap.set(topic.attributes.id, {
                 discipline: { id: discipline.key, title: discipline.label },
                 product: { id: product.attributes.id, title: product.attributes.name },
               });
             }
-
-            // data = [...data, ...productTopicEntries];
           }
         }
 
@@ -1150,30 +1105,18 @@ export function Content() {
 
         const topics = generatingDependency.getElementsByTagName('ThemaRef');
         for (const topic of topics) {
-          // if (topic.attributes.id === topicId) {
-
-          console.log('topicsMap', topicsMap.get(topic.attributes.id));
-
-          console.log('topic', topic.attributes.name);
-          // const products = generatingDependency.getElementsByTagName('ProduktRef');
           const productsToTopics = [];
 
-          // for (const product of products) {
-          //   if (product.attributes.id === productId) {
-          //     console.log('topic product', product.attributes.name);
           productsToTopics.push({
             id: topicsMap.get(topic.attributes.id)?.product.id,
             title: topicsMap.get(topic.attributes.id)?.product.title,
             suffix: '(' + topic.attributes.name + ')',
           });
-          // }
-          // }
 
           generatingDependenciesData.push({
-            subheader: topicsMap.get(topic.attributes.id)?.discipline, // TODO: nur discipline übergeben, um auch auf die id zugreifen zu können
+            subheader: topicsMap.get(topic.attributes.id)?.discipline,
             dataEntries: productsToTopics,
           });
-          // }
         }
         if (generatingDependenciesData.length > 0) {
           dataEntries.push(generatingDependenciesData);
@@ -1260,23 +1203,27 @@ export function Content() {
   ////////////////////////
 
   function getAnchorItems(): AnchorLinkItemProps[] {
-    const anchorItems =
-      selectedPageEntry?.subPageEntries?.map((productChild: PageEntry) => {
-        return {
-          key: productChild.id,
-          href: `#${productChild.id}`,
-          title: productChild.header,
-        };
-      }) || [];
+    if (selectedPageEntry) {
+      const anchorItems =
+        selectedPageEntry.subPageEntries?.map((productChild: PageEntry) => {
+          return {
+            key: productChild.id,
+            href: `#${productChild.id}`,
+            title: productChild.header,
+          };
+        }) || [];
 
-    const anchorList: AnchorLinkItemProps = {
-      key: selectedPageEntry.id,
-      href: `#${selectedPageEntry.id}`,
-      title: selectedPageEntry.header,
-      children: anchorItems,
-    };
+      const anchorList: AnchorLinkItemProps = {
+        key: selectedPageEntry.id,
+        href: `#${selectedPageEntry.id}`,
+        title: selectedPageEntry.header,
+        children: anchorItems,
+      };
 
-    return [anchorList];
+      return [anchorList];
+    } else {
+      return [];
+    }
   }
 
   ////////////////////////////////////
@@ -1866,30 +1813,7 @@ export function Content() {
 
     const description = decodeXml(jsonDataFromXml.getElementsByTagName('Beschreibung')[0]?.value);
 
-    // let idCounter = 2000;
-    //
-    // const sinnUndZweck = decodeXml(jsonDataFromXml.getElementsByTagName('Sinn_und_Zweck')[0]?.value);
-    //
-    // const entscheidungspunktZuProduktRef = jsonDataFromXml.getElementsByTagName('EntscheidungspunktZuProduktRef');
-
     const tableEntries: TableEntry[] = [];
-
-    // const products = entscheidungspunktZuProduktRef.flatMap((entry) => {
-    //   return entry.getElementsByTagName('ProduktRef').map((productRef) => {
-    //     return {
-    //       id: productRef.attributes.id,
-    //       title: productRef.attributes.name,
-    //     };
-    //   });
-    // });
-
-    // if (products.length > 0) {
-    //   tableEntries.push({
-    //     id: (idCounter++).toString(),
-    //     descriptionEntry: 'Zugeordnete Produkte',
-    //     dataEntries: products,
-    //   });
-    // }
 
     //////////////////////////////////////////////
 
@@ -2038,10 +1962,6 @@ export function Content() {
             description: { text: templateName, uri: templateUri },
           },
         ];
-
-        console.log('templateId', templateId);
-        console.log('templateName', templateName);
-        console.log('templateUri', templateUri);
       }
     }
 
@@ -2120,8 +2040,6 @@ export function Content() {
       '/Methodenreferenz/' +
       methodReferenceId;
 
-    // const jsonDataFromXml: any = await getJsonDataFromXml(methodReferenceUrl);
-
     let idCounter = 2000;
 
     return axios.get(methodReferenceUrl).then(async (response) => {
@@ -2196,8 +2114,6 @@ export function Content() {
       tailoringModelVariantId +
       '/Werkzeugreferenz/' +
       toolReferenceId;
-
-    // const jsonDataFromXml: any = await getJsonDataFromXml(methodReferenceUrl);
 
     let idCounter = 2000;
 
@@ -2295,16 +2211,18 @@ export function Content() {
         '/Wert/' +
         value.attributes.id;
 
-      const result: { key: string; title: string; answer: string } = await axios.get(valueUrl).then((valueResponse) => {
-        const valueJsonDataFromXml = new XMLParser().parseFromString(valueResponse.data);
-        const valueDescription = decodeXml(valueJsonDataFromXml.getElementsByTagName('Beschreibung')[0]?.value);
+      const result: { key: string; answer: string; explanation: string } = await axios
+        .get(valueUrl)
+        .then((valueResponse) => {
+          const valueJsonDataFromXml = new XMLParser().parseFromString(valueResponse.data);
+          const valueDescription = decodeXml(valueJsonDataFromXml.getElementsByTagName('Beschreibung')[0]?.value);
 
-        return {
-          key: value.attributes.id,
-          answer: value.attributes.name,
-          explanation: valueDescription,
-        };
-      });
+          return {
+            key: value.attributes.id,
+            answer: value.attributes.name,
+            explanation: valueDescription,
+          };
+        });
       data.push(result);
     }
 
@@ -2340,6 +2258,207 @@ export function Content() {
     // });
   }
 
+  async function getAbbreviationsContent(): Promise<PageEntry> {
+    const abbreviationsUrl =
+      'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      tailoringModelVariantId +
+      '/Abkuerzung/';
+
+    const jsonDataFromXml: any = await getJsonDataFromXml(abbreviationsUrl);
+
+    const abbreviations: XMLElement[] = jsonDataFromXml.getElementsByTagName('Abkuerzung');
+
+    const data = [];
+
+    for (const abbreviation of abbreviations) {
+      const abbreviationUrl =
+        'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+        tailoringModelVariantId +
+        '/Abkuerzung/' +
+        abbreviation.attributes.id;
+
+      const result: { key: string; abbreviation: string; expression: string } = await axios
+        .get(abbreviationUrl)
+        .then((valueResponse) => {
+          const valueJsonDataFromXml = new XMLParser().parseFromString(valueResponse.data);
+          const valueDescription = decodeXml(valueJsonDataFromXml.getElementsByTagName('Begriff')[0]?.value);
+
+          return {
+            key: abbreviation.attributes.id,
+            abbreviation: abbreviation.attributes.name,
+            expression: valueDescription,
+          };
+        });
+      data.push(result);
+    }
+
+    const tableEntries: TableEntry[] = [];
+    //
+    // //////////////////////////////////////////////
+    //
+    const columns = [
+      {
+        title: 'Kürzel',
+        dataIndex: 'abbreviation',
+        key: 'abbreviation',
+        defaultSortOrder: 'ascend',
+        sorter: {
+          compare: (a, b) => sorter(a.abbreviation, b.abbreviation),
+        },
+        width: '150px',
+      },
+      {
+        title: 'Begriff',
+        dataIndex: 'expression',
+        key: 'expression',
+        render: (html: string) => <span dangerouslySetInnerHTML={{ __html: html }} />,
+      },
+    ];
+
+    return {
+      id: 'abbreviationsContent',
+      header: 'Abkürzungen', //jsonDataFromXml.attributes.name,
+      descriptionText: '',
+      tableEntries: tableEntries,
+      dataSource: data,
+      columns: columns,
+    };
+  }
+
+  async function getGlossaryContent(): Promise<PageEntry> {
+    const expressionsUrl =
+      'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      tailoringModelVariantId +
+      '/Begriff/';
+
+    const jsonDataFromXml: any = await getJsonDataFromXml(expressionsUrl);
+
+    const expressions: XMLElement[] = jsonDataFromXml.getElementsByTagName('Begriff');
+
+    const data = [];
+
+    for (const expression of expressions) {
+      const expressionUrl =
+        'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+        tailoringModelVariantId +
+        '/Begriff/' +
+        expression.attributes.id;
+
+      const result: { key: string; expression: string; explanation: string } = await axios
+        .get(expressionUrl)
+        .then((valueResponse) => {
+          const valueJsonDataFromXml = new XMLParser().parseFromString(valueResponse.data);
+          const valueDescription = decodeXml(valueJsonDataFromXml.getElementsByTagName('Erläuterung')[0]?.value);
+
+          return {
+            key: expression.attributes.id,
+            expression: expression.attributes.name,
+            explanation: valueDescription,
+          };
+        });
+      data.push(result);
+    }
+
+    const tableEntries: TableEntry[] = [];
+    //
+    // //////////////////////////////////////////////
+    //
+    const columns = [
+      {
+        title: 'Begriff',
+        dataIndex: 'expression',
+        key: 'expression',
+        defaultSortOrder: 'ascend',
+        sorter: {
+          compare: (a, b) => sorter(a.expression, b.expression),
+        },
+        width: '250px',
+      },
+      {
+        title: 'Erläuterung',
+        dataIndex: 'explanation',
+        key: 'explanation',
+        render: (html: string) => <span dangerouslySetInnerHTML={{ __html: html }} />,
+      },
+    ];
+
+    return {
+      id: 'glossaryContent',
+      header: 'Glossar', //jsonDataFromXml.attributes.name,
+      descriptionText: '',
+      tableEntries: tableEntries,
+      dataSource: data,
+      columns: columns,
+    };
+  }
+
+  async function getLiteratureContent(): Promise<PageEntry> {
+    const sourcesUrl =
+      'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      tailoringModelVariantId +
+      '/Quelle/';
+
+    const jsonDataFromXml: any = await getJsonDataFromXml(sourcesUrl);
+
+    const sources: XMLElement[] = jsonDataFromXml.getElementsByTagName('Quelle');
+
+    const data = [];
+
+    for (const source of sources) {
+      const sourceUrl =
+        'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+        tailoringModelVariantId +
+        '/Quelle/' +
+        source.attributes.id;
+
+      const result: { key: string; abbreviation: string; reference: string } = await axios
+        .get(sourceUrl)
+        .then((valueResponse) => {
+          const valueJsonDataFromXml = new XMLParser().parseFromString(valueResponse.data);
+          const valueDescription = decodeXml(valueJsonDataFromXml.getElementsByTagName('Quellenverweis')[0]?.value);
+
+          return {
+            key: source.attributes.id,
+            abbreviation: source.attributes.name,
+            reference: valueDescription,
+          };
+        });
+      data.push(result);
+    }
+
+    const tableEntries: TableEntry[] = [];
+    //
+    // //////////////////////////////////////////////
+    //
+    const columns = [
+      {
+        title: 'Kürzel',
+        dataIndex: 'abbreviation',
+        key: 'abbreviation',
+        defaultSortOrder: 'ascend',
+        sorter: {
+          compare: (a, b) => sorter(a.abbreviation, b.abbreviation),
+        },
+        width: '150px',
+      },
+      {
+        title: 'Quellenverweis',
+        dataIndex: 'reference',
+        key: 'reference',
+        render: (html: string) => <span dangerouslySetInnerHTML={{ __html: html }} />,
+      },
+    ];
+
+    return {
+      id: 'literatureContent',
+      header: 'Literaturverzeichnis', //jsonDataFromXml.attributes.name,
+      descriptionText: '',
+      tableEntries: tableEntries,
+      dataSource: data,
+      columns: columns,
+    };
+  }
+
   async function getProjectTypeContent(): Promise<PageEntry> {
     const projectTypeUrl =
       'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
@@ -2347,28 +2466,21 @@ export function Content() {
       '/Projekttyp/' +
       projectTypeId;
 
-    // const jsonDataFromXml: any = await getJsonDataFromXml(methodReferenceUrl);
-
     return axios.get(projectTypeUrl).then((response) => {
       console.log(response.data);
       const jsonDataFromXml = new XMLParser().parseFromString(response.data);
 
-      // const sinnUndZweck = decodeXml(jsonDataFromXml.getElementsByTagName('Sinn_und_Zweck')[0]?.value);
       const description = decodeXml(jsonDataFromXml.getElementsByTagName('Beschreibung')[0]?.value);
 
       const tableEntries: TableEntry[] = [];
 
       //////////////////////////////////////////////
 
-      // console.log('this.pageEntry roles', this.pageEntry);
-
       return {
         id: jsonDataFromXml.attributes.id,
-        // menuEntryId: jsonDataFromXml.attributes.id,
         header: jsonDataFromXml.attributes.name,
         descriptionText: description,
         tableEntries: tableEntries,
-        // subPageEntries: subPageEntries,
       };
     });
   }
@@ -2556,28 +2668,30 @@ export function Content() {
 
   return (
     <>
-      <Layout style={{ background: '#FFF' }}>
-        <Row>
-          <Col
-            style={{ display: 'flex', flexDirection: 'column' }}
-            xs={{ span: 24, order: 2 }}
-            lg={{ span: 16, order: 1 }}
-          >
-            <div style={{ padding: '24px', flex: '1 0 auto' }}>{<PageEntryContent />}</div>
-            {/*<FooterComponent />*/}
-          </Col>
-          <Col xs={{ span: 24, order: 1 }} lg={{ span: 8, order: 2 }}>
-            {selectedPageEntry && (
-              <div style={{ position: 'sticky', top: 0, overflow: 'auto' }}>
-                <h3 style={{ paddingLeft: '16px' }}>Seitenübersicht</h3>
-                <Anchor affix={false} onClick={(e) => e.nativeEvent.preventDefault()} items={getAnchorItems()} />
-              </div>
-            )}
-            {/*<AnchorList />*/}
-            <FloatButton.BackTop />
-          </Col>
-        </Row>
-      </Layout>
+      <Spin spinning={loading}>
+        <Layout style={{ background: '#FFF' }}>
+          <Row>
+            <Col
+              style={{ display: 'flex', flexDirection: 'column' }}
+              xs={{ span: 24, order: 2 }}
+              lg={{ span: 16, order: 1 }}
+            >
+              <div style={{ padding: '24px', flex: '1 0 auto' }}>{<PageEntryContent />}</div>
+              {/*<FooterComponent />*/}
+            </Col>
+            <Col xs={{ span: 24, order: 1 }} lg={{ span: 8, order: 2 }}>
+              {selectedPageEntry && (
+                <div style={{ position: 'sticky', top: 0, overflow: 'auto' }}>
+                  <h3 style={{ paddingLeft: '16px' }}>Seitenübersicht</h3>
+                  <Anchor affix={false} onClick={(e) => e.nativeEvent.preventDefault()} items={getAnchorItems()} />
+                </div>
+              )}
+              {/*<AnchorList />*/}
+              <FloatButton.BackTop />
+            </Col>
+          </Row>
+        </Layout>
+      </Spin>
     </>
   );
 }

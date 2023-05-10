@@ -60,9 +60,10 @@ export const SiteHeader = (props: any) => {
 
   const { error, image } = useImage(modelVariantId + '/ALLG-Logo-Farbe.gif');
 
-  if (error) {
-    console.log('error on fetching image', error);
-  }
+  // TODO
+  // if (error) {
+  //   console.log('error on fetching image', error);
+  // }
 
   // const logoPath = '../../assets/' + modelVariantId + '/ALLG-Logo-Farbe.gif';
 

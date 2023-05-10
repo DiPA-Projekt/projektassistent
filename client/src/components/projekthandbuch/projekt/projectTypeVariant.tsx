@@ -24,8 +24,7 @@ export function ProjectTypeVariant() {
     projectTypeVariantId,
     setProjectTypeVariantId,
     setProjectTypeId,
-    setProjectFeaturesDataFromProjectTypeVariant,
-    setProjectFeaturesDataFromProjectType,
+    setProjectFeaturesData,
     setSearchParams,
   } = useTailoring();
 
@@ -41,7 +40,7 @@ export function ProjectTypeVariant() {
 
   useEffect(() => {
     async function getProjectTypeVariantData() {
-      console.log('getProjectTypeVariantData', modelVariantId);
+      // console.log('getProjectTypeVariantData', modelVariantId);
 
       const projectTypeVariants = await fetchProjectTypeVariantData();
 
@@ -49,6 +48,8 @@ export function ProjectTypeVariant() {
       if (projectTypeVariantId) {
         const cascaderDefaultArray = getCascaderDefaultArray(projectTypeVariants);
         setCascaderDefaultValue(cascaderDefaultArray);
+      } else {
+        setCascaderDefaultValue([]);
       }
     }
 
@@ -57,15 +58,32 @@ export function ProjectTypeVariant() {
   }, [modelVariantId]);
 
   useEffect(() => {
-    if (projectTypeVariantId) {
-      async function getProjectTypeData() {
-        void fetchProjectTypeData();
-      }
+    async function getProjectTypeVariantData() {
+      if (projectTypeVariantId) {
+        // TODO: check if still necessary in getProjectTypeVariantData
+        const cascaderDefaultArray = getCascaderDefaultArray(projectTypeVariantsData);
+        setCascaderDefaultValue(cascaderDefaultArray);
 
-      getProjectTypeData().then();
+        await getProjectTypeData();
+      }
     }
+
+    getProjectTypeVariantData().then();
     //eslint-disable-next-line
   }, [projectTypeVariantId]);
+
+  async function getProjectTypeData() {
+    const projectFeaturesFromProjectTypeVariant = await fetchProjectTypeData();
+
+    const projectTypeId = await getProjectTypeId();
+
+    const projectFeaturesFromProjectType = await fetchProjectFeaturesDataFromProjectType(projectTypeId);
+
+    setProjectFeaturesData({
+      fromProjectType: projectFeaturesFromProjectType,
+      fromProjectTypeVariant: projectFeaturesFromProjectTypeVariant,
+    });
+  }
 
   function getCascaderEntry(projectTypeVariant: ProjectTypeVariant): { key: string; value: string } {
     // TODO: nicht bei ' ' trennen -> z.B. Internes Projekt
@@ -76,7 +94,7 @@ export function ProjectTypeVariant() {
 
   // TODO: Parameter vorher als projectTypeVariantsData... müsste dafür als ref deklariert werden
   function getCascaderDefaultArray(projectTypeVariants: ProjectTypeVariant[]): string[] {
-    console.log('getCascaderDefaultArray', projectTypeVariantId);
+    // console.log('getCascaderDefaultArray', projectTypeVariantId);
     if (projectTypeVariantId !== undefined) {
       const foundVariant = projectTypeVariants.find(
         (projectTypeVariant) => projectTypeVariant.id === projectTypeVariantId!
@@ -109,7 +127,7 @@ export function ProjectTypeVariant() {
     projectTypeVariants.forEach((projectTypeVariant) => {
       const cascaderEntry = getCascaderEntry(projectTypeVariant);
 
-      console.log('key, value', cascaderEntry.key, cascaderEntry.value);
+      // console.log('key, value', cascaderEntry.key, cascaderEntry.value);
 
       let optionIndex = projectTypeVariantsCascaderOptions.findIndex((x) => x.value === cascaderEntry.key);
 
@@ -130,7 +148,7 @@ export function ProjectTypeVariant() {
       // projectTypeVariantsCascaderOptions.push(option);
     });
 
-    console.log('projectTypeVariantsCascaderOptions', projectTypeVariantsCascaderOptions);
+    // console.log('projectTypeVariantsCascaderOptions', projectTypeVariantsCascaderOptions);
 
     setCascaderOptions(projectTypeVariantsCascaderOptions);
 
@@ -142,9 +160,7 @@ export function ProjectTypeVariant() {
     // }
   }
 
-  async function fetchProjectTypeData(): Promise<void> {
-    // setProjectTypeVariantId(projectTypeVariantId);
-
+  async function getProjectTypeId(): Promise<string> {
     const projectTypeVariantUrl =
       'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
       modelVariantId +
@@ -157,7 +173,27 @@ export function ProjectTypeVariant() {
     const projectType: ProjectType = jsonDataFromXml.getElementsByTagName('ProjekttypRef')[0]
       ?.attributes as ProjectType;
 
-    console.log('test');
+    setProjectTypeId(projectType.id); // TODO
+
+    return projectType.id;
+  }
+
+  async function fetchProjectTypeData(): Promise<ProjectFeature[]> {
+    // setProjectTypeVariantId(projectTypeVariantId);
+
+    const projectTypeVariantUrl =
+      'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      modelVariantId +
+      '/Projekttypvariante/' +
+      projectTypeVariantId;
+
+    // get projectTypeId, projectFeaturesDataFromProjectType and projectFeaturesDataFromProjectTypeVariant
+    const jsonDataFromXml: any = await getJsonDataFromXml(projectTypeVariantUrl);
+
+    // const projectType: ProjectType = jsonDataFromXml.getElementsByTagName('ProjekttypRef')[0]
+    //   ?.attributes as ProjectType;
+
+    // console.log('test');
 
     // setSearchParams({ mV: modelVariantId!, ptV: projectTypeVariantId!, pt: projectType.id });
     // setProjectTypeVariantId(projectTypeVariantId);
@@ -165,18 +201,13 @@ export function ProjectTypeVariant() {
 
     ////////////////////////////////////////////////////////////////
 
-    const projectFeaturesFromProjectTypeVariant: ProjectFeature[] = jsonDataFromXml
-      .getElementsByTagName('ProjektmerkmalRef')
-      .map((feature: any) => {
-        return feature.attributes as ProjectFeature;
-      });
-
-    setProjectFeaturesDataFromProjectTypeVariant(projectFeaturesFromProjectTypeVariant);
-    console.log('setProjectFeaturesDataFromProjectTypeVariant', projectFeaturesFromProjectTypeVariant);
+    return jsonDataFromXml.getElementsByTagName('ProjektmerkmalRef').map((feature: any) => {
+      return feature.attributes as ProjectFeature;
+    });
+    // await setProjectFeaturesDataFromProjectTypeVariant(projectFeaturesFromProjectTypeVariant);
+    // console.log('setProjectFeaturesDataFromProjectTypeVariant', projectFeaturesFromProjectTypeVariant);
 
     ////////////////////////////////////////////////////////////////
-
-    void fetchProjectFeaturesDataFromProjectType(projectType.id);
   }
 
   async function fetchProjectFeaturesDataFromProjectType(projectTypeId: string): Promise<void> {
@@ -188,15 +219,13 @@ export function ProjectTypeVariant() {
 
     const jsonDataFromXml: any = await getJsonDataFromXml(projectTypeUrl);
 
-    const projectFeaturesFromProjectType: ProjectFeature[] = jsonDataFromXml
-      .getElementsByTagName('ProjektmerkmalRef')
-      .map((feature: any) => {
-        return feature.attributes as ProjectFeature;
-      });
+    return jsonDataFromXml.getElementsByTagName('ProjektmerkmalRef').map((feature: any) => {
+      return feature.attributes as ProjectFeature;
+    });
 
-    setProjectTypeId(projectTypeId); // TODO: andere Stelle besser?
-    setProjectFeaturesDataFromProjectType(projectFeaturesFromProjectType);
-    console.log('setProjectFeaturesDataFromProjectType', projectFeaturesFromProjectType);
+    // setProjectTypeId(projectTypeId); // TODO: andere Stelle besser?
+    // setProjectFeaturesDataFromProjectType(projectFeaturesFromProjectType);
+    // console.log('setProjectFeaturesDataFromProjectType', projectFeaturesFromProjectType);
   }
 
   return (
@@ -208,7 +237,7 @@ export function ProjectTypeVariant() {
             <Cascader
               options={cascaderOptions}
               onChange={(value: any /*CascaderValueType*/) => {
-                console.log('changed projectTypeVarinatId manually');
+                console.log('changed projectTypeVarinatId manually', value);
                 setProjectTypeVariantId(value[1]);
                 setSearchParams({ mV: modelVariantId, ptV: value[1] });
                 // setSearchParams({ mV: modelVariantId!, ptV: value[1] });

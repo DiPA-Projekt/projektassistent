@@ -39,6 +39,8 @@ export class SelectComponent extends Component<FeatureProps, any> {
       </div>
     );
 
+    console.log('render Select', this.state);
+
     return (
       <Form.Item
         {...layout}
@@ -46,7 +48,7 @@ export class SelectComponent extends Component<FeatureProps, any> {
         label={labelWithPopover}
       >
         <Select
-          defaultValue={this.props.defaultValue || this.props.projectFeature.values?.selectedValue}
+          value={this.props.defaultValue}
           onChange={(value: SelectValue) => {
             this.setState({ value: this.getAnswer(value) });
             if (this.props.onChange) {

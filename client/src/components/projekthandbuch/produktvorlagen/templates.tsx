@@ -1,13 +1,12 @@
 import React, { useEffect } from 'react';
 
 import { Col, FloatButton, Form, Layout, Row } from 'antd';
-
-import { SelectAreaComponent } from './selectArea/component';
-import { useTemplate } from '../../../context/TemplateContext';
+// import { useTemplate } from '../../../context/TemplateContext';
 import { TemplateProps, TemplatesContent } from './TemplatesContent';
-import { getJsonDataFromXml } from '../../../shares/utils';
+import { decodeXml, getJsonDataFromXml } from '../../../shares/utils';
 import { NavTypeEnum } from '../documentation/navigation/navigation';
 import { useTailoring } from '../../../context/TailoringContext';
+import { SubmitArea } from './SubmitArea';
 
 export function Templates() {
   // public readonly ctrl: ProduktvorlagenController;
@@ -22,7 +21,7 @@ export function Templates() {
   // private samplesSubscription: Subscription = new Subscription();
   // private showAllSubscription: Subscription = new Subscription();
 
-  const { selectAll } = useTemplate();
+  // const { selectAll } = useTemplate();
 
   // public componentDidMount(): void {
   //   this.productTemplatesSubscription = this.ctrl.produktvorlagenService
@@ -145,23 +144,52 @@ export function Templates() {
 
     const jsonDataFromXml: any = await getJsonDataFromXml(topicUrl);
 
+    console.log('ist Produktvorlage', jsonDataFromXml.attributes.Produktvorlage === 'Ja');
+
     // TODO jsonDataFromXml.attributes.Produktvorlage === true
 
-    const topics = jsonDataFromXml.getElementsByTagName('ThemaRef').map((topicValue: any) => {
-      return {
-        key: topicValue.attributes.id,
-        // parent: disciplineEntry,
-        label: topicValue.attributes.name,
-        dataType: NavTypeEnum.TOPIC,
-        disabled: false,
-        checked: false,
-        checkable: true,
-        // onClick: (item: any) => handleSelectedItem(item.key), // TODO: different Types
-      };
-    });
+    const topics = await Promise.all(
+      jsonDataFromXml.getElementsByTagName('ThemaRef').map(async (topicValue: any) => {
+        const infoText = await getTopicContent(topicValue.attributes.id, disciplineId, productId);
+
+        return {
+          key: topicValue.attributes.id,
+          // parent: disciplineEntry,
+          label: topicValue.attributes.name,
+          infoText: decodeXml(infoText),
+          dataType: NavTypeEnum.TOPIC,
+          // disabled: false,
+          checked: false,
+          checkable: true,
+          // onClick: (item: any) => handleSelectedItem(item.key), // TODO: different Types
+        };
+      })
+    );
     console.log('topics', topics);
 
     return topics;
+  }
+
+  async function getTopicContent(topicId: string, disciplineId: string, productId: string): Promise<string> {
+    const topicUrl =
+      'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      modelVariantId +
+      '/Projekttyp/' +
+      projectTypeId +
+      '/Projekttypvariante/' +
+      projectTypeVariantId +
+      '/Disziplin/' +
+      disciplineId +
+      '/Produkt/' +
+      productId +
+      '/Thema/' +
+      topicId +
+      '?' +
+      getProjectFeaturesQueryString();
+
+    const jsonDataFromXml: any = await getJsonDataFromXml(topicUrl);
+
+    return jsonDataFromXml.getElementsByTagName('Beschreibung')[0]?.value;
   }
 
   function handleSubmit(/*event: any*/) {
@@ -183,7 +211,7 @@ export function Templates() {
             </div>
           </Col>
           <Col xs={{ span: 24, order: 1 }} lg={{ span: 8, order: 2 }}>
-            <SelectAreaComponent />
+            <SubmitArea />
             <FloatButton.BackTop />
           </Col>
         </Row>

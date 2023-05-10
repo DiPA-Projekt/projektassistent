@@ -7,14 +7,11 @@ import { useTailoring } from '../context/TailoringContext';
 interface ListEntry {
   avatar?: string;
   title: string;
-  description: string;
+  description: string | JSX.Element | JSX.Element[];
 }
 
 export function Home() {
   const { modelVariantId } = useTailoring();
-  // const [modelVariantId] = useState<ListEntry[] | undefined>(
-  //   !localStorage.getItem('modelVariantId') ? undefined : JSON.parse(localStorage.getItem('modelVariantId') ?? '')
-  // );
 
   useEffect(() => {
     if (modelVariantId) {
@@ -35,7 +32,7 @@ export function Home() {
 
     const jsonDataFromXml: any = await getJsonDataFromXml(projectModelVariantUrl);
 
-    const listEntries = [];
+    const listEntries: ListEntry[] = [];
 
     const version = parse(decodeXml(jsonDataFromXml.getElementsByTagName('Version')[0]?.value));
     const copyright = parse(decodeXml(jsonDataFromXml.getElementsByTagName('Copyright_lang')[0]?.value));

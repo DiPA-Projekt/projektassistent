@@ -3,13 +3,19 @@ import axios from 'axios';
 import XMLParser, { XMLElement } from 'react-xml-parser';
 import { NavMenuItem } from '../components/projekthandbuch/documentation/navigation/navigation';
 
+const { convert } = require('html-to-text');
+
 export function typeIt<T>(json: Object): T {
   const typed = JSON.parse(JSON.stringify(json)) as { default: T };
   return typed.default;
 }
 
+/***
+ * convert html string into plain text without html tags but with line breaks etc.
+ * @param html html string to convert
+ */
 export function removeHtmlTags(html: string): string {
-  return html.replace(/(<([^>]+)>)/gi, '');
+  return convert(html);
 }
 
 export function decodeXml(xml: string): string {
