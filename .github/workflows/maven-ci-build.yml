@@ -62,7 +62,7 @@ jobs:
         if: github.ref == 'refs/heads/develop'
         run: |
           mkdir -p ~/.m2
-          cp .mvn/security-settings.xml ~/.m2
+          cp .mvn/settings-security.xml ~/.m2
           mkdir -p ~/.ssh
           echo -e "${{ secrets.DEPLOYMENT_SSH_KEY }}" > ~/.ssh/id_rsa
           echo -e "${{ secrets.DEPLOYMENT_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
