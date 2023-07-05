@@ -75,6 +75,7 @@
     "@unocss/preset-mini": "0.48.3",
     "@unocss/vite": "0.48.3",
     "@unocss/webpack": "0.48.3",
+    "ajv": "^6.12.6",
     "chromedriver": "97.0.4",
     "copy-webpack-plugin": "8.1.1",
     "cssnano": "5.0.6",
