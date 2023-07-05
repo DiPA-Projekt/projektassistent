@@ -51,7 +51,7 @@ jobs:
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
       - name: Build & Analyze with Maven
-        run: mvn -s .mvn/settings.xml -P develop-ci -Ddockerfile.build.skip=true -B clean install org.sonarsource.scanner.maven:sonar-maven-plugin:sonar --file pom.xml
+        run: mvn -s .mvn/settings.xml -P develop-ci -Ddocker.skip.build=true -B clean install org.sonarsource.scanner.maven:sonar-maven-plugin:sonar --file pom.xml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -61,11 +61,13 @@ jobs:
       - name: Deployment to Kubernetes
         if: github.ref == 'refs/heads/develop'
         run: |
+          mkdir -p ~/.m2
+          cp .mvn/settings-security.xml ~/.m2
           mkdir -p ~/.ssh
           echo -e "${{ secrets.DEPLOYMENT_SSH_KEY }}" > ~/.ssh/id_rsa
           echo -e "${{ secrets.DEPLOYMENT_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
           chmod 600 ~/.ssh/id_rsa
-          mvn -s .mvn/settings.xml -P develop-ci -B -DskipTests install dockerfile:push --file pom.xml
+          mvn -s .mvn/settings.xml -P develop-ci -B -DskipTests install docker:push --file pom.xml
           scp server/target/deployment/*.yaml dipa-deployment@dipa.rz-housing.tu-clausthal.de:pa-deployment/develop
           ssh dipa-deployment@dipa.rz-housing.tu-clausthal.de kubectl apply -k pa-deployment/develop
         env:
