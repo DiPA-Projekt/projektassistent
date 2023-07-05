@@ -5,8 +5,9 @@ import { ModelVariant } from '@dipa-projekt/projektassistent-openapi';
 
 import axios from 'axios';
 import XMLParser from 'react-xml-parser';
-import { ProjectTypeVariant } from './projectTypeVariant';
+import { ProjectTypeVariantComponent } from './projectTypeVariant';
 import { useTailoring } from '../../../context/TailoringContext';
+import { useTranslation } from 'react-i18next';
 
 const { Option } = Select;
 
@@ -15,8 +16,10 @@ const layout = {
   wrapperCol: { span: 8 },
 };
 
-export function ModelVariant() {
-  const { modelVariantId, setModelVariantId } = useTailoring();
+export function ModelVariantComponent() {
+  const { t } = useTranslation();
+
+  const { tailoringParameter, setTailoringParameter } = useTailoring();
 
   const [modelVariantsData, setModelVariantsData] = useState<ModelVariant[]>([]);
 
@@ -51,11 +54,12 @@ export function ModelVariant() {
     <>
       <Form.Item {...layout}>
         <Select
-          placeholder="Bitte wählen"
+          placeholder={t('common.PleaseChoose')}
           onChange={(value: string) => {
-            setModelVariantId(value);
+            console.log('ATTENTION changing modelVariant', value);
+            setTailoringParameter({ modelVariantId: value });
           }}
-          value={modelVariantId}
+          value={tailoringParameter.modelVariantId}
         >
           {modelVariantsData.map((modelVariant: ModelVariant, index: number) => {
             return (
@@ -66,7 +70,7 @@ export function ModelVariant() {
           })}
         </Select>
       </Form.Item>
-      {modelVariantId && <ProjectTypeVariant />}
+      {tailoringParameter.modelVariantId && <ProjectTypeVariantComponent />}
     </>
   );
 }

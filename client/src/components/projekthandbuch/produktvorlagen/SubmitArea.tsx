@@ -127,7 +127,6 @@ export function SubmitArea() {
         document.body.appendChild(link);
         link.click();
         link.remove();
-
       })
       .catch(() => 'obligatory catch');
   };

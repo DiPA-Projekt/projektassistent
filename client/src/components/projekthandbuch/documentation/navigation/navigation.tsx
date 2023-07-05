@@ -138,13 +138,7 @@ export function Navigation() {
   //   }
   // });
 
-  const {
-    modelVariantId,
-    projectTypeVariantId,
-    projectTypeId,
-    getProjectFeaturesQueryString,
-    // projectFeatures,
-  } = useTailoring();
+  const { tailoringParameter, getProjectFeaturesQueryString } = useTailoring();
 
   // const [collapsed, setCollapsed] = useState<boolean>(false);
 
@@ -152,14 +146,16 @@ export function Navigation() {
 
   useEffect(() => {
     async function mount() {
-      setLoading(true);
-      await fetchData();
-      setLoading(false);
+      if (tailoringParameter.modelVariantId !== null) {
+        setLoading(true);
+        await fetchData();
+        setLoading(false);
+      }
     }
 
     mount().then();
     //eslint-disable-next-line
-  }, [modelVariantId]);
+  }, [tailoringParameter.modelVariantId]);
 
   // https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/c62d12f444739b2/Kapitel
 
@@ -248,7 +244,7 @@ export function Navigation() {
 
     const sectionDetailUrl =
       'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      modelVariantId +
+      tailoringParameter.modelVariantId +
       '/Kapitel/' +
       sectionId;
 
@@ -417,7 +413,9 @@ export function Navigation() {
 
   async function fetchData(): Promise<void> {
     const sectionUrl =
-      'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' + modelVariantId + '/Kapitel/';
+      'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      tailoringParameter.modelVariantId +
+      '/Kapitel/';
 
     const jsonDataFromXml: any = await getJsonDataFromXml(sectionUrl);
 
@@ -443,11 +441,11 @@ export function Navigation() {
     console.log('getReferenceProducts', target);
     const referenceProductsUrl =
       'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      modelVariantId +
+      tailoringParameter.modelVariantId +
       '/Projekttyp/' +
-      projectTypeId +
+      tailoringParameter.projectTypeId +
       '/Projekttypvariante/' +
-      projectTypeVariantId +
+      tailoringParameter.projectTypeVariantId +
       '/Disziplin?' +
       getProjectFeaturesQueryString();
 
@@ -490,11 +488,11 @@ export function Navigation() {
   async function getReferenceRoles(target: any): Promise<NavMenuItem[]> {
     const referenceRolesUrl =
       'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      modelVariantId +
+      tailoringParameter.modelVariantId +
       '/Projekttyp/' +
-      projectTypeId +
+      tailoringParameter.projectTypeId +
       '/Projekttypvariante/' +
-      projectTypeVariantId +
+      tailoringParameter.projectTypeVariantId +
       '/Rollenkategorie?' +
       getProjectFeaturesQueryString();
 
@@ -558,11 +556,11 @@ export function Navigation() {
   async function getDecisionPoints(target: any): Promise<NavMenuItem[]> {
     const decisionPointsUrl =
       'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      modelVariantId +
+      tailoringParameter.modelVariantId +
       '/Projekttyp/' +
-      projectTypeId +
+      tailoringParameter.projectTypeId +
       '/Projekttypvariante/' +
-      projectTypeVariantId +
+      tailoringParameter.projectTypeVariantId +
       '/Entscheidungspunkt?' +
       getProjectFeaturesQueryString();
 
@@ -586,11 +584,11 @@ export function Navigation() {
   async function getProcessModules(target: any): Promise<NavMenuItem[]> {
     const processModulesUrl =
       'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      modelVariantId +
+      tailoringParameter.modelVariantId +
       '/Projekttyp/' +
-      projectTypeId +
+      tailoringParameter.projectTypeId +
       '/Projekttypvariante/' +
-      projectTypeVariantId +
+      tailoringParameter.projectTypeVariantId +
       '/Ablaufbaustein?' +
       getProjectFeaturesQueryString();
 
@@ -612,11 +610,11 @@ export function Navigation() {
   async function getTailoringProcessBuildingBlocks(target: any): Promise<NavMenuItem[]> {
     const tailoringProcessBuildingBlocksUrl =
       'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      modelVariantId +
+      tailoringParameter.modelVariantId +
       '/Projekttyp/' +
-      projectTypeId +
+      tailoringParameter.projectTypeId +
       '/Projekttypvariante/' +
-      projectTypeVariantId +
+      tailoringParameter.projectTypeVariantId +
       '/Vorgehensbaustein?' +
       getProjectFeaturesQueryString();
 
@@ -636,11 +634,11 @@ export function Navigation() {
   async function getWorkAidsActivities(target: any): Promise<NavMenuItem[]> {
     const workAidsActivitiesUrl =
       'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      modelVariantId +
+      tailoringParameter.modelVariantId +
       '/Projekttyp/' +
-      projectTypeId +
+      tailoringParameter.projectTypeId +
       '/Projekttypvariante/' +
-      projectTypeVariantId +
+      tailoringParameter.projectTypeVariantId +
       '/Aktivitaet?' +
       getProjectFeaturesQueryString();
 
@@ -690,7 +688,7 @@ export function Navigation() {
   async function getWorkAidsMethodReferences(target: any): Promise<NavMenuItem[]> {
     const workAidsMethodReferencesUrl =
       'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      modelVariantId +
+      tailoringParameter.modelVariantId +
       '/Methodenreferenz';
 
     const jsonDataFromXml: any = await getJsonDataFromXml(workAidsMethodReferencesUrl);
@@ -709,7 +707,7 @@ export function Navigation() {
   async function getWorkAidsToolReferences(target: any): Promise<NavMenuItem[]> {
     const workAidsToolReferencesUrl =
       'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      modelVariantId +
+      tailoringParameter.modelVariantId +
       '/Werkzeugreferenz';
 
     const jsonDataFromXml: any = await getJsonDataFromXml(workAidsToolReferencesUrl);
@@ -728,11 +726,11 @@ export function Navigation() {
   async function getTemplates(target: any): Promise<NavMenuItem[]> {
     const templatesUrl =
       'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      modelVariantId +
+      tailoringParameter.modelVariantId +
       '/Projekttyp/' +
-      projectTypeId +
+      tailoringParameter.projectTypeId +
       '/Projekttypvariante/' +
-      projectTypeVariantId +
+      tailoringParameter.projectTypeVariantId +
       '/ExterneKopiervorlage?' +
       getProjectFeaturesQueryString();
 
@@ -765,7 +763,9 @@ export function Navigation() {
 
   async function getProjectCharacteristics(target: any): Promise<NavMenuItem[]> {
     const projectCharacteristicsUrl =
-      'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' + modelVariantId + '/Projektmerkmal';
+      'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      tailoringParameter.modelVariantId +
+      '/Projektmerkmal';
 
     const jsonDataFromXml: any = await getJsonDataFromXml(projectCharacteristicsUrl);
 
@@ -783,7 +783,7 @@ export function Navigation() {
   async function getProductTypesAndProductTypeVariants(target: any): Promise<NavMenuItem[]> {
     const projectTypeVariantsUrl =
       'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      modelVariantId +
+      tailoringParameter.modelVariantId +
       '/Projekttypvariante';
 
     const jsonDataFromXmlProjectTypeVariants: any = await getJsonDataFromXml(projectTypeVariantsUrl);
@@ -824,7 +824,7 @@ export function Navigation() {
   async function getProjectExecutionStrategies(target: any): Promise<NavMenuItem[]> {
     const projectTypeVariantsUrl =
       'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      modelVariantId +
+      tailoringParameter.modelVariantId +
       '/Projekttypvariante';
 
     const jsonDataFromXmlProjectTypeVariants: any = await getJsonDataFromXml(projectTypeVariantsUrl);

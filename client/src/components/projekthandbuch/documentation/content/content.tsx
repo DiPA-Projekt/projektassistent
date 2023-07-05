@@ -77,12 +77,7 @@ export function Content() {
 
   const [loading, setLoading] = useState(false);
 
-  const {
-    modelVariantId: tailoringModelVariantId,
-    projectTypeVariantId: tailoringProjectTypeVariantId,
-    projectTypeId: tailoringProjectTypeId,
-    getProjectFeaturesQueryString: getProjectFeaturesString,
-  } = useTailoring();
+  const { tailoringParameter, getProjectFeaturesQueryString: getProjectFeaturesString } = useTailoring();
 
   const { t } = useTranslation();
 
@@ -518,11 +513,11 @@ export function Content() {
   async function getTopicContent(topicId: string): Promise<PageEntry> {
     const topicUrl =
       'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      tailoringModelVariantId +
+      tailoringParameter.modelVariantId +
       '/Projekttyp/' +
-      tailoringProjectTypeId +
+      tailoringParameter.projectTypeId +
       '/Projekttypvariante/' +
-      tailoringProjectTypeVariantId +
+      tailoringParameter.projectTypeVariantId +
       '/Disziplin/' +
       disciplineId +
       '/Produkt/' +
@@ -604,11 +599,11 @@ export function Content() {
   async function getGeneratingDependenciesData(): Promise<XMLElement[]> {
     const generatingDependenciesUrl =
       'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      tailoringModelVariantId +
+      tailoringParameter.modelVariantId +
       '/Projekttyp/' +
-      tailoringProjectTypeId +
+      tailoringParameter.projectTypeId +
       '/Projekttypvariante/' +
-      tailoringProjectTypeVariantId +
+      tailoringParameter.projectTypeVariantId +
       '/ErzeugendeAbhaengigkeit?' +
       getProjectFeaturesString();
 
@@ -634,11 +629,11 @@ export function Content() {
 
       const responsibleRolesForProductsUrl =
         'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-        tailoringModelVariantId +
+        tailoringParameter.modelVariantId +
         '/Projekttyp/' +
-        tailoringProjectTypeId +
+        tailoringParameter.projectTypeId +
         '/Projekttypvariante/' +
-        tailoringProjectTypeVariantId +
+        tailoringParameter.projectTypeVariantId +
         '/Disziplin/' +
         currentProduct.parent.key +
         '/Produkt/' +
@@ -714,11 +709,11 @@ export function Content() {
 
       const contributeRolesForProductsUrl =
         'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-        tailoringModelVariantId +
+        tailoringParameter.modelVariantId +
         '/Projekttyp/' +
-        tailoringProjectTypeId +
+        tailoringParameter.projectTypeId +
         '/Projekttypvariante/' +
-        tailoringProjectTypeVariantId +
+        tailoringParameter.projectTypeVariantId +
         '/Disziplin/' +
         currentProduct.parent.key +
         '/Produkt/' +
@@ -827,11 +822,11 @@ export function Content() {
     return text.replace(
       /src=['"](?:[^"'\/]*\/)*([^'"]+)['"]/g,
       'src="https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-        tailoringModelVariantId +
+        tailoringParameter.modelVariantId +
         '/Projekttyp/' +
-        tailoringProjectTypeId +
+        tailoringParameter.projectTypeId +
         '/Projekttypvariante/' +
-        tailoringProjectTypeVariantId +
+        tailoringParameter.projectTypeVariantId +
         '/Grafik/images/$1?' +
         getProjectFeaturesString() +
         '"'
@@ -849,7 +844,7 @@ export function Content() {
   async function fetchSectionDetailsData(sectionId: string): Promise<any> {
     const sectionDetailUrl =
       'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      tailoringModelVariantId +
+      tailoringParameter.modelVariantId +
       '/Kapitel/' +
       sectionId;
 
@@ -869,11 +864,11 @@ export function Content() {
   async function getDisciplineContent(): Promise<PageEntry> {
     const projectTypeUrl =
       'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      tailoringModelVariantId +
+      tailoringParameter.modelVariantId +
       '/Projekttyp/' +
-      tailoringProjectTypeId +
+      tailoringParameter.projectTypeId +
       '/Projekttypvariante/' +
-      tailoringProjectTypeVariantId +
+      tailoringParameter.projectTypeVariantId +
       '/Disziplin/' +
       disciplineId +
       '?' +
@@ -903,11 +898,11 @@ export function Content() {
   async function getProductContent(): Promise<PageEntry> {
     const productUrl =
       'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      tailoringModelVariantId +
+      tailoringParameter.modelVariantId +
       '/Projekttyp/' +
-      tailoringProjectTypeId +
+      tailoringParameter.projectTypeId +
       '/Projekttypvariante/' +
-      tailoringProjectTypeVariantId +
+      tailoringParameter.projectTypeVariantId +
       '/Disziplin/' +
       disciplineId +
       '/Produkt/' +
@@ -1075,11 +1070,11 @@ export function Content() {
         for (const discipline of filterDisciplineDataTypes) {
           const productsUrl =
             'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-            tailoringModelVariantId +
+            tailoringParameter.modelVariantId +
             '/Projekttyp/' +
-            tailoringProjectTypeId +
+            tailoringParameter.projectTypeId +
             '/Projekttypvariante/' +
-            tailoringProjectTypeVariantId +
+            tailoringParameter.projectTypeVariantId +
             '/Disziplin/' +
             discipline.key +
             '/Produkt?' +
@@ -1231,11 +1226,11 @@ export function Content() {
   async function getRoleContent(): Promise<PageEntry> {
     const url =
       'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      tailoringModelVariantId +
+      tailoringParameter.modelVariantId +
       '/Projekttyp/' +
-      tailoringProjectTypeId +
+      tailoringParameter.projectTypeId +
       '/Projekttypvariante/' +
-      tailoringProjectTypeVariantId +
+      tailoringParameter.projectTypeVariantId +
       '/Rolle/' +
       roleId +
       '?' +
@@ -1355,11 +1350,11 @@ export function Content() {
     for (const discipline of filterDisciplineDataTypes) {
       const productsUrl =
         'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-        tailoringModelVariantId +
+        tailoringParameter.modelVariantId +
         '/Projekttyp/' +
-        tailoringProjectTypeId +
+        tailoringParameter.projectTypeId +
         '/Projekttypvariante/' +
-        tailoringProjectTypeVariantId +
+        tailoringParameter.projectTypeVariantId +
         '/Disziplin/' +
         discipline.key +
         '/Produkt?' +
@@ -1496,9 +1491,9 @@ export function Content() {
     ];
 
     return {
-      id: 'productIndexContent', //jsonDataFromXml.attributes.id,
+      id: 'roleIndexContent', //jsonDataFromXml.attributes.id,
       // menuEntryId: jsonDataFromXml.attributes.id,
-      header: 'Produktindex', //jsonDataFromXml.attributes.name,
+      header: 'Rollentindex', //jsonDataFromXml.attributes.name,
       descriptionText: '',
       tableEntries: [],
       dataSource: data,
@@ -1649,7 +1644,7 @@ export function Content() {
     ];
 
     return {
-      id: 'processIndexContent', //jsonDataFromXml.attributes.id,
+      id: 'tailoringIndexContent', //jsonDataFromXml.attributes.id,
       // menuEntryId: jsonDataFromXml.attributes.id,
       header: 'Tailoringindex', //jsonDataFromXml.attributes.name,
       descriptionText: '',
@@ -1727,7 +1722,7 @@ export function Content() {
     ];
 
     return {
-      id: 'processIndexContent', //jsonDataFromXml.attributes.id,
+      id: 'workAidsIndexContent', //jsonDataFromXml.attributes.id,
       // menuEntryId: jsonDataFromXml.attributes.id,
       header: 'Arbeitshilfenindex', //jsonDataFromXml.attributes.name,
       descriptionText: '',
@@ -1741,11 +1736,11 @@ export function Content() {
   async function getDecisionPointContent(): Promise<PageEntry> {
     const tailoringProcessBuildingBlocksUrl =
       'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      tailoringModelVariantId +
+      tailoringParameter.modelVariantId +
       '/Projekttyp/' +
-      tailoringProjectTypeId +
+      tailoringParameter.projectTypeId +
       '/Projekttypvariante/' +
-      tailoringProjectTypeVariantId +
+      tailoringParameter.projectTypeVariantId +
       '/Entscheidungspunkt/' +
       decisionPointId +
       '?' +
@@ -1795,11 +1790,11 @@ export function Content() {
   async function getProcessModuleContent(): Promise<PageEntry> {
     const processModuleUrl =
       'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      tailoringModelVariantId +
+      tailoringParameter.modelVariantId +
       '/Projekttyp/' +
-      tailoringProjectTypeId +
+      tailoringParameter.projectTypeId +
       '/Projekttypvariante/' +
-      tailoringProjectTypeVariantId +
+      tailoringParameter.projectTypeVariantId +
       '/Ablaufbaustein/' +
       processModuleId +
       '?' +
@@ -1830,11 +1825,11 @@ export function Content() {
   async function getTailoringProcessBuildingBlocksContent(): Promise<PageEntry> {
     const tailoringProcessBuildingBlocksUrl =
       'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      tailoringModelVariantId +
+      tailoringParameter.modelVariantId +
       '/Projekttyp/' +
-      tailoringProjectTypeId +
+      tailoringParameter.projectTypeId +
       '/Projekttypvariante/' +
-      tailoringProjectTypeVariantId +
+      tailoringParameter.projectTypeVariantId +
       '/Vorgehensbaustein/' +
       processBuildingBlockId +
       '?' +
@@ -1850,11 +1845,11 @@ export function Content() {
 
     const overviewGraphicUrl =
       'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      tailoringModelVariantId +
+      tailoringParameter.modelVariantId +
       '/Projekttyp/' +
-      tailoringProjectTypeId +
+      tailoringParameter.projectTypeId +
       '/Projekttypvariante/' +
-      tailoringProjectTypeVariantId +
+      tailoringParameter.projectTypeVariantId +
       '/Grafik/images/VB_' +
       processBuildingBlockId +
       '.gif?' +
@@ -1894,11 +1889,11 @@ export function Content() {
   async function getActivitiesData(): Promise<XMLElement[]> {
     const activitiesUrl =
       'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      tailoringModelVariantId +
+      tailoringParameter.modelVariantId +
       '/Projekttyp/' +
-      tailoringProjectTypeId +
+      tailoringParameter.projectTypeId +
       '/Projekttypvariante/' +
-      tailoringProjectTypeVariantId +
+      tailoringParameter.projectTypeVariantId +
       '/Aktivitaet?' +
       getProjectFeaturesString();
 
@@ -1914,11 +1909,11 @@ export function Content() {
 
     const productsUrl =
       'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      tailoringModelVariantId +
+      tailoringParameter.modelVariantId +
       '/Projekttyp/' +
-      tailoringProjectTypeId +
+      tailoringParameter.projectTypeId +
       '/Projekttypvariante/' +
-      tailoringProjectTypeVariantId +
+      tailoringParameter.projectTypeVariantId +
       '/Disziplin/' +
       disciplineId +
       '/Produkt?' +
@@ -1939,11 +1934,11 @@ export function Content() {
 
         const externalTemplateUrl =
           'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-          tailoringModelVariantId +
+          tailoringParameter.modelVariantId +
           '/Projekttyp/' +
-          tailoringProjectTypeId +
+          tailoringParameter.projectTypeId +
           '/Projekttypvariante/' +
-          tailoringProjectTypeVariantId +
+          tailoringParameter.projectTypeVariantId +
           '/ExterneKopiervorlage/' +
           externalTemplateEntry.attributes.id +
           '?' +
@@ -2036,7 +2031,7 @@ export function Content() {
   async function getMethodReferenceContent(): Promise<PageEntry> {
     const methodReferenceUrl =
       'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      tailoringModelVariantId +
+      tailoringParameter.modelVariantId +
       '/Methodenreferenz/' +
       methodReferenceId;
 
@@ -2111,7 +2106,7 @@ export function Content() {
   async function getToolReferenceContent(): Promise<PageEntry> {
     const toolReferenceUrl =
       'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      tailoringModelVariantId +
+      tailoringParameter.modelVariantId +
       '/Werkzeugreferenz/' +
       toolReferenceId;
 
@@ -2186,7 +2181,7 @@ export function Content() {
   async function getProjectCharacteristicContent(): Promise<PageEntry> {
     const projectCharacteristicUrl =
       'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      tailoringModelVariantId +
+      tailoringParameter.modelVariantId +
       '/Projektmerkmal/' +
       projectCharacteristicId;
 
@@ -2205,7 +2200,7 @@ export function Content() {
     for (const value of values) {
       const valueUrl =
         'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-        tailoringModelVariantId +
+        tailoringParameter.modelVariantId +
         '/Projektmerkmal/' +
         projectCharacteristicId +
         '/Wert/' +
@@ -2261,7 +2256,7 @@ export function Content() {
   async function getAbbreviationsContent(): Promise<PageEntry> {
     const abbreviationsUrl =
       'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      tailoringModelVariantId +
+      tailoringParameter.modelVariantId +
       '/Abkuerzung/';
 
     const jsonDataFromXml: any = await getJsonDataFromXml(abbreviationsUrl);
@@ -2273,7 +2268,7 @@ export function Content() {
     for (const abbreviation of abbreviations) {
       const abbreviationUrl =
         'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-        tailoringModelVariantId +
+        tailoringParameter.modelVariantId +
         '/Abkuerzung/' +
         abbreviation.attributes.id;
 
@@ -2328,7 +2323,7 @@ export function Content() {
   async function getGlossaryContent(): Promise<PageEntry> {
     const expressionsUrl =
       'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      tailoringModelVariantId +
+      tailoringParameter.modelVariantId +
       '/Begriff/';
 
     const jsonDataFromXml: any = await getJsonDataFromXml(expressionsUrl);
@@ -2340,7 +2335,7 @@ export function Content() {
     for (const expression of expressions) {
       const expressionUrl =
         'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-        tailoringModelVariantId +
+        tailoringParameter.modelVariantId +
         '/Begriff/' +
         expression.attributes.id;
 
@@ -2395,7 +2390,7 @@ export function Content() {
   async function getLiteratureContent(): Promise<PageEntry> {
     const sourcesUrl =
       'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      tailoringModelVariantId +
+      tailoringParameter.modelVariantId +
       '/Quelle/';
 
     const jsonDataFromXml: any = await getJsonDataFromXml(sourcesUrl);
@@ -2407,7 +2402,7 @@ export function Content() {
     for (const source of sources) {
       const sourceUrl =
         'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-        tailoringModelVariantId +
+        tailoringParameter.modelVariantId +
         '/Quelle/' +
         source.attributes.id;
 
@@ -2462,7 +2457,7 @@ export function Content() {
   async function getProjectTypeContent(): Promise<PageEntry> {
     const projectTypeUrl =
       'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      tailoringModelVariantId +
+      tailoringParameter.modelVariantId +
       '/Projekttyp/' +
       projectTypeId;
 
@@ -2488,7 +2483,7 @@ export function Content() {
   async function getProjectTypeVariantContent(): Promise<PageEntry> {
     const projectTypeVariantUrl =
       'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      tailoringModelVariantId +
+      tailoringParameter.modelVariantId +
       '/Projekttypvariante/' +
       projectTypeVariantId;
 
@@ -2523,7 +2518,7 @@ export function Content() {
 
     const projectTypeVariantUrl =
       'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      tailoringModelVariantId +
+      tailoringParameter.modelVariantId +
       '/Projekttypvariante/' +
       projectTypeVariantId;
 
@@ -2575,11 +2570,11 @@ export function Content() {
   async function getActivityContent(): Promise<PageEntry> {
     const workAidsActivityUrl =
       'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      tailoringModelVariantId +
+      tailoringParameter.modelVariantId +
       '/Projekttyp/' +
-      tailoringProjectTypeId +
+      tailoringParameter.projectTypeId +
       '/Projekttypvariante/' +
-      tailoringProjectTypeVariantId +
+      tailoringParameter.projectTypeVariantId +
       '/Aktivitaet/' +
       activityId +
       '?' +

@@ -2,7 +2,7 @@ import React from 'react';
 // import {useSearchParams} from "react-router-dom";
 import { Form } from 'antd';
 import { ProjektkennzahlenComponent } from './projektkennzahlen/component';
-import { ModelVariant } from './modelVariant';
+import { ModelVariantComponent } from './modelVariant';
 
 export function Project() {
   return (
@@ -14,8 +14,7 @@ export function Project() {
       initialValues={{}}
     >
       <h2>Wähle die Modellvariante</h2>
-      {/*<Divider orientation="left">Wähle die Modellvariante</Divider>*/}
-      <ModelVariant />
+      <ModelVariantComponent />
       <ProjektkennzahlenComponent />
     </Form>
   );

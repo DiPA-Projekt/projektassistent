@@ -4,27 +4,36 @@ import { BookOutlined, FileTextOutlined, HomeOutlined, ScissorOutlined } from '@
 import { Link } from 'react-router-dom';
 import { useTailoring } from '../../context/TailoringContext';
 import useImage from '../../hooks/useImage';
+import { LinkWithQuery } from '../LinkWithQuery';
 
 const { Header } = Layout;
 
 const items: MenuProps['items'] = [
   {
-    label: <a href="#/">Home</a>,
+    label: (
+      <LinkWithQuery to="/">Home</LinkWithQuery>
+      // <LinkWithQuery href="#/" children={undefined} to={undefined}>
+      //   Home
+      // </LinkWithQuery>
+    ),
     key: 'home',
     icon: <HomeOutlined />,
   },
   {
-    label: <a href="#/tailoring">Tailoring</a>,
+    label: <LinkWithQuery to="/tailoring">Tailoring</LinkWithQuery>,
+    // <a href="#/tailoring">Tailoring</a>,
     key: 'tailoring',
     icon: <ScissorOutlined />,
   },
   {
-    label: <a href="#/documentation">Dokumentation</a>,
+    label: <LinkWithQuery to="/documentation">Dokumentation</LinkWithQuery>,
+    // label: <a href="#/documentation">Dokumentation</a>,
     key: 'dokumentation',
     icon: <FileTextOutlined />,
   },
   {
-    label: <a href="#/productTemplates">Produktvorlagen</a>,
+    label: <LinkWithQuery to="/productTemplates">Produktvorlagen</LinkWithQuery>,
+    // label: <a href="#/productTemplates">Produktvorlagen</a>,
     key: 'productTemplates',
     icon: <BookOutlined />,
   },

@@ -1,6 +1,7 @@
 {
   "common": {
     "No": "Nein",
+    "PleaseChoose": "Bitte wählen",
     "Yes": "Ja"
   },
   "dataType": {
