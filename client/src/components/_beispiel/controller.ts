@@ -1,8 +1,8 @@
 import { Subscription } from 'rxjs';
 
 import { StatusApi } from '@dipa-projekt/projektassistent-openapi';
-import { AbstractController } from '@leanup/lib/components/generic';
-import { DI } from '@leanup/lib/helpers/injector';
+import { AbstractController } from '@leanup/lib';
+import { DI } from '@leanup/lib';
 
 import TREE from './tree.data.json';
 

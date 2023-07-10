@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import { DI, Injector } from '@leanup/lib/helpers/injector';
+import { DI, Injector } from '@leanup/lib';
 
 xdescribe(`Test: Injector-Service (DI)`, () => {
   const myDI: Injector = new Injector();

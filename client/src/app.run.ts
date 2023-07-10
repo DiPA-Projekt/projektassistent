@@ -1,4 +1,4 @@
-import { DI } from '@leanup/lib/helpers/injector';
+import { DI } from '@leanup/lib';
 
 import * as APPLICATION_JSON from '../package.json';
 import { typeIt } from './shares/utils';

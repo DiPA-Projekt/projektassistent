@@ -1,0 +1,37 @@
+{
+  "common": {
+    "No": "Nein",
+    "PleaseChoose": "Bitte wählen",
+    "Yes": "Ja"
+  },
+  "dataType": {
+    "activity": "Aktivität",
+    "decisionPoint": "Entscheidungspunkt",
+    "externalTemplate": "Externe Kopiervorlage",
+    "methodReference": "Methodenreferenz",
+    "organisationRole": "Organisationsrolle",
+    "processBuildingBlock": "Vorgehensbaustein",
+    "processModule": "Ablaufbaustein",
+    "product": "Produkt",
+    "projectCharacteristic": "Projektmerkmal",
+    "projectRole": "Projektrolle",
+    "projectTeamRole": "Projektteamrolle",
+    "projectType": "Projekttyp",
+    "projectTypeVariant": "Projekttypvariante",
+    "projectTypeVariantSequence": "Projektdurchführungsstrategie",
+    "toolReference": "Werkzeugreferenz",
+    "topic": "Thema"
+  },
+  "format": {
+    "SimpleDate": "{{date, date}}"
+  },
+  "label": {
+    "bibliography": "Literaturverzeichnis",
+    "group": "Gruppe",
+    "product": "Produkt",
+    "products": "Produkte",
+    "sourceReference": "Quellenverweis"
+  },
+  "text": {
+  }
+}

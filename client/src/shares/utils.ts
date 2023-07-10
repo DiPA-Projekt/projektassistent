@@ -1,51 +1,67 @@
 import he from 'he';
-import { MenuEntry } from '@dipa-projekt/projektassistent-openapi';
+import axios from 'axios';
+import XMLParser, { XMLElement } from 'react-xml-parser';
+import { NavMenuItem } from '../components/projekthandbuch/documentation/navigation/navigation';
+
+const { convert } = require('html-to-text');
 
 export function typeIt<T>(json: Object): T {
   const typed = JSON.parse(JSON.stringify(json)) as { default: T };
   return typed.default;
 }
 
+/***
+ * convert html string into plain text without html tags but with line breaks etc.
+ * @param html html string to convert
+ */
 export function removeHtmlTags(html: string): string {
-  return html.replace(/(<([^>]+)>)/gi, '');
-}
-
-const umlautMap = {
-  '\u00dc': 'UE',
-  '\u00c4': 'AE',
-  '\u00d6': 'OE',
-  '\u00fc': 'ue',
-  '\u00e4': 'ae',
-  '\u00f6': 'oe',
-  '\u00df': 'ss',
-};
-
-export function replaceUmlaute(html: string): string {
-  // const pattern = /(\G(?!^)|<)([^<>]*?)([üöä])/;
-
-  return html
-    .replace(/[\u00dc|\u00c4|\u00d6][a-z]/g, (a) => {
-      const big = umlautMap[a.slice(0, 1)];
-      return big.charAt(0) + big.charAt(1).toLowerCase() + a.slice(1);
-    })
-    .replace(new RegExp('[' + Object.keys(umlautMap).join('|') + ']', 'g'), (a) => umlautMap[a]);
+  return convert(html);
 }
 
 export function decodeXml(xml: string): string {
   return xml ? he.decode(he.decode(xml)) : '';
 }
 
-export function findIdInMenuEntry(id: string, arr: MenuEntry[]): MenuEntry | null {
-  return arr.reduce<MenuEntry>((prev: MenuEntry, current: MenuEntry) => {
-    // console.log('find', prev, current);
-    if (prev) {
-      return prev;
+export function getMenuItemByAttributeValue(menuItems: NavMenuItem[], attribute: string, key: string) {
+  if (menuItems) {
+    for (const menuItem of menuItems) {
+      if (menuItem[attribute as keyof NavMenuItem] === key) {
+        return menuItem;
+      }
+      if (menuItem.children && menuItem.children.length > 0) {
+        const found: any = getMenuItemByAttributeValue(menuItem.children, attribute, key);
+        if (found) {
+          return found;
+        }
+      }
     }
-    if (current.id === id) {
-      return current;
+  }
+}
+
+export function flatten(data: any[]) {
+  return data.reduce((r, { children, ...rest }) => {
+    r.push(rest);
+    if (children) {
+      r.push(...flatten(children));
     }
-    if (current.subMenuEntries) {
-      return findIdInMenuEntry(id, current.subMenuEntries);
+    return r;
+  }, []);
+}
+
+export async function getJsonDataFromXml(url: string): Promise<XMLElement | void> {
+  return axios
+    .get(url)
+    .then((response: any) => {
+      return new XMLParser().parseFromString(response.data);
+    })
+    .catch((e) => console.log('obligatory catch', e));
+}
+
+export function clean(obj: any) {
+  for (const propName in obj) {
+    if (obj[propName] === null || obj[propName] === undefined) {
+      delete obj[propName];
     }
-  }, null);
+  }
+  return obj;
 }
