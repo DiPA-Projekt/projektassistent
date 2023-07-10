@@ -19,6 +19,7 @@ type DocumentationSession = {
   setNavigationData: Function;
   disciplineId: string | null;
   productId: string | null;
+  contentProductDependencyId: string | null;
   roleId: string | null;
   processModuleId: string | null;
   decisionPointId: string | null;
@@ -45,13 +46,6 @@ type DocumentationSessionProviderProps = { children: React.ReactNode };
 const DocumentationSessionContext = React.createContext<DocumentationSession | undefined>(undefined);
 
 const DocumentationSessionContextProvider = ({ children }: DocumentationSessionProviderProps) => {
-  // const [searchParams, setSearchParams] = useSearchParams();
-  // TODO: just temporary from search params
-  // const tailoringModelVariantId = searchParams.get('mV');
-  // const tailoringProjectTypeVariantId = searchParams.get('ptV');
-  // const tailoringProjectTypeId = searchParams.get('pt');
-  // const tailoringProjectFeatureIdsSearchParam: MyType = {};
-
   const [selectedPageEntry, setSelectedPageEntry] = React.useState<PageEntry>();
   const [selectedItemKey, setSelectedItemKey] = React.useState<string>();
   const [selectedIndexType, setSelectedIndexType] = React.useState<IndexTypeEnum>();
@@ -70,6 +64,7 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
 
   const [disciplineId, setDisciplineId] = useState<string | null>(null);
   const [productId, setProductId] = useState<string | null>(null);
+  const [contentProductDependencyId, setContentProductDependencyId] = useState<string | null>(null);
   const [roleId, setRoleId] = useState<string | null>(null);
   const [processModuleId, setProcessModuleId] = useState<string | null>(null);
   const [decisionPointId, setDecisionPointId] = useState<string | null>(null);
@@ -90,14 +85,13 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
     setSelectedItemKey,
     selectedIndexType,
     setSelectedIndexType,
-    // sectionsData,
-    // setSectionsData,
     collapsed,
     setCollapsed,
     navigationData,
     setNavigationData,
     disciplineId,
     productId,
+    contentProductDependencyId,
     roleId,
     processModuleId,
     decisionPointId,
@@ -118,14 +112,6 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
     openKeys,
     setOpenKeys,
   };
-
-  // const {
-  //   modelVariantId,
-  //   // projectFeaturesDetails,
-  //   // setProjectFeaturesDetails,
-  //   // projectFeaturesDataFromProjectType,
-  //   // projectFeaturesDataFromProjectTypeVariant,
-  // } = useTailoring();
 
   useEffect(() => {
     // async function mount() {
@@ -154,6 +140,7 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
   function resetSelectedMenuEntryId() {
     setDisciplineId(null);
     setProductId(null);
+    setContentProductDependencyId(null);
     setRoleId(null);
     setProcessModuleId(null);
     setDecisionPointId(null);
@@ -174,10 +161,6 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
 
     resetSelectedMenuEntryId();
 
-    // sectionsData.forEach((menu) => {
-    //   console.log('sectionsData', menu);
-    // });
-
     const gefunden = getMenuItemByAttributeValue(navigationData, 'key', menuEntryId);
     console.log('gefunden:', gefunden);
 
@@ -187,7 +170,8 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
         setProductId(gefunden.key);
       } else if (gefunden.dataType === NavTypeEnum.DISCIPLINE) {
         setDisciplineId(gefunden.key);
-        console.log('setDisciplineId');
+      } else if (gefunden.dataType === NavTypeEnum.CONTENT_PRODUCT_DEPENDENCY) {
+        setContentProductDependencyId(gefunden.key);
       } else if (
         [NavTypeEnum.PROJECT_ROLE, NavTypeEnum.PROJECT_TEAM_ROLE, NavTypeEnum.ORGANISATION_ROLE].includes(
           gefunden.dataType
@@ -196,37 +180,26 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
         setRoleId(gefunden.key);
       } else if (gefunden.dataType === NavTypeEnum.PROCESS_MODULE) {
         setProcessModuleId(gefunden.key);
-        console.log('setProcessModuleId');
       } else if (gefunden.dataType === NavTypeEnum.DECISION_POINT) {
         setDecisionPointId(gefunden.key);
-        console.log('setDecisionPointId');
       } else if (gefunden.dataType === NavTypeEnum.PROCESS_BUILDING_BLOCK) {
         setProcessBuildingBlockId(gefunden.key);
-        console.log('setProcessBuildingBlockId');
       } else if (gefunden.dataType === NavTypeEnum.METHOD_REFERENCE) {
         setMethodReferenceId(gefunden.key);
-        console.log('setMethodReferenceId');
       } else if (gefunden.dataType === NavTypeEnum.TOOL_REFERENCE) {
         setToolReferenceId(gefunden.key);
-        console.log('setToolReferenceId');
       } else if (gefunden.dataType === NavTypeEnum.PROJECT_CHARACTERISTIC) {
         setProjectCharacteristicId(gefunden.key);
-        console.log('setProjectCharacteristicId');
       } else if (gefunden.dataType === NavTypeEnum.PROJECT_TYPE) {
         setProjectTypeId(gefunden.key);
-        console.log('setProjectTypeId');
       } else if (gefunden.dataType === NavTypeEnum.PROJECT_TYPE_VARIANT) {
         setProjectTypeVariantId(gefunden.key);
-        console.log('setProjectTypeVariantId');
       } else if (gefunden.dataType === NavTypeEnum.PROJECT_TYPE_VARIANT_SEQUENCE) {
         setProjectTypeVariantSequenceId(gefunden.key);
-        console.log('setProjectTypeVariantSequenceId');
       } else if (gefunden.dataType === NavTypeEnum.ACTIVITY) {
         setActivityId(gefunden.key);
-        console.log('setActivityId');
       } else if (gefunden.dataType === NavTypeEnum.TEMPLATE_DISCIPLINE) {
         setTemplateDisciplineId(gefunden.key);
-        console.log('setTemplateDisciplineId');
       } else {
         setEntryId(gefunden.key);
       }

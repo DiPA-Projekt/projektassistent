@@ -123,13 +123,12 @@ export function ProjectTypeVariantComponent() {
     // }
   }
 
-  // TODO: finde richtigen Platz
-  async function getProjectTypeId(): Promise<string> {
+  async function getProjectTypeId(projectTypeVariantId: string): Promise<string> {
     const projectTypeVariantUrl =
       'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
       tailoringParameter.modelVariantId +
       '/Projekttypvariante/' +
-      tailoringParameter.projectTypeVariantId;
+      projectTypeVariantId;
 
     // get projectTypeId, projectFeaturesDataFromProjectType and projectFeaturesDataFromProjectTypeVariant
     const jsonDataFromXml: any = await getJsonDataFromXml(projectTypeVariantUrl);
@@ -155,7 +154,7 @@ export function ProjectTypeVariantComponent() {
                 setTailoringParameter({
                   modelVariantId: tailoringParameter.modelVariantId,
                   projectTypeVariantId: value[1],
-                  projectTypeId: await getProjectTypeId(),
+                  projectTypeId: await getProjectTypeId(value[1]),
                 });
               }}
               value={cascaderDefaultValue}

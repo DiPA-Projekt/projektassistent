@@ -92,6 +92,7 @@ export function Content() {
     setSelectedPageEntry,
     disciplineId,
     productId,
+    contentProductDependencyId,
     roleId,
     decisionPointId,
     processModuleId,
@@ -110,13 +111,9 @@ export function Content() {
 
   useEffect(() => {
     async function mount() {
-      // TODO: noch schauen wo das genau hinkommt
       if (productId && disciplineId) {
         const content = await getProductContent();
         setSelectedPageEntry(content);
-        console.log('setSelectedPageEntry', content);
-      } else {
-        console.log('no productId && disciplineId');
       }
     }
 
@@ -126,19 +123,27 @@ export function Content() {
 
   useEffect(() => {
     async function mount() {
-      // TODO: noch schauen wo das genau hinkommt
       if (disciplineId) {
         const content = await getDisciplineContent();
         setSelectedPageEntry(content);
-        console.log('setSelectedPageEntry', content);
-      } else {
-        console.log('no disciplineId');
       }
     }
 
     mount().then();
     //eslint-disable-next-line
   }, [disciplineId]);
+
+  useEffect(() => {
+    async function mount() {
+      if (contentProductDependencyId) {
+        const content = await getContentProductDependencyContent();
+        setSelectedPageEntry(content);
+      }
+    }
+
+    mount().then();
+    //eslint-disable-next-line
+  }, [contentProductDependencyId]);
 
   useEffect(() => {
     async function mount() {
@@ -174,13 +179,9 @@ export function Content() {
 
   useEffect(() => {
     async function mount() {
-      // TODO: noch schauen wo das genau hinkommt
       if (roleId) {
         const content = await getRoleContent();
         setSelectedPageEntry(content);
-        console.log('setSelectedPageEntry', content);
-      } else {
-        console.log('no roleId');
       }
     }
 
@@ -190,13 +191,9 @@ export function Content() {
 
   useEffect(() => {
     async function mount() {
-      // TODO: noch schauen wo das genau hinkommt
       if (processBuildingBlockId) {
         const content = await getTailoringProcessBuildingBlocksContent();
         setSelectedPageEntry(content);
-        console.log('setSelectedPageEntry', content);
-      } else {
-        console.log('no processBuildingBlockId');
       }
     }
 
@@ -206,13 +203,9 @@ export function Content() {
 
   useEffect(() => {
     async function mount() {
-      // TODO: noch schauen wo das genau hinkommt
       if (decisionPointId) {
         const content = await getDecisionPointContent();
         setSelectedPageEntry(content);
-        console.log('setSelectedPageEntry', content);
-      } else {
-        console.log('no decisionPointId');
       }
     }
 
@@ -222,13 +215,9 @@ export function Content() {
 
   useEffect(() => {
     async function mount() {
-      // TODO: noch schauen wo das genau hinkommt
       if (processModuleId) {
         const content = await getProcessModuleContent();
         setSelectedPageEntry(content);
-        console.log('setSelectedPageEntry', content);
-      } else {
-        console.log('no processModuleId');
       }
     }
 
@@ -238,13 +227,9 @@ export function Content() {
 
   useEffect(() => {
     async function mount() {
-      // TODO: noch schauen wo das genau hinkommt
       if (methodReferenceId) {
         const content = await getMethodReferenceContent();
         setSelectedPageEntry(content);
-        console.log('setSelectedPageEntry', content);
-      } else {
-        console.log('no methodReferenceId');
       }
     }
 
@@ -254,13 +239,9 @@ export function Content() {
 
   useEffect(() => {
     async function mount() {
-      // TODO: noch schauen wo das genau hinkommt
       if (toolReferenceId) {
         const content = await getToolReferenceContent();
         setSelectedPageEntry(content);
-        console.log('setSelectedPageEntry', content);
-      } else {
-        console.log('no toolReferenceId');
       }
     }
 
@@ -270,13 +251,9 @@ export function Content() {
 
   useEffect(() => {
     async function mount() {
-      // TODO: noch schauen wo das genau hinkommt
       if (projectCharacteristicId) {
         const content = await getProjectCharacteristicContent();
         setSelectedPageEntry(content);
-        console.log('setSelectedPageEntry', content);
-      } else {
-        console.log('no projectCharacteristicId');
       }
     }
 
@@ -286,13 +263,9 @@ export function Content() {
 
   useEffect(() => {
     async function mount() {
-      // TODO: noch schauen wo das genau hinkommt
       if (projectTypeId) {
         const content = await getProjectTypeContent();
         setSelectedPageEntry(content);
-        console.log('setSelectedPageEntry', content);
-      } else {
-        console.log('no projectTypeId');
       }
     }
 
@@ -302,13 +275,9 @@ export function Content() {
 
   useEffect(() => {
     async function mount() {
-      // TODO: noch schauen wo das genau hinkommt
       if (projectTypeVariantId) {
         const content = await getProjectTypeVariantContent();
         setSelectedPageEntry(content);
-        console.log('setSelectedPageEntry', content);
-      } else {
-        console.log('no projectTypeVariantId');
       }
     }
 
@@ -318,13 +287,9 @@ export function Content() {
 
   useEffect(() => {
     async function mount() {
-      // TODO: noch schauen wo das genau hinkommt
       if (projectTypeVariantSequenceId) {
         const content = await getProjectTypeVariantSequenceContent();
         setSelectedPageEntry(content);
-        console.log('setSelectedPageEntry', content);
-      } else {
-        console.log('no projectTypeVariantSequenceId');
       }
     }
 
@@ -334,13 +299,9 @@ export function Content() {
 
   useEffect(() => {
     async function mount() {
-      // TODO: noch schauen wo das genau hinkommt
       if (activityId) {
         const content = await getActivityContent();
         setSelectedPageEntry(content);
-        console.log('setSelectedPageEntry', content);
-      } else {
-        console.log('no activityId');
       }
     }
 
@@ -350,13 +311,9 @@ export function Content() {
 
   useEffect(() => {
     async function mount() {
-      // TODO: noch schauen wo das genau hinkommt
       if (templateDisciplineId) {
         const content = await getTemplatesContent();
         setSelectedPageEntry(content);
-        console.log('setSelectedPageEntry', content);
-      } else {
-        console.log('no templateDisciplineId');
       }
     }
 
@@ -366,30 +323,23 @@ export function Content() {
 
   useEffect(() => {
     async function mount() {
-      // TODO: noch schauen wo das genau hinkommt
       if (entryId) {
         setLoading(true);
         const content = await fetchSectionDetailsData(entryId);
 
         if (content.generatedContent === 'Elemente:Abkürzungen') {
           const content2 = await getAbbreviationsContent();
-          console.log(content2);
           setSelectedPageEntry(content2);
         } else if (content.generatedContent === 'Elemente:Glossar') {
           const content2 = await getGlossaryContent();
-          console.log(content2);
           setSelectedPageEntry(content2);
         } else if (content.generatedContent === 'Elemente:Quellen') {
           const content2 = await getLiteratureContent();
-          console.log(content2);
           setSelectedPageEntry(content2);
         } else {
           setSelectedPageEntry(content);
-          console.log('setSelectedPageEntry', content);
         }
         setLoading(false);
-      } else {
-        console.log('no entryId');
       }
     }
 
@@ -531,7 +481,15 @@ export function Content() {
 
     let idCounter = 2000;
 
-    const description = jsonDataFromXml.getElementsByTagName('Beschreibung')[0]?.value;
+    const textBausteinRef = jsonDataFromXml.getElementsByTagName('TextbausteinRef');
+
+    let description;
+
+    if (textBausteinRef.length > 0) {
+      description = await getTextBlockContent(textBausteinRef[0].attributes.id);
+    } else {
+      description = jsonDataFromXml.getElementsByTagName('Beschreibung')[0]?.value;
+    }
 
     // get table
     const generatingDependencies = await getGeneratingDependenciesData();
@@ -546,12 +504,10 @@ export function Content() {
       const topics = generatingDependency.getElementsByTagName('ThemaRef');
       for (const topic of topics) {
         if (topic.attributes.id === topicId) {
-          console.log('topic', topic.attributes.name);
           const products = generatingDependency.getElementsByTagName('ProduktRef');
           const productsToTopics = [];
 
           for (const product of products) {
-            console.log('topic product', product.attributes.name);
             productsToTopics.push({
               id: product.attributes.id,
               title: product.attributes.name,
@@ -574,7 +530,6 @@ export function Content() {
         descriptionEntry: 'Erzeugt',
         dataEntries: dataEntries,
       });
-      console.log('generatingDependenciesData', tableEntries);
     }
 
     // const products = generatingDependencies.getElementsByTagName('ProduktRef');
@@ -590,11 +545,17 @@ export function Content() {
     };
   }
 
-  // useEffect(() => {
-  //   console.log('selectedPageEntry changed', selectedPageEntry);
-  //
-  //   pageEntryFound = selectedPageEntry;
-  // }, [selectedPageEntry]);
+  async function getTextBlockContent(textbausteinId: string): Promise<string> {
+    const textbausteinUrl =
+      'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      tailoringParameter.modelVariantId +
+      '/Textbaustein/' +
+      textbausteinId;
+
+    const jsonDataFromXml: any = await getJsonDataFromXml(textbausteinUrl);
+
+    return jsonDataFromXml.getElementsByTagName('Text')[0]?.value;
+  }
 
   async function getGeneratingDependenciesData(): Promise<XMLElement[]> {
     const generatingDependenciesUrl =
@@ -774,9 +735,6 @@ export function Content() {
   }
 
   function PageEntryContent() {
-    // pageEntryFound = selectedPageEntry;
-    // console.log('pageEntryFound', pageEntryFound);
-
     let productData;
 
     const productDataArray = [];
@@ -875,7 +833,6 @@ export function Content() {
       getProjectFeaturesString();
 
     return axios.get(projectTypeUrl).then((response) => {
-      console.log(response.data);
       const jsonDataFromXml = new XMLParser().parseFromString(response.data);
 
       const sinnUndZweck = decodeXml(jsonDataFromXml.getElementsByTagName('Sinn_und_Zweck')[0]?.value);
@@ -910,8 +867,6 @@ export function Content() {
       '?' +
       getProjectFeaturesString();
 
-    console.log(productUrl);
-
     const jsonDataFromXml: any = await getJsonDataFromXml(productUrl);
 
     let idCounter = 2000;
@@ -930,6 +885,9 @@ export function Content() {
     );
     const erzeugendeAbhaengigkeitzuProduktRef: XMLElement[] = jsonDataFromXml.getElementsByTagName(
       'ErzeugendeAbhängigkeitzuProduktRef'
+    );
+    const inhaltlicheAbhaengigkeitenGruppeRef: XMLElement[] = jsonDataFromXml.getElementsByTagName(
+      'InhaltlicheAbhängigkeitenGruppeRef'
     );
 
     const initial = jsonDataFromXml.attributes.Initial;
@@ -1023,7 +981,6 @@ export function Content() {
     /////////////////////////////
 
     const tools = [...activities, ...products, ...activitiesToTools];
-    // console.log('Tools', tools);
 
     if (tools.length > 0) {
       tableEntries.push({
@@ -1129,6 +1086,21 @@ export function Content() {
 
     //////////////////////////////////////////////
 
+    const contentDependenciesDataEntries = await getProductsForContentDependencies(
+      inhaltlicheAbhaengigkeitenGruppeRef,
+      productId as string
+    );
+
+    if (contentDependenciesDataEntries.length > 0) {
+      tableEntries.push({
+        id: (idCounter++).toString(),
+        descriptionEntry: 'Inhaltlich abhängig',
+        dataEntries: contentDependenciesDataEntries,
+      });
+    }
+
+    //////////////////////////////////////////////
+
     const decisionPoints = produktZuEntscheidungspunktRef.flatMap((entry) => {
       return entry.getElementsByTagName('EntscheidungspunktRef').map((decisionPointRef) => {
         return {
@@ -1194,6 +1166,112 @@ export function Content() {
     };
   }
 
+  async function getProductsForContentDependencies(
+    inhaltlicheAbhaengigkeitenGruppeRef: XMLElement[],
+    productId: string
+  ): Promise<any> {
+    const contentProductDependenciesUrl =
+      'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      tailoringParameter.modelVariantId +
+      '/Projekttyp/' +
+      tailoringParameter.projectTypeId +
+      '/Projekttypvariante/' +
+      tailoringParameter.projectTypeVariantId +
+      '/InhaltlicheAbhaengigkeitenGruppe?' +
+      getProjectFeaturesString();
+
+    const jsonDataFromXml: any = await getJsonDataFromXml(contentProductDependenciesUrl);
+
+    const result = [];
+
+    for (const inhaltlicheAbhaengigkeitenGruppe of inhaltlicheAbhaengigkeitenGruppeRef) {
+      const inhaltlicheAbhaengigkeitenGruppeId = inhaltlicheAbhaengigkeitenGruppe.attributes.id;
+
+      const data = [];
+
+      // alle InhaltlicheAbhängigkeitenGruppen
+      const allContentDependenciesGroups: XMLElement[] = jsonDataFromXml.getElementsByTagName(
+        'InhaltlicheAbhängigkeitenGruppe'
+      );
+      // aktuell zum ausgewählten Projekt zugehörige InhaltlicheAbhängigkeitenGruppe
+      const selectedContentDependenciesGroup = allContentDependenciesGroups.filter(
+        (group: XMLElement) => group.attributes.id === inhaltlicheAbhaengigkeitenGruppeId
+      )[0];
+
+      const contentDependenciesToContentDependenciesGroupsMap = new Map<
+        string,
+        { id: string; title: string; products: { id: string; title: string }[] }[]
+      >();
+
+      for (const contentDependenciesGroup of allContentDependenciesGroups) {
+        const contentDependencyProducts = contentDependenciesGroup
+          .getElementsByTagName('ProduktRef')
+          .map((productRef) => {
+            return {
+              id: productRef.attributes.id,
+              title: productRef.attributes.name,
+            };
+          });
+
+        const contentDependencies = contentDependenciesGroup.getElementsByTagName('InhaltlicheAbhängigkeit');
+        for (const contentDependency of contentDependencies) {
+          if (!contentDependenciesToContentDependenciesGroupsMap.has(contentDependency.attributes.id)) {
+            contentDependenciesToContentDependenciesGroupsMap.set(contentDependency.attributes.id, []);
+          }
+
+          contentDependenciesToContentDependenciesGroupsMap.get(contentDependency.attributes.id)!.push({
+            id: contentDependenciesGroup.attributes.id,
+            title: contentDependenciesGroup.attributes.name,
+            products: contentDependencyProducts,
+          });
+        }
+      }
+
+      let filteredGroupWithoutProduct;
+
+      const contentDependenciesOfSelectedGroup =
+        selectedContentDependenciesGroup.getElementsByTagName('InhaltlicheAbhängigkeit');
+      for (const contentDependencyOfSelectedGroup of contentDependenciesOfSelectedGroup) {
+        const associatedContentDependenciesGroups = contentDependenciesToContentDependenciesGroupsMap.get(
+          contentDependencyOfSelectedGroup.attributes.id
+        );
+
+        if (associatedContentDependenciesGroups) {
+          filteredGroupWithoutProduct = associatedContentDependenciesGroups.filter(
+            (content) => !content.products.map((products) => products.id).includes(productId)
+          )[0];
+        }
+
+        /////////////////
+
+        const dataEntries = [];
+
+        if (filteredGroupWithoutProduct) {
+          for (const product of filteredGroupWithoutProduct.products) {
+            dataEntries.push({
+              id: product.id,
+              title: product.title,
+            });
+          }
+        }
+
+        ////////////////////
+
+        data.push({
+          subheader: {
+            id: contentDependencyOfSelectedGroup.attributes.id,
+            title: contentDependencyOfSelectedGroup.attributes.name,
+          },
+          dataEntries: dataEntries,
+        });
+      }
+
+      result.push(data);
+    }
+
+    return result;
+  }
+
   ////////////////////////
   ////////////////////////
 
@@ -1239,7 +1317,6 @@ export function Content() {
     let idCounter = 2000;
 
     return axios.get(url).then((response) => {
-      console.log(response.data);
       const jsonDataFromXml = new XMLParser().parseFromString(response.data);
 
       const description = decodeXml(jsonDataFromXml.getElementsByTagName('Beschreibung')[0]?.value);
@@ -1315,8 +1392,6 @@ export function Content() {
       }
 
       //////////////////////////////////////////////
-
-      // console.log('this.pageEntry roles', this.pageEntry);
 
       return {
         id: jsonDataFromXml.attributes.id,
@@ -1804,8 +1879,6 @@ export function Content() {
 
     const jsonDataFromXml: any = await getJsonDataFromXml(processModuleUrl);
 
-    console.log('getProcessModuleContent', jsonDataFromXml);
-
     const description = decodeXml(jsonDataFromXml.getElementsByTagName('Beschreibung')[0]?.value);
 
     const tableEntries: TableEntry[] = [];
@@ -1817,6 +1890,74 @@ export function Content() {
       // menuEntryId: jsonDataFromXml.attributes.id,
       header: jsonDataFromXml.attributes.name,
       descriptionText: description,
+      tableEntries: tableEntries,
+      // subPageEntries: subPageEntries,
+    };
+  }
+  async function getContentProductDependencyContent(): Promise<PageEntry> {
+    const contentProductDependenciesUrl =
+      'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      tailoringParameter.modelVariantId +
+      '/Projekttyp/' +
+      tailoringParameter.projectTypeId +
+      '/Projekttypvariante/' +
+      tailoringParameter.projectTypeVariantId +
+      '/InhaltlicheAbhaengigkeitenGruppe?' +
+      getProjectFeaturesString();
+
+    const jsonDataFromXml: any = await getJsonDataFromXml(contentProductDependenciesUrl);
+
+    let idCounter = 1;
+
+    const contentProductDependencyGroups = jsonDataFromXml.getElementsByTagName('InhaltlicheAbhängigkeitenGruppe');
+
+    let header;
+    let description;
+
+    const tableEntries = [];
+
+    for (const contentProductDependencyGroup of contentProductDependencyGroups) {
+      const contentProductDependencies = contentProductDependencyGroup.getElementsByTagName('InhaltlicheAbhängigkeit');
+
+      const dataEntries = [];
+
+      for (const contentProductDependency of contentProductDependencies) {
+        if (contentProductDependency.attributes.id === contentProductDependencyId) {
+          description = decodeXml(contentProductDependency.getElementsByTagName('Beschreibung')[0]?.value);
+
+          const products = contentProductDependencyGroup.getElementsByTagName('ProduktRef');
+
+          for (const product of products) {
+            dataEntries.push({
+              id: product.attributes.id,
+              title: product.attributes.name,
+            });
+          }
+
+          if (dataEntries.length > 0) {
+            tableEntries.push({
+              id: idCounter.toString(),
+              descriptionEntry:
+                (dataEntries.length > 1 ? t('translation:label.products') : t('translation:label.product')) +
+                ' (' +
+                t('translation:label.group') +
+                idCounter +
+                ')',
+              dataEntries: dataEntries,
+            });
+            idCounter++;
+          }
+
+          header = contentProductDependency.attributes.name;
+        }
+      }
+    }
+
+    return {
+      id: contentProductDependencyId as string,
+      // menuEntryId: jsonDataFromXml.attributes.id,
+      header: header,
+      descriptionText: description as string,
       tableEntries: tableEntries,
       // subPageEntries: subPageEntries,
     };
@@ -2038,7 +2179,6 @@ export function Content() {
     let idCounter = 2000;
 
     return axios.get(methodReferenceUrl).then(async (response) => {
-      console.log(response.data);
       const jsonDataFromXml = new XMLParser().parseFromString(response.data);
 
       const sinnUndZweck = decodeXml(jsonDataFromXml.getElementsByTagName('Sinn_und_Zweck')[0]?.value);
@@ -2090,8 +2230,6 @@ export function Content() {
         });
       }
 
-      // console.log('this.pageEntry roles', this.pageEntry);
-
       return {
         id: jsonDataFromXml.attributes.id,
         // menuEntryId: jsonDataFromXml.attributes.id,
@@ -2113,7 +2251,6 @@ export function Content() {
     let idCounter = 2000;
 
     return axios.get(toolReferenceUrl).then(async (response) => {
-      console.log(response.data);
       const jsonDataFromXml = new XMLParser().parseFromString(response.data);
 
       const sinnUndZweck = decodeXml(jsonDataFromXml.getElementsByTagName('Sinn_und_Zweck')[0]?.value);
@@ -2165,8 +2302,6 @@ export function Content() {
         });
       }
 
-      // console.log('this.pageEntry roles', this.pageEntry);
-
       return {
         id: jsonDataFromXml.attributes.id,
         // menuEntryId: jsonDataFromXml.attributes.id,
@@ -2185,11 +2320,7 @@ export function Content() {
       '/Projektmerkmal/' +
       projectCharacteristicId;
 
-    // const jsonDataFromXml: any = await getJsonDataFromXml(methodReferenceUrl);
-
     const jsonDataFromXml: any = await getJsonDataFromXml(projectCharacteristicUrl);
-
-    // const sinnUndZweck = decodeXml(jsonDataFromXml.getElementsByTagName('Sinn_und_Zweck')[0]?.value);
 
     const question = decodeXml(jsonDataFromXml.getElementsByTagName('Frage')[0]?.value);
     const description = decodeXml(jsonDataFromXml.getElementsByTagName('Beschreibung')[0]?.value);
@@ -2437,7 +2568,7 @@ export function Content() {
         width: '150px',
       },
       {
-        title: 'Quellenverweis',
+        title: t('translation:label.sourceReference'),
         dataIndex: 'reference',
         key: 'reference',
         render: (html: string) => <span dangerouslySetInnerHTML={{ __html: html }} />,
@@ -2446,7 +2577,7 @@ export function Content() {
 
     return {
       id: 'literatureContent',
-      header: 'Literaturverzeichnis', //jsonDataFromXml.attributes.name,
+      header: t('translation:label.bibliography'),
       descriptionText: '',
       tableEntries: tableEntries,
       dataSource: data,
@@ -2462,7 +2593,6 @@ export function Content() {
       projectTypeId;
 
     return axios.get(projectTypeUrl).then((response) => {
-      console.log(response.data);
       const jsonDataFromXml = new XMLParser().parseFromString(response.data);
 
       const description = decodeXml(jsonDataFromXml.getElementsByTagName('Beschreibung')[0]?.value);
@@ -2487,20 +2617,14 @@ export function Content() {
       '/Projekttypvariante/' +
       projectTypeVariantId;
 
-    // const jsonDataFromXml: any = await getJsonDataFromXml(methodReferenceUrl);
-
     return axios.get(projectTypeVariantUrl).then((response) => {
-      console.log(response.data);
       const jsonDataFromXml = new XMLParser().parseFromString(response.data);
 
-      // const sinnUndZweck = decodeXml(jsonDataFromXml.getElementsByTagName('Sinn_und_Zweck')[0]?.value);
       const description = decodeXml(jsonDataFromXml.getElementsByTagName('Beschreibung')[0]?.value);
 
       const tableEntries: TableEntry[] = [];
 
       //////////////////////////////////////////////
-
-      // console.log('this.pageEntry roles', this.pageEntry);
 
       return {
         id: jsonDataFromXml.attributes.id,
@@ -2522,10 +2646,7 @@ export function Content() {
       '/Projekttypvariante/' +
       projectTypeVariantId;
 
-    // const jsonDataFromXml: any = await getJsonDataFromXml(methodReferenceUrl);
-
     return axios.get(projectTypeVariantUrl).then((response) => {
-      console.log(response.data);
       const jsonDataFromXml = new XMLParser().parseFromString(response.data);
 
       let idCounter = 2000;
@@ -2554,8 +2675,6 @@ export function Content() {
 
       //////////////////////////////////////////////
 
-      // console.log('this.pageEntry roles', this.pageEntry);
-
       return {
         id: jsonDataFromXml.attributes.id,
         // menuEntryId: jsonDataFromXml.attributes.id,
@@ -2580,10 +2699,7 @@ export function Content() {
       '?' +
       getProjectFeaturesString();
 
-    // const jsonDataFromXml: any = await getJsonDataFromXml(methodReferenceUrl);
-
     return axios.get(workAidsActivityUrl).then((response) => {
-      console.log(response.data);
       const jsonDataFromXml = new XMLParser().parseFromString(response.data);
 
       let idCounter = 2000;

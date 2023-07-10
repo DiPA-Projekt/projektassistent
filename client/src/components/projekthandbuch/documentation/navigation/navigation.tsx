@@ -27,6 +27,7 @@ const { Sider } = Layout;
 
 export enum NavTypeEnum {
   PRODUCT = 'product',
+  CONTENT_PRODUCT_DEPENDENCY = 'contentProductDependency',
   TOPIC = 'topic',
   EXTERNAL_TEMPLATE = 'externalTemplate',
   DISCIPLINE = 'discipline',
@@ -125,22 +126,7 @@ export function Navigation() {
 
   const [loading, setLoading] = useState(false);
 
-  // const [searchParams /*, setSearchParams*/] = useSearchParams();
-  // TODO: just temporary from search params
-  // const modelVariantId = searchParams.get('mV');
-  // const projectTypeVariantId = searchParams.get('ptV');
-  // const projectTypeId = searchParams.get('pt');
-  // const projectFeatureIdsSearchParam: MyType = {};
-  //
-  // searchParams.forEach((value, key) => {
-  //   if (!['mV', 'ptV', 'pt'].includes(key)) {
-  //     projectFeatureIdsSearchParam[key] = value;
-  //   }
-  // });
-
   const { tailoringParameter, getProjectFeaturesQueryString } = useTailoring();
-
-  // const [collapsed, setCollapsed] = useState<boolean>(false);
 
   const productToDisciplineMap = new Map<string, { key: string; title: string }>();
 
@@ -183,12 +169,9 @@ export function Navigation() {
           let foundInGeneratedChildren = false;
 
           if (currentGeneratedChildren.length > 0) {
-            console.log(currentGeneratedChildren);
-
             const gefunden = getMenuItemByAttributeValue(currentGeneratedChildren, 'key', child.key);
             if (gefunden) {
               item.children![i] = gefunden;
-              // child = gefunden;
               foundInGeneratedChildren = true;
             }
           }
@@ -202,7 +185,6 @@ export function Navigation() {
             const test = await fetchSectionDetailsData(child);
             if (test.replacedContent) {
               item.children = test.replacedContent;
-              console.log('ersetze', test);
             } else if (test.mergedChildren) {
               // ermittle child Einträge!
               currentGeneratedChildren = test.mergedChildren;
@@ -212,13 +194,9 @@ export function Navigation() {
               if (gefunden) {
                 item.children![i] = gefunden;
               }
-
-              console.log('generatedContent', test.generatedContent);
             } else if (test.addedChildren) {
               child.children = test.addedChildren;
-              console.log('addedChildren', test.addedChildren);
             } else if (test.indexItem) {
-              console.log('indexItem', test);
               item.children![i] = test.indexItem;
             }
           }
@@ -238,7 +216,6 @@ export function Navigation() {
     return items;
   }
 
-  // TODO: kann optimiert werden, sodass alle Infos nur einmal geholte werden und alle zu ersetzenden Seiten vorher ermittelt werden
   async function fetchSectionDetailsData(childItem: any): Promise<any> {
     const sectionId = childItem.key;
 
@@ -250,11 +227,8 @@ export function Navigation() {
 
     const jsonDataFromXml: any = await getJsonDataFromXml(sectionDetailUrl);
 
-    //console.log("jsonDataFromXml.getElementsByTagName('Kapitel')", jsonDataFromXml.getElementsByTagName('Kapitel'));
-    // const textPart = jsonDataFromXml.children.find((child: any) => child.name === 'Text')?.value;
     const generatedContent = jsonDataFromXml.attributes.GenerierterInhalt;
     const wirdErsetzt = jsonDataFromXml.attributes.WirdErsetzt;
-    // const generierterInhaltErsetzend = jsonDataFromXml.attributes.GenerierterInhaltErsetzend;
 
     let replacedContent;
     let mergedChildren; // for merging children
@@ -262,10 +236,6 @@ export function Navigation() {
 
     // TODO: anders lösen
     let indexItem;
-
-    // TODO: generatedContent = Elemente:Projektrollen
-    // TODO: generatedContent = Elemente:Organisationsrollen
-    // TODO: generatedContent = Elemente:Projektteamrollen
 
     // const xmlDataWithParent = addParentRecursive([jsonDataFromXml]);
     if (wirdErsetzt === 'Ja') {
@@ -321,66 +291,51 @@ export function Navigation() {
       }
     }
 
-    // TODO: warum ist hier wirdErsetzt nicht gesetzt?
+    if (childItem.parent.label === 'Produktabhängigkeiten' && childItem.label === 'Inhaltliche Produktabhängigkeiten') {
+      addedChildren = await getContentProductDependencies(childItem.parent);
+    }
+
     if (childItem.parent.label === 'Referenz Rollen' && childItem.label !== 'Rollenindex') {
       // "Rollenindex" Spezialfall
       mergedChildren = await getReferenceRoles(childItem.parent);
-      console.log('Referenz Rollen', mergedChildren);
     }
 
-    // TODO: sollte direkt gehen, nicht unbedingt über die Referenz
     if (childItem.parent.label === 'Referenz Tailoring' && childItem.label === 'Vorgehensbausteine') {
       addedChildren = await getTailoringProcessBuildingBlocks(childItem);
-      console.log('Referenz Tailoring -> Vorgehensbausteine', addedChildren);
     }
 
-    // TODO: sollte direkt gehen, nicht unbedingt über die Referenz
     if (childItem.parent.label === 'Referenz Tailoring' && childItem.label === 'Projekttypen und Projekttypvarianten') {
       addedChildren = await getProductTypesAndProductTypeVariants(childItem);
-      console.log('Referenz Tailoring -> Projekttypen und Projekttypvarianten', addedChildren);
     }
 
-    // TODO: sollte direkt gehen, nicht unbedingt über die Referenz
     if (childItem.parent.label === 'Referenz Abläufe' && childItem.label === 'Projektdurchführungsstrategien') {
       addedChildren = await getProjectExecutionStrategies(childItem);
-      console.log('Referenz Tailoring -> Projektdurchführungsstrategien', addedChildren);
     }
 
-    // TODO: sollte direkt gehen, nicht unbedingt über die Referenz
     if (childItem.parent.label === 'Referenz Tailoring' && childItem.label === 'Projektmerkmale') {
       addedChildren = await getProjectCharacteristics(childItem);
-      console.log('Referenz Tailoring -> Projektmerkmale', addedChildren);
     }
 
-    // TODO: sollte direkt gehen, nicht unbedingt über die Referenz
     if (childItem.parent.label === 'Referenz Arbeitshilfen' && childItem.label === 'Aktivitäten') {
       addedChildren = await getWorkAidsActivities(childItem);
-      console.log('Referenz Arbeitshilfen -> Aktivitäten', addedChildren);
     }
 
-    // TODO: sollte direkt gehen, nicht unbedingt über die Referenz
     if (childItem.parent.label === 'Methoden und Werkzeuge' && childItem.label === 'Methodenreferenzen') {
       addedChildren = await getWorkAidsMethodReferences(childItem);
-      console.log('Referenz Arbeitshilfen -> Methodenreferenzen', addedChildren);
     }
 
-    // TODO: sollte direkt gehen, nicht unbedingt über die Referenz
     if (childItem.parent.label === 'Methoden und Werkzeuge' && childItem.label === 'Werkzeugreferenzen') {
       addedChildren = await getWorkAidsToolReferences(childItem);
-      console.log('Referenz Arbeitshilfen -> Werkzeugreferenzen', addedChildren);
     }
 
-    // TODO: sollte direkt gehen, nicht unbedingt über die Referenz
     if (childItem.parent.label === 'Referenz Abläufe' && childItem.label === 'Entscheidungspunkte') {
       addedChildren = await getDecisionPoints(childItem);
     }
 
-    // TODO: sollte direkt gehen, nicht unbedingt über die Referenz
     if (childItem.parent.label === 'Referenz Abläufe' && childItem.label === 'Ablaufbausteine') {
       addedChildren = await getProcessModules(childItem);
     }
 
-    // TODO: sollte direkt gehen, nicht unbedingt über die Referenz
     if (childItem.parent.label === 'Produktvorlagen' && childItem.label === 'Übersicht über Produktvorlagen') {
       addedChildren = await getTemplates(childItem);
     }
@@ -422,23 +377,12 @@ export function Navigation() {
     const navMenuItems = await xmlDataToNavMenuItem(jsonDataFromXml);
     console.log('navMenuItems', navMenuItems);
 
-    // const testWithParent = addParentLinks(navMenuItems);
-
     const xmlDataWithParent = await addParentRecursive(navMenuItems.children || []);
-    // const xmlDataWithParent = await addParentRecursive([jsonDataFromXml]);
-    console.log('xmlDataWithParent', xmlDataWithParent);
-    // console.log('testWithParent', testWithParent);
-
-    // const sections: Section[] = jsonDataFromXml.getElementsByTagName('Kapitel').map((section: any) => {
-    //   return section.attributes as Section;
-    // });
 
     setNavigationData(xmlDataWithParent);
-    // setNavigationData(testWithParent.children);
   }
 
   async function getReferenceProducts(target: any): Promise<NavMenuItem[]> {
-    console.log('getReferenceProducts', target);
     const referenceProductsUrl =
       'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
       tailoringParameter.modelVariantId +
@@ -496,8 +440,6 @@ export function Navigation() {
       '/Rollenkategorie?' +
       getProjectFeaturesQueryString();
 
-    // console.log(urlReferenceRolls);
-
     const jsonDataFromXml: any = await getJsonDataFromXml(referenceRolesUrl);
 
     const rolesNavigation: NavMenuItem[] = jsonDataFromXml
@@ -534,7 +476,6 @@ export function Navigation() {
         const roles: NavMenuItem[] = roleCategoryValue
           .getElementsByTagName('RolleRef')
           .map((roleValue: any): NavMenuItem => {
-            console.log('bliblablub', roleValue);
             return {
               key: roleValue.attributes.id,
               parent: roleCategoryEntry,
@@ -543,7 +484,6 @@ export function Navigation() {
               onClick: (item: any) => handleSelectedItem(item.key), // TODO: different Types
             };
           });
-        console.log('roles', roles);
 
         roleCategoryEntry.children = roles;
 
@@ -563,8 +503,6 @@ export function Navigation() {
       tailoringParameter.projectTypeVariantId +
       '/Entscheidungspunkt?' +
       getProjectFeaturesQueryString();
-
-    // console.log(urlReferenceProcesses);
 
     const jsonDataFromXml: any = await getJsonDataFromXml(decisionPointsUrl);
 
@@ -604,6 +542,42 @@ export function Navigation() {
         dataType: NavTypeEnum.PROCESS_MODULE,
         onClick: (item: any) => handleSelectedItem(item.key),
       };
+    });
+  }
+
+  async function getContentProductDependencies(target: any): Promise<NavMenuItem[]> {
+    const contentProductDependenciesUrl =
+      'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      tailoringParameter.modelVariantId +
+      '/Projekttyp/' +
+      tailoringParameter.projectTypeId +
+      '/Projekttypvariante/' +
+      tailoringParameter.projectTypeVariantId +
+      '/InhaltlicheAbhaengigkeitenGruppe?' +
+      getProjectFeaturesQueryString();
+
+    const jsonDataFromXml: any = await getJsonDataFromXml(contentProductDependenciesUrl);
+
+    const contentProductDependencies = jsonDataFromXml.getElementsByTagName('InhaltlicheAbhängigkeit');
+
+    const result: NavMenuItem[] = [];
+    const map = new Map();
+
+    for (const contentProductDependency of contentProductDependencies) {
+      if (!map.has(contentProductDependency.attributes.id)) {
+        map.set(contentProductDependency.attributes.id, true);
+        result.push({
+          key: contentProductDependency.attributes.id,
+          parent: target,
+          label: contentProductDependency.attributes.name,
+          dataType: NavTypeEnum.CONTENT_PRODUCT_DEPENDENCY,
+          onClick: (item: any) => handleSelectedItem(item.key),
+        });
+      }
+    }
+
+    return result.sort(function (a, b) {
+      return a.label < b.label ? -1 : 1;
     });
   }
 

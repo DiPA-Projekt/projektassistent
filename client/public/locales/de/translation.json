@@ -26,6 +26,11 @@
     "SimpleDate": "{{date, date}}"
   },
   "label": {
+    "bibliography": "Literaturverzeichnis",
+    "group": "Gruppe",
+    "product": "Produkt",
+    "products": "Produkte",
+    "sourceReference": "Quellenverweis"
   },
   "text": {
   }
