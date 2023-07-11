@@ -10,16 +10,6 @@ const { Header } = Layout;
 
 const items: MenuProps['items'] = [
   {
-    label: (
-      <LinkWithQuery to="/">Home</LinkWithQuery>
-      // <LinkWithQuery href="#/" children={undefined} to={undefined}>
-      //   Home
-      // </LinkWithQuery>
-    ),
-    key: 'home',
-    icon: <HomeOutlined />,
-  },
-  {
     label: <LinkWithQuery to="/tailoring">Tailoring</LinkWithQuery>,
     // <a href="#/tailoring">Tailoring</a>,
     key: 'tailoring',
@@ -36,6 +26,16 @@ const items: MenuProps['items'] = [
     // label: <a href="#/productTemplates">Produktvorlagen</a>,
     key: 'productTemplates',
     icon: <BookOutlined />,
+  },
+  {
+    label: (
+      <LinkWithQuery to="/info">Info</LinkWithQuery>
+      // <LinkWithQuery href="#/" children={undefined} to={undefined}>
+      //   Home
+      // </LinkWithQuery>
+    ),
+    key: 'info',
+    icon: <HomeOutlined />,
   },
 ];
 
@@ -57,7 +57,7 @@ const items: MenuProps['items'] = [
 // </Menu.Item>
 
 export const SiteHeader = (props: any) => {
-  const { modelVariantId } = useTailoring();
+  const { tailoringParameter } = useTailoring();
 
   // const navigate = useNavigate();
 
@@ -67,7 +67,7 @@ export const SiteHeader = (props: any) => {
   // }
   // };
 
-  const { error, image } = useImage(modelVariantId + '/ALLG-Logo-Farbe.gif');
+  const { error, image } = useImage(tailoringParameter.modelVariantId + '/ALLG-Logo-Farbe.gif');
 
   // TODO
   // if (error) {

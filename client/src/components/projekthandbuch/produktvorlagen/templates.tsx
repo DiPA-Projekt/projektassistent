@@ -55,13 +55,7 @@ export function Templates() {
 
   const [menuStructure, setMenuStructure] = React.useState<TemplateProps[]>();
 
-  const {
-    modelVariantId,
-    projectTypeVariantId,
-    projectTypeId,
-    getProjectFeaturesQueryString,
-    // projectFeatures,
-  } = useTailoring();
+  const { tailoringParameter, getProjectFeaturesQueryString } = useTailoring();
 
   useEffect(() => {
     async function mount() {
@@ -71,16 +65,16 @@ export function Templates() {
 
     mount().then();
     //eslint-disable-next-line
-  }, [modelVariantId]);
+  }, [tailoringParameter.modelVariantId]);
 
   async function getReferenceProducts(): Promise<TemplateProps[]> {
     const referenceProductsUrl =
       'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      modelVariantId +
+      tailoringParameter.modelVariantId +
       '/Projekttyp/' +
-      projectTypeId +
+      tailoringParameter.projectTypeId +
       '/Projekttypvariante/' +
-      projectTypeVariantId +
+      tailoringParameter.projectTypeVariantId +
       '/Disziplin?' +
       getProjectFeaturesQueryString();
 
@@ -130,11 +124,11 @@ export function Templates() {
   async function getTopics(disciplineId: string, productId: string): Promise<TemplateProps[]> {
     const topicUrl =
       'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      modelVariantId +
+      tailoringParameter.modelVariantId +
       '/Projekttyp/' +
-      projectTypeId +
+      tailoringParameter.projectTypeId +
       '/Projekttypvariante/' +
-      projectTypeVariantId +
+      tailoringParameter.projectTypeVariantId +
       '/Disziplin/' +
       disciplineId +
       '/Produkt/' +
@@ -173,11 +167,11 @@ export function Templates() {
   async function getTopicContent(topicId: string, disciplineId: string, productId: string): Promise<string> {
     const topicUrl =
       'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      modelVariantId +
+      tailoringParameter.modelVariantId +
       '/Projekttyp/' +
-      projectTypeId +
+      tailoringParameter.projectTypeId +
       '/Projekttypvariante/' +
-      projectTypeVariantId +
+      tailoringParameter.projectTypeVariantId +
       '/Disziplin/' +
       disciplineId +
       '/Produkt/' +

@@ -11,10 +11,10 @@ interface ListEntry {
 }
 
 export function Home() {
-  const { modelVariantId } = useTailoring();
+  const { tailoringParameter } = useTailoring();
 
   useEffect(() => {
-    if (modelVariantId) {
+    if (tailoringParameter.modelVariantId) {
       async function getModelVariantData() {
         await fetchModelVariantData();
       }
@@ -22,13 +22,13 @@ export function Home() {
       getModelVariantData().then();
     }
     //eslint-disable-next-line
-  }, [modelVariantId]);
+  }, [tailoringParameter.modelVariantId]);
 
   const [modelVariantData, setModelVariantData] = useState<ListEntry[] | undefined>(undefined);
 
   async function fetchModelVariantData(): Promise<void> {
     const projectModelVariantUrl =
-      'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' + modelVariantId;
+      'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' + tailoringParameter.modelVariantId;
 
     const jsonDataFromXml: any = await getJsonDataFromXml(projectModelVariantUrl);
 
@@ -51,7 +51,7 @@ export function Home() {
 
   return (
     <>
-      <h1>Home</h1>
+      <h1>Info</h1>
       <Row>
         <Col xs={24} sm={24} md={12}>
           <List
@@ -73,7 +73,7 @@ export function Home() {
           <img
             alt="ALLG-Titelseite-Prozessdoku"
             id="ALLG-Titelseite-Prozessdoku"
-            src={`https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/${modelVariantId}/Projekttyp/xxx/Projekttypvariante/xxx/Grafik/images/ALLG-Titelseite-Prozessdoku.png`}
+            src={`https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/${tailoringParameter.modelVariantId}/Projekttyp/xxx/Projekttypvariante/xxx/Grafik/images/ALLG-Titelseite-Prozessdoku.png`}
           />
         </Col>
       </Row>

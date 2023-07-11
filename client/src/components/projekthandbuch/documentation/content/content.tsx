@@ -450,7 +450,7 @@ export function Content() {
           productDataArray.push(
             <div key={menuEntryChildren?.id} style={{ marginTop: '40px' }}>
               <h3 id={menuEntryChildren?.id}> {menuEntryChildren.header} </h3>
-              {parse(subPageEntries.descriptionText)}
+              {parse(fixLinksInText(subPageEntries.descriptionText))}
               <DataTable data={subPageEntries?.tableEntries} />
             </div>
           );
@@ -540,7 +540,7 @@ export function Content() {
     return {
       id: jsonDataFromXml.attributes.id,
       header: jsonDataFromXml.attributes.name,
-      descriptionText: fixLinksInText(replaceUrlInText(textPart)),
+      descriptionText: replaceUrlInText(textPart),
       tableEntries: tableEntries,
     };
   }
@@ -747,7 +747,7 @@ export function Content() {
       productDataArray.push(
         <div key={selectedPageEntry?.id}>
           <h2 id={selectedPageEntry?.id}> {selectedPageEntry?.header} </h2>
-          {parse(selectedPageEntry?.descriptionText)}
+          {parse(fixLinksInText(selectedPageEntry?.descriptionText))}
           <DataTable data={selectedPageEntry?.tableEntries} />
 
           {selectedPageEntry && selectedPageEntry?.dataSource && (
@@ -792,11 +792,11 @@ export function Content() {
   }
 
   function fixLinksInText(testString: string): string {
-    // setPathSnippets(location.pathname.split('/').filter((i) => i));
-    const url = '#/documentation/'; // TODO
+    const url = '#/documentation/';
 
+    // TODO: only replace link to entries if they match a navigation id otherwise it is a local reference to an anchor
+    //  on the same page like in glossary
     return testString.replace(/href=['"]#(?:[^"'\/]*\/)*([^'"]+)['"]/g, 'href="' + url + '$1' + location.search + '"');
-    // return testString.replace(
   }
 
   async function fetchSectionDetailsData(sectionId: string): Promise<any> {
@@ -813,7 +813,7 @@ export function Content() {
       id: jsonDataFromXml.attributes.id,
       header: jsonDataFromXml.attributes.titel,
       generatedContent: jsonDataFromXml.attributes.GenerierterInhalt,
-      descriptionText: fixLinksInText(replaceUrlInText(textPart)),
+      descriptionText: replaceUrlInText(textPart),
       tableEntries: [],
       subPageEntries: [],
     };
@@ -1160,7 +1160,7 @@ export function Content() {
     return {
       id: jsonDataFromXml.attributes.id,
       header: jsonDataFromXml.attributes.name,
-      descriptionText: fixLinksInText(sinnUndZweck),
+      descriptionText: sinnUndZweck,
       tableEntries: tableEntries,
       subPageEntries: subPageEntries,
     };
@@ -2367,7 +2367,7 @@ export function Content() {
         title: 'Erläuterung',
         dataIndex: 'explanation',
         key: 'explanation',
-        render: (html: string) => <span dangerouslySetInnerHTML={{ __html: html }} />,
+        render: (html: string) => <span dangerouslySetInnerHTML={{ __html: fixLinksInText(html) }} />,
       },
     ];
 
@@ -2437,7 +2437,7 @@ export function Content() {
         title: 'Begriff',
         dataIndex: 'expression',
         key: 'expression',
-        render: (html: string) => <span dangerouslySetInnerHTML={{ __html: html }} />,
+        render: (html: string) => <span dangerouslySetInnerHTML={{ __html: fixLinksInText(html) }} />,
       },
     ];
 
@@ -2504,7 +2504,7 @@ export function Content() {
         title: 'Erläuterung',
         dataIndex: 'explanation',
         key: 'explanation',
-        render: (html: string) => <span dangerouslySetInnerHTML={{ __html: html }} />,
+        render: (html: string) => <span dangerouslySetInnerHTML={{ __html: fixLinksInText(html) }} />,
       },
     ];
 
@@ -2571,7 +2571,7 @@ export function Content() {
         title: t('translation:label.sourceReference'),
         dataIndex: 'reference',
         key: 'reference',
-        render: (html: string) => <span dangerouslySetInnerHTML={{ __html: html }} />,
+        render: (html: string) => <span dangerouslySetInnerHTML={{ __html: fixLinksInText(html) }} />,
       },
     ];
 
