@@ -118,7 +118,7 @@ export function Navigation() {
     navigationData,
     setNavigationData,
     currentSelectedKeys,
-    openKeys,
+    // openKeys,
   } = useDocumentation();
 
   const navigate = useNavigate();
@@ -132,7 +132,7 @@ export function Navigation() {
 
   useEffect(() => {
     async function mount() {
-      if (tailoringParameter.modelVariantId !== null) {
+      if (tailoringParameter.modelVariantId) {
         setLoading(true);
         await fetchData();
         setLoading(false);
@@ -848,7 +848,7 @@ export function Navigation() {
               inlineIndent={12}
               items={navigationData}
               selectedKeys={currentSelectedKeys}
-              openKeys={openKeys} // TODO: funzt noch nicht
+              // openKeys={openKeys} // TODO: funzt noch nicht
             />
           )}
 

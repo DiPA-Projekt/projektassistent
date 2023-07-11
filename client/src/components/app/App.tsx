@@ -18,11 +18,12 @@ function App() {
       <Layout>
         <Content style={{ padding: '0 25px' }}>
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<Project />} />
             <Route path="/tailoring" element={<Project />} />
             <Route path="/documentation" element={<Documentation />} />
             <Route path="/documentation/:id" element={<Documentation />} />
             <Route path="/productTemplates" element={<Templates />} />
+            <Route path="/info" element={<Home />} />
             {/*<Route path="*" element={<HomeComponent />} />*/}
           </Routes>
         </Content>
