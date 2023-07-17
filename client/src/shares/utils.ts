@@ -1,7 +1,7 @@
 import he from 'he';
 import axios from 'axios';
 import XMLParser, { XMLElement } from 'react-xml-parser';
-import { NavMenuItem } from '../components/projekthandbuch/documentation/navigation/navigation';
+import { NavMenuItem } from '../components/projekthandbuch/documentation/navigation/Navigation';
 
 const { convert } = require('html-to-text');
 
@@ -22,23 +22,28 @@ export function decodeXml(xml: string): string {
   return xml ? he.decode(he.decode(xml)) : '';
 }
 
-export function getMenuItemByAttributeValue(menuItems: NavMenuItem[], attribute: string, key: string) {
+export function getMenuItemByAttributeValue(
+  menuItems: NavMenuItem[],
+  attribute: string,
+  key: string
+): NavMenuItem | undefined {
   if (menuItems) {
     for (const menuItem of menuItems) {
       if (menuItem[attribute as keyof NavMenuItem] === key) {
         return menuItem;
       }
       if (menuItem.children && menuItem.children.length > 0) {
-        const found: any = getMenuItemByAttributeValue(menuItem.children, attribute, key);
+        const found = getMenuItemByAttributeValue(menuItem.children, attribute, key);
         if (found) {
           return found;
         }
       }
     }
   }
+  return undefined;
 }
 
-export function flatten(data: any[]) {
+export function flatten(data: NavMenuItem[]) {
   return data.reduce((r, { children, ...rest }) => {
     r.push(rest);
     if (children) {
@@ -48,20 +53,44 @@ export function flatten(data: any[]) {
   }, []);
 }
 
-export async function getJsonDataFromXml(url: string): Promise<XMLElement | void> {
-  return axios
-    .get(url)
-    .then((response: any) => {
-      return new XMLParser().parseFromString(response.data);
-    })
-    .catch((e) => console.log('obligatory catch', e));
+export async function getJsonDataFromXml(url: string): Promise<XMLElement> {
+  try {
+    return axios.get(url).then((response) => {
+      return new XMLParser().parseFromString(response.data as string);
+    });
+  } catch (err) {
+    throw Error('Unable to parse xml data.');
+  }
 }
 
-export function clean(obj: any) {
+export function clean(obj: { [key: string]: string }) {
   for (const propName in obj) {
     if (obj[propName] === null || obj[propName] === undefined) {
       delete obj[propName];
     }
   }
   return obj;
+}
+
+export function fixLinksInText(testString: string): string {
+  const url = '#/documentation/';
+
+  // TODO: only replace link to entries if they match a navigation id otherwise it is a local reference to an anchor
+  //  on the same page like in glossary
+  return testString.replace(/href=['"]#(?:[^"'\/]*\/)*([^'"]+)['"]/g, 'href="' + url + '$1' + location.search + '"');
+}
+
+export function replaceUrlInText(text: string, tailoringParameter: any, projectFeaturesString: string): string {
+  return text.replace(
+    /src=['"](?:[^"'\/]*\/)*([^'"]+)['"]/g,
+    'src="https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      tailoringParameter.modelVariantId +
+      '/Projekttyp/' +
+      tailoringParameter.projectTypeId +
+      '/Projekttypvariante/' +
+      tailoringParameter.projectTypeVariantId +
+      '/Grafik/images/$1?' +
+      projectFeaturesString +
+      '"'
+  );
 }

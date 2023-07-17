@@ -3,6 +3,7 @@ import { decodeXml, getJsonDataFromXml } from '../shares/utils';
 import { Col, List, Row } from 'antd';
 import parse from 'html-react-parser';
 import { useTailoring } from '../context/TailoringContext';
+import { weitApiUrl } from './app/App';
 
 interface ListEntry {
   avatar?: string;
@@ -28,9 +29,9 @@ export function Home() {
 
   async function fetchModelVariantData(): Promise<void> {
     const projectModelVariantUrl =
-      'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' + tailoringParameter.modelVariantId;
+      weitApiUrl + '/V-Modellmetamodell/mm_2021/V-Modellvariante/' + tailoringParameter.modelVariantId;
 
-    const jsonDataFromXml: any = await getJsonDataFromXml(projectModelVariantUrl);
+    const jsonDataFromXml = await getJsonDataFromXml(projectModelVariantUrl);
 
     const listEntries: ListEntry[] = [];
 

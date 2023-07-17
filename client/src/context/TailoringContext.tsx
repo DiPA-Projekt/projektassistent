@@ -1,10 +1,17 @@
 import { ProjectFeature } from '@dipa-projekt/projektassistent-openapi';
 import React, { useEffect, useState } from 'react';
-import { useLocation, useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { clean } from '../shares/utils';
 
 interface MyType {
   [key: string]: string;
+}
+
+interface TailoringParameter {
+  modelVariantId?: string;
+  projectTypeVariantId?: string;
+  projectTypeId?: string;
+  projectFeatures?: MyType;
 }
 
 type TailoringSession = {
@@ -22,13 +29,9 @@ type TailoringSession = {
   projectFeatures: { [key: string]: string } | null;
   setProjectFeatures: Function;
   getProjectFeaturesQueryString: Function;
-  tailoringParameter: {
-    modelVariantId?: string;
-    projectTypeVariantId?: string;
-    projectTypeId?: string;
-    projectFeatures?: MyType;
-  };
+  tailoringParameter: TailoringParameter;
   setTailoringParameter: Function;
+  redirectIfTailoringNotComplete: Function;
 };
 
 type TailoringSessionProviderProps = { children: React.ReactNode };
@@ -38,14 +41,11 @@ const TailoringSessionContext = React.createContext<TailoringSession | undefined
 const TailoringSessionContextProvider = ({ children }: TailoringSessionProviderProps) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
+  const navigate = useNavigate();
+
   const [projectFeaturesDetails, setProjectFeaturesDetails] = React.useState<ProjectFeature[]>([]);
 
-  const [tailoringParameter, setTailoringParameter] = useState<{
-    modelVariantId?: string;
-    projectTypeVariantId?: string;
-    projectTypeId?: string;
-    projectFeatures?: MyType;
-  }>({});
+  const [tailoringParameter, setTailoringParameter] = useState<TailoringParameter>({});
 
   const [modelVariantId, setModelVariantId] = useState<string | null>(null);
   const [projectTypeVariantId, setProjectTypeVariantId] = useState<string | null>(null);
@@ -53,7 +53,7 @@ const TailoringSessionContextProvider = ({ children }: TailoringSessionProviderP
   const [projectFeatures, setProjectFeatures] = useState<{ [key: string]: string } | null>(null);
 
   useEffect(() => {
-    console.log('tailoringParameter', tailoringParameter);
+    console.log('TailoringContext useEffect tailoringParameter', tailoringParameter);
 
     const searchParams = {
       mV: tailoringParameter.modelVariantId,
@@ -62,6 +62,7 @@ const TailoringSessionContextProvider = ({ children }: TailoringSessionProviderP
       ...tailoringParameter.projectFeatures,
     };
     // if (searchParams != null) {
+    // TODO
     setSearchParams(clean(searchParams));
     // }
   }, [tailoringParameter]);
@@ -83,6 +84,7 @@ const TailoringSessionContextProvider = ({ children }: TailoringSessionProviderP
     getProjectFeaturesQueryString,
     tailoringParameter,
     setTailoringParameter,
+    redirectIfTailoringNotComplete,
   };
 
   function getProjectFeaturesQueryString(): string {
@@ -94,6 +96,21 @@ const TailoringSessionContextProvider = ({ children }: TailoringSessionProviderP
         .join('&');
     } else {
       return '';
+    }
+  }
+
+  function isTailoringParameterMissing(): boolean {
+    return (
+      tailoringParameter.modelVariantId === undefined ||
+      tailoringParameter.projectTypeVariantId === undefined ||
+      tailoringParameter.projectTypeId === undefined ||
+      tailoringParameter.projectFeatures === undefined
+    );
+  }
+
+  function redirectIfTailoringNotComplete() {
+    if (isTailoringParameterMissing()) {
+      navigate('/tailoring', { replace: true });
     }
   }
 
@@ -114,6 +131,8 @@ const TailoringSessionContextProvider = ({ children }: TailoringSessionProviderP
 
     setTailoringParameter(clean(tailoringSearchParams));
     console.log('ON LOAD setTailoringParameter', clean(tailoringSearchParams));
+
+    redirectIfTailoringNotComplete();
 
     // eslint-disable-next-line
   }, []);

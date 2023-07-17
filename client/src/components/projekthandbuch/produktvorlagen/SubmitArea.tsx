@@ -1,10 +1,14 @@
 import { Button, Checkbox, Form, Input, Modal, Tag } from 'antd';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTemplate } from '../../../context/TemplateContext';
 import axios from 'axios';
+import { StatusApi } from '@dipa-projekt/projektassistent-openapi';
+import { Subscription } from 'rxjs';
 
 export function SubmitArea() {
   const { selectedProducts, selectedTopics, checkedKeys, topicsMap } = useTemplate();
+
+  let statusSubscription: Subscription = new Subscription();
 
   const [modalVisible, setModalVisible] = useState(false);
   const [formTitle, setFormTitle] = useState();
@@ -13,6 +17,18 @@ export function SubmitArea() {
   const [responsible, setResponsible] = useState<string>();
   const [projectName, setProjectName] = useState<string>();
   const [participants, setParticipants] = useState<string[]>([]);
+
+  const statusApi = new StatusApi();
+
+  useEffect(() => {
+    statusSubscription = statusApi.getStatus().subscribe((data: any) => {
+      console.log('statusSubscription', data);
+    });
+
+    return () => {
+      statusSubscription.unsubscribe();
+    };
+  }, []);
 
   function onReset() {
     console.log('reset');

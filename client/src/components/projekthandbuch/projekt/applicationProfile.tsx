@@ -1,7 +1,6 @@
-// import { Select } from 'antd';
 import React, { useEffect } from 'react';
 
-import { ProjectFeature, ProjectType } from '@dipa-projekt/projektassistent-openapi';
+import { ProjectFeature } from '@dipa-projekt/projektassistent-openapi';
 
 import axios from 'axios';
 import XMLParser, { XMLElement } from 'react-xml-parser';
@@ -11,6 +10,7 @@ import { PopoverComponent } from './popover/component';
 import { Form, Select } from 'antd';
 import { SelectValue } from 'antd/es/select';
 import parse from 'html-react-parser';
+import { weitApiUrl } from '../../app/App';
 
 const { Option } = Select;
 
@@ -23,16 +23,13 @@ interface MyType {
   [key: string]: string;
 }
 
+interface ProjectFeatureStringOption {
+  key: string;
+  title: string;
+  answer: string;
+}
+
 export function ApplicationProfile() {
-  // const {
-  //   modelVariantId,
-  //   projectFeatures,
-  //   setProjectFeatures,
-  //   projectFeaturesDetails,
-  //   setProjectFeaturesDetails,
-  //   projectFeaturesData,
-  //   // projectFeaturesDataFromProjectTypeVariant,
-  // } = useTailoring();
   const { tailoringParameter, setTailoringParameter, projectFeaturesDetails, setProjectFeaturesDetails } =
     useTailoring();
 
@@ -44,20 +41,10 @@ export function ApplicationProfile() {
   useEffect(() => {
     async function getProjectFeaturesData() {
       if (tailoringParameter.projectTypeVariantId) {
-        // TODO: check if still necessary in getProjectTypeVariantData
-        // const cascaderDefaultArray = getCascaderDefaultArray(projectTypeVariantsData);
-        // setCascaderDefaultValue(cascaderDefaultArray);
         const projectFeaturesFromProjectTypeVariant = await fetchProjectTypeData();
-
         const projectTypeId = await getProjectTypeId();
-
         const projectFeaturesFromProjectType = await fetchProjectFeaturesDataFromProjectType(projectTypeId);
 
-        // TODO
-        console.log('getProjectTypeData setProjectFeaturesData -> ', {
-          fromProjectType: projectFeaturesFromProjectType,
-          fromProjectTypeVariant: projectFeaturesFromProjectTypeVariant,
-        });
         setProjectFeaturesData({
           fromProjectType: projectFeaturesFromProjectType,
           fromProjectTypeVariant: projectFeaturesFromProjectTypeVariant,
@@ -65,18 +52,19 @@ export function ApplicationProfile() {
       }
     }
 
-    getProjectFeaturesData().then();
+    void getProjectFeaturesData().then();
     //eslint-disable-next-line
   }, [tailoringParameter.projectTypeVariantId]);
 
   async function fetchProjectFeaturesDataFromProjectType(projectTypeId: string): Promise<ProjectFeature[]> {
     const projectTypeUrl =
-      'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      weitApiUrl +
+      '/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
       tailoringParameter.modelVariantId +
       '/Projekttyp/' +
       projectTypeId;
 
-    const jsonDataFromXml: any = await getJsonDataFromXml(projectTypeUrl);
+    const jsonDataFromXml = await getJsonDataFromXml(projectTypeUrl);
 
     return jsonDataFromXml.getElementsByTagName('ProjektmerkmalRef').map((feature: any) => {
       return feature.attributes as ProjectFeature;
@@ -85,73 +73,64 @@ export function ApplicationProfile() {
 
   async function fetchProjectTypeData(): Promise<ProjectFeature[]> {
     const projectTypeVariantUrl =
-      'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      weitApiUrl +
+      '/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
       tailoringParameter.modelVariantId +
       '/Projekttypvariante/' +
       tailoringParameter.projectTypeVariantId;
 
-    const jsonDataFromXml: any = await getJsonDataFromXml(projectTypeVariantUrl);
+    const jsonDataFromXml = await getJsonDataFromXml(projectTypeVariantUrl);
 
-    return jsonDataFromXml.getElementsByTagName('ProjektmerkmalRef').map((feature: any) => {
-      return feature.attributes as ProjectFeature;
+    return jsonDataFromXml.getElementsByTagName('ProjektmerkmalRef').map((feature) => {
+      return {
+        id: feature.attributes.id,
+        name: feature.attributes.name,
+      } as ProjectFeature;
     });
   }
 
   async function getProjectTypeId(): Promise<string> {
     const projectTypeVariantUrl =
-      'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      weitApiUrl +
+      '/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
       tailoringParameter.modelVariantId +
       '/Projekttypvariante/' +
       tailoringParameter.projectTypeVariantId;
 
     // get projectTypeId, projectFeaturesDataFromProjectType and projectFeaturesDataFromProjectTypeVariant
-    const jsonDataFromXml: any = await getJsonDataFromXml(projectTypeVariantUrl);
+    const jsonDataFromXml = await getJsonDataFromXml(projectTypeVariantUrl);
 
-    const projectType: ProjectType = jsonDataFromXml.getElementsByTagName('ProjekttypRef')[0]
-      ?.attributes as ProjectType;
+    const projectType = jsonDataFromXml.getElementsByTagName('ProjekttypRef')[0];
 
-    //setProjectTypeId(projectType.id); // TODO
-
-    return projectType.id;
+    return projectType?.attributes.id;
   }
 
   useEffect(() => {
-    console.log('projectFeaturesData changed', projectFeaturesData);
-    // if (projectFeaturesData) {
-    getProjectFeatureDetails(projectFeaturesData);
-    // }
+    async function projectFeaturesDataChanged() {
+      await getProjectFeatureDetails(projectFeaturesData);
+    }
+
+    void projectFeaturesDataChanged().then();
 
     //eslint-disable-next-line
   }, [projectFeaturesData]);
 
   useEffect(() => {
-    // async function mount() {
-    console.log('projectFeatures changed', tailoringParameter.projectFeatures);
-    // }
-    // mount().then();
-    //eslint-disable-next-line
-  }, [tailoringParameter.projectFeatures]);
-
-  useEffect(() => {
-    // console.log('useEffect projectFeaturesDetails', projectFeaturesDetails);
-
-    // TODO: check if this is the way
     if (Object.keys(projectFeaturesDetails).length > 0) {
-      // if (!tailoringParameter.projectFeatures || Object.keys(tailoringParameter.projectFeatures).length === 0) {
       const tempArray: MyType = {};
       for (const projectFeature of projectFeaturesDetails) {
         if (projectFeature.values?.selectedValue) {
-          tempArray[projectFeature.id] = projectFeature.values.selectedValue;
+          // set default value if tailoring parameter is not set
+          const currentValue =
+            tailoringParameter.projectFeatures?.[projectFeature.id] !== undefined
+              ? tailoringParameter.projectFeatures?.[projectFeature.id]
+              : projectFeature.values.selectedValue;
+          tempArray[projectFeature.id] = currentValue;
         }
       }
-      // TODO: check
       let result = Object.assign({}, tailoringParameter);
       result = Object.assign(result, { projectFeatures: tempArray });
-      console.log('ATTENTION onProjectFeatureSelected', result);
       setTailoringParameter(result);
-      // } else {
-      // console.log('projectFeatures already set', projectFeatures);
-      // }
     }
     //eslint-disable-next-line
   }, [projectFeaturesDetails]);
@@ -212,50 +191,38 @@ export function ApplicationProfile() {
 
       for (const feature of combinedProjectFeatures) {
         const projectFeatureUrl =
-          'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+          weitApiUrl +
+          '/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
           tailoringParameter.modelVariantId +
           '/Projektmerkmal/' +
           feature.id;
 
-        const jsonDataFromXml: any = await axios
-          .get(projectFeatureUrl)
-          .then((response) => {
-            return new XMLParser().parseFromString(response.data);
-          })
-          .catch(() => 'obligatory catch');
+        const jsonDataFromXml = await getJsonDataFromXml(projectFeatureUrl);
 
-        const question = jsonDataFromXml.getElementsByTagName('Frage')[0]?.value;
-        const description = jsonDataFromXml.getElementsByTagName('Beschreibung')[0]?.value;
-        const defaultValue = jsonDataFromXml.getElementsByTagName('StandardwertRef')[0]?.attributes.id;
+        if (jsonDataFromXml) {
+          const question = jsonDataFromXml.getElementsByTagName('Frage')[0]?.value;
+          const description = jsonDataFromXml.getElementsByTagName('Beschreibung')[0]?.value;
+          const defaultValue = jsonDataFromXml.getElementsByTagName('StandardwertRef')[0]?.attributes.id;
 
-        const values = jsonDataFromXml.getElementsByTagName('Wert');
+          const values = jsonDataFromXml.getElementsByTagName('Wert');
 
-        const optionsWithAnswer: { key: string; title: string; answer: string }[] = await getOptionsWithAnswer(
-          values,
-          feature
-        );
+          const optionsWithAnswer: ProjectFeatureStringOption[] = await getOptionsWithAnswer(values, feature);
 
-        // console.log('getProjectFeatureDetails', tailoringParameter.projectFeatures[jsonDataFromXml.attributes.id]);
+          const selectedValue = defaultValue;
 
-        // const selectedValue =
-        //   tailoringParameter.projectFeatures && tailoringParameter.projectFeatures[jsonDataFromXml.attributes.id]
-        //     ? tailoringParameter.projectFeatures[jsonDataFromXml.attributes.id]
-        //     : defaultValue;
+          const projectFeature: ProjectFeature = {
+            id: jsonDataFromXml.attributes.id,
+            values: {
+              selectedValue: selectedValue,
+              possibleValues: optionsWithAnswer,
+            },
+            name: jsonDataFromXml.attributes.name,
+            description: removeHtmlTags(decodeXml(question)),
+            helpText: removeHtmlTags(decodeXml(description)),
+          };
 
-        const selectedValue = defaultValue;
-
-        const projectFeature: ProjectFeature = {
-          id: jsonDataFromXml.attributes.id,
-          values: {
-            selectedValue: selectedValue,
-            possibleValues: optionsWithAnswer,
-          },
-          name: jsonDataFromXml.attributes.name,
-          description: removeHtmlTags(decodeXml(question)),
-          helpText: removeHtmlTags(decodeXml(description)),
-        };
-
-        details.push(projectFeature);
+          details.push(projectFeature);
+        }
       }
 
       setProjectFeaturesDetails(details);
@@ -265,20 +232,21 @@ export function ApplicationProfile() {
   async function getOptionsWithAnswer(
     values: XMLElement[],
     feature: ProjectFeature
-  ): Promise<{ key: string; title: string; answer: string }[]> {
+  ): Promise<ProjectFeatureStringOption[]> {
     const resultValues = [];
 
     for (const value of values) {
       const valueUrl =
-        'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+        weitApiUrl +
+        '/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
         tailoringParameter.modelVariantId +
         '/Projektmerkmal/' +
         feature.id +
         '/Wert/' +
         value.attributes.id;
 
-      const result: { key: string; title: string; answer: string } = await axios.get(valueUrl).then((valueResponse) => {
-        const valueJsonDataFromXml = new XMLParser().parseFromString(valueResponse.data);
+      const result: ProjectFeatureStringOption = await axios.get(valueUrl).then((valueResponse) => {
+        const valueJsonDataFromXml = new XMLParser().parseFromString(valueResponse.data as string);
         const valueDescription = valueJsonDataFromXml.getElementsByTagName('Beschreibung')[0]?.value;
 
         return {
@@ -337,12 +305,6 @@ export function ApplicationProfile() {
           <h2>Definiere das Anwendungsprofil</h2>
           {projectFeaturesDetails?.map((projectFeature: ProjectFeature) => {
             return (
-              // <SelectComponent
-              //   key={`${projectFeature.name}-${projectFeature.id}`}
-              //   projectFeature={projectFeature}
-              //   defaultValue={projectFeatures[projectFeature.id]} // TODO: check
-              //   onChange={onProjectFeatureSelected}
-              // />
               <Form.Item
                 {...layout}
                 key={`${projectFeature.name}-${projectFeature.id}`}
@@ -355,14 +317,12 @@ export function ApplicationProfile() {
                     onProjectFeatureSelected(projectFeature.id, value);
                   }}
                 >
-                  {projectFeature.values?.possibleValues?.map(
-                    (value: { key: string; title: string; answer: string }) => (
-                      // wir müssen als Key in der API einen anderen Datentyp wählen / oder mappen
-                      <Option key={value.key} value={value.key}>
-                        {value.title}
-                      </Option>
-                    )
-                  )}
+                  {projectFeature.values?.possibleValues?.map((value: ProjectFeatureStringOption) => (
+                    // wir müssen als Key in der API einen anderen Datentyp wählen / oder mappen
+                    <Option key={value.key} value={value.key}>
+                      {value.title}
+                    </Option>
+                  ))}
                 </Select>
                 <div style={{ fontWeight: 500, marginTop: '5px' }}>
                   {parse(decodeXml(getAnswer(projectFeature, tailoringParameter.projectFeatures[projectFeature.id])))}

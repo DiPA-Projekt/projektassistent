@@ -9,7 +9,7 @@ import {
 } from '@ant-design/icons';
 import React, { useEffect } from 'react';
 import { DataNode } from 'antd/lib/tree';
-import { NavTypeEnum } from '../documentation/navigation/navigation';
+import { NavTypeEnum } from '../documentation/navigation/Navigation';
 import { useTemplate } from '../../../context/TemplateContext';
 import parse from 'html-react-parser';
 import { removeHtmlTags } from '../../../shares/utils';
@@ -116,47 +116,53 @@ export function TemplatesContent(props: { entries: TemplateProps[] }) {
 
       const products = [];
 
-      for (const product of discipline.children) {
-        const productHeader = (
-          <>
-            <span style={{ marginRight: '8px' }}>{product.label}</span>
-          </>
-        );
-
-        const topics = [];
-
-        for (const topic of product.children) {
-          const topicHeader = (
+      if (discipline.children) {
+        for (const product of discipline.children) {
+          const productHeader = (
             <>
-              <span style={{ marginRight: '8px' }}>{topic.label}</span>
-              <Popover destroyTooltipOnHide={true} content={parse(topic.infoText)} title={topic.label}>
-                <InfoCircleTwoTone style={{ cursor: 'help' }} />
-              </Popover>
+              <span style={{ marginRight: '8px' }}>{product.label}</span>
             </>
           );
 
-          topics.push({
-            title: topicHeader,
-            key: topic.key,
-            selectable: true,
-            icon: getIcon(topic.dataType),
-          });
+          const topics = [];
 
-          topicsMap.set(topic.key, {
-            topic: { title: topic.label, text: removeHtmlTags(topic.infoText) },
-            discipline: { id: discipline.key, title: discipline.label },
-            product: { id: product.key, title: product.label },
-          });
-        }
+          if (product.children) {
+            for (const topic of product.children) {
+              if (topic.infoText != null) {
+                const topicHeader = (
+                  <>
+                    <span style={{ marginRight: '8px' }}>{topic.label}</span>
+                    <Popover destroyTooltipOnHide={true} content={parse(topic.infoText)} title={topic.label}>
+                      <InfoCircleTwoTone style={{ cursor: 'help' }} />
+                    </Popover>
+                  </>
+                );
 
-        if (topics.length > 0) {
-          products.push({
-            title: productHeader,
-            key: product.key,
-            selectable: true,
-            icon: getIcon(product.dataType),
-            children: topics,
-          });
+                topics.push({
+                  title: topicHeader,
+                  key: topic.key,
+                  selectable: true,
+                  icon: getIcon(topic.dataType),
+                });
+
+                topicsMap.set(topic.key, {
+                  topic: { title: topic.label, text: removeHtmlTags(topic.infoText) },
+                  discipline: { id: discipline.key, title: discipline.label },
+                  product: { id: product.key, title: product.label },
+                });
+              }
+            }
+          }
+
+          if (topics.length > 0) {
+            products.push({
+              title: productHeader,
+              key: product.key,
+              selectable: true,
+              icon: getIcon(product.dataType),
+              children: topics,
+            });
+          }
         }
       }
 

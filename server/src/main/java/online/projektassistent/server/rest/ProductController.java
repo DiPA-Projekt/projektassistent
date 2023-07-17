@@ -20,7 +20,7 @@ public interface ProductController {
      * Creates a single product and returns a docx file.
      *
      * @param singleProduct container for all parameters
-     * @return doxc
+     * @return docx
      */
 
     @CrossOrigin(origins = "http://localhost:8080")
