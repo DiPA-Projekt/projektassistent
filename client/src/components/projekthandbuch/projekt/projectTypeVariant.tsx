@@ -7,6 +7,7 @@ import { useTailoring } from '../../../context/TailoringContext';
 import { ApplicationProfile } from './applicationProfile';
 import { getJsonDataFromXml } from '../../../shares/utils';
 import { useTranslation } from 'react-i18next';
+import { weitApiUrl } from '../../app/App';
 
 const layout = {
   labelCol: { span: 8 },
@@ -34,7 +35,7 @@ export function ProjectTypeVariantComponent() {
       setProjectTypeVariantsData(projectTypeVariants);
     }
 
-    getProjectTypeVariantData().then();
+    void getProjectTypeVariantData().then();
     //eslint-disable-next-line
   }, [tailoringParameter.modelVariantId]);
 
@@ -57,7 +58,6 @@ export function ProjectTypeVariantComponent() {
 
   // TODO: Parameter vorher als projectTypeVariantsData... müsste dafür als ref deklariert werden
   function getCascaderDefaultArray(projectTypeVariants: ProjectTypeVariant[]): string[] {
-    // console.log('getCascaderDefaultArray', projectTypeVariantId);
     if (tailoringParameter.projectTypeVariantId !== undefined) {
       const foundVariant = projectTypeVariants.find(
         (projectTypeVariant) => projectTypeVariant.id === tailoringParameter.projectTypeVariantId!
@@ -72,11 +72,12 @@ export function ProjectTypeVariantComponent() {
 
   async function fetchProjectTypeVariantData(): Promise<ProjectTypeVariant[]> {
     const projectTypeVariantsUrl =
-      'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      weitApiUrl +
+      '/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
       tailoringParameter.modelVariantId +
       '/Projekttypvariante';
 
-    const jsonDataFromXml: any = await getJsonDataFromXml(projectTypeVariantsUrl);
+    const jsonDataFromXml = await getJsonDataFromXml(projectTypeVariantsUrl);
 
     const projectTypeVariants: ProjectTypeVariant[] = jsonDataFromXml
       .getElementsByTagName('Projekttypvariante')
@@ -84,13 +85,10 @@ export function ProjectTypeVariantComponent() {
         return variant.attributes as ProjectTypeVariant;
       });
 
-    // setProjectTypeVariantsData( []);
     const projectTypeVariantsCascaderOptions: Option[] = [];
 
     projectTypeVariants.forEach((projectTypeVariant) => {
       const cascaderEntry = getCascaderEntry(projectTypeVariant);
-
-      // console.log('key, value', cascaderEntry.key, cascaderEntry.value);
 
       let optionIndex = projectTypeVariantsCascaderOptions.findIndex((x) => x.value === cascaderEntry.key);
 
@@ -107,36 +105,26 @@ export function ProjectTypeVariantComponent() {
         value: projectTypeVariant.id,
         label: cascaderEntry.value,
       });
-
-      // projectTypeVariantsCascaderOptions.push(option);
     });
-
-    // console.log('projectTypeVariantsCascaderOptions', projectTypeVariantsCascaderOptions);
 
     setCascaderOptions(projectTypeVariantsCascaderOptions);
 
     return projectTypeVariants;
-    // setProjectTypeVariantsData(projectTypeVariants); // TODO projectTypeVariants in getCascaderDefaultArray nicht gesetzt
-    // if (projectTypeVariantId) {
-    //   const cascaderDefaultArray = getCascaderDefaultArray();
-    //   setCascaderDefaultValue(cascaderDefaultArray);
-    // }
   }
 
   async function getProjectTypeId(projectTypeVariantId: string): Promise<string> {
     const projectTypeVariantUrl =
-      'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      weitApiUrl +
+      '/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
       tailoringParameter.modelVariantId +
       '/Projekttypvariante/' +
       projectTypeVariantId;
 
     // get projectTypeId, projectFeaturesDataFromProjectType and projectFeaturesDataFromProjectTypeVariant
-    const jsonDataFromXml: any = await getJsonDataFromXml(projectTypeVariantUrl);
+    const jsonDataFromXml = await getJsonDataFromXml(projectTypeVariantUrl);
 
     const projectType: ProjectType = jsonDataFromXml.getElementsByTagName('ProjekttypRef')[0]
       ?.attributes as ProjectType;
-
-    //setProjectTypeId(projectType.id); // TODO
 
     return projectType.id;
   }

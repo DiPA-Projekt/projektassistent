@@ -1,0 +1,54 @@
+import { DataEntry } from '@dipa-projekt/projektassistent-openapi';
+import { Link } from 'react-router-dom';
+import parse from 'html-react-parser';
+import React from 'react';
+import { fixLinksInText } from '../../../../shares/utils';
+
+export function TableEntriesList(props: { inputData: DataEntry[] }) {
+  const entries: JSX.Element[] = [];
+
+  console.log('TableEntriesList', props.inputData);
+
+  props.inputData.map((entryItem: DataEntry) => {
+    if (Array.isArray(entryItem)) {
+      for (const entrySubItem of entryItem) {
+        entries.push(
+          <span style={{ fontWeight: 'bold', display: 'block' }} key={`table-sub-header-${entrySubItem.subheader.id}`}>
+            {entrySubItem.subheader?.id ? (
+              <Link to={`/documentation/${entrySubItem.subheader.id}${location.search}`}>
+                {entrySubItem.subheader.title}
+              </Link>
+            ) : (
+              entrySubItem.subheader.title
+            )}
+          </span>
+        );
+
+        entrySubItem.dataEntries.map((innerEntryItem: DataEntry) => {
+          if (innerEntryItem?.id) {
+            entries.push(
+              <span style={{ marginRight: '20px', display: 'inline-flex' }} key={`table-item-${innerEntryItem.id}`}>
+                <Link to={`/documentation/${innerEntryItem.id}${location.search}`}>{innerEntryItem.title}</Link>
+                {innerEntryItem.suffix && <span style={{ marginLeft: '5px' }}>{innerEntryItem.suffix}</span>}
+              </span>
+            );
+          } else {
+            entries.push(<span style={{ marginRight: '20px' }}>{parse(fixLinksInText(innerEntryItem.title))}</span>);
+          }
+        });
+      }
+    } else {
+      if (entryItem?.id) {
+        entries.push(
+          <span style={{ marginRight: '20px', display: 'inline-flex' }} key={`table-item-${entryItem.id}`}>
+            <Link to={`/documentation/${entryItem.id}${location.search}`}>{entryItem.title}</Link>
+            {entryItem.suffix && <span style={{ marginLeft: '5px' }}>{entryItem.suffix}</span>}
+          </span>
+        );
+      } else {
+        entries.push(<span style={{ marginRight: '20px' }}>{parse(fixLinksInText(entryItem.title))}</span>);
+      }
+    }
+  });
+  return <>{entries}</>;
+}

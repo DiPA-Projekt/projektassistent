@@ -4,7 +4,7 @@ import {
   IndexTypeEnum,
   NavMenuItem,
   NavTypeEnum,
-} from '../components/projekthandbuch/documentation/navigation/navigation';
+} from '../components/projekthandbuch/documentation/navigation/Navigation';
 import { getMenuItemByAttributeValue } from '../shares/utils';
 
 type DocumentationSession = {
@@ -166,13 +166,16 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
 
     if (gefunden !== undefined) {
       if (gefunden.dataType === NavTypeEnum.PRODUCT) {
-        setDisciplineId(gefunden.parent.key);
-        setProductId(gefunden.key);
+        if (gefunden.parent) {
+          setDisciplineId(gefunden.parent.key);
+          setProductId(gefunden.key);
+        }
       } else if (gefunden.dataType === NavTypeEnum.DISCIPLINE) {
         setDisciplineId(gefunden.key);
       } else if (gefunden.dataType === NavTypeEnum.CONTENT_PRODUCT_DEPENDENCY) {
         setContentProductDependencyId(gefunden.key);
       } else if (
+        gefunden.dataType &&
         [NavTypeEnum.PROJECT_ROLE, NavTypeEnum.PROJECT_TEAM_ROLE, NavTypeEnum.ORGANISATION_ROLE].includes(
           gefunden.dataType
         )
@@ -208,48 +211,29 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
 
   function getNavigationPath(menuEntryId: string): { key: string; label: string }[] {
     let gefunden = getMenuItemByAttributeValue(navigationData, 'key', menuEntryId);
-    console.log('getNavigationPath call', gefunden, navigationData);
+    if (gefunden) {
+      const parentPath = [gefunden];
 
-    const parentPath = [gefunden];
+      while (gefunden) {
+        if (gefunden.parent) {
+          const parent = gefunden.parent;
 
-    while (gefunden) {
-      if (gefunden.parent) {
-        console.log(gefunden.parent.key);
-
-        const parent = gefunden.parent;
-
-        parentPath.push(parent);
-        gefunden = gefunden.parent;
-      } else {
-        gefunden = false;
+          parentPath.push(parent);
+          gefunden = gefunden.parent;
+        } else {
+          gefunden = undefined;
+        }
       }
+      return parentPath;
+    } else {
+      return [];
     }
-    return parentPath;
   }
 
   function onIndexPageSelected(indexPageType: IndexTypeEnum): void {
     console.log('onIndexPageSelected content', indexPageType);
     setSelectedIndexType(indexPageType);
   }
-
-  // async function fetchSectionContentData(sectionId: string): Promise<any> {
-  //   const sectionContentUrl =
-  //     'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-  //     modelVariantId +
-  //     '/Kapitel/' +
-  //     sectionId;
-  //
-  //   const jsonDataFromXml: any = await getJsonDataFromXml(sectionContentUrl);
-  //   const textPart = jsonDataFromXml.children.find((child: any) => child.name === 'Text')?.value;
-  //
-  //   return {
-  //     id: jsonDataFromXml.attributes.id,
-  //     header: jsonDataFromXml.attributes.name,
-  //     descriptionText: textPart,
-  //     tableEntries: [],
-  //     subPageEntries: [],
-  //   };
-  // }
 
   return (
     // the Provider gives access to the context to its children

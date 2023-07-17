@@ -22,6 +22,7 @@ import { useDocumentation } from '../../../../context/DocumentationContext';
 import 'antd/dist/reset.css';
 import { XMLElement } from 'react-xml-parser';
 import { useTailoring } from '../../../../context/TailoringContext';
+import { weitApiUrl } from '../../../app/App';
 
 const { Sider } = Layout;
 
@@ -139,7 +140,7 @@ export function Navigation() {
       }
     }
 
-    mount().then();
+    void mount().then();
     //eslint-disable-next-line
   }, [tailoringParameter.modelVariantId]);
 
@@ -165,7 +166,7 @@ export function Navigation() {
         let currentGeneratedChildren: NavMenuItem[] = [];
 
         let i = 0;
-        for (let child of item.children) {
+        for (const child of item.children) {
           let foundInGeneratedChildren = false;
 
           if (currentGeneratedChildren.length > 0) {
@@ -216,16 +217,17 @@ export function Navigation() {
     return items;
   }
 
-  async function fetchSectionDetailsData(childItem: any): Promise<any> {
+  async function fetchSectionDetailsData(childItem: NavMenuItem): Promise<any> {
     const sectionId = childItem.key;
 
     const sectionDetailUrl =
-      'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      weitApiUrl +
+      '/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
       tailoringParameter.modelVariantId +
       '/Kapitel/' +
       sectionId;
 
-    const jsonDataFromXml: any = await getJsonDataFromXml(sectionDetailUrl);
+    const jsonDataFromXml = await getJsonDataFromXml(sectionDetailUrl);
 
     const generatedContent = jsonDataFromXml.attributes.GenerierterInhalt;
     const wirdErsetzt = jsonDataFromXml.attributes.WirdErsetzt;
@@ -291,52 +293,58 @@ export function Navigation() {
       }
     }
 
-    if (childItem.parent.label === 'Produktabhängigkeiten' && childItem.label === 'Inhaltliche Produktabhängigkeiten') {
+    if (
+      childItem.parent?.label === 'Produktabhängigkeiten' &&
+      childItem.label === 'Inhaltliche Produktabhängigkeiten'
+    ) {
       addedChildren = await getContentProductDependencies(childItem.parent);
     }
 
-    if (childItem.parent.label === 'Referenz Rollen' && childItem.label !== 'Rollenindex') {
+    if (childItem.parent?.label === 'Referenz Rollen' && childItem.label !== 'Rollenindex') {
       // "Rollenindex" Spezialfall
       mergedChildren = await getReferenceRoles(childItem.parent);
     }
 
-    if (childItem.parent.label === 'Referenz Tailoring' && childItem.label === 'Vorgehensbausteine') {
+    if (childItem.parent?.label === 'Referenz Tailoring' && childItem.label === 'Vorgehensbausteine') {
       addedChildren = await getTailoringProcessBuildingBlocks(childItem);
     }
 
-    if (childItem.parent.label === 'Referenz Tailoring' && childItem.label === 'Projekttypen und Projekttypvarianten') {
+    if (
+      childItem.parent?.label === 'Referenz Tailoring' &&
+      childItem.label === 'Projekttypen und Projekttypvarianten'
+    ) {
       addedChildren = await getProductTypesAndProductTypeVariants(childItem);
     }
 
-    if (childItem.parent.label === 'Referenz Abläufe' && childItem.label === 'Projektdurchführungsstrategien') {
+    if (childItem.parent?.label === 'Referenz Abläufe' && childItem.label === 'Projektdurchführungsstrategien') {
       addedChildren = await getProjectExecutionStrategies(childItem);
     }
 
-    if (childItem.parent.label === 'Referenz Tailoring' && childItem.label === 'Projektmerkmale') {
+    if (childItem.parent?.label === 'Referenz Tailoring' && childItem.label === 'Projektmerkmale') {
       addedChildren = await getProjectCharacteristics(childItem);
     }
 
-    if (childItem.parent.label === 'Referenz Arbeitshilfen' && childItem.label === 'Aktivitäten') {
+    if (childItem.parent?.label === 'Referenz Arbeitshilfen' && childItem.label === 'Aktivitäten') {
       addedChildren = await getWorkAidsActivities(childItem);
     }
 
-    if (childItem.parent.label === 'Methoden und Werkzeuge' && childItem.label === 'Methodenreferenzen') {
+    if (childItem.parent?.label === 'Methoden und Werkzeuge' && childItem.label === 'Methodenreferenzen') {
       addedChildren = await getWorkAidsMethodReferences(childItem);
     }
 
-    if (childItem.parent.label === 'Methoden und Werkzeuge' && childItem.label === 'Werkzeugreferenzen') {
+    if (childItem.parent?.label === 'Methoden und Werkzeuge' && childItem.label === 'Werkzeugreferenzen') {
       addedChildren = await getWorkAidsToolReferences(childItem);
     }
 
-    if (childItem.parent.label === 'Referenz Abläufe' && childItem.label === 'Entscheidungspunkte') {
+    if (childItem.parent?.label === 'Referenz Abläufe' && childItem.label === 'Entscheidungspunkte') {
       addedChildren = await getDecisionPoints(childItem);
     }
 
-    if (childItem.parent.label === 'Referenz Abläufe' && childItem.label === 'Ablaufbausteine') {
+    if (childItem.parent?.label === 'Referenz Abläufe' && childItem.label === 'Ablaufbausteine') {
       addedChildren = await getProcessModules(childItem);
     }
 
-    if (childItem.parent.label === 'Produktvorlagen' && childItem.label === 'Übersicht über Produktvorlagen') {
+    if (childItem.parent?.label === 'Produktvorlagen' && childItem.label === 'Übersicht über Produktvorlagen') {
       addedChildren = await getTemplates(childItem);
     }
 
@@ -368,11 +376,9 @@ export function Navigation() {
 
   async function fetchData(): Promise<void> {
     const sectionUrl =
-      'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      tailoringParameter.modelVariantId +
-      '/Kapitel/';
+      weitApiUrl + '/V-Modellmetamodell/mm_2021/V-Modellvariante/' + tailoringParameter.modelVariantId + '/Kapitel/';
 
-    const jsonDataFromXml: any = await getJsonDataFromXml(sectionUrl);
+    const jsonDataFromXml = await getJsonDataFromXml(sectionUrl);
 
     const navMenuItems = await xmlDataToNavMenuItem(jsonDataFromXml);
     console.log('navMenuItems', navMenuItems);
@@ -382,9 +388,10 @@ export function Navigation() {
     setNavigationData(xmlDataWithParent);
   }
 
-  async function getReferenceProducts(target: any): Promise<NavMenuItem[]> {
+  async function getReferenceProducts(target: NavMenuItem): Promise<NavMenuItem[]> {
     const referenceProductsUrl =
-      'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      weitApiUrl +
+      '/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
       tailoringParameter.modelVariantId +
       '/Projekttyp/' +
       tailoringParameter.projectTypeId +
@@ -393,9 +400,9 @@ export function Navigation() {
       '/Disziplin?' +
       getProjectFeaturesQueryString();
 
-    const jsonDataFromXml: any = await getJsonDataFromXml(referenceProductsUrl);
+    const jsonDataFromXml = await getJsonDataFromXml(referenceProductsUrl);
 
-    return jsonDataFromXml.getElementsByTagName('Disziplin').map((disciplineValue: any) => {
+    return jsonDataFromXml.getElementsByTagName('Disziplin').map((disciplineValue) => {
       const disciplineEntry: NavMenuItem = {
         key: disciplineValue.attributes.id,
         parent: target,
@@ -406,7 +413,7 @@ export function Navigation() {
 
       const products: NavMenuItem[] = disciplineValue
         .getElementsByTagName('Produkt')
-        .map((productValue: any): NavMenuItem => {
+        .map((productValue): NavMenuItem => {
           // TODO: besser woanders?
           productToDisciplineMap.set(productValue.attributes.id, {
             key: disciplineValue.attributes.id,
@@ -429,9 +436,10 @@ export function Navigation() {
     });
   }
 
-  async function getReferenceRoles(target: any): Promise<NavMenuItem[]> {
+  async function getReferenceRoles(target: NavMenuItem): Promise<NavMenuItem[]> {
     const referenceRolesUrl =
-      'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      weitApiUrl +
+      '/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
       tailoringParameter.modelVariantId +
       '/Projekttyp/' +
       tailoringParameter.projectTypeId +
@@ -440,11 +448,11 @@ export function Navigation() {
       '/Rollenkategorie?' +
       getProjectFeaturesQueryString();
 
-    const jsonDataFromXml: any = await getJsonDataFromXml(referenceRolesUrl);
+    const jsonDataFromXml = await getJsonDataFromXml(referenceRolesUrl);
 
     const rolesNavigation: NavMenuItem[] = jsonDataFromXml
       .getElementsByTagName('Rollenkategorie')
-      .map((roleCategoryValue: any) => {
+      .map((roleCategoryValue) => {
         // in Kapitel the role entries are named "Projektrollen", "Organisationsrollen" and "Projektteamrollen"
         // in Rollenkategorie they are named im singular "Projektrolle", "Organisationsrolle" and "Projektteamrolle"
         const roleCategoryName = roleCategoryValue.attributes.name;
@@ -493,9 +501,10 @@ export function Navigation() {
     return rolesNavigation;
   }
 
-  async function getDecisionPoints(target: any): Promise<NavMenuItem[]> {
+  async function getDecisionPoints(target: NavMenuItem): Promise<NavMenuItem[]> {
     const decisionPointsUrl =
-      'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      weitApiUrl +
+      '/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
       tailoringParameter.modelVariantId +
       '/Projekttyp/' +
       tailoringParameter.projectTypeId +
@@ -504,7 +513,7 @@ export function Navigation() {
       '/Entscheidungspunkt?' +
       getProjectFeaturesQueryString();
 
-    const jsonDataFromXml: any = await getJsonDataFromXml(decisionPointsUrl);
+    const jsonDataFromXml = await getJsonDataFromXml(decisionPointsUrl);
 
     const entscheidungspunkte: XMLElement[] = jsonDataFromXml.getElementsByTagName('Entscheidungspunkt');
 
@@ -519,9 +528,10 @@ export function Navigation() {
     });
   }
 
-  async function getProcessModules(target: any): Promise<NavMenuItem[]> {
+  async function getProcessModules(target: NavMenuItem): Promise<NavMenuItem[]> {
     const processModulesUrl =
-      'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      weitApiUrl +
+      '/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
       tailoringParameter.modelVariantId +
       '/Projekttyp/' +
       tailoringParameter.projectTypeId +
@@ -530,7 +540,7 @@ export function Navigation() {
       '/Ablaufbaustein?' +
       getProjectFeaturesQueryString();
 
-    const jsonDataFromXml: any = await getJsonDataFromXml(processModulesUrl);
+    const jsonDataFromXml = await getJsonDataFromXml(processModulesUrl);
 
     const ablaufbausteine: XMLElement[] = jsonDataFromXml.getElementsByTagName('Ablaufbaustein');
 
@@ -545,9 +555,10 @@ export function Navigation() {
     });
   }
 
-  async function getContentProductDependencies(target: any): Promise<NavMenuItem[]> {
+  async function getContentProductDependencies(target: NavMenuItem): Promise<NavMenuItem[]> {
     const contentProductDependenciesUrl =
-      'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      weitApiUrl +
+      '/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
       tailoringParameter.modelVariantId +
       '/Projekttyp/' +
       tailoringParameter.projectTypeId +
@@ -556,7 +567,7 @@ export function Navigation() {
       '/InhaltlicheAbhaengigkeitenGruppe?' +
       getProjectFeaturesQueryString();
 
-    const jsonDataFromXml: any = await getJsonDataFromXml(contentProductDependenciesUrl);
+    const jsonDataFromXml = await getJsonDataFromXml(contentProductDependenciesUrl);
 
     const contentProductDependencies = jsonDataFromXml.getElementsByTagName('InhaltlicheAbhängigkeit');
 
@@ -581,9 +592,10 @@ export function Navigation() {
     });
   }
 
-  async function getTailoringProcessBuildingBlocks(target: any): Promise<NavMenuItem[]> {
+  async function getTailoringProcessBuildingBlocks(target: NavMenuItem): Promise<NavMenuItem[]> {
     const tailoringProcessBuildingBlocksUrl =
-      'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      weitApiUrl +
+      '/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
       tailoringParameter.modelVariantId +
       '/Projekttyp/' +
       tailoringParameter.projectTypeId +
@@ -592,9 +604,9 @@ export function Navigation() {
       '/Vorgehensbaustein?' +
       getProjectFeaturesQueryString();
 
-    const jsonDataFromXml: any = await getJsonDataFromXml(tailoringProcessBuildingBlocksUrl);
+    const jsonDataFromXml = await getJsonDataFromXml(tailoringProcessBuildingBlocksUrl);
 
-    return jsonDataFromXml.getElementsByTagName('Vorgehensbaustein').map((processBuildingBlockValue: any) => {
+    return jsonDataFromXml.getElementsByTagName('Vorgehensbaustein').map((processBuildingBlockValue) => {
       return {
         key: processBuildingBlockValue.attributes.id,
         parent: target,
@@ -605,9 +617,10 @@ export function Navigation() {
     });
   }
 
-  async function getWorkAidsActivities(target: any): Promise<NavMenuItem[]> {
+  async function getWorkAidsActivities(target: NavMenuItem): Promise<NavMenuItem[]> {
     const workAidsActivitiesUrl =
-      'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      weitApiUrl +
+      '/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
       tailoringParameter.modelVariantId +
       '/Projekttyp/' +
       tailoringParameter.projectTypeId +
@@ -616,11 +629,11 @@ export function Navigation() {
       '/Aktivitaet?' +
       getProjectFeaturesQueryString();
 
-    const jsonDataFromXml: any = await getJsonDataFromXml(workAidsActivitiesUrl);
+    const jsonDataFromXml = await getJsonDataFromXml(workAidsActivitiesUrl);
 
     const disciplineEntriesMap = new Map<string, NavMenuItem>();
 
-    jsonDataFromXml.getElementsByTagName('Aktivität').map((activityReference: any) => {
+    jsonDataFromXml.getElementsByTagName('Aktivität').map((activityReference) => {
       const productRef = activityReference.getElementsByTagName('ProduktRef')[0];
 
       const productToDisciplineEntryKey = productToDisciplineMap.get(productRef.attributes.id)!.key;
@@ -659,15 +672,16 @@ export function Navigation() {
     });
   }
 
-  async function getWorkAidsMethodReferences(target: any): Promise<NavMenuItem[]> {
+  async function getWorkAidsMethodReferences(target: NavMenuItem): Promise<NavMenuItem[]> {
     const workAidsMethodReferencesUrl =
-      'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      weitApiUrl +
+      '/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
       tailoringParameter.modelVariantId +
       '/Methodenreferenz';
 
-    const jsonDataFromXml: any = await getJsonDataFromXml(workAidsMethodReferencesUrl);
+    const jsonDataFromXml = await getJsonDataFromXml(workAidsMethodReferencesUrl);
 
-    return jsonDataFromXml.getElementsByTagName('Methodenreferenz').map((methodReference: any) => {
+    return jsonDataFromXml.getElementsByTagName('Methodenreferenz').map((methodReference) => {
       return {
         key: methodReference.attributes.id,
         parent: target,
@@ -678,15 +692,16 @@ export function Navigation() {
     });
   }
 
-  async function getWorkAidsToolReferences(target: any): Promise<NavMenuItem[]> {
+  async function getWorkAidsToolReferences(target: NavMenuItem): Promise<NavMenuItem[]> {
     const workAidsToolReferencesUrl =
-      'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      weitApiUrl +
+      '/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
       tailoringParameter.modelVariantId +
       '/Werkzeugreferenz';
 
-    const jsonDataFromXml: any = await getJsonDataFromXml(workAidsToolReferencesUrl);
+    const jsonDataFromXml = await getJsonDataFromXml(workAidsToolReferencesUrl);
 
-    return jsonDataFromXml.getElementsByTagName('Werkzeugreferenz').map((toolReference: any) => {
+    return jsonDataFromXml.getElementsByTagName('Werkzeugreferenz').map((toolReference) => {
       return {
         key: toolReference.attributes.id,
         parent: target,
@@ -697,9 +712,10 @@ export function Navigation() {
     });
   }
 
-  async function getTemplates(target: any): Promise<NavMenuItem[]> {
+  async function getTemplates(target: NavMenuItem): Promise<NavMenuItem[]> {
     const templatesUrl =
-      'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      weitApiUrl +
+      '/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
       tailoringParameter.modelVariantId +
       '/Projekttyp/' +
       tailoringParameter.projectTypeId +
@@ -708,11 +724,11 @@ export function Navigation() {
       '/ExterneKopiervorlage?' +
       getProjectFeaturesQueryString();
 
-    const jsonDataFromXml: any = await getJsonDataFromXml(templatesUrl);
+    const jsonDataFromXml = await getJsonDataFromXml(templatesUrl);
 
     const disciplineEntriesMap = new Map<string, NavMenuItem>();
 
-    jsonDataFromXml.getElementsByTagName('ExterneKopiervorlage').map((externalMasterTemplate: any) => {
+    jsonDataFromXml.getElementsByTagName('ExterneKopiervorlage').map((externalMasterTemplate) => {
       const productRef = externalMasterTemplate.getElementsByTagName('ProduktRef')[0];
 
       const productToDisciplineEntryKey = productToDisciplineMap.get(productRef.attributes.id)!.key;
@@ -735,15 +751,16 @@ export function Navigation() {
     });
   }
 
-  async function getProjectCharacteristics(target: any): Promise<NavMenuItem[]> {
+  async function getProjectCharacteristics(target: NavMenuItem): Promise<NavMenuItem[]> {
     const projectCharacteristicsUrl =
-      'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      weitApiUrl +
+      '/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
       tailoringParameter.modelVariantId +
       '/Projektmerkmal';
 
-    const jsonDataFromXml: any = await getJsonDataFromXml(projectCharacteristicsUrl);
+    const jsonDataFromXml = await getJsonDataFromXml(projectCharacteristicsUrl);
 
-    return jsonDataFromXml.getElementsByTagName('Projektmerkmal').map((projectCharacteristic: any) => {
+    return jsonDataFromXml.getElementsByTagName('Projektmerkmal').map((projectCharacteristic) => {
       return {
         key: projectCharacteristic.attributes.id,
         parent: target,
@@ -754,68 +771,66 @@ export function Navigation() {
     });
   }
 
-  async function getProductTypesAndProductTypeVariants(target: any): Promise<NavMenuItem[]> {
+  async function getProductTypesAndProductTypeVariants(target: NavMenuItem): Promise<NavMenuItem[]> {
     const projectTypeVariantsUrl =
-      'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      weitApiUrl +
+      '/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
       tailoringParameter.modelVariantId +
       '/Projekttypvariante';
 
-    const jsonDataFromXmlProjectTypeVariants: any = await getJsonDataFromXml(projectTypeVariantsUrl);
+    const jsonDataFromXmlProjectTypeVariants = await getJsonDataFromXml(projectTypeVariantsUrl);
 
     const navigation: NavMenuItem[] = [];
 
-    jsonDataFromXmlProjectTypeVariants
-      .getElementsByTagName('Projekttypvariante')
-      .map((projectTypeVariantValue: any) => {
-        const projectTypeValue = projectTypeVariantValue.getElementsByTagName('ProjekttypRef')[0];
+    jsonDataFromXmlProjectTypeVariants.getElementsByTagName('Projekttypvariante').map((projectTypeVariantValue) => {
+      const projectTypeValue = projectTypeVariantValue.getElementsByTagName('ProjekttypRef')[0];
 
-        let projectType = getMenuItemByAttributeValue(navigation, 'key', projectTypeValue.attributes.id);
-        if (projectType === undefined) {
-          projectType = {
-            key: projectTypeValue.attributes.id,
-            parent: target,
-            label: projectTypeValue.attributes.name,
-            dataType: NavTypeEnum.PROJECT_TYPE,
-            onTitleClick: (item: any) => handleSelectedItem(item.key),
-            children: [],
-          };
+      let projectType = getMenuItemByAttributeValue(navigation, 'key', projectTypeValue.attributes.id);
+      if (projectType === undefined) {
+        projectType = {
+          key: projectTypeValue.attributes.id,
+          parent: target,
+          label: projectTypeValue.attributes.name,
+          dataType: NavTypeEnum.PROJECT_TYPE,
+          onTitleClick: (item: any) => handleSelectedItem(item.key),
+          children: [],
+        };
 
-          navigation.push(projectType);
-        }
+        navigation.push(projectType);
+      }
 
-        projectType.children.push({
-          key: projectTypeVariantValue.attributes.id,
-          parent: projectTypeValue,
-          label: projectTypeVariantValue.attributes.name,
-          dataType: NavTypeEnum.PROJECT_TYPE_VARIANT,
-          onClick: (item: any) => handleSelectedItem(item.key), // TODO: different Types
-        });
+      projectType.children.push({
+        key: projectTypeVariantValue.attributes.id,
+        parent: projectTypeValue,
+        label: projectTypeVariantValue.attributes.name,
+        dataType: NavTypeEnum.PROJECT_TYPE_VARIANT,
+        onClick: (item: any) => handleSelectedItem(item.key), // TODO: different Types
       });
+    });
 
     return navigation;
   }
 
-  async function getProjectExecutionStrategies(target: any): Promise<NavMenuItem[]> {
+  async function getProjectExecutionStrategies(target: NavMenuItem): Promise<NavMenuItem[]> {
     const projectTypeVariantsUrl =
-      'https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      weitApiUrl +
+      '/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
       tailoringParameter.modelVariantId +
       '/Projekttypvariante';
 
-    const jsonDataFromXmlProjectTypeVariants: any = await getJsonDataFromXml(projectTypeVariantsUrl);
+    const jsonDataFromXmlProjectTypeVariants = await getJsonDataFromXml(projectTypeVariantsUrl);
 
     const navigation: NavMenuItem[] = [];
 
-    jsonDataFromXmlProjectTypeVariants
-      .getElementsByTagName('Projekttypvariante')
-      .map((projectTypeVariantValue: any) => {
-        navigation.push({
-          key: 'pes_' + projectTypeVariantValue.attributes.id,
-          parent: target,
-          label: projectTypeVariantValue.attributes.name,
-          dataType: NavTypeEnum.PROJECT_TYPE_VARIANT_SEQUENCE, // TODO: oder auch ProjectExecutionStrategy
-          onClick: (item: any) => handleSelectedItem(item.key), // TODO: different Types
-        });
+    jsonDataFromXmlProjectTypeVariants.getElementsByTagName('Projekttypvariante').map((projectTypeVariantValue) => {
+      navigation.push({
+        key: 'pes_' + projectTypeVariantValue.attributes.id,
+        parent: target,
+        label: projectTypeVariantValue.attributes.name,
+        dataType: NavTypeEnum.PROJECT_TYPE_VARIANT_SEQUENCE, // TODO: oder auch ProjectExecutionStrategy
+        onClick: (item: any) => handleSelectedItem(item.key), // TODO: different Types
       });
+    });
 
     return navigation;
   }

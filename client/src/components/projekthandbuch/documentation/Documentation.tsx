@@ -1,7 +1,7 @@
 import React from 'react';
 import { Layout } from 'antd';
-import { Navigation } from './navigation/navigation';
-import { Content } from './content/content';
+import { Navigation } from './navigation/Navigation';
+import { Content } from './content/Content';
 import { DocumentationSessionContextProvider } from '../../../context/DocumentationContext';
 import { Breadcrumbs } from '../../Breadcrumbs';
 import { SiderToggle } from '../../SiderToggle';

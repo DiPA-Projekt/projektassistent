@@ -3,13 +3,15 @@ import { Route } from 'react-router-dom';
 import { Home } from '../Home';
 import './../../i18n';
 import { Project } from '../projekthandbuch/projekt/project';
-import { Documentation } from '../projekthandbuch/documentation/documentation';
-import { Templates } from '../projekthandbuch/produktvorlagen/templates';
+import { Documentation } from '../projekthandbuch/documentation/Documentation';
+import { Templates } from '../projekthandbuch/produktvorlagen/Templates';
 import { Layout } from 'antd';
 import { SiteHeader } from '../header/SiteHeader';
 import { Routes } from 'react-router';
 import { SiteFooter } from '../footer/SiteFooter';
 import { Content } from 'antd/es/layout/layout';
+
+export const weitApiUrl = 'https://vm-api.weit-verein.de';
 
 function App() {
   return (

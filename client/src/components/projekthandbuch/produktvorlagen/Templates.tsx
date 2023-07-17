@@ -4,9 +4,10 @@ import { Col, FloatButton, Form, Layout, Row } from 'antd';
 // import { useTemplate } from '../../../context/TemplateContext';
 import { TemplateProps, TemplatesContent } from './TemplatesContent';
 import { decodeXml, getJsonDataFromXml } from '../../../shares/utils';
-import { NavTypeEnum } from '../documentation/navigation/navigation';
+import { NavTypeEnum } from '../documentation/navigation/Navigation';
 import { useTailoring } from '../../../context/TailoringContext';
 import { SubmitArea } from './SubmitArea';
+import { weitApiUrl } from '../../app/App';
 
 export function Templates() {
   // public readonly ctrl: ProduktvorlagenController;
@@ -63,13 +64,14 @@ export function Templates() {
       // console.log(navigation);
     }
 
-    mount().then();
+    void mount().then();
     //eslint-disable-next-line
   }, [tailoringParameter.modelVariantId]);
 
   async function getReferenceProducts(): Promise<TemplateProps[]> {
     const referenceProductsUrl =
-      'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      weitApiUrl +
+      '/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
       tailoringParameter.modelVariantId +
       '/Projekttyp/' +
       tailoringParameter.projectTypeId +
@@ -78,7 +80,7 @@ export function Templates() {
       '/Disziplin?' +
       getProjectFeaturesQueryString();
 
-    const jsonDataFromXml: any = await getJsonDataFromXml(referenceProductsUrl);
+    const jsonDataFromXml = await getJsonDataFromXml(referenceProductsUrl);
 
     const navigation: TemplateProps[] = await Promise.all(
       jsonDataFromXml.getElementsByTagName('Disziplin').map(async (disciplineValue: any) => {
@@ -123,7 +125,8 @@ export function Templates() {
 
   async function getTopics(disciplineId: string, productId: string): Promise<TemplateProps[]> {
     const topicUrl =
-      'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      weitApiUrl +
+      '/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
       tailoringParameter.modelVariantId +
       '/Projekttyp/' +
       tailoringParameter.projectTypeId +
@@ -136,7 +139,7 @@ export function Templates() {
       '?' +
       getProjectFeaturesQueryString();
 
-    const jsonDataFromXml: any = await getJsonDataFromXml(topicUrl);
+    const jsonDataFromXml = await getJsonDataFromXml(topicUrl);
 
     console.log('ist Produktvorlage', jsonDataFromXml.attributes.Produktvorlage === 'Ja');
 
@@ -166,7 +169,8 @@ export function Templates() {
 
   async function getTopicContent(topicId: string, disciplineId: string, productId: string): Promise<string> {
     const topicUrl =
-      'https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      weitApiUrl +
+      '/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
       tailoringParameter.modelVariantId +
       '/Projekttyp/' +
       tailoringParameter.projectTypeId +
@@ -181,7 +185,7 @@ export function Templates() {
       '?' +
       getProjectFeaturesQueryString();
 
-    const jsonDataFromXml: any = await getJsonDataFromXml(topicUrl);
+    const jsonDataFromXml = await getJsonDataFromXml(topicUrl);
 
     return jsonDataFromXml.getElementsByTagName('Beschreibung')[0]?.value;
   }

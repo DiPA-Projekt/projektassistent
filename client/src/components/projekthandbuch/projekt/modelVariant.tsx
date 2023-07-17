@@ -2,12 +2,11 @@ import { Form, Select } from 'antd';
 import React, { useEffect, useState } from 'react';
 
 import { ModelVariant } from '@dipa-projekt/projektassistent-openapi';
-
-import axios from 'axios';
-import XMLParser from 'react-xml-parser';
 import { ProjectTypeVariantComponent } from './projectTypeVariant';
 import { useTailoring } from '../../../context/TailoringContext';
 import { useTranslation } from 'react-i18next';
+import { weitApiUrl } from '../../app/App';
+import { getJsonDataFromXml } from '../../../shares/utils';
 
 const { Option } = Select;
 
@@ -25,29 +24,24 @@ export function ModelVariantComponent() {
 
   useEffect(() => {
     async function getModelVariantsData() {
-      fetchModelVariantsData();
+      await fetchModelVariantsData();
     }
 
-    getModelVariantsData().then();
+    void getModelVariantsData().then();
     //eslint-disable-next-line
   }, []);
 
-  function fetchModelVariantsData(): void {
-    axios
-      .get('https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante')
-      .then((response) => {
-        const jsonDataFromXml = new XMLParser().parseFromString(response.data);
+  async function fetchModelVariantsData(): Promise<void> {
+    const modelVariantsUrl = weitApiUrl + '/V-Modellmetamodell/mm_2021/V-Modellvariante';
 
-        const modelVariants: ModelVariant[] = jsonDataFromXml
-          .getElementsByTagName('V-Modellvariante')
-          .map((variante) => {
-            const currentAttributes = variante.attributes;
-            return { id: currentAttributes.id, name: currentAttributes.name };
-          });
+    const jsonDataFromXml = await getJsonDataFromXml(modelVariantsUrl);
 
-        setModelVariantsData(modelVariants);
-      })
-      .catch(() => 'obligatory catch');
+    const modelVariants: ModelVariant[] = jsonDataFromXml.getElementsByTagName('V-Modellvariante').map((variante) => {
+      const currentAttributes = variante.attributes;
+      return { id: currentAttributes.id, name: currentAttributes.name };
+    });
+
+    setModelVariantsData(modelVariants);
   }
 
   return (
