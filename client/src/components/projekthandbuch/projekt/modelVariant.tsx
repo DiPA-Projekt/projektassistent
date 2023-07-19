@@ -1,4 +1,4 @@
-import { Form, Select } from 'antd';
+import { Card, Form, Select } from 'antd';
 import React, { useEffect, useState } from 'react';
 
 import { ModelVariant } from '@dipa-projekt/projektassistent-openapi';
@@ -9,11 +9,6 @@ import { weitApiUrl } from '../../app/App';
 import { getJsonDataFromXml } from '../../../shares/utils';
 
 const { Option } = Select;
-
-const layout = {
-  labelCol: { span: 8 },
-  wrapperCol: { span: 8 },
-};
 
 export function ModelVariantComponent() {
   const { t } = useTranslation();
@@ -46,23 +41,26 @@ export function ModelVariantComponent() {
 
   return (
     <>
-      <Form.Item {...layout}>
-        <Select
-          placeholder={t('common.PleaseChoose')}
-          onChange={(value: string) => {
-            console.log('ATTENTION changing modelVariant', value);
-            setTailoringParameter({ modelVariantId: value });
-          }}
-          value={tailoringParameter.modelVariantId}
-        >
-          {modelVariantsData.map((modelVariant: ModelVariant, index: number) => {
-            return (
-              <Option value={modelVariant.id} key={`meta-model-${index}`}>
-                {modelVariant.name}
-              </Option>
-            );
-          })}
-        </Select>
+      <Form.Item>
+        <Card title={<h2>Wähle die Modellvariante</h2>} style={{ maxWidth: 800 }}>
+          <Select
+            style={{ maxWidth: '300px' }}
+            placeholder={t('common.PleaseChoose')}
+            onChange={(value: string) => {
+              console.log('ATTENTION changing modelVariant', value);
+              setTailoringParameter({ modelVariantId: value });
+            }}
+            value={tailoringParameter.modelVariantId}
+          >
+            {modelVariantsData.map((modelVariant: ModelVariant, index: number) => {
+              return (
+                <Option value={modelVariant.id} key={`meta-model-${index}`}>
+                  {modelVariant.name}
+                </Option>
+              );
+            })}
+          </Select>
+        </Card>
       </Form.Item>
       {tailoringParameter.modelVariantId && <ProjectTypeVariantComponent />}
     </>

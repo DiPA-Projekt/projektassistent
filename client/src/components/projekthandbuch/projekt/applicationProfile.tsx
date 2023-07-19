@@ -7,17 +7,13 @@ import XMLParser, { XMLElement } from 'react-xml-parser';
 import { useTailoring } from '../../../context/TailoringContext';
 import { decodeXml, getJsonDataFromXml, removeHtmlTags } from '../../../shares/utils';
 import { PopoverComponent } from './popover/component';
-import { Form, Select } from 'antd';
+import { Button, Card, Form, Select } from 'antd';
 import { SelectValue } from 'antd/es/select';
 import parse from 'html-react-parser';
 import { weitApiUrl } from '../../app/App';
+import { LinkWithQuery } from '../../LinkWithQuery';
 
 const { Option } = Select;
-
-const layout = {
-  labelCol: { span: 16 },
-  wrapperCol: { span: 8 },
-};
 
 interface MyType {
   [key: string]: string;
@@ -252,7 +248,7 @@ export function ApplicationProfile() {
         return {
           key: value.attributes.id,
           title: value.attributes.name,
-          answer: `<div style="float: left; margin-right: 5px;">ᐅ ${value.attributes.name}: </div>${valueDescription}`,
+          answer: `<div style="margin-right: 15px;">ᐅ ${value.attributes.name}: </div>${valueDescription}`,
         };
       });
       resultValues.push(result);
@@ -280,19 +276,6 @@ export function ApplicationProfile() {
     // setSearchParams({ mV: modelVariantId!, ptV: projectTypeVariantId!, pt: projectTypeId!, ...projectFeatures });
   }
 
-  function labelWithPopover(projectFeature: ProjectFeature) {
-    return (
-      <div>
-        <span style={{ marginRight: '5px' }}>{projectFeature.description}</span>
-        {projectFeature?.helpText !== undefined && (
-          <>
-            <PopoverComponent content={projectFeature.helpText} title={projectFeature.name} />
-          </>
-        )}
-      </div>
-    );
-  }
-
   function getAnswer(projectFeature: ProjectFeature, value: SelectValue): string | undefined {
     const selectedValue = projectFeature.values?.possibleValues?.find((x: any) => x.key === value);
     return selectedValue?.answer;
@@ -302,34 +285,49 @@ export function ApplicationProfile() {
     <>
       {tailoringParameter.projectFeatures && projectFeaturesDetails.length > 0 && (
         <>
-          <h2>Definiere das Anwendungsprofil</h2>
-          {projectFeaturesDetails?.map((projectFeature: ProjectFeature) => {
-            return (
-              <Form.Item
-                {...layout}
-                key={`${projectFeature.name}-${projectFeature.id}`}
-                label={labelWithPopover(projectFeature)}
-              >
-                <Select
-                  value={tailoringParameter.projectFeatures[projectFeature.id]}
-                  onChange={(value: string) => {
-                    // this.setState({ value: getAnswer(projectFeature, value) });
-                    onProjectFeatureSelected(projectFeature.id, value);
-                  }}
-                >
-                  {projectFeature.values?.possibleValues?.map((value: ProjectFeatureStringOption) => (
-                    // wir müssen als Key in der API einen anderen Datentyp wählen / oder mappen
-                    <Option key={value.key} value={value.key}>
-                      {value.title}
-                    </Option>
-                  ))}
-                </Select>
-                <div style={{ fontWeight: 500, marginTop: '5px' }}>
-                  {parse(decodeXml(getAnswer(projectFeature, tailoringParameter.projectFeatures[projectFeature.id])))}
-                </div>
-              </Form.Item>
-            );
-          })}
+          <Card
+            title={<h2>Definiere das Anwendungsprofil</h2>}
+            style={{ maxWidth: 800, backgroundColor: '#fffaf0 !important' }}
+          >
+            {projectFeaturesDetails?.map((projectFeature: ProjectFeature) => {
+              return (
+                <Form.Item key={`${projectFeature.name}-${projectFeature.id}`}>
+                  <Card
+                    className="multirow"
+                    title={<div style={{ fontSize: '14px', fontWeight: 'normal' }}>{projectFeature.description}</div>}
+                    extra={<PopoverComponent content={projectFeature.helpText} title={projectFeature.name} />}
+                    style={{ maxWidth: 800, backgroundColor: '#fffaf0 !important' }}
+                  >
+                    <Select
+                      style={{ maxWidth: '300px' }}
+                      value={tailoringParameter.projectFeatures[projectFeature.id]}
+                      onChange={(value: string) => {
+                        // this.setState({ value: getAnswer(projectFeature, value) });
+                        onProjectFeatureSelected(projectFeature.id, value);
+                      }}
+                    >
+                      {projectFeature.values?.possibleValues?.map((value: ProjectFeatureStringOption) => (
+                        // wir müssen als Key in der API einen anderen Datentyp wählen / oder mappen
+                        <Option key={value.key} value={value.key}>
+                          {value.title}
+                        </Option>
+                      ))}
+                    </Select>
+                    <div style={{ fontWeight: 700, marginTop: '10px' }}>
+                      {parse(
+                        decodeXml(getAnswer(projectFeature, tailoringParameter.projectFeatures[projectFeature.id]))
+                      )}
+                    </div>
+                  </Card>
+                </Form.Item>
+              );
+            })}
+          </Card>
+          <LinkWithQuery to="/documentation">
+            <Button type="primary" htmlType="button" style={{ marginTop: '20px' }}>
+              Generiere Dokumentation
+            </Button>
+          </LinkWithQuery>
         </>
       )}
     </>

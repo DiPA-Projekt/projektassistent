@@ -107,3 +107,32 @@ ul.sideMenu > li > ul > li > ul > li > div {
 /*  margin: 16px;*/
 /*  background: rgba(255, 255, 255, 0.3);*/
 /*}*/
+
+/* tailoring */
+
+.multirow .ant-card-head-title {
+  text-overflow: unset !important;
+  white-space: unset !important;
+}
+
+.ant-card-head {
+  background-color: #fdb66a !important;
+}
+
+.multirow .ant-card-head {
+  background-color: #ffe3bd !important;
+}
+
+.multirow .ant-card-body {
+  background-color: #fffaf0 !important;
+}
+
+.ant-card-head-title > h2 {
+  font-size: 16pt;
+  margin: 0 !important;
+}
+
+/*.ant-form-item:first-of-type:not(.multirow) {*/
+/*  margin-top: 24px;*/
+/*}*/
+

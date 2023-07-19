@@ -18,7 +18,7 @@ function App() {
     <Layout style={{ minHeight: '100vh' }}>
       <SiteHeader />
       <Layout>
-        <Content style={{ padding: '0 25px' }}>
+        <Content style={{ padding: '24px' }}>
           <Routes>
             <Route path="/" element={<Project />} />
             <Route path="/tailoring" element={<Project />} />

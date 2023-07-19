@@ -63,7 +63,7 @@ export async function getJsonDataFromXml(url: string): Promise<XMLElement> {
   }
 }
 
-export function clean(obj: { [key: string]: string }) {
+export function clean(obj: { [key: string]: string | undefined }) {
   for (const propName in obj) {
     if (obj[propName] === null || obj[propName] === undefined) {
       delete obj[propName];
@@ -72,12 +72,20 @@ export function clean(obj: { [key: string]: string }) {
   return obj;
 }
 
+export function getSearchStringFromHash() {
+  const searchHash = location.hash;
+  return searchHash.substring(searchHash.indexOf('?'));
+}
+
 export function fixLinksInText(testString: string): string {
   const url = '#/documentation/';
 
   // TODO: only replace link to entries if they match a navigation id otherwise it is a local reference to an anchor
   //  on the same page like in glossary
-  return testString.replace(/href=['"]#(?:[^"'\/]*\/)*([^'"]+)['"]/g, 'href="' + url + '$1' + location.search + '"');
+  return testString.replace(
+    /href=['"]#(?:[^"'\/]*\/)*([^'"]+)['"]/g,
+    'href="' + url + '$1' + getSearchStringFromHash() + '"'
+  );
 }
 
 export function replaceUrlInText(text: string, tailoringParameter: any, projectFeaturesString: string): string {
