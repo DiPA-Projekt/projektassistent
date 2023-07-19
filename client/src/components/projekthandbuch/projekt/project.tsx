@@ -11,9 +11,10 @@ export function Project() {
       layout="vertical"
       // onFinish={onFinish}
       // onFinishFailed={onFinishFailed}
+
+      style={{ maxWidth: '800px', textAlign: 'center', margin: 'auto' }}
       initialValues={{}}
     >
-      <h2>Wähle die Modellvariante</h2>
       <ModelVariantComponent />
       <ProjektkennzahlenComponent />
     </Form>

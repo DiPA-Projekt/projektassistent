@@ -1,4 +1,4 @@
-import { Cascader, Form } from 'antd';
+import { Card, Cascader, Form } from 'antd';
 import React, { useEffect, useState } from 'react';
 
 import { ProjectType, ProjectTypeVariant } from '@dipa-projekt/projektassistent-openapi';
@@ -8,11 +8,6 @@ import { ApplicationProfile } from './applicationProfile';
 import { getJsonDataFromXml } from '../../../shares/utils';
 import { useTranslation } from 'react-i18next';
 import { weitApiUrl } from '../../app/App';
-
-const layout = {
-  labelCol: { span: 8 },
-  wrapperCol: { span: 8 },
-};
 
 interface Option {
   value: string;
@@ -133,21 +128,23 @@ export function ProjectTypeVariantComponent() {
     <>
       {projectTypeVariantsData.length > 0 && (
         <>
-          <h2>Wähle die Projekttypvariante</h2>
-          <Form.Item {...layout}>
-            <Cascader
-              options={cascaderOptions}
-              onChange={async (value: any /*CascaderValueType*/) => {
-                console.log('ATTENTION changing projectTypeVariantId', value);
-                setTailoringParameter({
-                  modelVariantId: tailoringParameter.modelVariantId,
-                  projectTypeVariantId: value[1],
-                  projectTypeId: await getProjectTypeId(value[1]),
-                });
-              }}
-              value={cascaderDefaultValue}
-              placeholder={t('common.PleaseChoose')}
-            />
+          <Form.Item>
+            <Card title={<h2>Wähle die Projekttypvariante</h2>} style={{ maxWidth: 800 }}>
+              <Cascader
+                style={{ maxWidth: '300px' }}
+                options={cascaderOptions}
+                onChange={async (value: any /*CascaderValueType*/) => {
+                  console.log('ATTENTION changing projectTypeVariantId', value);
+                  setTailoringParameter({
+                    modelVariantId: tailoringParameter.modelVariantId,
+                    projectTypeVariantId: value[1],
+                    projectTypeId: await getProjectTypeId(value[1]),
+                  });
+                }}
+                value={cascaderDefaultValue}
+                placeholder={t('common.PleaseChoose')}
+              />
+            </Card>
           </Form.Item>
           {tailoringParameter.projectTypeVariantId && <ApplicationProfile />}
         </>

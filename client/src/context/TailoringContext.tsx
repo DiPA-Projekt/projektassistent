@@ -99,17 +99,17 @@ const TailoringSessionContextProvider = ({ children }: TailoringSessionProviderP
     }
   }
 
-  function isTailoringParameterMissing(): boolean {
+  function isTailoringParameterMissing(parameter: TailoringParameter): boolean {
     return (
-      tailoringParameter.modelVariantId === undefined ||
-      tailoringParameter.projectTypeVariantId === undefined ||
-      tailoringParameter.projectTypeId === undefined ||
-      tailoringParameter.projectFeatures === undefined
+      parameter.modelVariantId === undefined ||
+      parameter.projectTypeVariantId === undefined ||
+      parameter.projectTypeId === undefined ||
+      parameter.projectFeatures === undefined
     );
   }
 
-  function redirectIfTailoringNotComplete() {
-    if (isTailoringParameterMissing()) {
+  function redirectIfTailoringNotComplete(parameter: TailoringParameter) {
+    if (isTailoringParameterMissing(parameter)) {
       navigate('/tailoring', { replace: true });
     }
   }
@@ -123,16 +123,19 @@ const TailoringSessionContextProvider = ({ children }: TailoringSessionProviderP
     });
 
     const tailoringSearchParams = {
-      modelVariantId: searchParams.get('mV'),
-      projectTypeVariantId: searchParams.get('ptV'),
-      projectTypeId: searchParams.get('pt'),
-      projectFeatures: projectFeatureIdsSearchParam,
+      modelVariantId: searchParams.get('mV') ?? undefined,
+      projectTypeVariantId: searchParams.get('ptV') ?? undefined,
+      projectTypeId: searchParams.get('pt') ?? undefined,
     };
 
-    setTailoringParameter(clean(tailoringSearchParams));
-    console.log('ON LOAD setTailoringParameter', clean(tailoringSearchParams));
+    const cleanedTailoringSearchParams = clean(tailoringSearchParams);
 
-    redirectIfTailoringNotComplete();
+    const cleanedTailoringSearchParamsWithProjectFeatures = Object.assign(cleanedTailoringSearchParams, {
+      projectFeatures: projectFeatureIdsSearchParam,
+    });
+    setTailoringParameter(cleanedTailoringSearchParamsWithProjectFeatures);
+
+    redirectIfTailoringNotComplete(cleanedTailoringSearchParamsWithProjectFeatures);
 
     // eslint-disable-next-line
   }, []);

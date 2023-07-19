@@ -2,7 +2,7 @@ import { DataEntry } from '@dipa-projekt/projektassistent-openapi';
 import { Link } from 'react-router-dom';
 import parse from 'html-react-parser';
 import React from 'react';
-import { fixLinksInText } from '../../../../shares/utils';
+import { fixLinksInText, getSearchStringFromHash } from '../../../../shares/utils';
 
 export function TableEntriesList(props: { inputData: DataEntry[] }) {
   const entries: JSX.Element[] = [];
@@ -15,7 +15,7 @@ export function TableEntriesList(props: { inputData: DataEntry[] }) {
         entries.push(
           <span style={{ fontWeight: 'bold', display: 'block' }} key={`table-sub-header-${entrySubItem.subheader.id}`}>
             {entrySubItem.subheader?.id ? (
-              <Link to={`/documentation/${entrySubItem.subheader.id}${location.search}`}>
+              <Link to={`/documentation/${entrySubItem.subheader.id}${getSearchStringFromHash()}`}>
                 {entrySubItem.subheader.title}
               </Link>
             ) : (
@@ -28,7 +28,9 @@ export function TableEntriesList(props: { inputData: DataEntry[] }) {
           if (innerEntryItem?.id) {
             entries.push(
               <span style={{ marginRight: '20px', display: 'inline-flex' }} key={`table-item-${innerEntryItem.id}`}>
-                <Link to={`/documentation/${innerEntryItem.id}${location.search}`}>{innerEntryItem.title}</Link>
+                <Link to={`/documentation/${innerEntryItem.id}${getSearchStringFromHash()}`}>
+                  {innerEntryItem.title}
+                </Link>
                 {innerEntryItem.suffix && <span style={{ marginLeft: '5px' }}>{innerEntryItem.suffix}</span>}
               </span>
             );
@@ -41,7 +43,7 @@ export function TableEntriesList(props: { inputData: DataEntry[] }) {
       if (entryItem?.id) {
         entries.push(
           <span style={{ marginRight: '20px', display: 'inline-flex' }} key={`table-item-${entryItem.id}`}>
-            <Link to={`/documentation/${entryItem.id}${location.search}`}>{entryItem.title}</Link>
+            <Link to={`/documentation/${entryItem.id}${getSearchStringFromHash()}`}>{entryItem.title}</Link>
             {entryItem.suffix && <span style={{ marginLeft: '5px' }}>{entryItem.suffix}</span>}
           </span>
         );

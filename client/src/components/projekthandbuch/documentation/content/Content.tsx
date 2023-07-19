@@ -7,7 +7,14 @@ import { DataEntry, PageEntry, TableEntry } from '@dipa-projekt/projektassistent
 // import { ReactComponent } from '@leanup/lib';
 import { Link, useLocation } from 'react-router-dom';
 import { useDocumentation } from '../../../../context/DocumentationContext';
-import { decodeXml, fixLinksInText, flatten, getJsonDataFromXml, replaceUrlInText } from '../../../../shares/utils';
+import {
+  decodeXml,
+  fixLinksInText,
+  flatten,
+  getJsonDataFromXml,
+  getSearchStringFromHash,
+  replaceUrlInText,
+} from '../../../../shares/utils';
 import { AnchorLinkItemProps } from 'antd/es/anchor/Anchor';
 import axios from 'axios';
 import XMLParser, { XMLElement } from 'react-xml-parser';
@@ -1208,7 +1215,7 @@ export function Content() {
         sorter: {
           compare: (a, b) => sorter(a.modelElement.text, b.modelElement.text),
         },
-        render: (object) => <Link to={`/documentation/${object.id}${location.search}`}>{object.text}</Link>, // TODO
+        render: (object) => <Link to={`/documentation/${object.id}${getSearchStringFromHash()}`}>{object.text}</Link>, // TODO
       },
       {
         title: 'Typ',
@@ -1281,7 +1288,7 @@ export function Content() {
         sorter: {
           compare: (a, b) => sorter(a.modelElement.text, b.modelElement.text),
         },
-        render: (object) => <Link to={`/documentation/${object.id}${location.search}`}>{object.text}</Link>, // TODO
+        render: (object) => <Link to={`/documentation/${object.id}${getSearchStringFromHash()}`}>{object.text}</Link>, // TODO
       },
       {
         title: 'Typ',

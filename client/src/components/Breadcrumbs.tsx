@@ -2,6 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import { useDocumentation } from '../context/DocumentationContext';
 import { Breadcrumb } from 'antd';
+import { getSearchStringFromHash } from '../shares/utils';
 
 export function Breadcrumbs() {
   // const [pathSnippets, setPathSnippets] = useState<string[]>([]);
@@ -9,6 +10,10 @@ export function Breadcrumbs() {
   const location = useLocation();
 
   const { onRouteChanged } = useDocumentation();
+
+  const [breadcrumbs, setBreadcrumbs] = useState<any[]>([]);
+
+  const { navigationData, getNavigationPath, setCurrentSelectedKeys, setOpenKeys } = useDocumentation();
 
   useEffect(() => {
     const currentPathSnippets = location.pathname.split('/').filter((i) => i);
@@ -41,7 +46,7 @@ export function Breadcrumbs() {
       if (parents) {
         extraBreadcrumbItems = parents
           .map((parent: { key: string; label: string }) => {
-            const url = '/documentation/' + parent?.key + location.search;
+            const url = '/documentation/' + parent?.key + getSearchStringFromHash();
             return {
               key: url,
               title: <Link to={url}>{parent?.label}</Link>,
@@ -55,11 +60,7 @@ export function Breadcrumbs() {
     setBreadcrumbs(breadcrumbItems);
 
     //eslint-disable-next-line
-  }, [location]);
-
-  const [breadcrumbs, setBreadcrumbs] = useState<any[]>([]);
-
-  const { navigationData, getNavigationPath, setCurrentSelectedKeys, setOpenKeys } = useDocumentation();
+  }, [location, navigationData]);
 
   return <Breadcrumb items={breadcrumbs} style={{ margin: '16px 0' }} />;
 }

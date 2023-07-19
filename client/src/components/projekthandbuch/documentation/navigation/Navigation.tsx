@@ -15,7 +15,7 @@ import {
   ToolOutlined,
 } from '@ant-design/icons';
 import { Layout, Menu, Spin } from 'antd';
-import { getJsonDataFromXml, getMenuItemByAttributeValue } from '../../../../shares/utils';
+import { getJsonDataFromXml, getMenuItemByAttributeValue, getSearchStringFromHash } from '../../../../shares/utils';
 // import { MenuEntry } from '@dipa-projekt/projektassistent-openapi';
 import { useDocumentation } from '../../../../context/DocumentationContext';
 
@@ -157,7 +157,7 @@ export function Navigation() {
   function handleSelectedItem(key: string) {
     setSelectedItemKey(key);
     console.log('location', location);
-    navigate(`/documentation/${key}${location.search}`);
+    navigate(`/documentation/${key}${getSearchStringFromHash()}`);
   }
 
   async function addParentRecursive(items: NavMenuItem[]): Promise<NavMenuItem[]> {
