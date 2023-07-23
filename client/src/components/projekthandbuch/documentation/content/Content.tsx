@@ -1,4 +1,5 @@
 // import 'antd/dist/antd.css';
+import parse, { domToReact } from 'html-react-parser';
 
 import { Anchor, Col, FloatButton, Layout, Row, Spin, Tag } from 'antd';
 import React, { useEffect, useState } from 'react';
@@ -24,6 +25,7 @@ import { useTranslation } from 'react-i18next';
 import { useTailoring } from '../../../../context/TailoringContext';
 import { PageEntryContent } from './PageEntryContent';
 import { weitApiUrl } from '../../../app/App';
+import { HashLink } from 'react-router-hash-link';
 
 export function Content() {
   // public ctrl: ContentController = new ContentController();
@@ -63,6 +65,13 @@ export function Content() {
     entryId,
     selectedIndexType,
   } = useDocumentation();
+
+  useEffect(() => {
+    if (selectedPageEntry?.subPageEntries) {
+      console.log('selectedPageEntry?.subPageEntries set');
+    }
+    //eslint-disable-next-line
+  }, [selectedPageEntry?.subPageEntries]);
 
   useEffect(() => {
     async function mount() {
@@ -746,16 +755,21 @@ export function Content() {
         for (const topic of topics) {
           const productsToTopics = [];
 
-          productsToTopics.push({
-            id: topicsMap.get(topic.attributes.id)?.product.id,
-            title: topicsMap.get(topic.attributes.id)?.product.title,
-            suffix: '(' + topic.attributes.name + ')',
-          });
+          const topicsMapEntry = topicsMap.get(topic.attributes.id);
+          if (topicsMapEntry) {
+            productsToTopics.push({
+              id: topicsMapEntry.product.id,
+              title: topicsMapEntry.product.title,
+              suffix: '(' + topic.attributes.name + ')',
+            });
 
-          generatingDependenciesData.push({
-            subheader: topicsMap.get(topic.attributes.id)?.discipline,
-            dataEntries: productsToTopics,
-          });
+            generatingDependenciesData.push({
+              subheader: topicsMapEntry.discipline,
+              dataEntries: productsToTopics,
+            });
+          } else {
+            console.log('topic nicht in product liste!!!', topic); // TODO: darf das vorkommen?
+          }
         }
         if (generatingDependenciesData.length > 0) {
           dataEntries.push(generatingDependenciesData);
@@ -944,7 +958,6 @@ export function Content() {
         }
 
         ////////////////////
-
         data.push({
           subheader: {
             id: contentDependencyOfSelectedGroup.attributes.id,
@@ -1098,7 +1111,10 @@ export function Content() {
 
     let data: any[] = filterRelevantDataTypes.map((navItem: any): any => {
       return {
-        modelElement: navItem.label,
+        modelElement: {
+          id: navItem.key,
+          text: navItem.label,
+        },
         dataTypes: [navItem.dataType],
       };
     });
@@ -1125,13 +1141,25 @@ export function Content() {
 
       const jsonDataFromXml = await getJsonDataFromXml(productsUrl);
 
-      const themaRef: XMLElement[] = jsonDataFromXml.getElementsByTagName('ThemaRef');
-      const productTopicEntries = themaRef.map((subjectRef) => {
-        return {
-          modelElement: subjectRef.attributes.name,
-          dataTypes: [NavTypeEnum.TOPIC],
-        };
-      });
+      let productTopicEntries: any[] = [];
+
+      if (jsonDataFromXml.children) {
+        for (const product of jsonDataFromXml.children) {
+          const themaRef: XMLElement[] = product.getElementsByTagName('ThemaRef');
+          productTopicEntries = [
+            ...productTopicEntries,
+            ...themaRef.map((subjectRef) => {
+              return {
+                modelElement: {
+                  id: product.attributes.id + '#' + subjectRef.attributes.id,
+                  text: subjectRef.attributes.name,
+                },
+                dataTypes: [NavTypeEnum.TOPIC],
+              };
+            }),
+          ];
+        }
+      }
 
       data = [...data, ...productTopicEntries];
     }
@@ -1145,9 +1173,9 @@ export function Content() {
         key: 'modelElement',
         defaultSortOrder: 'ascend',
         sorter: {
-          compare: (a, b) => sorter(a.modelElement, b.modelElement),
+          compare: (a, b) => sorter(a.modelElement.text, b.modelElement.text),
         },
-        render: (text: string) => <a>{text}</a>, // TODO
+        render: (object) => <Link to={`/documentation/${object.id}${getSearchStringFromHash()}`}>{object.text}</Link>, // TODO  HashLink
       },
       {
         title: 'Typ',
@@ -2122,6 +2150,7 @@ export function Content() {
         title: 'Kürzel',
         dataIndex: 'abbreviation',
         key: 'abbreviation',
+        render: (text: any) => <a>{text}</a>,
         defaultSortOrder: 'ascend',
         sorter: {
           compare: (a, b) => sorter(a.abbreviation, b.abbreviation),
@@ -2144,6 +2173,22 @@ export function Content() {
       dataSource: data,
       columns: columns,
     };
+  }
+
+  function parseWithLinks(text: string) {
+    const options = {
+      replace: ({ name, attribs, children }) => {
+        if (name === 'a' && attribs.href) {
+          return (
+            <HashLink smooth to={attribs.href + getSearchStringFromHash()}>
+              {domToReact(children)}
+            </HashLink>
+          );
+        }
+      },
+    };
+
+    return parse(text, options);
   }
 
   async function getGlossaryContent(): Promise<PageEntry> {
@@ -2198,7 +2243,7 @@ export function Content() {
         title: 'Erläuterung',
         dataIndex: 'explanation',
         key: 'explanation',
-        render: (html: string) => <span dangerouslySetInnerHTML={{ __html: fixLinksInText(html) }} />,
+        render: (html: string) => <span>{parseWithLinks(html)}</span>,
       },
     ];
 

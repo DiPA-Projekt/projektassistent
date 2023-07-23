@@ -148,6 +148,8 @@ const TailoringSessionContextProvider = ({ children }: TailoringSessionProviderP
     if (modelVariantId && projectTypeVariantId && projectTypeId && projectFeatures) {
       setSearchParams({ mV: modelVariantId!, ptV: projectTypeVariantId!, pt: projectTypeId!, ...projectFeatures });
     }
+
+    window.scrollTo(0, 0);
   }, [pathname]);
 
   useEffect(() => {

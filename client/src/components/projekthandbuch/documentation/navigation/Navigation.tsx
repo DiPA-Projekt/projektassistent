@@ -760,15 +760,21 @@ export function Navigation() {
 
     const jsonDataFromXml = await getJsonDataFromXml(projectCharacteristicsUrl);
 
-    return jsonDataFromXml.getElementsByTagName('Projektmerkmal').map((projectCharacteristic) => {
-      return {
-        key: projectCharacteristic.attributes.id,
-        parent: target,
-        label: projectCharacteristic.attributes.name,
-        dataType: NavTypeEnum.PROJECT_CHARACTERISTIC,
-        onClick: (item: any) => handleSelectedItem(item.key),
-      };
-    });
+    return jsonDataFromXml
+      .getElementsByTagName('Projektmerkmal')
+      .filter((projectCharacteristic) =>
+        // Restrict to the current tailored project features
+        Object.keys(tailoringParameter.projectFeatures).includes(projectCharacteristic.attributes.id)
+      )
+      .map((projectCharacteristic) => {
+        return {
+          key: projectCharacteristic.attributes.id,
+          parent: target,
+          label: projectCharacteristic.attributes.name,
+          dataType: NavTypeEnum.PROJECT_CHARACTERISTIC,
+          onClick: (item: any) => handleSelectedItem(item.key),
+        };
+      });
   }
 
   async function getProductTypesAndProductTypeVariants(target: NavMenuItem): Promise<NavMenuItem[]> {
@@ -776,7 +782,8 @@ export function Navigation() {
       weitApiUrl +
       '/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
       tailoringParameter.modelVariantId +
-      '/Projekttypvariante';
+      '/Projekttypvariante/' +
+      tailoringParameter.projectTypeVariantId; // Restrict to the current tailored project type variant id
 
     const jsonDataFromXmlProjectTypeVariants = await getJsonDataFromXml(projectTypeVariantsUrl);
 
@@ -816,7 +823,7 @@ export function Navigation() {
       weitApiUrl +
       '/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
       tailoringParameter.modelVariantId +
-      '/Projekttypvariante';
+      '/Projekttypvariante'; // TODO: parameter setzen?
 
     const jsonDataFromXmlProjectTypeVariants = await getJsonDataFromXml(projectTypeVariantsUrl);
 

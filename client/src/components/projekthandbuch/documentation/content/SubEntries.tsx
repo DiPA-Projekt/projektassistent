@@ -40,7 +40,7 @@ export function SubEntries(props: { data: PageEntry }) {
       '/ErzeugendeAbhaengigkeit?' +
       getProjectFeaturesString();
 
-    const jsonDataFromXml: XMLElement = (await getJsonDataFromXml(generatingDependenciesUrl)) as XMLElement;
+    const jsonDataFromXml: XMLElement = await getJsonDataFromXml(generatingDependenciesUrl);
 
     return jsonDataFromXml.getElementsByTagName('ErzeugendeAbhängigkeit');
   }
