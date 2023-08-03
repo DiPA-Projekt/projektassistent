@@ -1,9 +1,11 @@
 import { Button, Checkbox, Form, Input, Modal, Tag } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useTemplate } from '../../../context/TemplateContext';
-import axios from 'axios';
-import { StatusApi } from '@dipa-projekt/projektassistent-openapi';
+import { SingleProduct, StatusApi } from '@dipa-projekt/projektassistent-openapi';
 import { Subscription } from 'rxjs';
+import { ProductsApi } from '@dipa-projekt/projektassistent-openapi/dist/apis/ProductsApi';
+import { MultiProducts } from '@dipa-projekt/projektassistent-openapi/dist/models/MultiProducts';
+import { ProductOfProject } from '@dipa-projekt/projektassistent-openapi/dist/models';
 
 export function SubmitArea() {
   const { selectedProducts, selectedTopics, checkedKeys, topicsMap } = useTemplate();
@@ -21,6 +23,8 @@ export function SubmitArea() {
   const statusApi = new StatusApi();
 
   useEffect(() => {
+    const status = statusApi.getStatus();
+    console.log('status', status);
     statusSubscription = statusApi.getStatus().subscribe((data: any) => {
       console.log('statusSubscription', data);
     });
@@ -41,16 +45,12 @@ export function SubmitArea() {
     },
   };
 
-  function collectDataByProduct(values: any): any {
-    const productsMap = new Map<
-      string,
-      {
-        productName: string;
-        responsible?: string;
-        participants: string[];
-        chapters: { title: string; text: string }[];
-      }
-    >();
+  function collectDataByProduct(values: {
+    participants: string;
+    projectName: string;
+    responsible: string;
+  }): SingleProduct | MultiProducts | undefined {
+    const productsMap = new Map<string, ProductOfProject>();
 
     for (const checkedKey of checkedKeys) {
       const topic = topicsMap.get(checkedKey);
@@ -59,7 +59,7 @@ export function SubmitArea() {
           productsMap.set(topic.product.id, {
             productName: topic.product.title,
             responsible: values.responsible,
-            participants: values.participants ?? [],
+            participants: values.participants ? [values.participants] : [],
             chapters: [],
           });
         }
@@ -67,29 +67,29 @@ export function SubmitArea() {
       }
     }
 
-    const products: any[] = [];
+    const products: ProductOfProject[] = [];
 
     if (productsMap.size > 0) {
       for (const productKey of productsMap.keys()) {
         const product = productsMap.get(productKey);
         if (product) {
-          products.push({
-            productName: product.productName,
-            responsible: product.responsible,
-            participants: product.participants,
-            chapters: product.chapters,
-          });
+          products.push(product);
         }
       }
       if (products.length > 1) {
         return {
           projectName: values.projectName,
           products: products,
-        };
+        } as MultiProducts;
       } else {
-        return Object.assign(products[0], { projectName: values.projectName });
+        const singleProductOfProject = products[0];
+        const singleProduct = Object.assign(singleProductOfProject, {
+          projectName: values.projectName,
+        }) as SingleProduct;
+        return singleProduct;
       }
     }
+    return undefined;
   }
 
   function doSubmit(): void {
@@ -110,42 +110,46 @@ export function SubmitArea() {
 
     setModalVisible(false);
 
-    let url;
+    const productsApi = new ProductsApi();
 
     const bodyData = collectDataByProduct(values);
     if (bodyData.hasOwnProperty('products')) {
-      url = 'http://localhost:9081/api/v1/products';
+      productsApi.getZipForMultiProducts({ multiProducts: bodyData as MultiProducts }).subscribe((data: any) => {
+        console.log('getZipForMultiProducts', data);
+        downloadFile(data);
+      });
     } else {
-      url = 'http://localhost:9081/api/v1/product';
+      productsApi.getDocxForSingleProduct({ singleProduct: bodyData as SingleProduct }).subscribe((data: any) => {
+        console.log('getDocxForSingleProduct', data);
+        downloadFile(data);
+      });
     }
 
-    axios
-      .post(url, bodyData, {
-        responseType: 'blob',
-      })
-      .then((response) => {
-        console.log(response);
-
-        const downloadUrl = window.URL.createObjectURL(response.data);
-        const link = document.createElement('a');
-        link.href = downloadUrl;
-
-        const contentDisposition = response.headers['content-disposition'];
-        let contentDispositionMatch = 'file.zip'; // TODO
-        if (contentDisposition) {
-          const match = /filename=*(.+)/;
-          const filename = contentDisposition.match(match);
-          if (filename && filename.length > 1) {
-            contentDispositionMatch = filename[1];
-          }
-        }
-        link.setAttribute('download', contentDispositionMatch);
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-      })
-      .catch(() => 'obligatory catch');
+    console.log('status', status);
+    statusSubscription = statusApi.getStatus().subscribe((data: any) => {
+      console.log('statusSubscription', data);
+    });
   };
+
+  function downloadFile(response: Blob) {
+    const downloadUrl = window.URL.createObjectURL(response);
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+
+    // const contentDisposition = response.headers['content-disposition'];
+    const contentDispositionMatch = 'file.zip'; // TODO
+    // if (contentDisposition) {
+    //   const match = /filename=*(.+)/;
+    //   const filename = contentDisposition.match(match);
+    //   if (filename && filename.length > 1) {
+    //     contentDispositionMatch = filename[1];
+    //   }
+    // }
+    link.setAttribute('download', contentDispositionMatch);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  }
 
   return (
     <>

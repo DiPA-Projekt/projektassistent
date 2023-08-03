@@ -4,9 +4,10 @@ import React, { Component } from 'react';
 import { SelectValue } from 'antd/es/select';
 import { PopoverComponent } from '../popover/component';
 
-import { ProjectFeature } from '@dipa-projekt/projektassistent-openapi';
+// import { ProjectFeature } from '@dipa-projekt/projektassistent-openapi';
 import parse from 'html-react-parser';
 import { decodeXml } from '../../../../shares/utils';
+import { ProjectFeature } from '../project';
 
 const { Option } = Select;
 

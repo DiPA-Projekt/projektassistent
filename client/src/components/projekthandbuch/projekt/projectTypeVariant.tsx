@@ -1,13 +1,13 @@
 import { Card, Cascader, Form } from 'antd';
 import React, { useEffect, useState } from 'react';
 
-import { ProjectType, ProjectTypeVariant } from '@dipa-projekt/projektassistent-openapi';
-
+// import { ProjectType, ProjectTypeVariant } from '@dipa-projekt/projektassistent-openapi';
 import { useTailoring } from '../../../context/TailoringContext';
 import { ApplicationProfile } from './applicationProfile';
 import { getJsonDataFromXml } from '../../../shares/utils';
 import { useTranslation } from 'react-i18next';
 import { weitApiUrl } from '../../app/App';
+import { ProjectType, ProjectTypeVariant } from './project';
 
 interface Option {
   value: string;

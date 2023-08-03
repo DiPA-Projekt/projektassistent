@@ -23,6 +23,7 @@ import 'antd/dist/reset.css';
 import { XMLElement } from 'react-xml-parser';
 import { useTailoring } from '../../../../context/TailoringContext';
 import { weitApiUrl } from '../../../app/App';
+import { useTranslation } from 'react-i18next';
 
 const { Sider } = Layout;
 
@@ -47,6 +48,7 @@ export enum NavTypeEnum {
   PROJECT_TYPE = 'projectType',
   PROJECT_CHARACTERISTIC = 'projectCharacteristic',
   TEMPLATE_DISCIPLINE = 'templateDiscipline',
+  PRODUCT_DISCIPLINE = 'productDiscipline',
 }
 
 export enum IndexTypeEnum {
@@ -112,6 +114,8 @@ export type NavMenuItem = {
 
 // @withRouter
 export function Navigation() {
+  const { t } = useTranslation();
+
   const {
     setSelectedItemKey,
     setSelectedIndexType,
@@ -220,6 +224,10 @@ export function Navigation() {
   async function fetchSectionDetailsData(childItem: NavMenuItem): Promise<any> {
     const sectionId = childItem.key;
 
+    if (!tailoringParameter.modelVariantId) {
+      return undefined;
+    }
+
     const sectionDetailUrl =
       weitApiUrl +
       '/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
@@ -249,46 +257,50 @@ export function Navigation() {
     }
 
     if (generatedContent) {
-      switch (generatedContent) {
-        case 'Index:Produkte': {
-          indexItem = {
-            key: childItem.key,
-            label: childItem.label,
-            onClick: () => setSelectedIndexType(IndexTypeEnum.PRODUCT),
-          };
-          break;
-        }
-        case 'Index:Rollen': {
-          indexItem = {
-            key: childItem.key,
-            label: childItem.label,
-            onClick: () => setSelectedIndexType(IndexTypeEnum.ROLE),
-          };
-          break;
-        }
-        case 'Index:Abläufe': {
-          indexItem = {
-            key: childItem.key,
-            label: childItem.label,
-            onClick: () => setSelectedIndexType(IndexTypeEnum.PROCESS),
-          };
-          break;
-        }
-        case 'Index:Tailoring': {
-          indexItem = {
-            key: childItem.key,
-            label: childItem.label,
-            onClick: () => setSelectedIndexType(IndexTypeEnum.TAILORING),
-          };
-          break;
-        }
-        case 'Index:Arbeitshilfen': {
-          indexItem = {
-            key: childItem.key,
-            label: childItem.label,
-            onClick: () => setSelectedIndexType(IndexTypeEnum.WORK_AIDS),
-          };
-          break;
+      if (generatedContent === 'Spezialkapitel:Disziplingruppe') {
+        addedChildren = getDisciplineGroup(childItem.parent, jsonDataFromXml);
+      } else {
+        switch (generatedContent) {
+          case 'Index:Produkte': {
+            indexItem = {
+              key: childItem.key,
+              label: childItem.label,
+              onClick: () => setSelectedIndexType(IndexTypeEnum.PRODUCT),
+            };
+            break;
+          }
+          case 'Index:Rollen': {
+            indexItem = {
+              key: childItem.key,
+              label: childItem.label,
+              onClick: () => setSelectedIndexType(IndexTypeEnum.ROLE),
+            };
+            break;
+          }
+          case 'Index:Abläufe': {
+            indexItem = {
+              key: childItem.key,
+              label: childItem.label,
+              onClick: () => setSelectedIndexType(IndexTypeEnum.PROCESS),
+            };
+            break;
+          }
+          case 'Index:Tailoring': {
+            indexItem = {
+              key: childItem.key,
+              label: childItem.label,
+              onClick: () => setSelectedIndexType(IndexTypeEnum.TAILORING),
+            };
+            break;
+          }
+          case 'Index:Arbeitshilfen': {
+            indexItem = {
+              key: childItem.key,
+              label: childItem.label,
+              onClick: () => setSelectedIndexType(IndexTypeEnum.WORK_AIDS),
+            };
+            break;
+          }
         }
       }
     }
@@ -404,10 +416,10 @@ export function Navigation() {
 
     return jsonDataFromXml.getElementsByTagName('Disziplin').map((disciplineValue) => {
       const disciplineEntry: NavMenuItem = {
-        key: disciplineValue.attributes.id,
+        key: 'productDiscipline_' + disciplineValue.attributes.id,
         parent: target,
         label: disciplineValue.attributes.name,
-        dataType: NavTypeEnum.DISCIPLINE,
+        dataType: NavTypeEnum.PRODUCT_DISCIPLINE,
         onTitleClick: (item: any) => handleSelectedItem(item.key),
       };
 
@@ -433,6 +445,18 @@ export function Navigation() {
       disciplineEntry.children = products;
 
       return disciplineEntry;
+    });
+  }
+
+  function getDisciplineGroup(target: NavMenuItem, jsonDataFromXml: XMLElement): NavMenuItem[] {
+    return jsonDataFromXml.getElementsByTagName('DisziplinRef').map((disciplineValue) => {
+      return {
+        key: disciplineValue.attributes.id,
+        parent: target,
+        label: disciplineValue.attributes.name,
+        dataType: NavTypeEnum.DISCIPLINE,
+        onClick: (item: any) => handleSelectedItem(item.key),
+      };
     });
   }
 
@@ -760,15 +784,21 @@ export function Navigation() {
 
     const jsonDataFromXml = await getJsonDataFromXml(projectCharacteristicsUrl);
 
-    return jsonDataFromXml.getElementsByTagName('Projektmerkmal').map((projectCharacteristic) => {
-      return {
-        key: projectCharacteristic.attributes.id,
-        parent: target,
-        label: projectCharacteristic.attributes.name,
-        dataType: NavTypeEnum.PROJECT_CHARACTERISTIC,
-        onClick: (item: any) => handleSelectedItem(item.key),
-      };
-    });
+    return jsonDataFromXml
+      .getElementsByTagName('Projektmerkmal')
+      .filter((projectCharacteristic) =>
+        // Restrict to the current tailored project features
+        Object.keys(tailoringParameter.projectFeatures).includes(projectCharacteristic.attributes.id)
+      )
+      .map((projectCharacteristic) => {
+        return {
+          key: projectCharacteristic.attributes.id,
+          parent: target,
+          label: projectCharacteristic.attributes.name,
+          dataType: NavTypeEnum.PROJECT_CHARACTERISTIC,
+          onClick: (item: any) => handleSelectedItem(item.key),
+        };
+      });
   }
 
   async function getProductTypesAndProductTypeVariants(target: NavMenuItem): Promise<NavMenuItem[]> {
@@ -776,7 +806,8 @@ export function Navigation() {
       weitApiUrl +
       '/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
       tailoringParameter.modelVariantId +
-      '/Projekttypvariante';
+      '/Projekttypvariante/' +
+      tailoringParameter.projectTypeVariantId; // Restrict to the current tailored project type variant id
 
     const jsonDataFromXmlProjectTypeVariants = await getJsonDataFromXml(projectTypeVariantsUrl);
 
@@ -816,7 +847,7 @@ export function Navigation() {
       weitApiUrl +
       '/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
       tailoringParameter.modelVariantId +
-      '/Projekttypvariante';
+      '/Projekttypvariante'; // TODO: parameter setzen?
 
     const jsonDataFromXmlProjectTypeVariants = await getJsonDataFromXml(projectTypeVariantsUrl);
 
@@ -837,7 +868,7 @@ export function Navigation() {
 
   return (
     <>
-      <Spin spinning={loading}>
+      <Spin tip={t('text.generateNavigation') + '...'} spinning={loading}>
         <Sider
           trigger={null}
           collapsible

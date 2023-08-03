@@ -1,8 +1,9 @@
-import { DataEntry } from '@dipa-projekt/projektassistent-openapi';
+// import { DataEntry } from '@dipa-projekt/projektassistent-openapi';
 import { Link } from 'react-router-dom';
 import parse from 'html-react-parser';
 import React from 'react';
 import { fixLinksInText, getSearchStringFromHash } from '../../../../shares/utils';
+import { DataEntry } from '../Documentation';
 
 export function TableEntriesList(props: { inputData: DataEntry[] }) {
   const entries: JSX.Element[] = [];

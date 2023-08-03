@@ -1,11 +1,12 @@
 import { Table, TableProps } from 'antd';
 import parse from 'html-react-parser';
 import React from 'react';
-import { TableEntry } from '@dipa-projekt/projektassistent-openapi';
-import { fixLinksInText } from '../../../../shares/utils';
+// import { TableEntry } from '@dipa-projekt/projektassistent-openapi';
+import { fixLinksInText, getSearchStringFromHash } from '../../../../shares/utils';
 import { DataTable } from './DataTable';
 import { SubEntries } from './SubEntries';
 import { useDocumentation } from '../../../../context/DocumentationContext';
+import { TableEntry } from '../Documentation';
 
 export function PageEntryContent() {
   let productData;
@@ -30,6 +31,9 @@ export function PageEntryContent() {
           <Table
             columns={selectedPageEntry?.columns}
             dataSource={selectedPageEntry?.dataSource}
+            onRow={(record) => ({
+              id: record.key + getSearchStringFromHash(),
+            })}
             pagination={false}
             onChange={onChange}
             scroll={{ y: '60vh' }} // TODO: schauen ob das so erwünscht ist
