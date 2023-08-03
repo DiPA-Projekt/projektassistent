@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 
-import { ProjectFeature } from '@dipa-projekt/projektassistent-openapi';
-
+// import { ProjectFeature } from '@dipa-projekt/projektassistent-openapi';
 import axios from 'axios';
 import XMLParser, { XMLElement } from 'react-xml-parser';
 import { useTailoring } from '../../../context/TailoringContext';
@@ -12,6 +11,7 @@ import { SelectValue } from 'antd/es/select';
 import parse from 'html-react-parser';
 import { weitApiUrl } from '../../app/App';
 import { LinkWithQuery } from '../../LinkWithQuery';
+import { ProjectFeature } from './project';
 
 const { Option } = Select;
 
@@ -254,11 +254,11 @@ export function ApplicationProfile() {
       resultValues.push(result);
     }
 
-    resultValues.unshift({
-      key: '',
-      title: '--',
-      answer: '',
-    });
+    // resultValues.unshift({
+    //   key: '',
+    //   title: '--',
+    //   answer: '',
+    // });
 
     return resultValues;
   }

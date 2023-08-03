@@ -3,10 +3,8 @@ import parse, { domToReact } from 'html-react-parser';
 
 import { Anchor, Col, FloatButton, Layout, Row, Spin, Tag } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { DataEntry, PageEntry, TableEntry } from '@dipa-projekt/projektassistent-openapi';
-// import { GenericComponent } from '@leanup/lib';
-// import { ReactComponent } from '@leanup/lib';
-import { Link, useLocation } from 'react-router-dom';
+// import { DataEntry, PageEntry, TableEntry } from '@dipa-projekt/projektassistent-openapi';
+import { Link } from 'react-router-dom';
 import { useDocumentation } from '../../../../context/DocumentationContext';
 import {
   decodeXml,
@@ -26,12 +24,9 @@ import { useTailoring } from '../../../../context/TailoringContext';
 import { PageEntryContent } from './PageEntryContent';
 import { weitApiUrl } from '../../../app/App';
 import { HashLink } from 'react-router-hash-link';
+import { DataEntry, PageEntry, TableEntry } from '../Documentation';
 
 export function Content() {
-  // public ctrl: ContentController = new ContentController();
-
-  const location = useLocation();
-
   const [loading, setLoading] = useState(false);
 
   const { tailoringParameter, getProjectFeaturesQueryString: getProjectFeaturesString } = useTailoring();
@@ -62,6 +57,7 @@ export function Content() {
     projectTypeVariantSequenceId,
     activityId,
     templateDisciplineId,
+    productDisciplineId,
     entryId,
     selectedIndexType,
   } = useDocumentation();
@@ -75,7 +71,7 @@ export function Content() {
 
   useEffect(() => {
     async function mount() {
-      if (productId && disciplineId) {
+      if (productId && productDisciplineId) {
         const content = await getProductContent();
         setSelectedPageEntry(content);
       }
@@ -84,6 +80,19 @@ export function Content() {
     void mount().then();
     //eslint-disable-next-line
   }, [productId]);
+
+  useEffect(() => {
+    async function mount() {
+      if (productDisciplineId) {
+        console.log('test');
+        const content = await getProductDisciplineContent();
+        setSelectedPageEntry(content);
+      }
+    }
+
+    void mount().then();
+    //eslint-disable-next-line
+  }, [productDisciplineId]);
 
   useEffect(() => {
     async function mount() {
@@ -496,6 +505,38 @@ export function Content() {
     };
   }
 
+  async function getProductDisciplineContent(): Promise<PageEntry> {
+    const disciplineId = productDisciplineId?.replace('productDiscipline_', '');
+
+    const projectTypeUrl =
+      weitApiUrl +
+      '/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      tailoringParameter.modelVariantId +
+      '/Projekttyp/' +
+      tailoringParameter.projectTypeId +
+      '/Projekttypvariante/' +
+      tailoringParameter.projectTypeVariantId +
+      '/Disziplin/' +
+      disciplineId +
+      '?' +
+      getProjectFeaturesString();
+
+    const jsonDataFromXml = await getJsonDataFromXml(projectTypeUrl);
+
+    const tableEntries: TableEntry[] = [];
+
+    //////////////////////////////////////////////
+
+    return {
+      id: jsonDataFromXml.attributes.id,
+      // menuEntryId: jsonDataFromXml.attributes.id,
+      header: jsonDataFromXml.attributes.name,
+      descriptionText: '',
+      tableEntries: tableEntries,
+      // subPageEntries: subPageEntries,
+    };
+  }
+
   async function getDisciplineContent(): Promise<PageEntry> {
     const projectTypeUrl =
       weitApiUrl +
@@ -547,6 +588,8 @@ export function Content() {
   }
 
   async function getProductContent(): Promise<PageEntry> {
+    const disciplineId = productDisciplineId?.replace('productDiscipline_', '');
+
     const productUrl =
       weitApiUrl +
       '/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +

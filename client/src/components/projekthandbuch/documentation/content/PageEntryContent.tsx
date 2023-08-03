@@ -1,11 +1,12 @@
 import { Table, TableProps } from 'antd';
 import parse from 'html-react-parser';
 import React from 'react';
-import { TableEntry } from '@dipa-projekt/projektassistent-openapi';
+// import { TableEntry } from '@dipa-projekt/projektassistent-openapi';
 import { fixLinksInText, getSearchStringFromHash } from '../../../../shares/utils';
 import { DataTable } from './DataTable';
 import { SubEntries } from './SubEntries';
 import { useDocumentation } from '../../../../context/DocumentationContext';
+import { TableEntry } from '../Documentation';
 
 export function PageEntryContent() {
   let productData;

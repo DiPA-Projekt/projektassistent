@@ -21,6 +21,8 @@ export function SubmitArea() {
   const statusApi = new StatusApi();
 
   useEffect(() => {
+    const status = statusApi.getStatus();
+    console.log('status', status);
     statusSubscription = statusApi.getStatus().subscribe((data: any) => {
       console.log('statusSubscription', data);
     });

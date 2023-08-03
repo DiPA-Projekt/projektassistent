@@ -1,7 +1,8 @@
-import { ProjectFeature } from '@dipa-projekt/projektassistent-openapi';
+// import { ProjectFeature } from '@dipa-projekt/projektassistent-openapi';
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { clean } from '../shares/utils';
+import { ProjectFeature } from '../components/projekthandbuch/projekt/project';
 
 interface MyType {
   [key: string]: string;

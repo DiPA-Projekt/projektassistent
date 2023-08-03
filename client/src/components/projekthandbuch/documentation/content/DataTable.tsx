@@ -1,4 +1,4 @@
-import { DataEntry, TableEntry } from '@dipa-projekt/projektassistent-openapi';
+// import { DataEntry, TableEntry } from '@dipa-projekt/projektassistent-openapi';
 import { Avatar, List } from 'antd';
 import React from 'react';
 import {
@@ -14,6 +14,7 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import { TableEntriesList } from './TableEntriesList';
+import { TableEntry } from '../Documentation';
 
 const icons: Map<string, { color: string; icon: JSX.Element }> = new Map<
   string,
@@ -62,22 +63,19 @@ export function DataTable(props: { data: TableEntry[] }) {
   }
 
   return (
-    props &&
-    props.data?.length > 0 && (
-      <List
-        itemLayout="horizontal"
-        dataSource={props.data}
-        renderItem={(item: TableEntry) => (
-          <List.Item>
-            <List.Item.Meta
-              avatar={renderSwitch(item.descriptionEntry)}
-              title={item.descriptionEntry}
-              description={<TableEntriesList inputData={item?.dataEntries as DataEntry[]} />}
-            />
-          </List.Item>
-        )}
-        style={{ padding: '0 1rem' }}
-      />
-    )
+    <List
+      itemLayout="horizontal"
+      dataSource={props.data}
+      renderItem={(item: TableEntry) => (
+        <List.Item>
+          <List.Item.Meta
+            avatar={renderSwitch(item.descriptionEntry)}
+            title={item.descriptionEntry}
+            description={<TableEntriesList inputData={item?.dataEntries} />}
+          />
+        </List.Item>
+      )}
+      style={{ padding: '0 1rem' }}
+    />
   );
 }

@@ -1,4 +1,4 @@
-import { PageEntry, TableEntry } from '@dipa-projekt/projektassistent-openapi';
+// import { PageEntry, TableEntry } from '@dipa-projekt/projektassistent-openapi';
 import { decodeXml, fixLinksInText, getJsonDataFromXml, replaceUrlInText } from '../../../../shares/utils';
 import React, { useEffect, useState } from 'react';
 import { XMLElement } from 'react-xml-parser';
@@ -7,6 +7,7 @@ import { useDocumentation } from '../../../../context/DocumentationContext';
 import { weitApiUrl } from '../../../app/App';
 import parse from 'html-react-parser';
 import { DataTable } from './DataTable';
+import { PageEntry } from '../Documentation';
 
 export function SubEntries(props: { data: PageEntry }) {
   const { tailoringParameter, getProjectFeaturesQueryString: getProjectFeaturesString } = useTailoring();
@@ -153,7 +154,7 @@ export function SubEntries(props: { data: PageEntry }) {
         <div key={subPageEntry?.id} style={{ marginTop: '40px' }}>
           <h3 id={subPageEntry?.id}> {subPageEntry.header} </h3>
           {parse(fixLinksInText(subPageEntry.descriptionText))}
-          <DataTable data={subPageEntry?.tableEntries as TableEntry[]} />
+          {subPageEntry?.tableEntries?.length > 0 && <DataTable data={subPageEntry.tableEntries} />}
         </div>
       );
     })

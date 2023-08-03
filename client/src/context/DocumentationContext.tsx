@@ -1,4 +1,4 @@
-import { PageEntry } from '@dipa-projekt/projektassistent-openapi';
+// import { PageEntry } from '@dipa-projekt/projektassistent-openapi';
 import React, { useEffect, useState } from 'react';
 import {
   IndexTypeEnum,
@@ -6,6 +6,7 @@ import {
   NavTypeEnum,
 } from '../components/projekthandbuch/documentation/navigation/Navigation';
 import { getMenuItemByAttributeValue } from '../shares/utils';
+import { PageEntry } from '../components/projekthandbuch/documentation/Documentation';
 
 type DocumentationSession = {
   selectedPageEntry: PageEntry | undefined;
@@ -32,6 +33,7 @@ type DocumentationSession = {
   projectTypeVariantSequenceId: string | null;
   activityId: string | null;
   templateDisciplineId: string | null;
+  productDisciplineId: string | null;
   entryId: string | null;
   getNavigationPath: Function;
   onRouteChanged: Function;
@@ -77,6 +79,7 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
   const [projectTypeVariantSequenceId, setProjectTypeVariantSequenceId] = useState<string | null>(null);
   const [activityId, setActivityId] = useState<string | null>(null);
   const [templateDisciplineId, setTemplateDisciplineId] = useState<string | null>(null);
+  const [productDisciplineId, setProductDisciplineId] = useState<string | null>(null);
   const [entryId, setEntryId] = useState<string | null>(null);
 
   const value: DocumentationSession = {
@@ -104,6 +107,7 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
     projectTypeVariantSequenceId,
     activityId,
     templateDisciplineId,
+    productDisciplineId,
     entryId,
     getNavigationPath,
     onRouteChanged,
@@ -153,6 +157,7 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
     setProjectTypeVariantSequenceId(null);
     setActivityId(null);
     setTemplateDisciplineId(null);
+    setProductDisciplineId(null);
     setEntryId(null);
   }
 
@@ -167,9 +172,11 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
     if (gefunden !== undefined) {
       if (gefunden.dataType === NavTypeEnum.PRODUCT) {
         if (gefunden.parent) {
-          setDisciplineId(gefunden.parent.key);
+          setProductDisciplineId(gefunden.parent.key);
           setProductId(gefunden.key);
         }
+      } else if (gefunden.dataType === NavTypeEnum.PRODUCT_DISCIPLINE) {
+        setProductDisciplineId(gefunden.key);
       } else if (gefunden.dataType === NavTypeEnum.DISCIPLINE) {
         setDisciplineId(gefunden.key);
       } else if (gefunden.dataType === NavTypeEnum.CONTENT_PRODUCT_DEPENDENCY) {
