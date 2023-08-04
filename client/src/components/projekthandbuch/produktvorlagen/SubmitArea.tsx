@@ -3,9 +3,9 @@ import React, { useEffect, useState } from 'react';
 import { useTemplate } from '../../../context/TemplateContext';
 import { SingleProduct, StatusApi } from '@dipa-projekt/projektassistent-openapi';
 import { Subscription } from 'rxjs';
-import { ProductsApi } from '@dipa-projekt/projektassistent-openapi/dist/apis/ProductsApi';
 import { MultiProducts } from '@dipa-projekt/projektassistent-openapi/dist/models/MultiProducts';
 import { ProductOfProject } from '@dipa-projekt/projektassistent-openapi/dist/models';
+import API from '../../../api';
 
 export function SubmitArea() {
   const { selectedProducts, selectedTopics, checkedKeys, topicsMap } = useTemplate();
@@ -110,16 +110,16 @@ export function SubmitArea() {
 
     setModalVisible(false);
 
-    const productsApi = new ProductsApi();
+    // const productsApi = new ProductsApi(configuration);
 
     const bodyData = collectDataByProduct(values);
     if (bodyData.hasOwnProperty('products')) {
-      productsApi.getZipForMultiProducts({ multiProducts: bodyData as MultiProducts }).subscribe((data: any) => {
+      API.ProductsApi.getZipForMultiProducts({ multiProducts: bodyData as MultiProducts }).subscribe((data: any) => {
         console.log('getZipForMultiProducts', data);
         downloadFile(data);
       });
     } else {
-      productsApi.getDocxForSingleProduct({ singleProduct: bodyData as SingleProduct }).subscribe((data: any) => {
+      API.ProductsApi.getDocxForSingleProduct({ singleProduct: bodyData as SingleProduct }).subscribe((data: any) => {
         console.log('getDocxForSingleProduct', data);
         downloadFile(data);
       });
