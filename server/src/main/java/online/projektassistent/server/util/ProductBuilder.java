@@ -1,21 +1,6 @@
 package online.projektassistent.server.util;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
+import online.projektassistent.server.model.*;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
@@ -29,11 +14,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.ResourceUtils;
 
-import online.projektassistent.server.model.Chapter;
-import online.projektassistent.server.model.MultiProducts;
-import online.projektassistent.server.model.Placeholders;
-import online.projektassistent.server.model.ProductOfProject;
-import online.projektassistent.server.model.SingleProduct;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 public class ProductBuilder implements Placeholders {
 
@@ -61,7 +51,7 @@ public class ProductBuilder implements Placeholders {
 
         List<Chapter> chapters = singleProduct.getChapters();
 
-        try (FileInputStream fileInputStream = new FileInputStream(ResourceUtils.getFile("classpath:" + PROJECT_TEMPLATE));
+        try (FileInputStream fileInputStream = new FileInputStream(ResourceUtils.getFile(PROJECT_TEMPLATE));
              XWPFDocument doc = new XWPFDocument(fileInputStream);
              ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 
@@ -108,7 +98,7 @@ public class ProductBuilder implements Placeholders {
             dataParams.put(PARTICIPANTS, String.join("; ", product.getParticipants()));
             List<Chapter> chapters = product.getChapters();
 
-            try (XWPFDocument template = new XWPFDocument(new FileInputStream(ResourceUtils.getFile("classpath:" + PROJECT_TEMPLATE)))) {
+            try (XWPFDocument template = new XWPFDocument(new FileInputStream(ResourceUtils.getFile(PROJECT_TEMPLATE)))) {
                 replacePlaceholdersInDocument(dataParams, template);
                 createChapters(template, chapters);
                 createTableOfContents(template);
