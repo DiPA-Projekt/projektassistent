@@ -51,7 +51,7 @@ public class ProductBuilder implements Placeholders {
 
         List<Chapter> chapters = singleProduct.getChapters();
 
-        try (FileInputStream fileInputStream = new FileInputStream(ResourceUtils.getFile(PROJECT_TEMPLATE));
+        try (FileInputStream fileInputStream = new FileInputStream(ResourceUtils.getFile("classpath:" + PROJECT_TEMPLATE));
              XWPFDocument doc = new XWPFDocument(fileInputStream);
              ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 
@@ -98,7 +98,7 @@ public class ProductBuilder implements Placeholders {
             dataParams.put(PARTICIPANTS, String.join("; ", product.getParticipants()));
             List<Chapter> chapters = product.getChapters();
 
-            try (XWPFDocument template = new XWPFDocument(new FileInputStream(ResourceUtils.getFile(PROJECT_TEMPLATE)))) {
+            try (XWPFDocument template = new XWPFDocument(new FileInputStream(ResourceUtils.getFile("classpath:" + PROJECT_TEMPLATE)))) {
                 replacePlaceholdersInDocument(dataParams, template);
                 createChapters(template, chapters);
                 createTableOfContents(template);

@@ -15,7 +15,7 @@ export function TableEntriesList(props: { inputData: DataEntry[] }) {
       for (const entrySubItem of entryItem) {
         entries.push(
           <span style={{ fontWeight: 'bold', display: 'block' }} key={`table-sub-header-${entrySubItem.subheader.id}`}>
-            {entrySubItem.subheader?.id ? (
+            {entrySubItem.subheader?.isLink ? (
               <Link to={`/documentation/${entrySubItem.subheader.id}${getSearchStringFromHash()}`}>
                 {entrySubItem.subheader.title}
               </Link>

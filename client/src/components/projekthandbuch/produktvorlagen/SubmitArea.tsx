@@ -1,16 +1,13 @@
-import { Button, Checkbox, Form, Input, Modal, Tag } from 'antd';
-import React, { useEffect, useState } from 'react';
+import { Button, Checkbox, Form, Input, Modal, Space, Tag } from 'antd';
+import React, { useState } from 'react';
 import { useTemplate } from '../../../context/TemplateContext';
-import { SingleProduct, StatusApi } from '@dipa-projekt/projektassistent-openapi';
-import { Subscription } from 'rxjs';
+import { SingleProduct } from '@dipa-projekt/projektassistent-openapi';
 import { MultiProducts } from '@dipa-projekt/projektassistent-openapi/dist/models/MultiProducts';
 import { ProductOfProject } from '@dipa-projekt/projektassistent-openapi/dist/models';
 import API from '../../../api';
 
 export function SubmitArea() {
-  const { selectedProducts, selectedTopics, checkedKeys, topicsMap } = useTemplate();
-
-  let statusSubscription: Subscription = new Subscription();
+  const { checkedKeys, topicsMap } = useTemplate();
 
   const [modalVisible, setModalVisible] = useState(false);
   const [formTitle, setFormTitle] = useState();
@@ -19,24 +16,6 @@ export function SubmitArea() {
   const [responsible, setResponsible] = useState<string>();
   const [projectName, setProjectName] = useState<string>();
   const [participants, setParticipants] = useState<string[]>([]);
-
-  const statusApi = new StatusApi();
-
-  useEffect(() => {
-    const status = statusApi.getStatus();
-    console.log('status', status);
-    statusSubscription = statusApi.getStatus().subscribe((data: any) => {
-      console.log('statusSubscription', data);
-    });
-
-    return () => {
-      statusSubscription.unsubscribe();
-    };
-  }, []);
-
-  function onReset() {
-    console.log('reset');
-  }
 
   const buttonItemLayout = {
     wrapperCol: {
@@ -110,8 +89,6 @@ export function SubmitArea() {
 
     setModalVisible(false);
 
-    // const productsApi = new ProductsApi(configuration);
-
     const bodyData = collectDataByProduct(values);
     if (bodyData.hasOwnProperty('products')) {
       API.ProductsApi.getZipForMultiProducts({ multiProducts: bodyData as MultiProducts }).subscribe((data: any) => {
@@ -124,11 +101,6 @@ export function SubmitArea() {
         downloadFile(data);
       });
     }
-
-    console.log('status', status);
-    statusSubscription = statusApi.getStatus().subscribe((data: any) => {
-      console.log('statusSubscription', data);
-    });
   };
 
   function downloadFile(response: Blob) {
@@ -165,11 +137,12 @@ export function SubmitArea() {
             Alle <Tag color="blue">Produktvorlagen</Tag>auswählen
           </Checkbox>
         </div>
-        <Form.Item style={{ marginTop: '30px' }}>
-          <Checkbox>
-            <Tag color="red">Mustertexte</Tag> einfügen
-          </Checkbox>
-        </Form.Item>
+        {/*TODO: reinsert if there are Mustertexte available*/}
+        {/*<Form.Item style={{ marginTop: '30px' }}>*/}
+        {/*  <Checkbox>*/}
+        {/*    <Tag color="red">Mustertexte</Tag> einfügen*/}
+        {/*  </Checkbox>*/}
+        {/*</Form.Item>*/}
         <Form.Item>
           <Checkbox>Themenbeschreibungen einfügen</Checkbox>
         </Form.Item>
@@ -179,18 +152,16 @@ export function SubmitArea() {
             htmlType="submit"
             onClick={() => doSubmit()}
             style={{ marginRight: '8px', marginTop: '20px' }}
+            disabled={checkedKeys.length === 0}
           >
             Vorlagen erzeugen
-          </Button>
-          <Button htmlType="button" onClick={onReset} style={{ marginTop: '20px' }}>
-            Zurücksetzen
           </Button>
         </Form.Item>
       </div>
 
       <Modal
         title={formTitle}
-        visible={modalVisible}
+        open={modalVisible}
         confirmLoading={confirmLoading}
         onCancel={handleCancel}
         footer={[]} //this to hide the default inputs of the modal
@@ -223,7 +194,7 @@ export function SubmitArea() {
             rules={[
               {
                 required: true,
-                message: 'Bitte geben Sie einen Verantwortliche ein.',
+                message: 'Bitte geben Sie einen oder mehrere Verantwortliche ein.',
               },
             ]}
           >
@@ -232,17 +203,17 @@ export function SubmitArea() {
           <Form.Item name="participants" label="Mitwirkend">
             <Input />
           </Form.Item>
-          <Form.Item name="modifier" className="collection-create-form_last-form-item">
+          <Space wrap>
             <Button key="submit" type="primary" loading={confirmLoading} htmlType="submit">
               Erzeugen
             </Button>
-            <Button key="cancel" type="default" htmlType="button">
+            <Button key="cancel" type="default" onClick={handleCancel} htmlType="button">
               Abbrechen
             </Button>
             <Button key="reset" type="ghost" htmlType="reset">
               Zurücksetzen
             </Button>
-          </Form.Item>
+          </Space>
         </Form>
       </Modal>
     </>
