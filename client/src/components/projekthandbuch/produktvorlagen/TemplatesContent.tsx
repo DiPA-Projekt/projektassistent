@@ -246,7 +246,7 @@ export function TemplatesContent(props: { entries: TemplateProps[] }) {
         selectedKeys={selectedKeys}
         switcherIcon={<DownOutlined />}
         treeData={treeEntries}
-        defaultCheckedKeys={checkedKeys as React.Key[]}
+        defaultCheckedKeys={checkedKeys}
       />
       {/*{submenuEntries}*/}
       {/*</Collapse>*/}

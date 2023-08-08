@@ -12,7 +12,7 @@ import { PageEntry } from '../Documentation';
 export function SubEntries(props: { data: PageEntry }) {
   const { tailoringParameter, getProjectFeaturesQueryString: getProjectFeaturesString } = useTailoring();
 
-  const { disciplineId, productId } = useDocumentation();
+  const { productDisciplineId, productId } = useDocumentation();
 
   const [subPageEntries, setSubPageEntries] = useState<PageEntry[]>([]);
 
@@ -47,7 +47,8 @@ export function SubEntries(props: { data: PageEntry }) {
   }
 
   async function getTopicContent(topicId: string): Promise<PageEntry> {
-    console.log('getTopicContent', topicId);
+    const disciplineId = productDisciplineId?.replace('productDiscipline_', '');
+
     const topicUrl =
       weitApiUrl +
       '/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
@@ -85,7 +86,7 @@ export function SubEntries(props: { data: PageEntry }) {
     const dataEntries = [];
 
     for (const generatingDependency of generatingDependencies) {
-      // const generatingDependencyId = generatingDependency.attributes.id;
+      const generatingDependencyId = generatingDependency.attributes.id;
       const generatingDependencyTitle = generatingDependency.attributes.name;
       const generatingDependenciesData = [];
 
@@ -103,7 +104,7 @@ export function SubEntries(props: { data: PageEntry }) {
           }
 
           generatingDependenciesData.push({
-            subheader: { title: generatingDependencyTitle },
+            subheader: { id: generatingDependencyId, title: generatingDependencyTitle, isLink: false },
             dataEntries: productsToTopics,
           });
         }
@@ -148,15 +149,16 @@ export function SubEntries(props: { data: PageEntry }) {
   }, [props.data]);
 
   return (
-    subPageEntries.length > 0 &&
-    subPageEntries.map((subPageEntry) => {
-      return (
-        <div key={subPageEntry?.id} style={{ marginTop: '40px' }}>
-          <h3 id={subPageEntry?.id}> {subPageEntry.header} </h3>
-          {parse(fixLinksInText(subPageEntry.descriptionText))}
-          {subPageEntry?.tableEntries?.length > 0 && <DataTable data={subPageEntry.tableEntries} />}
-        </div>
-      );
-    })
+    <div>
+      {subPageEntries.map((subPageEntry) => {
+        return (
+          <div key={subPageEntry?.id} style={{ marginTop: '40px' }}>
+            <h3 id={subPageEntry?.id}> {subPageEntry.header} </h3>
+            {parse(fixLinksInText(subPageEntry.descriptionText))}
+            {subPageEntry?.tableEntries?.length > 0 && <DataTable data={subPageEntry.tableEntries} />}
+          </div>
+        );
+      })}
+    </div>
   );
 }

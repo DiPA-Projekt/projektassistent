@@ -388,7 +388,7 @@ export function Content() {
     for (const key of responsibleRoleToProductsMap.keys()) {
       const products = responsibleRoleToProductsMap.get(key);
       productsToRoles.push({
-        subheader: { id: key, title: responsibleRolesMap.get(key) }, // TODO: id + key
+        subheader: { id: key, title: responsibleRolesMap.get(key), isLink: true }, // TODO: id + key
         dataEntries: products,
       });
     }
@@ -470,7 +470,7 @@ export function Content() {
     for (const key of contributeRoleToProductsMap.keys()) {
       const products = contributeRoleToProductsMap.get(key);
       productsToRoles.push({
-        subheader: { id: key, title: contributeRolesMap.get(key) }, // TODO: id + key
+        subheader: { id: key, title: contributeRolesMap.get(key), isLink: true }, // TODO: id + key
         dataEntries: products,
       });
     }
@@ -807,7 +807,7 @@ export function Content() {
             });
 
             generatingDependenciesData.push({
-              subheader: topicsMapEntry.discipline,
+              subheader: { ...topicsMapEntry.discipline, isLink: true },
               dataEntries: productsToTopics,
             });
           } else {
@@ -1005,6 +1005,7 @@ export function Content() {
           subheader: {
             id: contentDependencyOfSelectedGroup.attributes.id,
             title: contentDependencyOfSelectedGroup.attributes.name,
+            isLink: true,
           },
           dataEntries: dataEntries,
         });

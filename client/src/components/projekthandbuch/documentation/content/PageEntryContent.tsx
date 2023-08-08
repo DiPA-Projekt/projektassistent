@@ -6,48 +6,42 @@ import { fixLinksInText, getSearchStringFromHash } from '../../../../shares/util
 import { DataTable } from './DataTable';
 import { SubEntries } from './SubEntries';
 import { useDocumentation } from '../../../../context/DocumentationContext';
-import { TableEntry } from '../Documentation';
 
 export function PageEntryContent() {
-  let productData;
-
   const { selectedPageEntry } = useDocumentation();
-
-  const productDataArray = [];
 
   const onChange: TableProps<any>['onChange'] = (pagination, filters, sorter, extra) => {
     console.log('params', pagination, filters, sorter, extra);
   };
   console.log('PageEntryContent subPageEntries', selectedPageEntry);
 
-  if (selectedPageEntry?.id) {
-    productDataArray.push(
-      <div key={selectedPageEntry?.id}>
-        <h2 id={selectedPageEntry?.id}> {selectedPageEntry?.header} </h2>
-        {parse(fixLinksInText(selectedPageEntry?.descriptionText))}
-        <DataTable data={selectedPageEntry?.tableEntries as TableEntry[]} />
+  return (
+    <div>
+      {selectedPageEntry?.id ? (
+        <>
+          <div key={selectedPageEntry?.id}>
+            <h2 id={selectedPageEntry?.id}> {selectedPageEntry?.header} </h2>
+            {parse(fixLinksInText(selectedPageEntry?.descriptionText))}
 
-        {selectedPageEntry?.dataSource && (
-          <Table
-            columns={selectedPageEntry?.columns}
-            dataSource={selectedPageEntry?.dataSource}
-            onRow={(record) => ({
-              id: record.key + getSearchStringFromHash(),
-            })}
-            pagination={false}
-            onChange={onChange}
-            scroll={{ y: '60vh' }} // TODO: schauen ob das so erwünscht ist
-          />
-        )}
-      </div>
-    );
-
-    productDataArray.push(<SubEntries data={selectedPageEntry} />);
-
-    productData = productDataArray;
-  } else {
-    productData = <h2> Keine Seite ausgewählt </h2>;
-  }
-
-  return <div>{productData}</div>;
+            {selectedPageEntry.tableEntries.length > 0 && <DataTable data={selectedPageEntry.tableEntries} />}
+            {selectedPageEntry?.dataSource && (
+              <Table
+                columns={selectedPageEntry?.columns}
+                dataSource={selectedPageEntry?.dataSource}
+                onRow={(record) => ({
+                  id: record.key + getSearchStringFromHash(),
+                })}
+                pagination={false}
+                onChange={onChange}
+                scroll={{ y: '60vh' }} // TODO: schauen ob das so erwünscht ist
+              />
+            )}
+          </div>
+          <SubEntries data={selectedPageEntry} />
+        </>
+      ) : (
+        <h2> Keine Seite ausgewählt </h2>
+      )}
+    </div>
+  );
 }
