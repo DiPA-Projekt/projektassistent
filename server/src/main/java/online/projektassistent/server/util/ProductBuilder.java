@@ -2,6 +2,8 @@ package online.projektassistent.server.util;
 
 import online.projektassistent.server.model.*;
 import org.apache.logging.log4j.util.Strings;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
@@ -12,10 +14,8 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSimpleField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.ResourceUtils;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -51,9 +51,8 @@ public class ProductBuilder implements Placeholders {
 
         List<Chapter> chapters = singleProduct.getChapters();
 
-        try (FileInputStream fileInputStream = new FileInputStream(ResourceUtils.getFile("classpath:" + PROJECT_TEMPLATE));
-             XWPFDocument doc = new XWPFDocument(fileInputStream);
-             ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+        try (XWPFDocument doc = new XWPFDocument(OPCPackage.open(getClass().getResourceAsStream("/" + PROJECT_TEMPLATE)));
+            ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 
             replacePlaceholdersInDocument(dataParams, doc);
             createChapters(doc, chapters);
@@ -61,6 +60,8 @@ public class ProductBuilder implements Placeholders {
 
             doc.write(out);
             return out.toByteArray();
+        } catch (InvalidFormatException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -98,7 +99,7 @@ public class ProductBuilder implements Placeholders {
             dataParams.put(PARTICIPANTS, String.join("; ", product.getParticipants()));
             List<Chapter> chapters = product.getChapters();
 
-            try (XWPFDocument template = new XWPFDocument(new FileInputStream(ResourceUtils.getFile("classpath:" + PROJECT_TEMPLATE)))) {
+            try (XWPFDocument template = new XWPFDocument(OPCPackage.open(getClass().getResourceAsStream("/" + PROJECT_TEMPLATE)))) {
                 replacePlaceholdersInDocument(dataParams, template);
                 createChapters(template, chapters);
                 createTableOfContents(template);
@@ -108,7 +109,9 @@ public class ProductBuilder implements Placeholders {
                     template.write(out);
                     Files.write(tempFile, out.toByteArray());
                 }
-                productsMap.put(FileUtil.sanitizeFilename(product.getProductName()) + ".docx", tempFile);
+            productsMap.put(FileUtil.sanitizeFilename(product.getProductName()) + ".docx", tempFile);
+            } catch (InvalidFormatException e) {
+                throw new RuntimeException(e);
             }
         }
         return productsMap;
