@@ -31,10 +31,15 @@ export function ModelVariantComponent() {
 
     const jsonDataFromXml = await getJsonDataFromXml(modelVariantsUrl);
 
-    const modelVariants: ModelVariant[] = jsonDataFromXml.getElementsByTagName('V-Modellvariante').map((variante) => {
-      const currentAttributes = variante.attributes;
-      return { id: currentAttributes.id, name: currentAttributes.name };
-    });
+    const modelVariants: ModelVariant[] = jsonDataFromXml
+      .getElementsByTagName('V-Modellvariante')
+      .map((variante) => {
+        const currentAttributes = variante.attributes;
+        return { id: currentAttributes.id, name: currentAttributes.name };
+      })
+      .sort(function (a, b) {
+        return a.name < b.name ? -1 : 1;
+      });
 
     setModelVariantsData(modelVariants);
   }
