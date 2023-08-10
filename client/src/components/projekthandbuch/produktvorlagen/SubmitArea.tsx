@@ -1,10 +1,11 @@
 import { Button, Checkbox, Form, Input, Modal, Space, Tag } from 'antd';
 import React, { useState } from 'react';
 import { useTemplate } from '../../../context/TemplateContext';
-import { SingleProduct } from '@dipa-projekt/projektassistent-openapi';
+import { OperationOpts, SingleProduct } from '@dipa-projekt/projektassistent-openapi';
 import { MultiProducts } from '@dipa-projekt/projektassistent-openapi/dist/models/MultiProducts';
 import { ProductOfProject } from '@dipa-projekt/projektassistent-openapi/dist/models';
 import API from '../../../api';
+import { AjaxResponse } from 'rxjs/ajax';
 
 export function SubmitArea() {
   const { checkedKeys, topicsMap } = useTemplate();
@@ -89,34 +90,38 @@ export function SubmitArea() {
 
     setModalVisible(false);
 
+    const opts: OperationOpts = { responseOpts: { response: 'raw' } };
+
     const bodyData = collectDataByProduct(values);
     if (bodyData.hasOwnProperty('products')) {
-      API.ProductsApi.getZipForMultiProducts({ multiProducts: bodyData as MultiProducts }).subscribe((data: any) => {
-        console.log('getZipForMultiProducts', data);
-        downloadFile(data);
-      });
+      API.ProductsApi.getZipForMultiProducts({ multiProducts: bodyData as MultiProducts }, opts).subscribe(
+        (response: AjaxResponse<Blob>) => {
+          downloadFile(response);
+        }
+      );
     } else {
-      API.ProductsApi.getDocxForSingleProduct({ singleProduct: bodyData as SingleProduct }).subscribe((data: any) => {
-        console.log('getDocxForSingleProduct', data);
-        downloadFile(data);
-      });
+      API.ProductsApi.getDocxForSingleProduct({ singleProduct: bodyData as SingleProduct }, opts).subscribe(
+        (response: AjaxResponse<Blob>) => {
+          downloadFile(response);
+        }
+      );
     }
   };
 
-  function downloadFile(response: Blob) {
-    const downloadUrl = window.URL.createObjectURL(response);
+  function downloadFile(response: AjaxResponse<Blob>) {
+    const downloadUrl = window.URL.createObjectURL(response.response);
     const link = document.createElement('a');
     link.href = downloadUrl;
 
-    // const contentDisposition = response.headers['content-disposition'];
-    const contentDispositionMatch = 'file.zip'; // TODO
-    // if (contentDisposition) {
-    //   const match = /filename=*(.+)/;
-    //   const filename = contentDisposition.match(match);
-    //   if (filename && filename.length > 1) {
-    //     contentDispositionMatch = filename[1];
-    //   }
-    // }
+    const contentDisposition = response.responseHeaders['content-disposition'];
+    let contentDispositionMatch = 'file.zip';
+    if (contentDisposition) {
+      const match = /filename=*(.+)/;
+      const filename = contentDisposition.match(match);
+      if (filename && filename.length > 1) {
+        contentDispositionMatch = filename[1];
+      }
+    }
     link.setAttribute('download', contentDispositionMatch);
     document.body.appendChild(link);
     link.click();

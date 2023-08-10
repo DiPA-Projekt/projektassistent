@@ -98,7 +98,7 @@ export const SiteHeader = (props: any) => {
             />
           )}
         </Col>
-        <Col span={18}>
+        <Col span={20}>
           <Menu
             mode="horizontal"
             theme="dark"
