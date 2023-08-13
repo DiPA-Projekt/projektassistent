@@ -13,15 +13,18 @@ type TemplateSession = {
   setSelectedKeys: Function;
   autoExpandParent: boolean;
   setAutoExpandParent: Function;
-  topicsMap: Map<
+  productsMap: Map<
     React.Key,
     {
-      topic: { title: string; text: string | undefined };
-      discipline: { id: string; title: string };
       product: { id: string; title: string };
+      discipline: { id: string; title: string };
+      topics: { title: string; text: string }[];
     }
   >;
-  setTopicsMap: Function;
+  setProductsMap: Function;
+
+  insertTopicDescription: boolean;
+  setInsertTopicDescription: Function;
 };
 
 type TemplateSessionProviderProps = { children: React.ReactNode };
@@ -36,14 +39,15 @@ const TemplateSessionContextProvider = ({ children }: TemplateSessionProviderPro
   const [checkedKeys, setCheckedKeys] = useState<React.Key[]>([]);
   const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
   const [autoExpandParent, setAutoExpandParent] = useState<boolean>(true);
+  const [insertTopicDescription, setInsertTopicDescription] = useState<boolean>(true);
 
-  const [topicsMap, setTopicsMap] = useState(
+  const [productsMap, setProductsMap] = useState(
     new Map<
       React.Key,
       {
-        topic: { title: string; text: string | undefined };
-        discipline: { id: string; title: string };
         product: { id: string; title: string };
+        discipline: { id: string; title: string };
+        topics: { title: string; text: string }[];
       }
     >()
   );
@@ -61,8 +65,10 @@ const TemplateSessionContextProvider = ({ children }: TemplateSessionProviderPro
     setSelectedKeys,
     autoExpandParent,
     setAutoExpandParent,
-    topicsMap,
-    setTopicsMap,
+    productsMap,
+    setProductsMap,
+    insertTopicDescription,
+    setInsertTopicDescription,
   };
 
   return (

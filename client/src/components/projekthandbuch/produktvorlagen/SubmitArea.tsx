@@ -9,7 +9,7 @@ import { AjaxResponse } from 'rxjs/ajax';
 import { TemplateFormModal } from './TemplateFormModal';
 
 export function SubmitArea() {
-  const { checkedKeys, topicsMap } = useTemplate();
+  const { checkedKeys, productsMap, insertTopicDescription, setInsertTopicDescription } = useTemplate();
 
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -41,33 +41,35 @@ export function SubmitArea() {
     } as MultiProducts;
   }
 
+  function getChaptersData(topics: { title: string; text: string }[]) {
+    if (insertTopicDescription) {
+      return topics;
+    } else {
+      return topics.map((obj) => ({ ...obj, text: undefined }));
+    }
+  }
+
   function doSubmit(): void {
     setModalVisible(true);
 
-    const productsMap = new Map<string, ProductOfProject>();
+    const productOfProjectMap = new Map<string, ProductOfProject>();
 
     for (const checkedKey of checkedKeys) {
-      const topic = topicsMap.get(checkedKey);
-      if (topic) {
-        if (!productsMap.has(topic.product.id)) {
-          productsMap.set(topic.product.id, {
-            productName: topic.product.title,
-            responsible: '',
-            participants: [],
-            chapters: [],
-          });
-        }
-        const currentProductsMap = productsMap.get(topic.product.id);
-        if (currentProductsMap) {
-          currentProductsMap.chapters.push(topic.topic);
-        }
+      const product = productsMap.get(checkedKey);
+      if (product) {
+        productOfProjectMap.set(product.product.id, {
+          productName: product.product.title,
+          responsible: '',
+          participants: [],
+          chapters: getChaptersData(product.topics),
+        });
       }
     }
 
     const products: ProductOfProject[] = [];
 
-    for (const productKey of productsMap.keys()) {
-      const product = productsMap.get(productKey);
+    for (const productKey of productOfProjectMap.keys()) {
+      const product = productOfProjectMap.get(productKey);
       if (product) {
         products.push(product);
       }
@@ -126,6 +128,10 @@ export function SubmitArea() {
     link.remove();
   }
 
+  function onChangeInsertTopicDescription() {
+    setInsertTopicDescription(!insertTopicDescription);
+  }
+
   return (
     <>
       <div className="sticky-wrapper" style={{ padding: '24px' }}>
@@ -147,7 +153,9 @@ export function SubmitArea() {
         {/*  </Checkbox>*/}
         {/*</Form.Item>*/}
         <Form.Item>
-          <Checkbox>Themenbeschreibungen einfügen</Checkbox>
+          <Checkbox checked={insertTopicDescription} onChange={onChangeInsertTopicDescription}>
+            Themenbeschreibungen einfügen
+          </Checkbox>
         </Form.Item>
         <Form.Item {...buttonItemLayout}>
           <Button
