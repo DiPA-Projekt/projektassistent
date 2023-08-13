@@ -1,4 +1,4 @@
-import { Popover, Tree } from 'antd';
+import { Checkbox, Popover, Tree } from 'antd';
 import {
   BookTwoTone,
   ContainerTwoTone,
@@ -186,6 +186,31 @@ export function TemplatesContent(props: { entries: TemplateProps[] }) {
     return result || [];
   }
 
+  // Call this once
+  const getAllKeys = (tree: any[]) => {
+    const result: any[] = [];
+    tree.forEach((x) => {
+      let childKeys = [];
+      if (x.children) {
+        childKeys = getAllKeys(x.children);
+      }
+
+      result.push(...[x.key, ...childKeys]);
+    });
+
+    return result;
+  };
+
+  const allKeys = getAllKeys(treeEntries);
+
+  const onChange = () => {
+    if (checkedKeys.length === allKeys.length) {
+      setCheckedKeys([]);
+    } else {
+      setCheckedKeys(allKeys);
+    }
+  };
+
   return (
     <>
       <h2>Vorlagen</h2>
@@ -193,6 +218,11 @@ export function TemplatesContent(props: { entries: TemplateProps[] }) {
       an Textbausteinen übernehmen oder an der Auswahl nach Belieben Änderungen vornehmen (Vorlagen für initiale
       Produkte können nicht abgewählt werden). Der Button "Vorlagen erzeugen" startet den Generierungsvorgang.
       {/*<Collapse onChange={callback} style={{ marginTop: '20px' }}>*/}
+      <div style={{ marginTop: '10px', height: '24px' }}>
+        <Checkbox onChange={onChange} checked={checkedKeys.length === allKeys.length}>
+          Alles auswählen
+        </Checkbox>
+      </div>
       <Tree
         checkable
         showIcon={true}

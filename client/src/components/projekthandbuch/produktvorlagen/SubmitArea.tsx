@@ -1,4 +1,4 @@
-import { Button, Checkbox, Form, Tag } from 'antd';
+import { Button, Checkbox, Form } from 'antd';
 import React, { useState } from 'react';
 import { useTemplate } from '../../../context/TemplateContext';
 import { OperationOpts, SingleProduct } from '@dipa-projekt/projektassistent-openapi';
@@ -135,17 +135,6 @@ export function SubmitArea() {
   return (
     <>
       <div className="sticky-wrapper" style={{ padding: '24px' }}>
-        <div style={{ marginTop: '10px' }}>
-          <Checkbox
-          // indeterminate={indeterminateProductTemplates}
-          // onChange={(e: CheckboxChangeEvent) => {
-          //   this.ctrl.produktvorlagenService.setCheckAllProductTemplates(e.target.checked);
-          // }}
-          // checked={this.ctrl.checkAllProductTemplates}
-          >
-            Alle <Tag color="blue">Produktvorlagen</Tag>auswählen
-          </Checkbox>
-        </div>
         {/*TODO: reinsert if there are Mustertexte available*/}
         {/*<Form.Item style={{ marginTop: '30px' }}>*/}
         {/*  <Checkbox>*/}
