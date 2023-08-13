@@ -1,4 +1,4 @@
-import { Button, Checkbox, Form, Input, Modal, Space, Tag } from 'antd';
+import { Button, Checkbox, Form, Tag } from 'antd';
 import React, { useState } from 'react';
 import { useTemplate } from '../../../context/TemplateContext';
 import { OperationOpts, SingleProduct } from '@dipa-projekt/projektassistent-openapi';
@@ -6,17 +6,14 @@ import { MultiProducts } from '@dipa-projekt/projektassistent-openapi/dist/model
 import { ProductOfProject } from '@dipa-projekt/projektassistent-openapi/dist/models';
 import API from '../../../api';
 import { AjaxResponse } from 'rxjs/ajax';
+import { TemplateFormModal } from './TemplateFormModal';
 
 export function SubmitArea() {
   const { checkedKeys, topicsMap } = useTemplate();
 
   const [modalVisible, setModalVisible] = useState(false);
-  const [formTitle, setFormTitle] = useState();
-  const [confirmLoading, setConfirmLoading] = useState();
 
-  const [responsible, setResponsible] = useState<string>();
-  const [projectName, setProjectName] = useState<string>();
-  const [participants, setParticipants] = useState<string[]>([]);
+  const [selectedProducts, setSelectedProducts] = useState<ProductOfProject[]>([]);
 
   const buttonItemLayout = {
     wrapperCol: {
@@ -25,11 +22,28 @@ export function SubmitArea() {
     },
   };
 
-  function collectDataByProduct(values: {
-    participants: string;
+  function collectDataForSingleProduct(values: {
     projectName: string;
     responsible: string;
-  }): SingleProduct | MultiProducts | undefined {
+    participants: string[];
+  }): SingleProduct {
+    return Object.assign(selectedProducts[0], {
+      projectName: values.projectName,
+      responsible: values.responsible,
+      participants: values.participants,
+    }) as SingleProduct;
+  }
+
+  function collectDataForMultiProducts(values: { projectName: string }): MultiProducts {
+    return {
+      projectName: values.projectName,
+      products: selectedProducts,
+    } as MultiProducts;
+  }
+
+  function doSubmit(): void {
+    setModalVisible(true);
+
     const productsMap = new Map<string, ProductOfProject>();
 
     for (const checkedKey of checkedKeys) {
@@ -38,73 +52,57 @@ export function SubmitArea() {
         if (!productsMap.has(topic.product.id)) {
           productsMap.set(topic.product.id, {
             productName: topic.product.title,
-            responsible: values.responsible,
-            participants: values.participants ? [values.participants] : [],
+            responsible: '',
+            participants: [],
             chapters: [],
           });
         }
-        productsMap.get(topic.product.id)!.chapters.push(topic.topic);
+        const currentProductsMap = productsMap.get(topic.product.id);
+        if (currentProductsMap) {
+          currentProductsMap.chapters.push(topic.topic);
+        }
       }
     }
 
     const products: ProductOfProject[] = [];
 
-    if (productsMap.size > 0) {
-      for (const productKey of productsMap.keys()) {
-        const product = productsMap.get(productKey);
-        if (product) {
-          products.push(product);
-        }
-      }
-      if (products.length > 1) {
-        return {
-          projectName: values.projectName,
-          products: products,
-        } as MultiProducts;
-      } else {
-        const singleProductOfProject = products[0];
-        const singleProduct = Object.assign(singleProductOfProject, {
-          projectName: values.projectName,
-        }) as SingleProduct;
-        return singleProduct;
+    for (const productKey of productsMap.keys()) {
+      const product = productsMap.get(productKey);
+      if (product) {
+        products.push(product);
       }
     }
-    return undefined;
+
+    setSelectedProducts(products);
   }
 
-  function doSubmit(): void {
-    setModalVisible(true);
-  }
-
-  const handleCancel = (values) => {
+  const handleClose = (values: { projectName: string; responsible: string; participants: string[] }) => {
     console.log('Received values of form: ', values);
-    setModalVisible(false);
-  };
-
-  const handleOk = (values: any) => {
-    console.log('Received values of form: ', values);
-
-    setProjectName(values.projectName);
-    setResponsible(values.responsible);
-    setParticipants(values.participants);
 
     setModalVisible(false);
 
-    const opts: OperationOpts = { responseOpts: { response: 'raw' } };
+    if (values) {
+      const opts: OperationOpts = { responseOpts: { response: 'raw' } };
 
-    const bodyData = collectDataByProduct(values);
-    if (bodyData.hasOwnProperty('products')) {
-      API.ProductsApi.getZipForMultiProducts({ multiProducts: bodyData as MultiProducts }, opts).subscribe(
-        (response: AjaxResponse<Blob>) => {
+      if (selectedProducts.length > 1) {
+        API.ProductsApi.getZipForMultiProducts(
+          {
+            multiProducts: collectDataForMultiProducts(values),
+          },
+          opts
+        ).subscribe((response: AjaxResponse<Blob>) => {
           downloadFile(response);
-        }
-      );
-    } else {
-      API.ProductsApi.getDocxForSingleProduct({ singleProduct: bodyData as SingleProduct }, opts).subscribe(
-        (response: AjaxResponse<Blob>) => {
+        });
+      } else {
+        API.ProductsApi.getDocxForSingleProduct(
+          {
+            singleProduct: collectDataForSingleProduct(values),
+          },
+          opts
+        ).subscribe((response: AjaxResponse<Blob>) => {
           downloadFile(response);
-        }
-      );
+        });
+      }
     }
   };
 
@@ -164,63 +162,7 @@ export function SubmitArea() {
         </Form.Item>
       </div>
 
-      <Modal
-        title={formTitle}
-        open={modalVisible}
-        confirmLoading={confirmLoading}
-        onCancel={handleCancel}
-        footer={[]} //this to hide the default inputs of the modal
-      >
-        <Form
-          layout="vertical"
-          name="form_in_modal"
-          initialValues={
-            {
-              // modifier: 'public',
-            }
-          }
-          onFinish={handleOk}
-        >
-          <Form.Item
-            name="projectName"
-            label="Projektname"
-            rules={[
-              {
-                required: true,
-                message: 'Bitte geben Sie einen Projektnamen ein.',
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="responsible"
-            label="Verantwortlich"
-            rules={[
-              {
-                required: true,
-                message: 'Bitte geben Sie einen oder mehrere Verantwortliche ein.',
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item name="participants" label="Mitwirkend">
-            <Input />
-          </Form.Item>
-          <Space wrap>
-            <Button key="submit" type="primary" loading={confirmLoading} htmlType="submit">
-              Erzeugen
-            </Button>
-            <Button key="cancel" type="default" onClick={handleCancel} htmlType="button">
-              Abbrechen
-            </Button>
-            <Button key="reset" type="ghost" htmlType="reset">
-              Zurücksetzen
-            </Button>
-          </Space>
-        </Form>
-      </Modal>
+      <TemplateFormModal products={selectedProducts} open={modalVisible} handleClose={handleClose} />
     </>
   );
 }

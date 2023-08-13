@@ -13,7 +13,14 @@ type TemplateSession = {
   setSelectedKeys: Function;
   autoExpandParent: boolean;
   setAutoExpandParent: Function;
-  topicsMap: any;
+  topicsMap: Map<
+    React.Key,
+    {
+      topic: { title: string; text: string | undefined };
+      discipline: { id: string; title: string };
+      product: { id: string; title: string };
+    }
+  >;
   setTopicsMap: Function;
 };
 
@@ -30,7 +37,16 @@ const TemplateSessionContextProvider = ({ children }: TemplateSessionProviderPro
   const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
   const [autoExpandParent, setAutoExpandParent] = useState<boolean>(true);
 
-  const [topicsMap, setTopicsMap] = useState();
+  const [topicsMap, setTopicsMap] = useState(
+    new Map<
+      React.Key,
+      {
+        topic: { title: string; text: string | undefined };
+        discipline: { id: string; title: string };
+        product: { id: string; title: string };
+      }
+    >()
+  );
 
   const value: TemplateSession = {
     selectAll,
