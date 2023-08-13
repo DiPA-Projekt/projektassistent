@@ -108,9 +108,10 @@ export function TemplatesContent(props: { entries: TemplateProps[] }) {
             {discipline.label}
             {/*{entry.dataType === NavTypeEnum.PRODUCT ? 'Generierte Vorlage' : entry.label}*/}
           </span>
-          <Popover destroyTooltipOnHide={true} content={discipline.infoText} title={discipline.label}>
-            <InfoCircleTwoTone style={{ cursor: 'help' }} />
-          </Popover>
+          {/*comment out for now till data is not loaded at this time*/}
+          {/*<Popover destroyTooltipOnHide={true} content={discipline.infoText} title={discipline.label}>*/}
+          {/*  <InfoCircleTwoTone style={{ cursor: 'help' }} />*/}
+          {/*</Popover>*/}
         </>
       );
 
