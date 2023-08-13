@@ -1,0 +1,85 @@
+
+.ReactTags__tags {
+    position: relative;
+}
+
+.ReactTags__clearAll {
+    cursor: pointer;
+    padding: 10px;
+    margin: 10px;
+    background: #f88d8d;
+    color: #fff;
+    border: none;
+}
+
+/* Styles for the input */
+.ReactTags__tagInput {
+    border-radius: 2px;
+}
+.ReactTags__tagInput input.ReactTags__tagInputField {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 4px 11px;
+    color: rgba(0, 0, 0, 0.88);
+    font-size: 14px;
+    line-height: 1.5714285714285714;
+    list-style: none;
+    font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,'Noto Sans',sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol','Noto Color Emoji';
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    min-width: 0;
+    background-color: #ffffff;
+    background-image: none;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #d9d9d9;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.ReactTags__tagInput input.ReactTags__tagInputField:hover {
+    border-color: #4096ff;
+    border-inline-end-width: 1px;
+}
+
+.ReactTags__tagInput input.ReactTags__tagInputField:focus {
+    border-color: #4096ff;
+    box-shadow: 0 0 0 2px rgba(5, 145, 255, 0.1);
+    border-inline-end-width: 1px;
+    outline: 0;
+}
+
+.ReactTags__editInput {
+    border-radius: 1px;
+}
+
+.ReactTags__editTagInput {
+    display: inline-flex;
+}
+
+/* Styles for selected tags */
+.ReactTags__selected span.ReactTags__tag {
+    background: #c6c6c6;
+    color: black;
+    font-size: 14px;
+    display: inline-block;
+    padding: 5px 8px;
+    margin: 0 5px 5px;
+    border-radius: 15px;
+}
+.ReactTags__selected a.ReactTags__remove {
+    color: black;
+    font-size: 14px;
+    margin-left: 5px;
+    cursor: pointer;
+}
+
+
+.ReactTags__remove {
+    border: none;
+    cursor: pointer;
+    background: none;
+    color: black;
+    font-size: 14px;
+}

@@ -13,8 +13,20 @@ type TemplateSession = {
   setSelectedKeys: Function;
   autoExpandParent: boolean;
   setAutoExpandParent: Function;
-  topicsMap: any;
-  setTopicsMap: Function;
+  productsMap: Map<
+    React.Key,
+    {
+      product: { id: string; title: string };
+      discipline: { id: string; title: string };
+      topics: { title: string; text: string }[];
+    }
+  >;
+  setProductsMap: Function;
+
+  insertTopicDescription: boolean;
+  setInsertTopicDescription: Function;
+  checkAllProductTemplates: boolean;
+  setCheckAllProductTemplates: Function;
 };
 
 type TemplateSessionProviderProps = { children: React.ReactNode };
@@ -29,8 +41,19 @@ const TemplateSessionContextProvider = ({ children }: TemplateSessionProviderPro
   const [checkedKeys, setCheckedKeys] = useState<React.Key[]>([]);
   const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
   const [autoExpandParent, setAutoExpandParent] = useState<boolean>(true);
+  const [insertTopicDescription, setInsertTopicDescription] = useState<boolean>(true);
+  const [checkAllProductTemplates, setCheckAllProductTemplates] = useState<boolean>(true);
 
-  const [topicsMap, setTopicsMap] = useState();
+  const [productsMap, setProductsMap] = useState(
+    new Map<
+      React.Key,
+      {
+        product: { id: string; title: string };
+        discipline: { id: string; title: string };
+        topics: { title: string; text: string }[];
+      }
+    >()
+  );
 
   const value: TemplateSession = {
     selectAll,
@@ -45,8 +68,12 @@ const TemplateSessionContextProvider = ({ children }: TemplateSessionProviderPro
     setSelectedKeys,
     autoExpandParent,
     setAutoExpandParent,
-    topicsMap,
-    setTopicsMap,
+    productsMap,
+    setProductsMap,
+    insertTopicDescription,
+    setInsertTopicDescription,
+    checkAllProductTemplates,
+    setCheckAllProductTemplates,
   };
 
   return (

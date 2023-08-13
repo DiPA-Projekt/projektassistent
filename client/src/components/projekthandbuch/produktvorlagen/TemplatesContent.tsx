@@ -1,4 +1,4 @@
-import { Popover, Tree } from 'antd';
+import { Checkbox, Popover, Tree } from 'antd';
 import {
   BookTwoTone,
   ContainerTwoTone,
@@ -59,15 +59,15 @@ export function TemplatesContent(props: { entries: TemplateProps[] }) {
     setExpandedKeys,
     autoExpandParent,
     setAutoExpandParent,
-    setTopicsMap,
+    setProductsMap,
   } = useTemplate();
 
-  const topicsMap = new Map<
+  const productsMap = new Map<
     string,
     {
-      topic: { title: string; text: string | undefined };
-      discipline: { id: string; title: string };
       product: { id: string; title: string };
+      discipline: { id: string; title: string };
+      topics: { title: string; text: string }[];
     }
   >();
 
@@ -108,13 +108,14 @@ export function TemplatesContent(props: { entries: TemplateProps[] }) {
             {discipline.label}
             {/*{entry.dataType === NavTypeEnum.PRODUCT ? 'Generierte Vorlage' : entry.label}*/}
           </span>
-          <Popover destroyTooltipOnHide={true} content={discipline.infoText} title={discipline.label}>
-            <InfoCircleTwoTone style={{ cursor: 'help' }} />
-          </Popover>
+          {/*comment out for now till data is not loaded at this time*/}
+          {/*<Popover destroyTooltipOnHide={true} content={discipline.infoText} title={discipline.label}>*/}
+          {/*  <InfoCircleTwoTone style={{ cursor: 'help' }} />*/}
+          {/*</Popover>*/}
         </>
       );
 
-      const products = [];
+      const productTreeItems = [];
 
       if (discipline.children) {
         for (const product of discipline.children) {
@@ -124,7 +125,8 @@ export function TemplatesContent(props: { entries: TemplateProps[] }) {
             </>
           );
 
-          const topics = [];
+          const topicsTreeItems = [];
+          const topicsForMap = [];
 
           if (product.children) {
             for (const topic of product.children) {
@@ -138,94 +140,77 @@ export function TemplatesContent(props: { entries: TemplateProps[] }) {
                   </>
                 );
 
-                topics.push({
+                topicsTreeItems.push({
                   title: topicHeader,
                   key: topic.key,
                   selectable: true,
+                  checkable: false,
                   icon: getIcon(topic.dataType),
                 });
 
-                topicsMap.set(topic.key, {
-                  topic: { title: topic.label, text: removeHtmlTags(topic.infoText) },
-                  discipline: { id: discipline.key, title: discipline.label },
-                  product: { id: product.key, title: product.label },
-                });
+                topicsForMap.push({ title: topic.label, text: removeHtmlTags(topic.infoText) });
               }
             }
           }
 
-          if (topics.length > 0) {
-            products.push({
+          productsMap.set(product.key, {
+            product: { id: product.key, title: product.label },
+            discipline: { id: discipline.key, title: discipline.label },
+            topics: topicsForMap,
+          });
+
+          if (topicsTreeItems.length > 0) {
+            productTreeItems.push({
               title: productHeader,
               key: product.key,
               selectable: true,
               icon: getIcon(product.dataType),
-              children: topics,
+              children: topicsTreeItems,
             });
           }
         }
       }
 
-      if (products.length > 0) {
+      if (productTreeItems.length > 0) {
         result.push({
           title: disciplineHeader,
           key: discipline.key,
           selectable: false,
           icon: getIcon(discipline.dataType),
-          children: products,
+          children: productTreeItems,
         });
       }
     }
 
-    console.log('topicsMap', topicsMap);
-
-    setTopicsMap(topicsMap);
+    setProductsMap(productsMap);
 
     return result || [];
   }
 
-  // const templatePanels = [];
-  // for (const templateEntry of props.entries as TemplateProps[]) {
-  // const submenuEntries = [];
+  // Call this once
+  const getAllKeys = (tree: any[]) => {
+    const result: any[] = [];
+    tree.forEach((x) => {
+      let childKeys = [];
+      if (x.children) {
+        childKeys = getAllKeys(x.children);
+      }
 
-  // if (templateEntry.children) {
-  //   for (const submenuEntry of templateEntry.children) {
-  // const fileEntries = [];
-  // if (submenuEntry.files) {
-  //   fileEntries.push(
-  //     <SelectTree
-  //       key={submenuEntry.key}
-  //       data={getTreeData(submenuEntry.files)}
-  //       checkedKeys={[]}
-  //       // checkedKeys={props.ctrl.getCheckedKeys([submenuEntry])}
-  //       disabled={submenuEntry.disabled}
-  //     />
-  //   );
-  // }
+      result.push(...[x.key, ...childKeys]);
+    });
 
-  // const header = (
-  //   <div style={{ color: submenuEntry.disabled ? '#cccccc' : '' }}>
-  //     <span style={{ marginRight: '8px' }}>{submenuEntry.label}</span>
-  //     <Popover destroyTooltipOnHide={true} content={submenuEntry.infoText} title={submenuEntry.label}>
-  //       <InfoCircleTwoTone style={{ cursor: 'help' }} />
-  //     </Popover>
-  //   </div>
-  // );
+    return result;
+  };
 
-  // submenuEntries.push(
-  //   //     <Collapse key={submenuEntry?.key.toString()} ghost>
-  //   //       <Panel key={submenuEntry?.key.toString()} header={header}>
-  //   <SelectTree
-  //     data={getTreeData(props.entries)}
-  //     checkedKeys={[]}
-  //     // checkedKeys={props.ctrl.getCheckedKeys([submenuEntry])}
-  //   />
-  //
-  //
-  //   // {fileEntries}
-  //   //       </Panel>
-  //   //     </Collapse>
-  // );
+  const allKeys = getAllKeys(treeEntries);
+
+  const onChange = () => {
+    if (checkedKeys.length === allKeys.length) {
+      setCheckedKeys([]);
+    } else {
+      setCheckedKeys(allKeys);
+    }
+  };
 
   return (
     <>
@@ -234,6 +219,11 @@ export function TemplatesContent(props: { entries: TemplateProps[] }) {
       an Textbausteinen übernehmen oder an der Auswahl nach Belieben Änderungen vornehmen (Vorlagen für initiale
       Produkte können nicht abgewählt werden). Der Button "Vorlagen erzeugen" startet den Generierungsvorgang.
       {/*<Collapse onChange={callback} style={{ marginTop: '20px' }}>*/}
+      <div style={{ marginTop: '10px', height: '24px' }}>
+        <Checkbox onChange={onChange} checked={checkedKeys.length === allKeys.length}>
+          Alles auswählen
+        </Checkbox>
+      </div>
       <Tree
         checkable
         showIcon={true}
