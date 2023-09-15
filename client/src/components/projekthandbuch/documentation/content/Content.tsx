@@ -17,7 +17,7 @@ import {
 import { AnchorLinkItemProps } from 'antd/es/anchor/Anchor';
 import axios from 'axios';
 import XMLParser, { XMLElement } from 'react-xml-parser';
-import { IndexTypeEnum, NavTypeEnum } from '../navigation/Navigation';
+import { IndexTypeEnum, NavMenuItem, NavTypeEnum } from '../navigation/Navigation';
 import { ColumnsType } from 'antd/es/table';
 import { useTranslation } from 'react-i18next';
 import { useTailoring } from '../../../../context/TailoringContext';
@@ -321,7 +321,7 @@ export function Content() {
   }, [entryId]);
 
   async function getResponsibleRolesForProducts(productIds: string[]): Promise<any[]> {
-    const filterProductDataTypes = flatten(navigationData).filter((item: any) =>
+    const filterProductDataTypes: NavMenuItem[] = flatten(navigationData).filter((item: any) =>
       [NavTypeEnum.PRODUCT].includes(item.dataType)
     );
 
@@ -335,6 +335,9 @@ export function Content() {
     for (const productId of productIds) {
       const currentProduct = filterProductDataTypes.filter((product) => product.key === productId)?.[0];
 
+      const productDiscipline = currentProduct.parent.key;
+      const disciplineId = productDiscipline?.replace('productDiscipline_', '');
+
       const responsibleRolesForProductsUrl =
         weitApiUrl +
         '/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
@@ -344,7 +347,7 @@ export function Content() {
         '/Projekttypvariante/' +
         tailoringParameter.projectTypeVariantId +
         '/Disziplin/' +
-        currentProduct.parent.key +
+        disciplineId +
         '/Produkt/' +
         currentProduct.key +
         '?' +
@@ -396,7 +399,7 @@ export function Content() {
   }
 
   async function getContributeRolesForProducts(productIds: string[]): Promise<any[]> {
-    const filterProductDataTypes = flatten(navigationData).filter((item: any) =>
+    const filterProductDataTypes: NavMenuItem[] = flatten(navigationData).filter((item: any) =>
       [NavTypeEnum.PRODUCT].includes(item.dataType)
     );
 
@@ -410,6 +413,9 @@ export function Content() {
     for (const productId of productIds) {
       const currentProduct = filterProductDataTypes.filter((product) => product.key === productId)?.[0];
 
+      const productDiscipline = currentProduct.parent.key;
+      const disciplineId = productDiscipline?.replace('productDiscipline_', '');
+
       const contributeRolesForProductsUrl =
         weitApiUrl +
         '/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
@@ -419,7 +425,7 @@ export function Content() {
         '/Projekttypvariante/' +
         tailoringParameter.projectTypeVariantId +
         '/Disziplin/' +
-        currentProduct.parent.key +
+        disciplineId +
         '/Produkt/' +
         currentProduct.key +
         '?' +
@@ -551,12 +557,30 @@ export function Content() {
       '?' +
       getProjectFeaturesString();
 
+    let idCounter = 2000;
+
     const jsonDataFromXml = await getJsonDataFromXml(projectTypeUrl);
 
     const sinnUndZweck = decodeXml(jsonDataFromXml.getElementsByTagName('Sinn_und_Zweck')[0]?.value);
 
     const tableEntries: TableEntry[] = [];
 
+    const products = jsonDataFromXml.getElementsByTagName('Produkt').map((productRef) => {
+      return {
+        id: productRef.attributes.id,
+        title: productRef.attributes.name,
+      };
+    });
+
+    const productsToRoles = await getResponsibleRolesForProducts(products.map((product) => product.id));
+
+    if (productsToRoles.length > 0) {
+      tableEntries.push({
+        id: (idCounter++).toString(),
+        descriptionEntry: 'Verantwortliche und Produkte',
+        dataEntries: [productsToRoles],
+      });
+    }
     //////////////////////////////////////////////
 
     return {

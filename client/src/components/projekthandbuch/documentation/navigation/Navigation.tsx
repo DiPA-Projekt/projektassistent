@@ -112,6 +112,8 @@ export type NavMenuItem = {
   parent?: NavMenuItem;
 };
 
+const excludeNavItemLabels = ['Einstieg in das projektspezifische V-Modell', 'Projektdurchführungsstrategie'];
+
 // @withRouter
 export function Navigation() {
   const { t } = useTranslation();
@@ -139,6 +141,7 @@ export function Navigation() {
     async function mount() {
       if (tailoringParameter.modelVariantId) {
         setLoading(true);
+        //TODO: getDisciplineIds
         await fetchData();
         setLoading(false);
       }
@@ -242,7 +245,7 @@ export function Navigation() {
 
     let replacedContent;
     let mergedChildren; // for merging children
-    let addedChildren; // for adding children
+    let addedChildren: NavMenuItem[]; // for adding children
 
     // TODO: anders lösen
     let indexItem;
@@ -258,7 +261,11 @@ export function Navigation() {
 
     if (generatedContent) {
       if (generatedContent === 'Spezialkapitel:Disziplingruppe') {
-        addedChildren = getDisciplineGroup(childItem.parent, jsonDataFromXml);
+        // TODO
+        const disciplineIds = await getDisciplineIds();
+        addedChildren = getDisciplineGroup(childItem.parent, jsonDataFromXml).filter((navMenuItem) =>
+          disciplineIds.includes(navMenuItem.key)
+        );
       } else {
         switch (generatedContent) {
           case 'Index:Produkte': {
@@ -386,18 +393,50 @@ export function Navigation() {
     };
   }
 
+  function removeFromArrayOfObj(array: NavMenuItem[], labelsToRemove: string[]) {
+    for (const [i, e] of array.entries()) {
+      if (labelsToRemove.includes(e.label)) {
+        array.splice(i, 1);
+        continue;
+      }
+      if (e.children) {
+        removeFromArrayOfObj(e.children, labelsToRemove);
+      }
+    }
+    return array;
+  }
+
   async function fetchData(): Promise<void> {
     const sectionUrl =
       weitApiUrl + '/V-Modellmetamodell/mm_2021/V-Modellvariante/' + tailoringParameter.modelVariantId + '/Kapitel/';
 
     const jsonDataFromXml = await getJsonDataFromXml(sectionUrl);
 
-    const navMenuItems = await xmlDataToNavMenuItem(jsonDataFromXml);
-    console.log('navMenuItems', navMenuItems);
+    const navMenuItems = xmlDataToNavMenuItem(jsonDataFromXml);
+    const filteredNavMenuItems = removeFromArrayOfObj(navMenuItems.children, excludeNavItemLabels);
 
-    const xmlDataWithParent = await addParentRecursive(navMenuItems.children || []);
+    const xmlDataWithParent = await addParentRecursive(filteredNavMenuItems || []);
 
     setNavigationData(xmlDataWithParent);
+  }
+
+  async function getDisciplineIds(): Promise<string[]> {
+    const disciplinesUrl =
+      weitApiUrl +
+      '/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      tailoringParameter.modelVariantId +
+      '/Projekttyp/' +
+      tailoringParameter.projectTypeId +
+      '/Projekttypvariante/' +
+      tailoringParameter.projectTypeVariantId +
+      '/Disziplin?' +
+      getProjectFeaturesQueryString();
+
+    const jsonDataFromXml = await getJsonDataFromXml(disciplinesUrl);
+
+    return jsonDataFromXml.getElementsByTagName('Disziplin').map((disciplineValue) => {
+      return disciplineValue.attributes.id;
+    });
   }
 
   async function getReferenceProducts(target: NavMenuItem): Promise<NavMenuItem[]> {
