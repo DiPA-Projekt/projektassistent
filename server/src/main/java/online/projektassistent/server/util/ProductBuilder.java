@@ -36,10 +36,10 @@ public class ProductBuilder implements Placeholders {
     private final Logger logger = LoggerFactory.getLogger(ProductBuilder.class);
 
     /**
-     * Creates a single product and returns a byte array in doxc format
+     * Creates a single product and returns a byte array in docx format
      *
      * @param singleProduct container for all parameters
-     * @return bytes in doxc format
+     * @return bytes in docx format
      */
     public byte[] createSingleProduct(SingleProduct singleProduct) throws IOException {
         Map<String, String> dataParams = new HashMap<>();
@@ -84,7 +84,7 @@ public class ProductBuilder implements Placeholders {
     }
 
     /**
-     * Creates multiple doxc files in temp directory
+     * Creates multiple docx files in temp directory
      *
      * @param products   list of product parameters
      * @param dataParams map with project parameters
@@ -109,7 +109,13 @@ public class ProductBuilder implements Placeholders {
                     template.write(out);
                     Files.write(tempFile, out.toByteArray());
                 }
-            productsMap.put(FileUtil.sanitizeFilename(product.getProductName()) + ".docx", tempFile);
+
+                String sanitizedDirectory = product.getDisciplineName();
+                String sanitizedFilename = FileUtil.sanitizeFilename(product.getProductName());
+
+                String filename = sanitizedDirectory != null ? sanitizedDirectory + "/" + sanitizedFilename : sanitizedFilename;
+
+                productsMap.put(filename + ".docx", tempFile);
             } catch (InvalidFormatException e) {
                 throw new RuntimeException(e);
             }

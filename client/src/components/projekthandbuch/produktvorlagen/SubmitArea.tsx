@@ -59,6 +59,7 @@ export function SubmitArea() {
       if (product) {
         productOfProjectMap.set(product.product.id, {
           productName: product.product.title,
+          disciplineName: product.discipline.title,
           responsible: '',
           participants: [],
           chapters: getChaptersData(product.topics),

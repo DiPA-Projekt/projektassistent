@@ -794,16 +794,18 @@ export function Navigation() {
     jsonDataFromXml.getElementsByTagName('ExterneKopiervorlage').map((externalMasterTemplate) => {
       const productRef = externalMasterTemplate.getElementsByTagName('ProduktRef')[0];
 
-      const productToDisciplineEntryKey = productToDisciplineMap.get(productRef.attributes.id)!.key;
+      if (productRef.attributes.id) {
+        const productToDisciplineEntryKey = productToDisciplineMap.get(productRef.attributes.id)!.key;
 
-      if (!disciplineEntriesMap.get(productToDisciplineEntryKey)) {
-        disciplineEntriesMap.set(productToDisciplineEntryKey, {
-          key: 'td_' + productToDisciplineEntryKey, // TODO: check !
-          parent: target,
-          label: productToDisciplineMap.get(productRef.attributes.id)!.title, // TODO: check !
-          dataType: NavTypeEnum.TEMPLATE_DISCIPLINE,
-          onClick: (item: any) => handleSelectedItem(item.key),
-        });
+        if (!disciplineEntriesMap.get(productToDisciplineEntryKey)) {
+          disciplineEntriesMap.set(productToDisciplineEntryKey, {
+            key: 'td_' + productToDisciplineEntryKey, // TODO: check !
+            parent: target,
+            label: productToDisciplineMap.get(productRef.attributes.id)!.title, // TODO: check !
+            dataType: NavTypeEnum.TEMPLATE_DISCIPLINE,
+            onClick: (item: any) => handleSelectedItem(item.key),
+          });
+        }
       }
     });
 

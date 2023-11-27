@@ -136,3 +136,11 @@ ul.sideMenu > li > ul > li > ul > li > div {
 /*  margin-top: 24px;*/
 /*}*/
 
+/* Otherwise, the drop-down lists look as if they are disabled */
+.ant-select-selector > .ant-select-selection-placeholder {
+  color: rgba(0, 0, 0, 0.88);
+}
+
+.disable-link{
+  pointer-events: none;
+}

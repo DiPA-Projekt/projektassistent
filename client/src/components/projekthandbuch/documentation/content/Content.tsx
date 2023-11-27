@@ -11,6 +11,7 @@ import {
   fixLinksInText,
   flatten,
   getJsonDataFromXml,
+  getMenuItemByAttributeValue,
   getSearchStringFromHash,
   replaceUrlInText,
 } from '../../../../shares/utils';
@@ -1949,10 +1950,13 @@ export function Content() {
       );
     };
 
+    const disciplineMenuEntry = getMenuItemByAttributeValue(navigationData, 'key', disciplineId);
+    const headerLabel = disciplineMenuEntry ? disciplineMenuEntry.label : '';
+
     return {
       id: 'externalTemplateContent', //jsonDataFromXml.attributes.id,
       // menuEntryId: jsonDataFromXml.attributes.id,
-      header: 'Disziplin', //jsonDataFromXml.attributes.name,
+      header: headerLabel, //jsonDataFromXml.attributes.name,
       descriptionText: '',
       tableEntries: [],
       dataSource: data,
