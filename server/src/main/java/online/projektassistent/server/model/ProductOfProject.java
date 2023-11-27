@@ -1,16 +1,17 @@
 package online.projektassistent.server.model;
 
-import java.util.List;
-import java.util.Objects;
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import java.util.List;
+import java.util.Objects;
 
 @SuppressWarnings("unused")
 public class ProductOfProject {
 
     @NotBlank(message = "productName is mandatory")
     private String productName;
+
+    private String disciplineName;
 
     @NotBlank(message = "responsible is mandatory")
     private String responsible;
@@ -22,6 +23,10 @@ public class ProductOfProject {
 
     public String getProductName() {
         return productName;
+    }
+
+    public String getDisciplineName() {
+        return disciplineName;
     }
 
     public String getResponsible() {

@@ -8,37 +8,6 @@ import { LinkWithQuery } from '../LinkWithQuery';
 
 const { Header } = Layout;
 
-const items: MenuProps['items'] = [
-  {
-    label: <LinkWithQuery to="/tailoring">Tailoring</LinkWithQuery>,
-    // <a href="#/tailoring">Tailoring</a>,
-    key: 'tailoring',
-    icon: <ScissorOutlined />,
-  },
-  {
-    label: <LinkWithQuery to="/documentation">Dokumentation</LinkWithQuery>,
-    // label: <a href="#/documentation">Dokumentation</a>,
-    key: 'dokumentation',
-    icon: <FileTextOutlined />,
-  },
-  {
-    label: <LinkWithQuery to="/productTemplates">Produktvorlagen</LinkWithQuery>,
-    // label: <a href="#/productTemplates">Produktvorlagen</a>,
-    key: 'productTemplates',
-    icon: <BookOutlined />,
-  },
-  {
-    label: (
-      <LinkWithQuery to="/info">Info</LinkWithQuery>
-      // <LinkWithQuery href="#/" children={undefined} to={undefined}>
-      //   Home
-      // </LinkWithQuery>
-    ),
-    key: 'info',
-    icon: <HomeOutlined />,
-  },
-];
-
 // <Menu.Item key="1">
 //   <HomeOutlined />
 //   <Link to="/"> Home</Link>
@@ -59,13 +28,55 @@ const items: MenuProps['items'] = [
 export const SiteHeader = (props: any) => {
   const { tailoringParameter } = useTailoring();
 
-  // const navigate = useNavigate();
-
-  // const handleMenuClick = ({ key: string }) => {
-  // if (key) {
-  //   navigate(key);
-  // }
-  // };
+  const items: MenuProps['items'] = [
+    {
+      label: <LinkWithQuery to="/tailoring">Tailoring</LinkWithQuery>,
+      key: 'tailoring',
+      icon: <ScissorOutlined />,
+    },
+    {
+      label: (
+        <LinkWithQuery
+          to="/documentation"
+          class={!tailoringParameter.projectTypeId ? 'disable-link' : ''}
+          disabled={!tailoringParameter.projectTypeId}
+        >
+          Dokumentation
+        </LinkWithQuery>
+      ),
+      key: 'dokumentation',
+      icon: <FileTextOutlined />,
+      disabled: !tailoringParameter.projectTypeId,
+    },
+    {
+      label: (
+        <LinkWithQuery
+          to="/productTemplates"
+          class={!tailoringParameter.projectTypeId ? 'disable-link' : ''}
+          disabled={!tailoringParameter.projectTypeId}
+        >
+          Produktvorlagen
+        </LinkWithQuery>
+      ),
+      key: 'productTemplates',
+      icon: <BookOutlined />,
+      disabled: !tailoringParameter.projectTypeId,
+    },
+    {
+      label: (
+        <LinkWithQuery
+          to="/info"
+          class={!tailoringParameter.modelVariantId ? 'disable-link' : ''}
+          disabled={!tailoringParameter.modelVariantId}
+        >
+          Info
+        </LinkWithQuery>
+      ),
+      key: 'info',
+      icon: <HomeOutlined />,
+      disabled: !tailoringParameter.modelVariantId,
+    },
+  ];
 
   const { error, image } = useImage(tailoringParameter.modelVariantId + '/ALLG-Logo-Farbe.gif');
 
