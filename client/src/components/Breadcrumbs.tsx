@@ -39,7 +39,7 @@ export function Breadcrumbs() {
 
       setCurrentSelectedKeys(navigationPathKeys);
       setOpenKeys(navigationPathKeys);
-      console.log('navigationPathKeys', navigationPathKeys);
+      // console.log('navigationPathKeys', navigationPathKeys);
 
       let extraBreadcrumbItems = [];
 

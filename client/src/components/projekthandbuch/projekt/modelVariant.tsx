@@ -52,7 +52,6 @@ export function ModelVariantComponent() {
             style={{ maxWidth: '300px' }}
             placeholder={t('common.PleaseChoose')}
             onChange={(value: string) => {
-              console.log('ATTENTION changing modelVariant', value);
               setTailoringParameter({ modelVariantId: value });
             }}
             value={tailoringParameter.modelVariantId}

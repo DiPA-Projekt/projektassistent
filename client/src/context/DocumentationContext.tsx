@@ -162,56 +162,53 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
   }
 
   function onRouteChanged(menuEntryId: string): void {
-    console.log('onRouteChanged content', menuEntryId);
-
     resetSelectedMenuEntryId();
 
-    const gefunden = getMenuItemByAttributeValue(navigationData, 'key', menuEntryId);
-    console.log('gefunden:', gefunden);
+    const foundMenuItem = getMenuItemByAttributeValue(navigationData, 'key', menuEntryId);
 
-    if (gefunden !== undefined) {
-      if (gefunden.dataType === NavTypeEnum.PRODUCT) {
-        if (gefunden.parent) {
-          setProductDisciplineId(gefunden.parent.key);
-          setProductId(gefunden.key);
+    if (foundMenuItem !== undefined) {
+      if (foundMenuItem.dataType === NavTypeEnum.PRODUCT) {
+        if (foundMenuItem.parent) {
+          setProductDisciplineId(foundMenuItem.parent.key);
+          setProductId(foundMenuItem.key);
         }
-      } else if (gefunden.dataType === NavTypeEnum.PRODUCT_DISCIPLINE) {
-        setProductDisciplineId(gefunden.key);
-      } else if (gefunden.dataType === NavTypeEnum.DISCIPLINE) {
-        setDisciplineId(gefunden.key);
-      } else if (gefunden.dataType === NavTypeEnum.CONTENT_PRODUCT_DEPENDENCY) {
-        setContentProductDependencyId(gefunden.key);
+      } else if (foundMenuItem.dataType === NavTypeEnum.PRODUCT_DISCIPLINE) {
+        setProductDisciplineId(foundMenuItem.key);
+      } else if (foundMenuItem.dataType === NavTypeEnum.DISCIPLINE) {
+        setDisciplineId(foundMenuItem.key);
+      } else if (foundMenuItem.dataType === NavTypeEnum.CONTENT_PRODUCT_DEPENDENCY) {
+        setContentProductDependencyId(foundMenuItem.key);
       } else if (
-        gefunden.dataType &&
+        foundMenuItem.dataType &&
         [NavTypeEnum.PROJECT_ROLE, NavTypeEnum.PROJECT_TEAM_ROLE, NavTypeEnum.ORGANISATION_ROLE].includes(
-          gefunden.dataType
+          foundMenuItem.dataType
         )
       ) {
-        setRoleId(gefunden.key);
-      } else if (gefunden.dataType === NavTypeEnum.PROCESS_MODULE) {
-        setProcessModuleId(gefunden.key);
-      } else if (gefunden.dataType === NavTypeEnum.DECISION_POINT) {
-        setDecisionPointId(gefunden.key);
-      } else if (gefunden.dataType === NavTypeEnum.PROCESS_BUILDING_BLOCK) {
-        setProcessBuildingBlockId(gefunden.key);
-      } else if (gefunden.dataType === NavTypeEnum.METHOD_REFERENCE) {
-        setMethodReferenceId(gefunden.key);
-      } else if (gefunden.dataType === NavTypeEnum.TOOL_REFERENCE) {
-        setToolReferenceId(gefunden.key);
-      } else if (gefunden.dataType === NavTypeEnum.PROJECT_CHARACTERISTIC) {
-        setProjectCharacteristicId(gefunden.key);
-      } else if (gefunden.dataType === NavTypeEnum.PROJECT_TYPE) {
-        setProjectTypeId(gefunden.key);
-      } else if (gefunden.dataType === NavTypeEnum.PROJECT_TYPE_VARIANT) {
-        setProjectTypeVariantId(gefunden.key);
-      } else if (gefunden.dataType === NavTypeEnum.PROJECT_TYPE_VARIANT_SEQUENCE) {
-        setProjectTypeVariantSequenceId(gefunden.key);
-      } else if (gefunden.dataType === NavTypeEnum.ACTIVITY) {
-        setActivityId(gefunden.key);
-      } else if (gefunden.dataType === NavTypeEnum.TEMPLATE_DISCIPLINE) {
-        setTemplateDisciplineId(gefunden.key);
+        setRoleId(foundMenuItem.key);
+      } else if (foundMenuItem.dataType === NavTypeEnum.PROCESS_MODULE) {
+        setProcessModuleId(foundMenuItem.key);
+      } else if (foundMenuItem.dataType === NavTypeEnum.DECISION_POINT) {
+        setDecisionPointId(foundMenuItem.key);
+      } else if (foundMenuItem.dataType === NavTypeEnum.PROCESS_BUILDING_BLOCK) {
+        setProcessBuildingBlockId(foundMenuItem.key);
+      } else if (foundMenuItem.dataType === NavTypeEnum.METHOD_REFERENCE) {
+        setMethodReferenceId(foundMenuItem.key);
+      } else if (foundMenuItem.dataType === NavTypeEnum.TOOL_REFERENCE) {
+        setToolReferenceId(foundMenuItem.key);
+      } else if (foundMenuItem.dataType === NavTypeEnum.PROJECT_CHARACTERISTIC) {
+        setProjectCharacteristicId(foundMenuItem.key);
+      } else if (foundMenuItem.dataType === NavTypeEnum.PROJECT_TYPE) {
+        setProjectTypeId(foundMenuItem.key);
+      } else if (foundMenuItem.dataType === NavTypeEnum.PROJECT_TYPE_VARIANT) {
+        setProjectTypeVariantId(foundMenuItem.key);
+      } else if (foundMenuItem.dataType === NavTypeEnum.PROJECT_TYPE_VARIANT_SEQUENCE) {
+        setProjectTypeVariantSequenceId(foundMenuItem.key);
+      } else if (foundMenuItem.dataType === NavTypeEnum.ACTIVITY) {
+        setActivityId(foundMenuItem.key);
+      } else if (foundMenuItem.dataType === NavTypeEnum.TEMPLATE_DISCIPLINE) {
+        setTemplateDisciplineId(foundMenuItem.key);
       } else {
-        setEntryId(gefunden.key);
+        setEntryId(foundMenuItem.key);
       }
     }
   }

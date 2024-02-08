@@ -8,8 +8,6 @@ import { DataEntry } from '../Documentation';
 export function TableEntriesList(props: { inputData: DataEntry[] }) {
   const entries: JSX.Element[] = [];
 
-  console.log('TableEntriesList', props.inputData);
-
   props.inputData.map((entryItem: DataEntry) => {
     if (Array.isArray(entryItem)) {
       for (const entrySubItem of entryItem) {

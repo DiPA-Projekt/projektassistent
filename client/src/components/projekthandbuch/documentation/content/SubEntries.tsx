@@ -135,8 +135,6 @@ export function SubEntries(props: { data: PageEntry }) {
     async function mount() {
       const subPageEntriesData: PageEntry[] = [];
       if (props.data?.subPageEntries && props.data.subPageEntries.length > 0) {
-        console.log('SubEntries subPageEntries', props.data.subPageEntries);
-
         for (const menuEntryChildren of props.data?.subPageEntries as PageEntry[]) {
           subPageEntriesData.push(await getTopicContent(menuEntryChildren?.id));
         }

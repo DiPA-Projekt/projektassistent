@@ -264,16 +264,11 @@ export function ApplicationProfile() {
   }
 
   function onProjectFeatureSelected(projectFeatureKey: string, value: string) {
-    // console.log(projectFeatureKey, value);
-
     const newProjectFeatures = Object.assign(tailoringParameter.projectFeatures, { [projectFeatureKey]: value });
 
     let result = Object.assign({}, tailoringParameter);
     result = Object.assign(result, { projectFeatures: newProjectFeatures });
-    console.log('ATTENTION onProjectFeatureSelected', result);
     setTailoringParameter(result);
-
-    // setSearchParams({ mV: modelVariantId!, ptV: projectTypeVariantId!, pt: projectTypeId!, ...projectFeatures });
   }
 
   function getAnswer(projectFeature: ProjectFeature, value: SelectValue): string | undefined {

@@ -40,8 +40,6 @@ export class SelectComponent extends Component<FeatureProps, any> {
       </div>
     );
 
-    console.log('render Select', this.state);
-
     return (
       <Form.Item
         {...layout}

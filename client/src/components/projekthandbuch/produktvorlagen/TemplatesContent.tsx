@@ -1,22 +1,10 @@
 import { Checkbox, Popover, Tree } from 'antd';
-import {
-  BookTwoTone,
-  ContainerTwoTone,
-  DownOutlined,
-  FileExcelTwoTone,
-  FileTextTwoTone,
-  InfoCircleTwoTone,
-} from '@ant-design/icons';
-import React, { useEffect } from 'react';
-import { DataNode } from 'antd/lib/tree';
+import { BookTwoTone, ContainerTwoTone, DownOutlined, FileTextTwoTone, InfoCircleTwoTone } from '@ant-design/icons';
+import React, { Key, useEffect } from 'react';
+import { DataNode, EventDataNode } from 'antd/lib/tree';
 import { NavTypeEnum } from '../documentation/navigation/Navigation';
 import { useTemplate } from '../../../context/TemplateContext';
 import parse from 'html-react-parser';
-import { removeHtmlTags } from '../../../shares/utils';
-
-// const { Panel } = Collapse;
-
-// const projectTemplates = TEMPLATE_DATA as TemplateProps[];
 
 // Tiny helper interfaces till OpenApi is updated
 export interface TemplateProps {
@@ -34,16 +22,23 @@ export interface TemplateProps {
   children?: TemplateProps[];
 }
 
+interface CheckInfo<T> {
+  checked: boolean;
+  checkedNodes: T[];
+  halfCheckedNodes: React.Key[];
+  node: EventDataNode<T>;
+}
+
 function getIcon(icon: string | undefined): JSX.Element {
   switch (icon) {
-    case 'sample':
+    case NavTypeEnum.SAMPLE_TEXT:
       return <FileTextTwoTone twoToneColor="#cf1322" />;
     case NavTypeEnum.TOPIC:
       return <BookTwoTone twoToneColor="#389e0d" />;
     case NavTypeEnum.PRODUCT:
       return <ContainerTwoTone twoToneColor="#096dd9" />;
-    case 'excel':
-      return <FileExcelTwoTone twoToneColor="#454545" />;
+    case NavTypeEnum.EXTERNAL_TEMPLATE:
+      return <FileTextTwoTone twoToneColor="#454545" />;
     default:
       return <></>;
   }
@@ -68,6 +63,7 @@ export function TemplatesContent(props: { entries: TemplateProps[] }) {
       product: { id: string; title: string };
       discipline: { id: string; title: string };
       topics: { title: string; text: string }[];
+      externalCopyTemplates: { title: string; uri: string }[];
     }
   >();
 
@@ -78,20 +74,30 @@ export function TemplatesContent(props: { entries: TemplateProps[] }) {
   }, [props.entries]);
 
   const onExpand = (expandedKeysValue: React.Key[]) => {
-    console.log('onExpand', expandedKeysValue);
+    //console.log('onExpand', expandedKeysValue);
     // if not set autoExpandParent to false, if children expanded, parent can not collapse.
     // or, you can remove all expanded children keys.
     setExpandedKeys(expandedKeysValue);
     setAutoExpandParent(false);
   };
 
-  const onCheck = (checkedKeysValue: React.Key[]) => {
-    console.log('onCheck', checkedKeysValue);
-    setCheckedKeys(checkedKeysValue);
+  function setChildrenDisabledStatus(node: DataNode, disabled: boolean) {
+    if (node.children) {
+      for (const child of node.children) {
+        if (child.className && (' ' + child.className + ' ').indexOf(' canBeDisabled ') > -1) {
+          child.disabled = disabled;
+        }
+        setChildrenDisabledStatus(child, disabled);
+      }
+    }
+  }
+
+  const onCheck = (e: Key[] | { checked: Key[]; halfChecked: Key[] }, info: CheckInfo<DataNode>) => {
+    setChildrenDisabledStatus(info.node, !info.checked);
+    setCheckedKeys({ checked: e });
   };
 
-  const onSelect = (selectedKeysValue: React.Key[], info: any) => {
-    console.log('onSelect', info);
+  const onSelect = (selectedKeysValue: React.Key[]) => {
     setSelectedKeys(selectedKeysValue);
   };
 
@@ -115,7 +121,7 @@ export function TemplatesContent(props: { entries: TemplateProps[] }) {
         </>
       );
 
-      const productTreeItems = [];
+      const productTreeItems: DataNode[] = [];
 
       if (discipline.children) {
         for (const product of discipline.children) {
@@ -127,6 +133,7 @@ export function TemplatesContent(props: { entries: TemplateProps[] }) {
 
           const topicsTreeItems = [];
           const topicsForMap = [];
+          const externalCopyTemplatesForMap = [];
 
           if (product.children) {
             for (const topic of product.children) {
@@ -140,15 +147,65 @@ export function TemplatesContent(props: { entries: TemplateProps[] }) {
                   </>
                 );
 
+                const samplesTreeItems: DataNode[] = [];
+                const samplesForMap = [];
+
+                if (topic.children) {
+                  for (const sample of topic.children) {
+                    const sampleHeader = (
+                      <>
+                        <span style={{ marginRight: '8px' }}>{parse(sample.label)}</span>
+                        {sample.infoText && (
+                          <>
+                            <Popover destroyTooltipOnHide={true} content={parse(sample.infoText)}>
+                              <InfoCircleTwoTone style={{ cursor: 'help' }} />
+                            </Popover>
+                          </>
+                        )}
+                      </>
+                    );
+
+                    samplesTreeItems.push({
+                      title: sampleHeader,
+                      key: sample.key,
+                      selectable: true,
+                      checkable: true,
+                      disabled: !product.checked,
+                      icon: getIcon(sample.dataType),
+                      children: [],
+                      className: 'canBeDisabled',
+                    });
+
+                    samplesForMap.push({ id: sample.key, title: sample.label, text: sample.infoText });
+                  }
+                }
+
                 topicsTreeItems.push({
                   title: topicHeader,
                   key: topic.key,
                   selectable: true,
-                  checkable: false,
+                  checkable: topic.dataType === NavTypeEnum.EXTERNAL_TEMPLATE,
+                  disabled: !product.checked,
+                  disableCheckbox: false, //topic.dataType !== NavTypeEnum.EXTERNAL_TEMPLATE,
                   icon: getIcon(topic.dataType),
+                  children: samplesTreeItems,
+                  className: 'canBeDisabled',
                 });
 
-                topicsForMap.push({ title: topic.label, text: removeHtmlTags(topic.infoText) });
+                if (topic.dataType === NavTypeEnum.TOPIC) {
+                  topicsForMap.push({
+                    id: topic.key,
+                    title: topic.label,
+                    text: topic.infoText,
+                    samples: samplesForMap,
+                  });
+                } else if (topic.dataType === NavTypeEnum.EXTERNAL_TEMPLATE) {
+                  externalCopyTemplatesForMap.push({
+                    id: topic.key,
+                    title: topic.label,
+                    uri: topic.infoText,
+                  });
+                }
               }
             }
           }
@@ -157,6 +214,7 @@ export function TemplatesContent(props: { entries: TemplateProps[] }) {
             product: { id: product.key, title: product.label },
             discipline: { id: discipline.key, title: discipline.label },
             topics: topicsForMap,
+            externalCopyTemplates: externalCopyTemplatesForMap,
           });
 
           if (topicsTreeItems.length > 0) {
@@ -188,10 +246,10 @@ export function TemplatesContent(props: { entries: TemplateProps[] }) {
   }
 
   // Call this once
-  const getAllKeys = (tree: any[]) => {
-    const result: any[] = [];
+  const getAllKeys = (tree: DataNode[]) => {
+    const result: Key[] = [];
     tree.forEach((x) => {
-      let childKeys = [];
+      let childKeys: Key[] = [];
       if (x.children) {
         childKeys = getAllKeys(x.children);
       }
@@ -205,22 +263,17 @@ export function TemplatesContent(props: { entries: TemplateProps[] }) {
   const allKeys = getAllKeys(treeEntries);
 
   const onChange = () => {
-    if (checkedKeys.length === allKeys.length) {
-      setCheckedKeys([]);
+    if (checkedKeys.checked.length === allKeys.length) {
+      setCheckedKeys({ checked: [], halfChecked: [] });
     } else {
-      setCheckedKeys(allKeys);
+      setCheckedKeys({ checked: allKeys, halfChecked: [] });
     }
   };
 
   return (
     <>
-      <h2>Vorlagen</h2>
-      Hier sehen Sie die Liste aller Produkte, die für Ihr Projekt relevant sind. Sie können die vorgeschlagene Auswahl
-      an Textbausteinen übernehmen oder an der Auswahl nach Belieben Änderungen vornehmen (Vorlagen für initiale
-      Produkte können nicht abgewählt werden). Der Button "Vorlagen erzeugen" startet den Generierungsvorgang.
-      {/*<Collapse onChange={callback} style={{ marginTop: '20px' }}>*/}
       <div style={{ marginTop: '10px', height: '24px' }}>
-        <Checkbox onChange={onChange} checked={checkedKeys.length === allKeys.length}>
+        <Checkbox onChange={onChange} checked={checkedKeys.checked.length === allKeys.length}>
           Alles auswählen
         </Checkbox>
       </div>
@@ -236,10 +289,8 @@ export function TemplatesContent(props: { entries: TemplateProps[] }) {
         selectedKeys={selectedKeys}
         switcherIcon={<DownOutlined />}
         treeData={treeEntries}
-        defaultCheckedKeys={checkedKeys}
+        defaultCheckedKeys={checkedKeys.checked}
       />
-      {/*{submenuEntries}*/}
-      {/*</Collapse>*/}
     </>
   );
 }

@@ -38,7 +38,7 @@ export const SiteHeader = (props: any) => {
       label: (
         <LinkWithQuery
           to="/documentation"
-          class={!tailoringParameter.projectTypeId ? 'disable-link' : ''}
+          className={!tailoringParameter.projectTypeId ? 'disable-link' : ''}
           disabled={!tailoringParameter.projectTypeId}
         >
           Dokumentation
@@ -52,7 +52,7 @@ export const SiteHeader = (props: any) => {
       label: (
         <LinkWithQuery
           to="/productTemplates"
-          class={!tailoringParameter.projectTypeId ? 'disable-link' : ''}
+          className={!tailoringParameter.projectTypeId ? 'disable-link' : ''}
           disabled={!tailoringParameter.projectTypeId}
         >
           Produktvorlagen
@@ -66,7 +66,7 @@ export const SiteHeader = (props: any) => {
       label: (
         <LinkWithQuery
           to="/info"
-          class={!tailoringParameter.modelVariantId ? 'disable-link' : ''}
+          className={!tailoringParameter.modelVariantId ? 'disable-link' : ''}
           disabled={!tailoringParameter.modelVariantId}
         >
           Info
