@@ -4,23 +4,19 @@ import javax.validation.constraints.NotBlank;
 import java.util.Objects;
 
 @SuppressWarnings("unused")
-public class Chapter {
+public class ExternalCopyTemplate {
 
     @NotBlank(message = "title is mandatory")
     private String title;
-    private String text;
-    private String samplesText;
+    @NotBlank(message = "uri is mandatory")
+    private String uri;
 
     public String getTitle() {
         return title;
     }
 
-    public String getText() {
-        return text;
-    }
-
-    public String getSamplesText() {
-        return samplesText;
+    public String getUri() {
+        return uri;
     }
 
     @Override
@@ -28,18 +24,16 @@ public class Chapter {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Chapter chapter = (Chapter) o;
+        ExternalCopyTemplate chapter = (ExternalCopyTemplate) o;
 
         if (!Objects.equals(title, chapter.title)) return false;
-        if (!Objects.equals(text, chapter.text)) return false;
-        return Objects.equals(samplesText, chapter.samplesText);
+        return Objects.equals(uri, chapter.uri);
     }
 
     @Override
     public int hashCode() {
         int result = title != null ? title.hashCode() : 0;
-        result = 31 * result + (text != null ? text.hashCode() : 0);
-        result = 31 * result + (samplesText != null ? samplesText.hashCode() : 0);
+        result = 31 * result + (uri != null ? uri.hashCode() : 0);
         return result;
     }
 }

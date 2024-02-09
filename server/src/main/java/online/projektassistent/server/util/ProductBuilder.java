@@ -1,9 +1,14 @@
 package online.projektassistent.server.util;
 
 import online.projektassistent.server.model.*;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.util.Strings;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ooxml.POIXMLDocumentPart;
+import org.apache.poi.ooxml.POIXMLRelation;
 import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackagePartName;
+import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
@@ -15,11 +20,13 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSimpleField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import javax.xml.namespace.QName;
+import java.io.*;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.zip.ZipEntry;
@@ -41,7 +48,7 @@ public class ProductBuilder implements Placeholders {
      * @param singleProduct container for all parameters
      * @return bytes in docx format
      */
-    public byte[] createSingleProduct(SingleProduct singleProduct) throws IOException {
+    public byte[] createSingleProduct(SingleProduct singleProduct) {
         Map<String, String> dataParams = new HashMap<>();
         dataParams.put(PRODUCT_NAME, singleProduct.getProductName());
         dataParams.put(PROJECT_NAME, singleProduct.getProjectName());
@@ -51,8 +58,8 @@ public class ProductBuilder implements Placeholders {
 
         List<Chapter> chapters = singleProduct.getChapters();
 
-        try (XWPFDocument doc = new XWPFDocument(OPCPackage.open(getClass().getResourceAsStream("/" + PROJECT_TEMPLATE)));
-            ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+        try (XWPFDocument doc = new XWPFDocument(OPCPackage.open(Objects.requireNonNull(getClass().getResourceAsStream("/" + PROJECT_TEMPLATE))));
+             ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 
             replacePlaceholdersInDocument(dataParams, doc);
             createChapters(doc, chapters);
@@ -60,7 +67,7 @@ public class ProductBuilder implements Placeholders {
 
             doc.write(out);
             return out.toByteArray();
-        } catch (InvalidFormatException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -98,8 +105,21 @@ public class ProductBuilder implements Placeholders {
             dataParams.put(RESPONSIBLE, product.getResponsible());
             dataParams.put(PARTICIPANTS, String.join("; ", product.getParticipants()));
             List<Chapter> chapters = product.getChapters();
+            List<ExternalCopyTemplate> externalCopyTemplates = product.getExternalCopyTemplates();
 
-            try (XWPFDocument template = new XWPFDocument(OPCPackage.open(getClass().getResourceAsStream("/" + PROJECT_TEMPLATE)))) {
+            if (!externalCopyTemplates.isEmpty()) {
+                for (ExternalCopyTemplate externalCopyTemplate : externalCopyTemplates) {
+                    Path downloadedFile = download(externalCopyTemplate.getUri());
+
+                    String sanitizedDirectory = product.getDisciplineName();
+                    String sanitizedFilename = FileUtil.sanitizeFilename(FilenameUtils.getName(externalCopyTemplate.getUri()));
+                    String filename = sanitizedDirectory != null ? sanitizedDirectory + "/" + sanitizedFilename : sanitizedFilename;
+
+                    productsMap.put(filename, downloadedFile);
+                }
+            }
+
+            try (XWPFDocument template = new XWPFDocument(OPCPackage.open(Objects.requireNonNull(getClass().getResourceAsStream("/" + PROJECT_TEMPLATE))))) {
                 replacePlaceholdersInDocument(dataParams, template);
                 createChapters(template, chapters);
                 createTableOfContents(template);
@@ -116,11 +136,25 @@ public class ProductBuilder implements Placeholders {
                 String filename = sanitizedDirectory != null ? sanitizedDirectory + "/" + sanitizedFilename : sanitizedFilename;
 
                 productsMap.put(filename + ".docx", tempFile);
-            } catch (InvalidFormatException e) {
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
         return productsMap;
+    }
+
+    private static Path download(String sourceURL) throws IOException
+    {
+        URL url = new URL(sourceURL);
+
+        String basename = FilenameUtils.getBaseName(sourceURL);
+        String extension = FilenameUtils.getExtension(sourceURL);
+
+        Path tempFile = Files.createTempFile(basename, "." + extension);
+
+        Files.copy(url.openStream(), tempFile, StandardCopyOption.REPLACE_EXISTING);
+
+        return tempFile;
     }
 
     /**
@@ -171,7 +205,7 @@ public class ProductBuilder implements Placeholders {
      * @param document docx template document
      * @param chapters list of chapters to create
      */
-    private void createChapters(XWPFDocument document, List<Chapter> chapters) {
+    private void createChapters(XWPFDocument document, List<Chapter> chapters) throws Exception {
         Optional<XWPFRun> firstChapter = document.getParagraphs().stream().flatMap(paragraph -> paragraph.getRuns().stream())
                 .filter(run -> FIRST_CHAPTER.equals(run.text()))
                 .findFirst();
@@ -184,8 +218,9 @@ public class ProductBuilder implements Placeholders {
             document.removeBodyElement(document.getPosOfParagraph(para));
 
             XWPFDocument doc = para.getDocument();
+            int idx = 0;
             for (Chapter chapter : chapters) {
-                createChapter(cur, doc, chapter.getTitle(), chapter.getText());
+                createChapter(cur, doc, chapter, idx++);
                 setCursorToNextStartToken(cur);
             }
         }
@@ -196,10 +231,12 @@ public class ProductBuilder implements Placeholders {
      *
      * @param cur      cursor pointing to position in document
      * @param document docx template document
-     * @param title    title of chapter
-     * @param content  content of chapter
+     * @param chapter  chapter
      */
-    private void createChapter(XmlCursor cur, XWPFDocument document, String title, String content) {
+    private void createChapter(XmlCursor cur, XWPFDocument document, Chapter chapter, Integer index) throws Exception {
+        String title = chapter.getTitle();
+        String content = chapter.getText();
+        String samplesText = chapter.getSamplesText();
 
         XWPFParagraph para = document.insertNewParagraph(cur);
         para.setStyle(STYLE_HEADER);
@@ -207,16 +244,30 @@ public class ProductBuilder implements Placeholders {
         run.setText(title);
         run.setStyle(STYLE_HEADER);
 
-        cur.toNextToken();
-        para = document.insertNewParagraph(cur);
-        para.setAlignment(ParagraphAlignment.BOTH);
-        para.setStyle(STYLE_BODY);
-
-        run = para.createRun();
-        run.setText(content);
-        run.setColor(COLOR_CHAPTERS);
+        // Chapter text
 
         cur.toNextToken();
+        XWPFParagraph paraContent = document.insertNewParagraph(cur);
+
+        HtmlXWPFDocument contentHtmlXWPFDocument = createHtmlDoc(document, "contentHtmlDoc" + index);
+        contentHtmlXWPFDocument.setHtml(contentHtmlXWPFDocument.getHtml().replace("<body></body>", content));
+
+        XmlCursor contentCursor = paraContent.getCTP().newCursor();
+        insertAltChunk(contentHtmlXWPFDocument, contentCursor);
+
+        // Samples text
+
+        cur.toNextToken();
+        XWPFParagraph paraSamples = document.insertNewParagraph(cur);
+
+        HtmlXWPFDocument samplesHtmlXWPFDocument = createHtmlDoc(document, "samplesHtmlDoc" + index);
+        samplesHtmlXWPFDocument.setHtml(samplesHtmlXWPFDocument.getHtml().replace("<body></body>", samplesText));
+
+        XmlCursor samplesCursor = paraSamples.getCTP().newCursor();
+        insertAltChunk(samplesHtmlXWPFDocument, samplesCursor);
+
+        cur.toNextToken();
+
         para = document.insertNewParagraph(cur);
         para.setAlignment(ParagraphAlignment.BOTH);
         run = para.createRun();
@@ -226,7 +277,7 @@ public class ProductBuilder implements Placeholders {
     private XmlCursor setCursorToNextStartToken(XmlCursor cursor) {
         cursor.toEndToken(); // set cursor to end of the XmlObject
         // there always must be a next start token
-        while (cursor.hasNextToken() && cursor.toNextToken() != org.apache.xmlbeans.XmlCursor.TokenType.START) ;
+        while (cursor.hasNextToken() && cursor.toNextToken() != org.apache.xmlbeans.XmlCursor.TokenType.START);
         // cursor is now at the next start token and new things can be inserted here
         return cursor;
     }
@@ -295,5 +346,63 @@ public class ProductBuilder implements Placeholders {
     private void replaceText(XWPFRun run, String text, Map.Entry<String, String> entry) {
         text = text.replace(entry.getKey(), entry.getValue());
         run.setText(text, 0);
+    }
+
+    private static HtmlXWPFDocument createHtmlDoc(XWPFDocument document, String id) throws Exception {
+        OPCPackage oPCPackage = document.getPackage();
+        PackagePartName partName = PackagingURIHelper.createPartName("/word/" + id + ".html");
+        PackagePart part = oPCPackage.createPart(partName, "text/html");
+        HtmlXWPFDocument htmlXWPFDocument = new HtmlXWPFDocument(part, id);
+        document.addRelation(htmlXWPFDocument.getId(), new XWPFHtmlRelation(), htmlXWPFDocument);
+        return htmlXWPFDocument;
+    }
+
+    private static void insertAltChunk(HtmlXWPFDocument htmlXWPFDocument, XmlCursor cursor) {
+        QName altChunk = new QName("http://schemas.openxmlformats.org/wordprocessingml/2006/main", "altChunk");
+        QName id = new QName("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "id");
+        cursor.beginElement(altChunk);
+        cursor.insertAttributeWithValue(id, htmlXWPFDocument.getId());
+    }
+
+    private static class HtmlXWPFDocument extends POIXMLDocumentPart {
+
+        private final String id;
+        private String html;
+
+        private HtmlXWPFDocument(PackagePart part, String id) {
+            super(part);
+            this.id = id;
+            this.html = "<!DOCTYPE html><html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"><style></style></head><body></body>";
+        }
+
+        private String getId() {
+            return id;
+        }
+
+        private String getHtml() {
+            return html;
+        }
+
+        private void setHtml(String html) {
+            this.html = html;
+        }
+
+        @Override
+        protected void commit() throws IOException {
+            PackagePart part = getPackagePart();
+            OutputStream out = part.getOutputStream();
+            Writer writer = new OutputStreamWriter(out, StandardCharsets.UTF_8);
+            writer.write(html);
+            writer.close();
+            out.close();
+        }
+    }
+
+    private final static class XWPFHtmlRelation extends POIXMLRelation {
+        private XWPFHtmlRelation() {
+            super("text/html",
+                    "http://schemas.openxmlformats.org/officeDocument/2006/relationships/aFChunk",
+                    "/word/htmlDoc#.html");
+        }
     }
 }
