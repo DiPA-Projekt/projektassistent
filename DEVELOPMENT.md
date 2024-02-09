@@ -59,7 +59,7 @@ Folgende Tools werden im Projekt benötigt bzw. kommen zum Einsatz.
 
 - GitSCM (https://git-scm.com/)
 - Node.js (https://nodejs.org/de/download/)
-- Java (OpenJDK 11 or later)
+- Java (OpenJDK 17 or later)
 - Maven
 - Docker (Linux oder Docker for Windows)
 - Editor
