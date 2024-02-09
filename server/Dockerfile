@@ -1,4 +1,4 @@
-FROM openjdk:11
+FROM openjdk:17
 
 RUN adduser --system --group dipa
 USER dipa:dipa
