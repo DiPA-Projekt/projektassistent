@@ -1,4 +1,4 @@
-FROM amazoncorretto:17
+FROM openjdk:17-alpine
 
 RUN adduser --system --group dipa
 USER dipa:dipa
