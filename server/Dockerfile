@@ -1,4 +1,4 @@
-FROM amazoncorretto:17-alpine
+FROM amazoncorretto:17
 
 RUN adduser --system --group dipa
 USER dipa:dipa
