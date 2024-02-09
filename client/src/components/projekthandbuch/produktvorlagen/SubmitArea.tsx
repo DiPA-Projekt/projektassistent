@@ -13,12 +13,7 @@ import { BookTwoTone } from '@ant-design/icons';
 export function SubmitArea() {
   const { t } = useTranslation();
 
-  const {
-    checkedKeys,
-    productsMap,
-    insertTopicDescription,
-    setInsertTopicDescription,
-  } = useTemplate();
+  const { checkedKeys, productsMap, insertTopicDescription, setInsertTopicDescription } = useTemplate();
 
   const [modalVisible, setModalVisible] = useState(false);
 
