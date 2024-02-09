@@ -7,9 +7,18 @@ import { ProductOfProject } from '@dipa-projekt/projektassistent-openapi/dist/mo
 import API from '../../../api';
 import { AjaxResponse } from 'rxjs/ajax';
 import { TemplateFormModal } from './TemplateFormModal';
+import { useTranslation } from 'react-i18next';
+import { BookTwoTone } from '@ant-design/icons';
 
 export function SubmitArea() {
-  const { checkedKeys, productsMap, insertTopicDescription, setInsertTopicDescription } = useTemplate();
+  const { t } = useTranslation();
+
+  const {
+    checkedKeys,
+    productsMap,
+    insertTopicDescription,
+    setInsertTopicDescription,
+  } = useTemplate();
 
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -41,12 +50,27 @@ export function SubmitArea() {
     } as MultiProducts;
   }
 
-  function getChaptersData(topics: { title: string; text: string }[]) {
+  function getChaptersWithSamplesData(
+    topics: { title: string; text: string; samples: { id: string; title: string; text: string }[] }[]
+  ): {
+    text?: string;
+    title: string;
+    samplesText?: string;
+  }[] {
     if (insertTopicDescription) {
-      return topics;
-    } else {
-      return topics.map((obj) => ({ ...obj, text: undefined }));
+      return topics.map(({ samples, ...keepAttrs }) => ({
+        ...keepAttrs,
+        text: keepAttrs.text,
+        samplesText: samples
+          .filter((sample) => checkedKeys.checked.includes(sample.id))
+          .map((sample) => sample.text)
+          .join('\n'),
+      }));
     }
+    return topics.map(({ samples, ...keepAttrs }) => ({
+      ...keepAttrs,
+      text: samples.map((sample) => sample.text).join('\n'),
+    }));
   }
 
   function doSubmit(): void {
@@ -54,7 +78,7 @@ export function SubmitArea() {
 
     const productOfProjectMap = new Map<string, ProductOfProject>();
 
-    for (const checkedKey of checkedKeys) {
+    for (const checkedKey of checkedKeys.checked) {
       const product = productsMap.get(checkedKey);
       if (product) {
         productOfProjectMap.set(product.product.id, {
@@ -62,7 +86,10 @@ export function SubmitArea() {
           disciplineName: product.discipline.title,
           responsible: '',
           participants: [],
-          chapters: getChaptersData(product.topics),
+          chapters: getChaptersWithSamplesData(product.topics),
+          externalCopyTemplates: product.externalCopyTemplates.filter((externalCopyTemplate) =>
+            checkedKeys.checked.includes(externalCopyTemplate.id)
+          ),
         });
       }
     }
@@ -80,8 +107,6 @@ export function SubmitArea() {
   }
 
   const handleClose = (values: { projectName: string; responsible: string; participants: string[] }) => {
-    console.log('Received values of form: ', values);
-
     setModalVisible(false);
 
     if (values) {
@@ -136,15 +161,10 @@ export function SubmitArea() {
   return (
     <>
       <div className="sticky-wrapper" style={{ padding: '24px' }}>
-        {/*TODO: reinsert if there are Mustertexte available*/}
-        {/*<Form.Item style={{ marginTop: '30px' }}>*/}
-        {/*  <Checkbox>*/}
-        {/*    <Tag color="red">Mustertexte</Tag> einfügen*/}
-        {/*  </Checkbox>*/}
-        {/*</Form.Item>*/}
-        <Form.Item>
+        <Form.Item style={{ marginBottom: '0' }}>
           <Checkbox checked={insertTopicDescription} onChange={onChangeInsertTopicDescription}>
-            Themenbeschreibungen einfügen
+            <BookTwoTone twoToneColor="#389e0d" style={{ marginRight: '5px' }} />
+            {t('text.insertTopicDescription')}
           </Checkbox>
         </Form.Item>
         <Form.Item {...buttonItemLayout}>
@@ -153,7 +173,7 @@ export function SubmitArea() {
             htmlType="submit"
             onClick={() => doSubmit()}
             style={{ marginRight: '8px', marginTop: '20px' }}
-            disabled={checkedKeys.length === 0}
+            disabled={checkedKeys?.checked?.length === 0}
           >
             Vorlagen erzeugen
           </Button>

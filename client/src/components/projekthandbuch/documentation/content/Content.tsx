@@ -85,7 +85,6 @@ export function Content() {
   useEffect(() => {
     async function mount() {
       if (productDisciplineId) {
-        console.log('test');
         const content = await getProductDisciplineContent();
         setSelectedPageEntry(content);
       }
@@ -1835,7 +1834,6 @@ export function Content() {
   }
 
   async function getTemplatesContent(): Promise<PageEntry> {
-    console.log('templateDisciplineId', templateDisciplineId);
     const disciplineId = templateDisciplineId?.replace('td_', '');
     // get all products with externalTemplate info for templateDisciplineId
 
@@ -1860,7 +1858,6 @@ export function Content() {
 
     for (const product of productEntries) {
       const externalTemplateEntries = product.getElementsByTagName('ExterneKopiervorlageRef');
-      console.log('externalTemplateEntries', externalTemplateEntries);
 
       for (const externalTemplateEntry of externalTemplateEntries) {
         // <ExterneKopiervorlageRef id="5f83148a786ca0b" name="Arbeitsauftragsliste"/>

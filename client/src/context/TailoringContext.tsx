@@ -54,9 +54,7 @@ const TailoringSessionContextProvider = ({ children }: TailoringSessionProviderP
   const [projectFeatures, setProjectFeatures] = useState<{ [key: string]: string } | null>(null);
 
   useEffect(() => {
-    console.log('TailoringContext useEffect tailoringParameter', tailoringParameter);
-
-    const searchParams = {
+    const currentSearchParams = {
       mV: tailoringParameter.modelVariantId,
       ptV: tailoringParameter.projectTypeVariantId,
       pt: tailoringParameter.projectTypeId,
@@ -64,7 +62,7 @@ const TailoringSessionContextProvider = ({ children }: TailoringSessionProviderP
     };
     // if (searchParams != null) {
     // TODO
-    setSearchParams(clean(searchParams));
+    setSearchParams(clean(currentSearchParams));
     // }
   }, [tailoringParameter]);
 
@@ -90,9 +88,9 @@ const TailoringSessionContextProvider = ({ children }: TailoringSessionProviderP
 
   function getProjectFeaturesQueryString(): string {
     if (tailoringParameter.projectFeatures) {
-      return Object.keys(tailoringParameter.projectFeatures || '')
+      return Object.keys(tailoringParameter.projectFeatures)
         .map((key: string) => {
-          return `${key}=${tailoringParameter.projectFeatures[key]}`;
+          return `${key}=${tailoringParameter.projectFeatures?.[key] || ''}`;
         })
         .join('&');
     } else {
@@ -144,18 +142,16 @@ const TailoringSessionContextProvider = ({ children }: TailoringSessionProviderP
   const { pathname } = useLocation();
 
   useEffect(() => {
-    console.log('Location update', pathname);
-
     if (modelVariantId && projectTypeVariantId && projectTypeId && projectFeatures) {
-      setSearchParams({ mV: modelVariantId!, ptV: projectTypeVariantId!, pt: projectTypeId!, ...projectFeatures });
+      setSearchParams({ mV: modelVariantId, ptV: projectTypeVariantId, pt: projectTypeId, ...projectFeatures });
     }
 
     window.scrollTo(0, 0);
   }, [pathname]);
 
-  useEffect(() => {
-    console.log('searchParams update', searchParams);
-  }, [searchParams]);
+  // useEffect(() => {
+  //   console.log('searchParams update', searchParams);
+  // }, [searchParams]);
 
   return (
     // the Provider gives access to the context to its children

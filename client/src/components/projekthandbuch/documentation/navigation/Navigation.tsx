@@ -49,6 +49,7 @@ export enum NavTypeEnum {
   PROJECT_CHARACTERISTIC = 'projectCharacteristic',
   TEMPLATE_DISCIPLINE = 'templateDiscipline',
   PRODUCT_DISCIPLINE = 'productDiscipline',
+  SAMPLE_TEXT = 'sampleText',
 }
 
 export enum IndexTypeEnum {
@@ -99,6 +100,15 @@ export interface Section {
   version?: string;
   name: string;
   children: Section[];
+}
+
+// TODO: OpenApi
+export interface SectionDetail {
+  generatedContent: string;
+  replacedContent?: NavMenuItem[];
+  mergedChildren?: NavMenuItem[];
+  addedChildren?: NavMenuItem[];
+  indexItem?: { key: string; label: string; onClick: () => any };
 }
 
 export type NavMenuItem = {
@@ -163,7 +173,7 @@ export function Navigation() {
 
   function handleSelectedItem(key: string) {
     setSelectedItemKey(key);
-    console.log('location', location);
+    // console.log('location', location);
     navigate(`/documentation/${key}${getSearchStringFromHash()}`);
   }
 
@@ -177,9 +187,9 @@ export function Navigation() {
           let foundInGeneratedChildren = false;
 
           if (currentGeneratedChildren.length > 0) {
-            const gefunden = getMenuItemByAttributeValue(currentGeneratedChildren, 'key', child.key);
-            if (gefunden) {
-              item.children![i] = gefunden;
+            const foundMenuItem = getMenuItemByAttributeValue(currentGeneratedChildren, 'key', child.key);
+            if (foundMenuItem) {
+              item.children[i] = foundMenuItem;
               foundInGeneratedChildren = true;
             }
           }
@@ -198,14 +208,14 @@ export function Navigation() {
               currentGeneratedChildren = test.mergedChildren;
 
               // TODO: für das erste muss das auch gemacht werden... vllt sollte man es daher rausziehen
-              const gefunden = getMenuItemByAttributeValue(currentGeneratedChildren, 'key', child.key);
-              if (gefunden) {
-                item.children![i] = gefunden;
+              const foundMenuItem = getMenuItemByAttributeValue(currentGeneratedChildren, 'key', child.key);
+              if (foundMenuItem) {
+                item.children[i] = foundMenuItem;
               }
             } else if (test.addedChildren) {
               child.children = test.addedChildren;
             } else if (test.indexItem) {
-              item.children![i] = test.indexItem;
+              item.children[i] = test.indexItem;
             }
           }
           i++;
@@ -224,7 +234,7 @@ export function Navigation() {
     return items;
   }
 
-  async function fetchSectionDetailsData(childItem: NavMenuItem): Promise<any> {
+  async function fetchSectionDetailsData(childItem: NavMenuItem): Promise<SectionDetail> {
     const sectionId = childItem.key;
 
     if (!tailoringParameter.modelVariantId) {
@@ -241,18 +251,18 @@ export function Navigation() {
     const jsonDataFromXml = await getJsonDataFromXml(sectionDetailUrl);
 
     const generatedContent = jsonDataFromXml.attributes.GenerierterInhalt;
-    const wirdErsetzt = jsonDataFromXml.attributes.WirdErsetzt;
+    const isReplaced = jsonDataFromXml.attributes.WirdErsetzt;
 
     let replacedContent;
     let mergedChildren; // for merging children
-    let addedChildren: NavMenuItem[]; // for adding children
+    let addedChildren; // for adding children
 
     // TODO: anders lösen
     let indexItem;
 
     // const xmlDataWithParent = addParentRecursive([jsonDataFromXml]);
-    if (wirdErsetzt === 'Ja') {
-      if (generatedContent === 'Elemente:Produkte_mit_Themen_nach_Disziplinen') {
+    if (isReplaced === 'Ja') {
+      if (generatedContent === 'Elemente:Produkte_mit_Themen_nach_Disziplinen' && childItem.parent) {
         replacedContent = await getReferenceProducts(childItem.parent);
       } else {
         console.log('muss noch ersetzt werden', jsonDataFromXml);
@@ -260,7 +270,7 @@ export function Navigation() {
     }
 
     if (generatedContent) {
-      if (generatedContent === 'Spezialkapitel:Disziplingruppe') {
+      if (generatedContent === 'Spezialkapitel:Disziplingruppe' && childItem.parent) {
         // TODO
         const disciplineIds = await getDisciplineIds();
         addedChildren = getDisciplineGroup(childItem.parent, jsonDataFromXml).filter((navMenuItem) =>
@@ -374,7 +384,6 @@ export function Navigation() {
     return {
       // text: textPart,
       generatedContent: generatedContent,
-      wirdErsetzt: wirdErsetzt,
       // generierterInhaltErsetzend: generierterInhaltErsetzend,
       replacedContent: replacedContent,
       mergedChildren: mergedChildren,
@@ -519,16 +528,20 @@ export function Navigation() {
         // in Kapitel the role entries are named "Projektrollen", "Organisationsrollen" and "Projektteamrollen"
         // in Rollenkategorie they are named im singular "Projektrolle", "Organisationsrolle" and "Projektteamrolle"
         const roleCategoryName = roleCategoryValue.attributes.name;
-        const roleCategoryNavItem = target.children.find(
+        const roleCategoryNavItem = target.children?.find(
           (child: any) => child.label.includes(roleCategoryName) // TODO: hier macht es Probleme, dass einige Einträge schon keine attributes.titel mehr haben... besser wir ändern nicht das ursprüngliche Object
         );
 
-        const roleCategoryEntry: NavMenuItem = {
-          key: roleCategoryNavItem.key, // roleCategory has no id
-          parent: target,
-          label: roleCategoryNavItem.label,
-          onTitleClick: (item: any) => handleSelectedItem(item.key),
-        };
+        let roleCategoryEntry: NavMenuItem;
+
+        if (roleCategoryNavItem) {
+          roleCategoryEntry = {
+            key: roleCategoryNavItem.key, // roleCategory has no id
+            parent: target,
+            label: roleCategoryNavItem.label,
+            onTitleClick: (item: any) => handleSelectedItem(item.key),
+          };
+        }
 
         // TODO: über Variablen lösen?!
         let navTypeRole: NavTypeEnum;
@@ -565,6 +578,15 @@ export function Navigation() {
   }
 
   async function getDecisionPoints(target: NavMenuItem): Promise<NavMenuItem[]> {
+    // TODO: getUrl as function
+    if (
+      !weitApiUrl ||
+      !tailoringParameter.modelVariantId ||
+      !tailoringParameter.projectTypeId ||
+      !tailoringParameter.projectTypeVariantId
+    ) {
+      return [];
+    }
     const decisionPointsUrl =
       weitApiUrl +
       '/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
@@ -574,7 +596,7 @@ export function Navigation() {
       '/Projekttypvariante/' +
       tailoringParameter.projectTypeVariantId +
       '/Entscheidungspunkt?' +
-      getProjectFeaturesQueryString();
+      String(getProjectFeaturesQueryString());
 
     const jsonDataFromXml = await getJsonDataFromXml(decisionPointsUrl);
 

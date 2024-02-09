@@ -33,6 +33,7 @@
     "sourceReference": "Quellenverweis"
   },
   "text": {
+    "insertTopicDescription": "Themenbeschreibungen einfügen",
     "generateNavigation": "Erstelle Navigation"
   }
 }

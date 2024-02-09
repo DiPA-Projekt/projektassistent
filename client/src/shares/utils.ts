@@ -22,6 +22,10 @@ export function decodeXml(xml: string): string {
   return xml ? he.decode(he.decode(xml)) : '';
 }
 
+export function simpleDecodeXml(xml: string): string {
+  return xml ? he.decode(xml) : '';
+}
+
 export function getMenuItemByAttributeValue(
   menuItems: NavMenuItem[],
   attribute: string,

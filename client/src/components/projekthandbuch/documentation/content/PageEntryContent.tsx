@@ -1,4 +1,4 @@
-import { Table, TableProps } from 'antd';
+import { Table } from 'antd';
 import parse from 'html-react-parser';
 import React from 'react';
 // import { TableEntry } from '@dipa-projekt/projektassistent-openapi';
@@ -10,10 +10,10 @@ import { useDocumentation } from '../../../../context/DocumentationContext';
 export function PageEntryContent() {
   const { selectedPageEntry } = useDocumentation();
 
-  const onChange: TableProps<any>['onChange'] = (pagination, filters, sorter, extra) => {
-    console.log('params', pagination, filters, sorter, extra);
-  };
-  console.log('PageEntryContent subPageEntries', selectedPageEntry);
+  // const onChange: TableProps<any>['onChange'] = (pagination, filters, sorter, extra) => {
+  //   console.log('params', pagination, filters, sorter, extra);
+  // };
+  // console.log('PageEntryContent subPageEntries', selectedPageEntry);
 
   return (
     <div>

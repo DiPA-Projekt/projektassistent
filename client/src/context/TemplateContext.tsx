@@ -7,7 +7,7 @@ type TemplateSession = {
   setShowAll: Function;
   expandedKeys: React.Key[];
   setExpandedKeys: Function;
-  checkedKeys: React.Key[];
+  checkedKeys: { checked: React.Key[]; halfChecked: React.Key[] };
   setCheckedKeys: Function;
   selectedKeys: React.Key[];
   setSelectedKeys: Function;
@@ -18,7 +18,8 @@ type TemplateSession = {
     {
       product: { id: string; title: string };
       discipline: { id: string; title: string };
-      topics: { title: string; text: string }[];
+      topics: { id: string; title: string; text: string; samples: { id: string; title: string; text: string }[] }[];
+      externalCopyTemplates: { id: string; title: string; uri: string }[];
     }
   >;
   setProductsMap: Function;
@@ -38,7 +39,10 @@ const TemplateSessionContextProvider = ({ children }: TemplateSessionProviderPro
   const [showAll, setShowAll] = useState<boolean>(false);
 
   const [expandedKeys, setExpandedKeys] = useState<React.Key[]>([]);
-  const [checkedKeys, setCheckedKeys] = useState<React.Key[]>([]);
+  const [checkedKeys, setCheckedKeys] = useState<{ checked: React.Key[]; halfChecked: React.Key[] }>({
+    checked: [],
+    halfChecked: [],
+  });
   const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
   const [autoExpandParent, setAutoExpandParent] = useState<boolean>(true);
   const [insertTopicDescription, setInsertTopicDescription] = useState<boolean>(true);
@@ -50,7 +54,8 @@ const TemplateSessionContextProvider = ({ children }: TemplateSessionProviderPro
       {
         product: { id: string; title: string };
         discipline: { id: string; title: string };
-        topics: { title: string; text: string }[];
+        topics: { id: string; title: string; text: string; samples: { id: string; title: string; text: string }[] }[];
+        externalCopyTemplates: { id: string; title: string; uri: string }[];
       }
     >()
   );

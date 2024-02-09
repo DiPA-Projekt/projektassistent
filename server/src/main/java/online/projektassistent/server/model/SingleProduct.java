@@ -23,6 +23,8 @@ public class SingleProduct {
     @NotEmpty(message = "at least one chapter is mandatory")
     private List<Chapter> chapters;
 
+    private List<ExternalCopyTemplate> externalCopyTemplates;
+
     public String getProductName() {
         return productName;
     }
@@ -47,6 +49,10 @@ public class SingleProduct {
         return chapters;
     }
 
+    public List<ExternalCopyTemplate> getExternalCopyTemplates() {
+        return externalCopyTemplates;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -58,6 +64,7 @@ public class SingleProduct {
         if (!Objects.equals(responsible, singleProduct.responsible)) return false;
         if (!Objects.equals(projectName, singleProduct.projectName)) return false;
         if (!Objects.equals(participants, singleProduct.participants)) return false;
+        if (!Objects.equals(externalCopyTemplates, singleProduct.externalCopyTemplates)) return false;
         return Objects.equals(chapters, singleProduct.chapters);
     }
 
@@ -68,6 +75,7 @@ public class SingleProduct {
         result = 31 * result + (projectName != null ? projectName.hashCode() : 0);
         result = 31 * result + (participants != null ? participants.hashCode() : 0);
         result = 31 * result + (chapters != null ? chapters.hashCode() : 0);
+        result = 31 * result + (externalCopyTemplates != null ? externalCopyTemplates.hashCode() : 0);
         return result;
     }
 }

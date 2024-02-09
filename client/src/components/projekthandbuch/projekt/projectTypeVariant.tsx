@@ -134,7 +134,6 @@ export function ProjectTypeVariantComponent() {
                 style={{ maxWidth: '300px' }}
                 options={cascaderOptions}
                 onChange={async (value: any /*CascaderValueType*/) => {
-                  console.log('ATTENTION changing projectTypeVariantId', value);
                   setTailoringParameter({
                     modelVariantId: tailoringParameter.modelVariantId,
                     projectTypeVariantId: value[1],
