@@ -1,6 +1,6 @@
-FROM amazoncorretto:17
+FROM openjdk:17-alpine
 
-RUN adduser --system --group dipa
+RUN addgroup -S dipa && adduser -S dipa -G dipa
 USER dipa:dipa
 
 ARG JAR_FILE
