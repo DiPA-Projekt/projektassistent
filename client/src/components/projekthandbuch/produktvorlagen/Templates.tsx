@@ -22,7 +22,10 @@ export function Templates() {
     string,
     { id: string; title: string; infoText: string; isStandardSelection: boolean }[]
   >();
-  const productToExternalCopyTemplateMap = new Map<string, { id: string; title: string /*infoText: string*/ }[]>();
+  const productToExternalCopyTemplateMap = new Map<
+    string,
+    { id: string; title: string; isStandardSelection: boolean }[]
+  >();
 
   const initialKeys: React.Key[] = [];
 
@@ -208,10 +211,9 @@ export function Templates() {
       const vmThemaRef = topicSample.getElementsByTagName('VMThemaRef');
 
       if (!vmThemaRef[0]) {
-        // Ansonsten Unterthema
+        // in diesem Fall handelt es sich um "Unterthemen", welche schon über das normale Thema erfasst werden
         continue;
       }
-      // TODO: Zusatzthemen
 
       const topicId = vmThemaRef[0].attributes.link;
 
@@ -226,6 +228,7 @@ export function Templates() {
         const isStandardSelection = sampleStandardauswahl === 'ja';
 
         if (isStandardSelection) {
+          // TODO: hier werden möglicherweise Keys eingefügt, die gar in den Daten vorkommen, da sie beim Tayloring bereits herausgefiltert wurden */
           initialKeys.push(sampleTextId);
         }
 
@@ -278,6 +281,7 @@ export function Templates() {
       productToExternalCopyTemplateMap.get(productId)!.push({
         id: templateId,
         title: templateName,
+        isStandardSelection: isStandardSelection,
         //infoText: decodeXml(sampleTextText),
       });
     });
@@ -314,7 +318,7 @@ export function Templates() {
           infoText: templateUri,
           dataType: NavTypeEnum.EXTERNAL_TEMPLATE,
           disabled: false,
-          checked: false,
+          checked: externalCopyTemplate.isStandardSelection,
           checkable: true,
         });
       }

@@ -263,7 +263,12 @@ export function TemplatesContent(props: { entries: TemplateProps[] }) {
   const allKeys = getAllKeys(treeEntries);
 
   const onChange = () => {
-    if (checkedKeys.checked.length === allKeys.length) {
+    const checkedAll = checkedKeys.checked.length === allKeys.length;
+
+    for (const entry of treeEntries) {
+      setChildrenDisabledStatus(entry, checkedAll);
+    }
+    if (checkedAll) {
       setCheckedKeys({ checked: [], halfChecked: [] });
     } else {
       setCheckedKeys({ checked: allKeys, halfChecked: [] });
