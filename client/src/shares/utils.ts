@@ -106,3 +106,20 @@ export function replaceUrlInText(text: string, tailoringParameter: any, projectF
       '"'
   );
 }
+
+export function removeLinksFromHtml(htmlString: string) {
+  const elem = document.createElement('div');
+  elem.innerHTML = htmlString;
+
+  const aTag = elem.getElementsByTagName('a');
+
+  while (aTag.length) {
+    const parent = aTag[0].parentNode;
+    while (aTag[0].firstChild) {
+      parent?.insertBefore(aTag[0].firstChild, aTag[0]);
+    }
+    parent?.removeChild(aTag[0]);
+  }
+
+  return elem.innerHTML;
+}
