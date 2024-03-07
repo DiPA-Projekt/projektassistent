@@ -9,4 +9,6 @@ public interface Placeholders {
     String DATE = "{date}";
     String FIRST_CHAPTER = "{FIRST_CHAPTER}";
     String TOC = "{TOC}";
+    String MODEL_VARIANT = "{modelVariant}";
+    String VERSION = "{version}";
 }
