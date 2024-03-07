@@ -11,6 +11,11 @@ public class SingleProduct {
     @NotBlank(message = "productName is mandatory")
     private String productName;
 
+    @NotBlank(message = "version is mandatory")
+    private String version;
+    @NotBlank(message = "model variant is mandatory")
+    private String modelVariant;
+
     private String disciplineName;
 
     @NotBlank(message = "responsible is mandatory")
@@ -27,6 +32,12 @@ public class SingleProduct {
 
     public String getProductName() {
         return productName;
+    }
+    public String getVersion() {
+        return version;
+    }
+    public String getModelVariant() {
+        return modelVariant;
     }
 
     public String getDisciplineName() {

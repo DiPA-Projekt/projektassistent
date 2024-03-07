@@ -1,7 +1,7 @@
 import { Button, Checkbox, Form } from 'antd';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTemplate } from '../../../context/TemplateContext';
-import { OperationOpts, SingleProduct } from '@dipa-projekt/projektassistent-openapi';
+import { ModelVariant, OperationOpts, SingleProduct } from '@dipa-projekt/projektassistent-openapi';
 import { MultiProducts } from '@dipa-projekt/projektassistent-openapi/dist/models/MultiProducts';
 import { ProductOfProject } from '@dipa-projekt/projektassistent-openapi/dist/models';
 import API from '../../../api';
@@ -9,15 +9,26 @@ import { AjaxResponse } from 'rxjs/ajax';
 import { TemplateFormModal } from './TemplateFormModal';
 import { useTranslation } from 'react-i18next';
 import { BookTwoTone } from '@ant-design/icons';
+import { weitApiUrl } from '../../app/App';
+import { decodeXml, getJsonDataFromXml } from '../../../shares/utils';
+import parse from 'html-react-parser';
+import { useTailoring } from '../../../context/TailoringContext';
 
 export function SubmitArea() {
   const { t } = useTranslation();
+
+  const { tailoringParameter } = useTailoring();
 
   const { checkedKeys, productsMap, insertTopicDescription, setInsertTopicDescription } = useTemplate();
 
   const [modalVisible, setModalVisible] = useState(false);
 
   const [selectedProducts, setSelectedProducts] = useState<ProductOfProject[]>([]);
+
+  const selectedProductsRef = React.useRef(selectedProducts);
+  useEffect(() => {
+    selectedProductsRef.current = selectedProducts;
+  }, [selectedProducts]);
 
   const buttonItemLayout = {
     wrapperCol: {
@@ -30,18 +41,28 @@ export function SubmitArea() {
     projectName: string;
     responsible: string;
     participants: string[];
+    modelVariant: string;
+    version: string;
   }): SingleProduct {
-    return Object.assign(selectedProducts[0], {
+    return Object.assign(selectedProductsRef.current[0], {
       projectName: values.projectName,
       responsible: values.responsible,
       participants: values.participants,
+      modelVariant: values.modelVariant,
+      version: values.version,
     }) as SingleProduct;
   }
 
-  function collectDataForMultiProducts(values: { projectName: string }): MultiProducts {
+  function collectDataForMultiProducts(values: {
+    projectName: string;
+    modelVariant: string;
+    version: string;
+  }): MultiProducts {
     return {
       projectName: values.projectName,
-      products: selectedProducts,
+      products: selectedProductsRef.current,
+      modelVariant: values.modelVariant,
+      version: values.version,
     } as MultiProducts;
   }
 
@@ -75,10 +96,13 @@ export function SubmitArea() {
 
     for (const checkedKey of checkedKeys.checked) {
       const product = productsMap.get(checkedKey);
+
       if (product) {
         productOfProjectMap.set(product.product.id, {
           productName: product.product.title,
           disciplineName: product.discipline.title,
+          modelVariant: product.modelVariant,
+          version: product.version,
           responsible: '',
           participants: [],
           chapters: getChaptersWithSamplesData(product.topics),
@@ -86,6 +110,44 @@ export function SubmitArea() {
             checkedKeys.checked.includes(externalCopyTemplate.id)
           ),
         });
+      } else if (
+        Array.from(productsMap.values()).filter((x) => x.externalCopyTemplates.some((y) => y.id === checkedKey))
+      ) {
+        const productWithExternalCopyTemplate = Array.from(productsMap.values()).filter((x) =>
+          x.externalCopyTemplates.find((y) => y.id === checkedKey)
+        );
+
+        if (productWithExternalCopyTemplate.length > 0) {
+          const foundProduct = productWithExternalCopyTemplate.at(0);
+          if (!foundProduct) {
+            continue;
+          }
+
+          const existingProduct = productOfProjectMap.get(foundProduct.product.id);
+          const externalCopyTemplates = foundProduct.externalCopyTemplates.filter((externalCopyTemplate) =>
+            checkedKeys.checked.includes(externalCopyTemplate.id)
+          );
+
+          if (existingProduct) {
+            productOfProjectMap.set(
+              foundProduct.product.id,
+              Object.assign(existingProduct, {
+                externalCopyTemplates: externalCopyTemplates,
+              })
+            );
+          } else {
+            productOfProjectMap.set(foundProduct.product.id, {
+              productName: foundProduct.product.title,
+              disciplineName: foundProduct.discipline.title,
+              modelVariant: '',
+              version: '',
+              responsible: '',
+              participants: [],
+              chapters: [],
+              externalCopyTemplates: externalCopyTemplates,
+            });
+          }
+        }
       }
     }
 
@@ -101,16 +163,36 @@ export function SubmitArea() {
     setSelectedProducts(products);
   }
 
-  const handleClose = (values: { projectName: string; responsible: string; participants: string[] }) => {
+  const handleClose = async (values: { projectName: string; responsible: string; participants: string[] }) => {
     setModalVisible(false);
 
     if (values) {
       const opts: OperationOpts = { responseOpts: { response: 'raw' } };
 
-      if (selectedProducts.length > 1) {
+      const projectModelVariantUrl =
+        weitApiUrl + '/V-Modellmetamodell/mm_2021/V-Modellvariante/' + tailoringParameter.modelVariantId;
+
+      const jsonDataFromXml = await getJsonDataFromXml(projectModelVariantUrl);
+      const version = parse(decodeXml(jsonDataFromXml.getElementsByTagName('Version')[0]?.value));
+
+      const modelVariantsUrl = weitApiUrl + '/V-Modellmetamodell/mm_2021/V-Modellvariante';
+      const jsonDataFromXml2 = await getJsonDataFromXml(modelVariantsUrl);
+
+      const modelVariants: ModelVariant[] = jsonDataFromXml2
+        .getElementsByTagName('V-Modellvariante')
+        .filter((variante) => variante.attributes.id === tailoringParameter.modelVariantId);
+
+      const modelVariantName = modelVariants[0].attributes.name;
+
+      const valuesWithModelVariantAndVersion = Object.assign(values, {
+        modelVariant: modelVariantName,
+        version: version,
+      });
+
+      if (selectedProductsRef.current.length > 1 || selectedProductsRef.current[0].externalCopyTemplates.length > 0) {
         API.ProductsApi.getZipForMultiProducts(
           {
-            multiProducts: collectDataForMultiProducts(values),
+            multiProducts: collectDataForMultiProducts(valuesWithModelVariantAndVersion),
           },
           opts
         ).subscribe((response: AjaxResponse<Blob>) => {
@@ -119,7 +201,7 @@ export function SubmitArea() {
       } else {
         API.ProductsApi.getDocxForSingleProduct(
           {
-            singleProduct: collectDataForSingleProduct(values),
+            singleProduct: collectDataForSingleProduct(valuesWithModelVariantAndVersion),
           },
           opts
         ).subscribe((response: AjaxResponse<Blob>) => {

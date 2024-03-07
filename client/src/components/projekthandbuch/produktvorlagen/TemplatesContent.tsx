@@ -136,8 +136,15 @@ export function TemplatesContent(props: { entries: TemplateProps[] }) {
           const externalCopyTemplatesForMap = [];
 
           if (product.children) {
-            for (const topic of product.children) {
-              if (topic.infoText != null) {
+            const topicChildren = product.children.filter((child) => child.dataType === NavTypeEnum.TOPIC);
+            const externalCopyChildren = product.children.filter(
+              (child) => child.dataType === NavTypeEnum.EXTERNAL_TEMPLATE
+            );
+
+            if (topicChildren.length > 0) {
+              const generatedTemplateTreeItems: DataNode[] = [];
+
+              for (const topic of topicChildren) {
                 const topicHeader = (
                   <>
                     <span style={{ marginRight: '8px' }}>{topic.label}</span>
@@ -180,32 +187,69 @@ export function TemplatesContent(props: { entries: TemplateProps[] }) {
                   }
                 }
 
-                topicsTreeItems.push({
+                generatedTemplateTreeItems.push({
                   title: topicHeader,
                   key: topic.key,
                   selectable: true,
-                  checkable: topic.dataType === NavTypeEnum.EXTERNAL_TEMPLATE,
+                  checkable: false,
                   disabled: !product.checked,
-                  disableCheckbox: false, //topic.dataType !== NavTypeEnum.EXTERNAL_TEMPLATE,
+                  disableCheckbox: false,
                   icon: getIcon(topic.dataType),
                   children: samplesTreeItems,
                   className: 'canBeDisabled',
                 });
 
-                if (topic.dataType === NavTypeEnum.TOPIC) {
-                  topicsForMap.push({
-                    id: topic.key,
-                    title: topic.label,
-                    text: topic.infoText,
-                    samples: samplesForMap,
-                  });
-                } else if (topic.dataType === NavTypeEnum.EXTERNAL_TEMPLATE) {
-                  externalCopyTemplatesForMap.push({
-                    id: topic.key,
-                    title: topic.label,
-                    uri: topic.infoText,
-                  });
-                }
+                topicsForMap.push({
+                  id: topic.key,
+                  title: topic.label,
+                  text: topic.infoText,
+                  samples: samplesForMap,
+                });
+              }
+
+              // Generierte Vorlage
+              topicsTreeItems.push({
+                title: 'Generierte Vorlage',
+                key: product.key,
+                selectable: true,
+                checkable: true,
+                disabled: false,
+                icon: null,
+                children: generatedTemplateTreeItems,
+              });
+            }
+
+            if (externalCopyChildren.length > 0) {
+              for (const externalCopy of externalCopyChildren) {
+                const externalCopyHeader = (
+                  <>
+                    <span style={{ marginRight: '8px' }}>{externalCopy.label}</span>
+                    <Popover
+                      destroyTooltipOnHide={true}
+                      content={parse(externalCopy.infoText)}
+                      title={externalCopy.label}
+                    >
+                      <InfoCircleTwoTone style={{ cursor: 'help' }} />
+                    </Popover>
+                  </>
+                );
+
+                topicsTreeItems.push({
+                  title: externalCopyHeader,
+                  key: externalCopy.key,
+                  selectable: true,
+                  checkable: true,
+                  disabled: false,
+                  disableCheckbox: false,
+                  icon: getIcon(externalCopy.dataType),
+                  children: [],
+                });
+
+                externalCopyTemplatesForMap.push({
+                  id: externalCopy.key,
+                  title: externalCopy.label,
+                  uri: externalCopy.infoText,
+                });
               }
             }
           }
@@ -220,7 +264,7 @@ export function TemplatesContent(props: { entries: TemplateProps[] }) {
           if (topicsTreeItems.length > 0) {
             productTreeItems.push({
               title: productHeader,
-              key: product.key,
+              key: product.key + '_generatedTemplate',
               selectable: true,
               icon: getIcon(product.dataType),
               children: topicsTreeItems,

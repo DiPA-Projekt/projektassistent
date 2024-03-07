@@ -18,6 +18,8 @@ type TemplateSession = {
     {
       product: { id: string; title: string };
       discipline: { id: string; title: string };
+      modelVariant: { id: string; title: string };
+      version: { title: string };
       topics: { id: string; title: string; text: string; samples: { id: string; title: string; text: string }[] }[];
       externalCopyTemplates: { id: string; title: string; uri: string }[];
     }
@@ -54,6 +56,8 @@ const TemplateSessionContextProvider = ({ children }: TemplateSessionProviderPro
       {
         product: { id: string; title: string };
         discipline: { id: string; title: string };
+        modelVariant: { id: string; title: string };
+        version: { title: string };
         topics: { id: string; title: string; text: string; samples: { id: string; title: string; text: string }[] }[];
         externalCopyTemplates: { id: string; title: string; uri: string }[];
       }

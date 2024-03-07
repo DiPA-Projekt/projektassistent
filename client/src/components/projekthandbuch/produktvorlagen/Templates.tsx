@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import { Col, FloatButton, Form, Layout, Row, Spin } from 'antd';
 import { TemplateProps, TemplatesContent } from './TemplatesContent';
-import { decodeXml, getJsonDataFromXml, simpleDecodeXml } from '../../../shares/utils';
+import { decodeXml, getJsonDataFromXml, removeLinksFromHtml, simpleDecodeXml } from '../../../shares/utils';
 import { NavTypeEnum } from '../documentation/navigation/Navigation';
 import { useTailoring } from '../../../context/TailoringContext';
 import { SubmitArea } from './SubmitArea';
@@ -140,7 +140,7 @@ export function Templates() {
         return {
           key: topicValue.attributes.id,
           label: topicValue.attributes.name,
-          infoText: decodeXml(infoText),
+          infoText: removeLinksFromHtml(decodeXml(infoText)),
           dataType: NavTypeEnum.TOPIC,
           disabled: false,
           checked: false,
@@ -191,7 +191,30 @@ export function Templates() {
 
     const jsonDataFromXml = await getJsonDataFromXml(topicUrl);
 
-    return jsonDataFromXml.getElementsByTagName('Beschreibung')[0]?.value;
+    const textBausteinRef = jsonDataFromXml.getElementsByTagName('TextbausteinRef');
+
+    let description;
+
+    if (textBausteinRef.length > 0) {
+      description = await getTextBlockContent(textBausteinRef[0].attributes.id);
+    } else {
+      description = jsonDataFromXml.getElementsByTagName('Beschreibung')[0]?.value;
+    }
+
+    return description;
+  }
+
+  async function getTextBlockContent(textbausteinId: string): Promise<string> {
+    const textbausteinUrl =
+      weitApiUrl +
+      '/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      tailoringParameter.modelVariantId +
+      '/Textbaustein/' +
+      textbausteinId;
+
+    const jsonDataFromXml: XMLElement = await getJsonDataFromXml(textbausteinUrl);
+
+    return jsonDataFromXml.getElementsByTagName('Text')[0]?.value;
   }
 
   async function getSampleTexts(): Promise<void> {
