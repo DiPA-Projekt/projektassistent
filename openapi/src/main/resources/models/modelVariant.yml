@@ -1,0 +1,18 @@
+ModelVariant:
+  type: object
+  properties:
+    id:
+      description: Unique identifier of the model variant
+      type: string
+      example: "fc3fc9d51ffd42"
+    version:
+      description: Version of the model variant
+      type: string
+      example: "1504"
+    name:
+      description: Name of the model variant
+      type: string
+      example: "V-Modell XT"
+  required:
+    - id
+    - name

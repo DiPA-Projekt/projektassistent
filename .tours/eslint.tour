@@ -1,0 +1,32 @@
+{
+  "$schema": "https://aka.ms/codetour-schema",
+  "title": "ESLint",
+  "steps": [
+    {
+      "file": "client/package.json",
+      "description": "ESLint ist im @leanup/stack enthalten.",
+      "line": 40
+    },
+    {
+      "file": "client/node_modules/@leanup/stack/package.json",
+      "description": "Hier finden wir die Dependency für ESLint.",
+      "line": 46
+    },
+    {
+      "file": "client/.eslintrc.js",
+      "description": "Hier ist die ESLint-Konfiguration im Projektverzeichnis. Sie verwendet und erweitert die @leanup-Standard-Konfiguration.",
+      "line": 12
+    },
+    {
+      "file": "client/node_modules/@leanup/stack/.eslintrc.js",
+      "description": "Hier finden wir die Framework-neutrale @leanup-Standard-Konfiguration für ESLint.",
+      "line": 4
+    },
+    {
+      "file": "client/package.json",
+      "description": "Mittels `npm run lint` kann die statische Codeprüfung ausgeführt werden.\r\n\r\n> ESLint wird immer separat und nicht während des Serves oder Builds ausgeführt. Dies folgt der Entscheidung die Dinge immer granular zu definieren, um eine maximale Ausführungsgeschwindigkeit pro Arbeitsschritt zu erzielen.",
+      "line": 10
+    }
+  ],
+  "ref": "refactor/react-app"
+}

@@ -1,0 +1,22 @@
+DataEntry:
+  type: object
+  properties:
+    title:
+      description: Title of a table data entry
+      type: string
+      example: "Anbahnung und Organisation"
+    suffix:
+      description: Suffix of a table data entry
+      type: string
+      example: "(Aktivität)"
+    type:
+      description: Type of a table data entry
+      type: string
+      example: "bold"
+    menuEntryId:
+      description: Unique identifier of the target data entry
+      type: integer
+      format: int64
+      example: 18
+  required:
+    - title

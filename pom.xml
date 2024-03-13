@@ -5,13 +5,13 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.4.3</version>
+        <version>2.5.1</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>online.projektassistent</groupId>
     <artifactId>projektassistent-parent</artifactId>
     <packaging>pom</packaging>
-    <version>0.0.1</version>
+    <version>0.0.2-SNAPSHOT</version>
     <name>Projektassistent :: Parent</name>
     <description>Projektassistent</description>
 
@@ -28,11 +28,25 @@
         </repository>
     </distributionManagement>
 
+    <repositories>
+        <repository>
+            <id>github</id>
+            <name>GitHub - DiPA-Projekt</name>
+            <url>https://maven.pkg.github.com/dipa-projekt/projektassistent-openapi</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
     <properties>
         <project.scm.id>github</project.scm.id>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
 
         <!-- dependency versions -->
 
@@ -40,15 +54,14 @@
         <jackson-databind-nullable.version>0.2.1</jackson-databind-nullable.version>
         <slf4j.version>1.7.30</slf4j.version>
         <logback.version>1.2.3</logback.version>
-        <spring-data-jpa.version>2.4.5</spring-data-jpa.version>
+        <spring-data-jpa.version>2.5.1</spring-data-jpa.version>
 
         <!-- maven plugins -->
-        <openapi-generator-maven-plugin.version>5.0.1</openapi-generator-maven-plugin.version>
-        <frontend-maven-plugin.version>1.11.2</frontend-maven-plugin.version>
-        <dockerfile-maven.version>1.4.13</dockerfile-maven.version>
+        <frontend-maven-plugin.version>1.12.0</frontend-maven-plugin.version>
+        <docker-maven-plugin.version>0.43.0</docker-maven-plugin.version>
 
         <!-- build profile defaults -->
-        <dockerfile.skip>true</dockerfile.skip>
+        <docker.skip>true</docker.skip>
         <sonar.projectKey>DiPA-Projekt_projektassistent</sonar.projectKey>
         <sonar.organization>dipa-projekt</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
@@ -56,8 +69,7 @@
     </properties>
 
     <modules>
-        <module>open-api</module>
-        <module>frontend</module>
+        <module>client</module>
         <module>server</module>
     </modules>
     <build>
@@ -134,26 +146,21 @@
         <pluginManagement>
             <plugins>
                 <plugin>
-                    <groupId>org.openapitools</groupId>
-                    <artifactId>openapi-generator-maven-plugin</artifactId>
-                    <version>${openapi-generator-maven-plugin.version}</version>
-                </plugin>
-                <plugin>
                     <groupId>com.github.eirslett</groupId>
                     <artifactId>frontend-maven-plugin</artifactId>
                     <version>${frontend-maven-plugin.version}</version>
                 </plugin>
                 <plugin>
-                    <groupId>com.spotify</groupId>
-                    <artifactId>dockerfile-maven-plugin</artifactId>
-                    <version>${dockerfile-maven.version}</version>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>docker-maven-plugin</artifactId>
+                    <version>${docker-maven-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>com.amashchenko.maven.plugin</groupId>
                     <artifactId>gitflow-maven-plugin</artifactId>
-                    <version>1.15.1</version>
+                    <version>1.16.0</version>
                     <configuration>
-                        <argLine>-s .mvn/release.settings.xml -DskipTests -P production-ci</argLine>
+                        <argLine>-s .mvn/settings.xml -DskipTests -P production-ci</argLine>
                         <gitFlowConfig>
                             <productionBranch>main</productionBranch>
                         </gitFlowConfig>
@@ -189,7 +196,6 @@
                 <profile.properties.file>config-production.properties</profile.properties.file>
             </properties>
         </profile>
-
     </profiles>
 
     <dependencyManagement>

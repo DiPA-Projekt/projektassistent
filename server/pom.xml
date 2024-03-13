@@ -6,8 +6,9 @@
     <parent>
         <groupId>online.projektassistent</groupId>
         <artifactId>projektassistent-parent</artifactId>
-        <version>0.0.1</version>
+        <version>0.0.2-SNAPSHOT</version>
     </parent>
+
     <artifactId>projektassistent-server</artifactId>
     <name>Projektassistent :: Server</name>
     <description>Weit e.V. Projektassistent Server Backend</description>
@@ -15,11 +16,15 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>projektassistent-frontend</artifactId>
+            <artifactId>projektassistent-client</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <!-- spring dependencies -->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-boot-starter</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -41,6 +46,11 @@
             <artifactId>spring-boot-devtools</artifactId>
             <optional>true</optional>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-jpa</artifactId>
+            <version>${spring-data-jpa.version}</version>
+        </dependency>
 
         <!-- for initial setup deactivated -->
         <!--
@@ -50,11 +60,12 @@
             <scope>runtime</scope>
         </dependency>
         -->
-        <!-- OpenAPI -->
 
+        <!-- OpenAPI -->
         <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-boot-starter</artifactId>
+            <groupId>online.dipa</groupId>
+            <artifactId>projektassistent-openapi</artifactId>
+            <version>0.0.1</version>
         </dependency>
 
         <dependency>
@@ -85,6 +96,13 @@
             <artifactId>logback-classic</artifactId>
         </dependency>
 
+        <!-- framework for word -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>5.2.3</version>
+        </dependency>
+
         <!-- testing -->
 
         <dependency>
@@ -98,10 +116,29 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+            <version>3.0.4</version>
+        </dependency>
 
     </dependencies>
 
     <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -113,55 +150,6 @@
                 <targetPath>${project.build.directory}/deployment</targetPath>
             </resource>
         </resources>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-
-            <plugin>
-                <groupId>org.openapitools</groupId>
-                <artifactId>openapi-generator-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <?m2e execute onConfiguration?>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <!-- specify the OpenAPI spec -->
-                            <inputSpec>projektassistent.yaml</inputSpec>
-                            <enablePostProcessFile>false</enablePostProcessFile>
-
-                            <generatorName>spring</generatorName>
-
-                            <configOptions>
-                                <apiPackage>online.projektassistent.api.rest</apiPackage>
-                                <modelPackage>online.projektassistent.api.model</modelPackage>
-                                <interfaceOnly>true</interfaceOnly>
-                                <generateSupportingFiles>false</generateSupportingFiles>
-                                <generateModelTests>false</generateModelTests>
-                                <generateModelDocumentation>false</generateModelDocumentation>
-                                <generateApiDocumentation>false</generateApiDocumentation>
-                                <generateApiTests>false</generateApiTests>
-                                <serializableModel>true</serializableModel>
-                                <snapshotVersion>true</snapshotVersion>
-                                <useTags>true</useTags>
-                            </configOptions>
-
-                        </configuration>
-
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>${project.groupId}</groupId>
-                        <artifactId>projektassistent-open-api</artifactId>
-                        <version>${project.version}</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-        </plugins>
     </build>
 
     <profiles>
@@ -176,26 +164,31 @@
             <build>
                 <plugins>
                     <plugin>
-                        <groupId>com.spotify</groupId>
-                        <artifactId>dockerfile-maven-plugin</artifactId>
+                        <groupId>io.fabric8</groupId>
+                        <artifactId>docker-maven-plugin</artifactId>
                         <executions>
                             <execution>
                                 <id>default</id>
                                 <goals>
                                     <goal>build</goal>
+                                    <goal>tag</goal>
                                     <goal>push</goal>
                                 </goals>
                             </execution>
                         </executions>
                         <configuration>
                             <skip>false</skip>
-                            <repository>docker.dipa.online/dipa-projekt/projektassistent</repository>
-                            <tag>${k8s.image.version}</tag>
-                            <buildArgs>
-                                <JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
-                            </buildArgs>
-                            <useMavenSettingsForAuth>true</useMavenSettingsForAuth>
-                            <pullNewerImage>false</pullNewerImage>
+                            <images>
+                                <image>
+                                    <name>docker.dipa.online/dipa-projekt/projektassistent:${k8s.image.version}</name>
+                                    <build>
+                                        <contextDir>${project.basedir}</contextDir>
+                                        <args>
+                                            <JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
+                                        </args>
+                                    </build>
+                                </image>
+                            </images>
                         </configuration>
                     </plugin>
                 </plugins>

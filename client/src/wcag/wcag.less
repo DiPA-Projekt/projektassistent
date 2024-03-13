@@ -1,0 +1,25 @@
+*:focus {
+  background-color: @wcag-background-color;
+}
+
+*:focus,
+.ant-select-focused,
+.ant-select-item-option-active,
+.ant-radio-input:focus + .ant-radio-inner,
+.ant-checkbox-input:focus + .ant-checkbox-inner {
+  background-color: @wcag-background-color;
+  color: @wcag-color;
+  outline-color: @wcag-background-color;
+  outline-offset: 2px !important;
+  outline-style: dashed !important;
+  outline-width: 2px !important;
+}
+
+.ant-radio-input:focus + .ant-radio-inner::after,
+.ant-checkbox-input:focus + .ant-checkbox-inner::after {
+  border-color: @wcag-color;
+}
+
+.ant-select-focused .ant-select-selector {
+  background-color: unset !important;
+}

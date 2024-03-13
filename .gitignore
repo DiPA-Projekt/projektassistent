@@ -74,6 +74,8 @@ local.properties
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio and WebStorm
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
 
+.idea
+
 # User-specific stuff
 .idea/**/workspace.xml
 .idea/**/tasks.xml
@@ -193,8 +195,5 @@ buildNumber.properties
 
 # VS Code
 .vscode
-/frontend/node/**
-/frontend/coverage/**
-/frontend/projects/projektassistent-api-client/src/**
+/client/eslint-report.json
 /server/src/main/resources/liquibase-diff-changeLog.yaml
-/frontend/eslint-report.json

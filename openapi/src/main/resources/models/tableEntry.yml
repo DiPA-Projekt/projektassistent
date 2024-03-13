@@ -1,0 +1,21 @@
+TableEntry:
+  type: object
+  properties:
+    id:
+      description: Unique identifier of the table entry
+      type: integer
+      format: int64
+      example: 1
+    descriptionEntry:
+      description: Entry on the left side of the table
+      type: string
+      example: "Erzeugt"
+    dataEntries:
+      description: Entries on the right side of the table
+      type: array
+      items:
+        $ref: "./dataEntry.yml#/DataEntry"
+  required:
+    - id
+    - descriptionEntry
+    - dataEntries
