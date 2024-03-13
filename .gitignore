@@ -197,3 +197,7 @@ buildNumber.properties
 .vscode
 /client/eslint-report.json
 /server/src/main/resources/liquibase-diff-changeLog.yaml
+
+OpenOfficePortable/
+client/node/
+node_modules/
