@@ -1,32 +1,26 @@
 import { Col, Layout, Menu, MenuProps, Row } from 'antd';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { BookOutlined, FileTextOutlined, HomeOutlined, ScissorOutlined } from '@ant-design/icons';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useTailoring } from '../../context/TailoringContext';
 import useImage from '../../hooks/useImage';
 import { LinkWithQuery } from '../LinkWithQuery';
 
 const { Header } = Layout;
 
-// <Menu.Item key="1">
-//   <HomeOutlined />
-//   <Link to="/"> Home</Link>
-// </Menu.Item>
-// <Menu.Item key="2">
-//   <ScissorOutlined />
-//   <NavLink to="/tailoring">Tailoring</NavLink>
-// </Menu.Item>
-// <Menu.Item key="3">
-//   <FileTextOutlined />
-//   <NavLink to="/documentation">Dokumentation</NavLink>
-// </Menu.Item>
-// <Menu.Item key="4">
-//   <BookOutlined />
-//   <NavLink to="/produktvorlagen">Produktvorlagen</NavLink>
-// </Menu.Item>
-
 export const SiteHeader = (props: any) => {
   const { tailoringParameter } = useTailoring();
+  const location = useLocation();
+  const [current, setCurrent] = useState(location.pathname);
+
+  useEffect(() => {
+    if (location) {
+      const splitPathname = location.pathname.split('/');
+      if (splitPathname.length >= 2 && current !== splitPathname[1]) {
+        setCurrent(splitPathname[1]);
+      }
+    }
+  }, [location]);
 
   const items: MenuProps['items'] = [
     {
@@ -44,7 +38,7 @@ export const SiteHeader = (props: any) => {
           Dokumentation
         </LinkWithQuery>
       ),
-      key: 'dokumentation',
+      key: 'documentation',
       icon: <FileTextOutlined />,
       disabled: !tailoringParameter.projectTypeId,
     },
@@ -114,6 +108,7 @@ export const SiteHeader = (props: any) => {
             mode="horizontal"
             theme="dark"
             defaultSelectedKeys={[props.selectedKey]}
+            selectedKeys={[current]}
             // onClick={handleMenuClick}
             items={items}
           ></Menu>

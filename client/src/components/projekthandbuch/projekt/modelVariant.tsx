@@ -27,15 +27,15 @@ export function ModelVariantComponent() {
   }, []);
 
   async function fetchModelVariantsData(): Promise<void> {
-    const modelVariantsUrl = weitApiUrl + '/V-Modellmetamodell/mm_2021/V-Modellvariante';
+    const metaModelUrl = weitApiUrl + '/V-Modellmetamodell/mm_2021';
 
-    const jsonDataFromXml = await getJsonDataFromXml(modelVariantsUrl);
+    const jsonDataFromXml = await getJsonDataFromXml(metaModelUrl);
 
     const modelVariants: ModelVariant[] = jsonDataFromXml
       .getElementsByTagName('V-Modellvariante')
       .map((variante) => {
         const currentAttributes = variante.attributes;
-        return { id: currentAttributes.id, name: currentAttributes.name };
+        return { id: currentAttributes.id, name: currentAttributes.name + ' (v' + currentAttributes.version + ')' };
       })
       .sort(function (a, b) {
         return a.name < b.name ? -1 : 1;

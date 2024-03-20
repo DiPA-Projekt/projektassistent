@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import {
   AuditOutlined,
@@ -139,7 +139,7 @@ export function Navigation() {
   } = useDocumentation();
 
   const navigate = useNavigate();
-  const location = useLocation();
+  // const location = useLocation();
 
   const [loading, setLoading] = useState(false);
 
