@@ -126,7 +126,7 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
 
     // mount().then();
     //eslint-disable-next-line
-  }, [selectedItemKey]); // TODO selectedIndexType
+  }, [selectedItemKey]);
 
   useEffect(() => {
     // async function mount() {
@@ -137,9 +137,7 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
 
     // mount().then();
     //eslint-disable-next-line
-  }, [selectedIndexType]); // TODO selectedIndexType
-
-  // TODO: onIndexPageChanged
+  }, [selectedIndexType]);
 
   function resetSelectedMenuEntryId() {
     setDisciplineId(null);
@@ -162,6 +160,7 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
   }
 
   function onRouteChanged(menuEntryId: string): void {
+    setSelectedIndexType(undefined);
     resetSelectedMenuEntryId();
 
     const foundMenuItem = getMenuItemByAttributeValue(navigationData, 'key', menuEntryId);
@@ -235,7 +234,7 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
   }
 
   function onIndexPageSelected(indexPageType: IndexTypeEnum): void {
-    console.log('onIndexPageSelected content', indexPageType);
+    resetSelectedMenuEntryId();
     setSelectedIndexType(indexPageType);
   }
 

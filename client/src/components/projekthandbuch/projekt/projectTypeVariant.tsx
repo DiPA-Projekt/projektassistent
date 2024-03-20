@@ -133,12 +133,14 @@ export function ProjectTypeVariantComponent() {
               <Cascader
                 style={{ maxWidth: '300px' }}
                 options={cascaderOptions}
-                onChange={async (value: any /*CascaderValueType*/) => {
-                  setTailoringParameter({
-                    modelVariantId: tailoringParameter.modelVariantId,
-                    projectTypeVariantId: value[1],
-                    projectTypeId: await getProjectTypeId(value[1]),
-                  });
+                onChange={async (value: (string | number)[]) => {
+                  if (tailoringParameter.projectTypeVariantId !== value[1]) {
+                    setTailoringParameter({
+                      modelVariantId: tailoringParameter.modelVariantId,
+                      projectTypeVariantId: value[1],
+                      projectTypeId: await getProjectTypeId(String(value[1])),
+                    });
+                  }
                 }}
                 value={cascaderDefaultValue}
                 placeholder={t('common.PleaseChoose')}

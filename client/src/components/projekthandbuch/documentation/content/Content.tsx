@@ -141,8 +141,6 @@ export function Content() {
             break;
         }
         setSelectedPageEntry(content);
-      } else {
-        console.log('no selectedIndexType');
       }
     }
 
@@ -1447,7 +1445,7 @@ export function Content() {
 
     const data: any[] = filterRelevantDataTypes.map((navItem: any): any => {
       return {
-        modelElement: navItem.label,
+        modelElement: { id: navItem.key, text: navItem.label },
         dataTypes: [navItem.dataType],
       };
     });
@@ -1459,9 +1457,9 @@ export function Content() {
         key: 'modelElement',
         defaultSortOrder: 'ascend',
         sorter: {
-          compare: (a, b) => sorter(a.modelElement, b.modelElement),
+          compare: (a, b) => sorter(a.modelElement.text, b.modelElement.text),
         },
-        render: (text: string) => <a>{text}</a>, // TODO
+        render: (object) => <Link to={`/documentation/${object.id}${getSearchStringFromHash()}`}>{object.text}</Link>,
       },
       {
         title: 'Typ',
@@ -1522,7 +1520,7 @@ export function Content() {
 
     const data: any[] = filterRelevantDataTypes.map((navItem: any): any => {
       return {
-        modelElement: navItem.label,
+        modelElement: { id: navItem.key, text: navItem.label },
         dataTypes: [navItem.dataType],
       };
     });
@@ -1534,9 +1532,9 @@ export function Content() {
         key: 'modelElement',
         defaultSortOrder: 'ascend',
         sorter: {
-          compare: (a, b) => sorter(a.modelElement, b.modelElement),
+          compare: (a, b) => sorter(a.modelElement.text, b.modelElement.text),
         },
-        render: (text: string) => <a>{text}</a>, // TODO
+        render: (object) => <Link to={`/documentation/${object.id}${getSearchStringFromHash()}`}>{object.text}</Link>,
       },
       {
         title: 'Typ',
@@ -2509,7 +2507,7 @@ export function Content() {
     let idCounter = 2000;
 
     const sinnUndZweck = decodeXml(jsonDataFromXml.getElementsByTagName('Sinn_und_Zweck')[0]?.value);
-    const aktivityRef: XMLElement[] = jsonDataFromXml.getElementsByTagName('AktivitätZuProduktRef');
+    const activityRef: XMLElement[] = jsonDataFromXml.getElementsByTagName('AktivitätZuProduktRef');
     const methodsRef: XMLElement[] = jsonDataFromXml.getElementsByTagName('AktivitätZuMethodenreferenzRef');
     const toolsRef: XMLElement[] = jsonDataFromXml.getElementsByTagName('AktivitätZuWerkzeugreferenzRef');
     // const description = decodeXml(jsonDataFromXml.getElementsByTagName('Beschreibung')[0]?.value);
@@ -2518,7 +2516,7 @@ export function Content() {
 
     //////////////////////////////////////////////
 
-    const products = aktivityRef.flatMap((entry) => {
+    const products = activityRef.flatMap((entry) => {
       return entry.getElementsByTagName('ProduktRef').map((productRef) => {
         return {
           id: productRef.attributes.id,
