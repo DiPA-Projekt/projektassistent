@@ -34,6 +34,7 @@ type DocumentationSession = {
   activityId: string | null;
   templateDisciplineId: string | null;
   productDisciplineId: string | null;
+  glossaryEntryId: string | null;
   entryId: string | null;
   getNavigationPath: Function;
   onRouteChanged: Function;
@@ -80,6 +81,7 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
   const [activityId, setActivityId] = useState<string | null>(null);
   const [templateDisciplineId, setTemplateDisciplineId] = useState<string | null>(null);
   const [productDisciplineId, setProductDisciplineId] = useState<string | null>(null);
+  const [glossaryEntryId, setGlossaryEntryId] = useState<string | null>(null);
   const [entryId, setEntryId] = useState<string | null>(null);
 
   const value: DocumentationSession = {
@@ -108,6 +110,7 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
     activityId,
     templateDisciplineId,
     productDisciplineId,
+    glossaryEntryId,
     entryId,
     getNavigationPath,
     onRouteChanged,
@@ -156,6 +159,7 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
     setActivityId(null);
     setTemplateDisciplineId(null);
     setProductDisciplineId(null);
+    setGlossaryEntryId(null);
     setEntryId(null);
   }
 
@@ -206,6 +210,8 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
         setActivityId(foundMenuItem.key);
       } else if (foundMenuItem.dataType === NavTypeEnum.TEMPLATE_DISCIPLINE) {
         setTemplateDisciplineId(foundMenuItem.key);
+      } else if (foundMenuItem.dataType === NavTypeEnum.GLOSSARY_ENTRY) {
+        setGlossaryEntryId(foundMenuItem.key);
       } else {
         setEntryId(foundMenuItem.key);
       }

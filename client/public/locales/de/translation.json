@@ -34,6 +34,7 @@
   },
   "text": {
     "insertTopicDescription": "Themenbeschreibungen einfügen",
-    "generateNavigation": "Erstelle Navigation"
+    "generateNavigation": "Erstelle Navigation",
+    "pleaseSelectSubChapter": "Bitte wählen Sie ein Unterkapitel."
   }
 }
