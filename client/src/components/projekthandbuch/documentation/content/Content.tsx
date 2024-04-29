@@ -1195,7 +1195,7 @@ export function Content() {
       [NavTypeEnum.PRODUCT].includes(item.dataType)
     );
 
-    let data: any[] = filterRelevantDataTypes.map((navItem: any): any => {
+    const data: any[] = filterRelevantDataTypes.map((navItem: any): any => {
       return {
         modelElement: {
           id: navItem.key,
@@ -1204,51 +1204,6 @@ export function Content() {
         dataTypes: [navItem.dataType],
       };
     });
-
-    /////////////////
-
-    const filterDisciplineDataTypes = flatten(navigationData).filter((item: any) =>
-      [NavTypeEnum.DISCIPLINE].includes(item.dataType)
-    );
-
-    for (const discipline of filterDisciplineDataTypes) {
-      const productsUrl =
-        weitApiUrl +
-        '/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-        tailoringParameter.modelVariantId +
-        '/Projekttyp/' +
-        tailoringParameter.projectTypeId +
-        '/Projekttypvariante/' +
-        tailoringParameter.projectTypeVariantId +
-        '/Disziplin/' +
-        discipline.key +
-        '/Produkt?' +
-        getProjectFeaturesString();
-
-      const jsonDataFromXml = await getJsonDataFromXml(productsUrl);
-
-      let productTopicEntries: any[] = [];
-
-      if (jsonDataFromXml.children) {
-        for (const product of jsonDataFromXml.children) {
-          const themaRef: XMLElement[] = product.getElementsByTagName('ThemaRef');
-          productTopicEntries = [
-            ...productTopicEntries,
-            ...themaRef.map((subjectRef) => {
-              return {
-                modelElement: {
-                  id: product.attributes.id + '#' + subjectRef.attributes.id,
-                  text: subjectRef.attributes.name,
-                },
-                dataTypes: [NavTypeEnum.TOPIC],
-              };
-            }),
-          ];
-        }
-      }
-
-      data = [...data, ...productTopicEntries];
-    }
 
     /////////////////
 
@@ -1281,9 +1236,6 @@ export function Content() {
               let color;
               if (tag === 'product') {
                 color = 'geekblue';
-              }
-              if (tag === 'topic') {
-                color = 'green';
               }
               return (
                 <Tag color={color} key={tag}>
@@ -2023,7 +1975,8 @@ export function Content() {
     //////////////////////////////////////////////
 
     const activitiesData = await getActivitiesData();
-    const activitiesToTools = [];
+    const activitiesToTools: DataEntry[] = [];
+    const activitiesToProducts: DataEntry[] = [];
 
     for (const activity of activitiesData) {
       const methodReferences = activity.getElementsByTagName('MethodenreferenzRef');
@@ -2047,11 +2000,15 @@ export function Content() {
             const products = activity.getElementsByTagName('ProduktRef');
 
             for (const product of products) {
-              activitiesToTools.push({
-                id: product.attributes.id,
-                title: activity.attributes.name,
-                suffix: '(' + product.attributes.name + ')',
-              });
+              const foundProduct = getMenuItemByAttributeValue(navigationData, 'key', product.attributes.id);
+
+              if (foundProduct) {
+                activitiesToProducts.push({
+                  id: product.attributes.id,
+                  title: activity.attributes.name,
+                  suffix: '(' + product.attributes.name + ')',
+                });
+              }
             }
           }
         }
@@ -2061,13 +2018,19 @@ export function Content() {
     if (activitiesToTools.length > 0) {
       tableEntries.push({
         id: (idCounter++).toString(),
-        descriptionEntry: 'Aktivitäten',
+        descriptionEntry: t('translation:label.activities'),
         dataEntries: activitiesToTools,
+      });
+    } else if (activitiesToProducts.length > 0) {
+      tableEntries.push({
+        id: (idCounter++).toString(),
+        descriptionEntry: t('translation:label.products'),
+        dataEntries: activitiesToProducts,
       });
     }
 
     // //////////////////////////////////////////////
-    //
+
     const quellen = quelleRefs.flatMap((entry: XMLElement) => {
       return entry.getElementsByTagName('QuelleRef').map((productRef) => {
         return {
@@ -2115,16 +2078,42 @@ export function Content() {
     //////////////////////////////////////////////
 
     const activitiesData = await getActivitiesData();
-    const activitiesToTools = [];
+    const activitiesToTools: DataEntry[] = [];
+    const activitiesToProducts: DataEntry[] = [];
 
     for (const activity of activitiesData) {
       const toolReferences = activity.getElementsByTagName('WerkzeugreferenzRef');
       for (const toolReference of toolReferences) {
         if (toolReference.attributes.id === toolReferenceId) {
-          activitiesToTools.push({
-            id: activity.attributes.id,
-            title: activity.attributes.name,
-          });
+          /* The method and tool references (reference work aids) contain links to the corresponding activities.
+             As the activities are no longer part of the documentation (since version 2.4), the links cannot be resolved.
+             Instead of the activity, a link should therefore be created to the product linked to the activity.
+
+             -> So, if the activity id is not in navigation menu change linked site to products page of the activity.
+           */
+
+          const foundActivity = getMenuItemByAttributeValue(navigationData, 'key', activity.attributes.id);
+
+          if (foundActivity) {
+            activitiesToTools.push({
+              id: activity.attributes.id,
+              title: activity.attributes.name,
+            });
+          } else {
+            const products = activity.getElementsByTagName('ProduktRef');
+
+            for (const product of products) {
+              const foundProduct = getMenuItemByAttributeValue(navigationData, 'key', product.attributes.id);
+
+              if (foundProduct) {
+                activitiesToProducts.push({
+                  id: product.attributes.id,
+                  title: activity.attributes.name,
+                  suffix: '(' + product.attributes.name + ')',
+                });
+              }
+            }
+          }
         }
       }
     }
@@ -2132,8 +2121,14 @@ export function Content() {
     if (activitiesToTools.length > 0) {
       tableEntries.push({
         id: (idCounter++).toString(),
-        descriptionEntry: 'Aktivitäten',
+        descriptionEntry: t('translation:label.activities'),
         dataEntries: activitiesToTools,
+      });
+    } else if (activitiesToProducts.length > 0) {
+      tableEntries.push({
+        id: (idCounter++).toString(),
+        descriptionEntry: t('translation:label.products'),
+        dataEntries: activitiesToProducts,
       });
     }
 

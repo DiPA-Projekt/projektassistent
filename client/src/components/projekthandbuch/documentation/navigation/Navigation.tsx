@@ -955,16 +955,21 @@ export function Navigation() {
 
     const navigation: NavMenuItem[] = [];
 
-    jsonDataFromXmlProjectTypeVariants.getElementsByTagName('Projekttypvariante').map((projectTypeVariantValue) => {
-      navigation.push({
-        key: 'pes_' + projectTypeVariantValue.attributes.id,
-        parent: target,
-        label: projectTypeVariantValue.attributes.name,
-        dataType: NavTypeEnum.PROJECT_TYPE_VARIANT_SEQUENCE, // TODO: oder auch ProjectExecutionStrategy
-        onClick: (item: any) => handleSelectedItem(item.key), // TODO: different Types
-        onTitleClick: (item: any) => handleSelectedItem(item.key), // TODO: different Types
+    jsonDataFromXmlProjectTypeVariants
+      .getElementsByTagName('Projekttypvariante')
+      .filter(
+        (projectTypeVariantValue) => projectTypeVariantValue.attributes.id === tailoringParameter.projectTypeVariantId
+      )
+      .map((projectTypeVariantValue) => {
+        navigation.push({
+          key: 'pes_' + projectTypeVariantValue.attributes.id,
+          parent: target,
+          label: projectTypeVariantValue.attributes.name,
+          dataType: NavTypeEnum.PROJECT_TYPE_VARIANT_SEQUENCE, // TODO: oder auch ProjectExecutionStrategy
+          onClick: (item: any) => handleSelectedItem(item.key), // TODO: different Types
+          onTitleClick: (item: any) => handleSelectedItem(item.key), // TODO: different Types
+        });
       });
-    });
 
     return navigation;
   }
