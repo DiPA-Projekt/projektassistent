@@ -50,6 +50,7 @@ icons.set('Ausgewählte Vorgehensbausteine', { color: '#689fd0', icon: <ToolOutl
 icons.set('Ausgewählte Ablaufbausteine', { color: '#689fd0', icon: <ToolOutlined /> });
 // Referenz Arbeitshilfen
 icons.set('Produkt', { color: '#689fd0', icon: <ShoppingOutlined /> });
+icons.set('Produkte', { color: '#689fd0', icon: <ShoppingOutlined /> });
 icons.set('Werkzeuge', { color: '#689fd0', icon: <ToolOutlined /> });
 icons.set('Arbeitsschritte', { color: '#689fd0', icon: <ToolOutlined /> });
 icons.set('Methoden', { color: '#689fd0', icon: <ToolOutlined /> });
