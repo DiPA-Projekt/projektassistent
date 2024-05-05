@@ -43,7 +43,7 @@ jobs:
         run: mvn -s .mvn/settings.xml -B -DreleaseVersion=${{ github.event.inputs.release_version }} gitflow:release --file pom.xml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DOCKER_REGISTRY_USERNAME: dipa
+          DOCKER_REGISTRY_USERNAME: projektassistent
           DOCKER_REGISTRY_TOKEN: ${{ secrets.DOCKER_REGISTRY_TOKEN }}
           GIT_HUB_USERNAME: ${{ secrets.GIT_HUB_USERNAME }}
           GIT_HUB_PACKAGES_ACCESS_TOKEN: ${{ secrets.GIT_HUB_PACKAGES_ACCESS_TOKEN }}
