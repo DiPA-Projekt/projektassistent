@@ -39,6 +39,15 @@ jobs:
         run: |
           git config user.email "actions@dipa.online"
           git config user.name "DiPA GitHub Actions"
+      - name: Einstellen des Autorisierungstoken
+        run: |
+          npm config set //npm.pkg.github.com/:_authToken=${{ secrets.GIT_HUB_PACKAGES_ACCESS_TOKEN_WRITE }}
+      - name: Set up Node.js
+        uses: actions/setup-node@v2.1.5
+        with:
+          node-version: 14.x
+          registry-url: "https://npm.pkg.github.com"
+          scope: "@dipa-projekt"
       - name: Release with Maven
         run: mvn -s .mvn/settings.xml -B -DreleaseVersion=${{ github.event.inputs.release_version }} gitflow:release --file pom.xml
         env:
