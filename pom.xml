@@ -11,7 +11,7 @@
     <groupId>online.projektassistent</groupId>
     <artifactId>projektassistent-parent</artifactId>
     <packaging>pom</packaging>
-    <version>0.0.2-SNAPSHOT</version>
+    <version>0.0.10</version>
     <name>Projektassistent :: Parent</name>
     <description>Projektassistent</description>
 
@@ -158,7 +158,7 @@
                 <plugin>
                     <groupId>com.amashchenko.maven.plugin</groupId>
                     <artifactId>gitflow-maven-plugin</artifactId>
-                    <version>1.16.0</version>
+                    <version>1.21.0</version>
                     <configuration>
                         <argLine>-s .mvn/settings.xml -DskipTests -P production-ci</argLine>
                         <gitFlowConfig>

@@ -10,6 +10,7 @@ import {
   decodeXml,
   fixLinksInText,
   flatten,
+  getFigureDesignationFromText,
   getJsonDataFromXml,
   getMenuItemByAttributeValue,
   getSearchStringFromHash,
@@ -26,6 +27,7 @@ import { PageEntryContent } from './PageEntryContent';
 import { weitApiUrl } from '../../../app/App';
 import { HashLink } from 'react-router-hash-link';
 import { DataEntry, PageEntry, TableEntry } from '../Documentation';
+import { ProjectType } from '../../projekt/project';
 
 export function Content() {
   const [loading, setLoading] = useState(false);
@@ -59,6 +61,7 @@ export function Content() {
     activityId,
     templateDisciplineId,
     productDisciplineId,
+    glossaryEntryId,
     entryId,
     selectedIndexType,
   } = useDocumentation();
@@ -141,8 +144,6 @@ export function Content() {
             break;
         }
         setSelectedPageEntry(content);
-      } else {
-        console.log('no selectedIndexType');
       }
     }
 
@@ -293,6 +294,18 @@ export function Content() {
     void mount().then();
     //eslint-disable-next-line
   }, [templateDisciplineId]);
+
+  useEffect(() => {
+    async function mount() {
+      if (glossaryEntryId) {
+        const content = await getGlossaryEntryContent();
+        setSelectedPageEntry(content);
+      }
+    }
+
+    void mount().then();
+    //eslint-disable-next-line
+  }, [glossaryEntryId]);
 
   useEffect(() => {
     async function mount() {
@@ -498,6 +511,8 @@ export function Content() {
       const childText = jsonDataFromXml.children.find((child) => child.name === 'Text');
       if (childText) {
         textPart = decodeXml(childText.value);
+      } else {
+        textPart = t('text.pleaseSelectSubChapter');
       }
     }
 
@@ -537,7 +552,7 @@ export function Content() {
       id: jsonDataFromXml.attributes.id,
       // menuEntryId: jsonDataFromXml.attributes.id,
       header: jsonDataFromXml.attributes.name,
-      descriptionText: '',
+      descriptionText: t('text.pleaseSelectSubChapter'),
       tableEntries: tableEntries,
       // subPageEntries: subPageEntries,
     };
@@ -742,7 +757,10 @@ export function Content() {
     }
     /////////////////////////////
 
-    const tools = [...activities, ...products, ...activitiesToTools];
+    // To hide the links to the activities in the tools section of a product the id has to removed here
+    const activitiesWithoutId = activities.map(({ id, ...keepAttrs }) => keepAttrs);
+
+    const tools = [...activitiesWithoutId, ...products, ...activitiesToTools];
 
     if (tools.length > 0) {
       tableEntries.push({
@@ -1177,7 +1195,7 @@ export function Content() {
       [NavTypeEnum.PRODUCT].includes(item.dataType)
     );
 
-    let data: any[] = filterRelevantDataTypes.map((navItem: any): any => {
+    const data: any[] = filterRelevantDataTypes.map((navItem: any): any => {
       return {
         modelElement: {
           id: navItem.key,
@@ -1186,51 +1204,6 @@ export function Content() {
         dataTypes: [navItem.dataType],
       };
     });
-
-    /////////////////
-
-    const filterDisciplineDataTypes = flatten(navigationData).filter((item: any) =>
-      [NavTypeEnum.DISCIPLINE].includes(item.dataType)
-    );
-
-    for (const discipline of filterDisciplineDataTypes) {
-      const productsUrl =
-        weitApiUrl +
-        '/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-        tailoringParameter.modelVariantId +
-        '/Projekttyp/' +
-        tailoringParameter.projectTypeId +
-        '/Projekttypvariante/' +
-        tailoringParameter.projectTypeVariantId +
-        '/Disziplin/' +
-        discipline.key +
-        '/Produkt?' +
-        getProjectFeaturesString();
-
-      const jsonDataFromXml = await getJsonDataFromXml(productsUrl);
-
-      let productTopicEntries: any[] = [];
-
-      if (jsonDataFromXml.children) {
-        for (const product of jsonDataFromXml.children) {
-          const themaRef: XMLElement[] = product.getElementsByTagName('ThemaRef');
-          productTopicEntries = [
-            ...productTopicEntries,
-            ...themaRef.map((subjectRef) => {
-              return {
-                modelElement: {
-                  id: product.attributes.id + '#' + subjectRef.attributes.id,
-                  text: subjectRef.attributes.name,
-                },
-                dataTypes: [NavTypeEnum.TOPIC],
-              };
-            }),
-          ];
-        }
-      }
-
-      data = [...data, ...productTopicEntries];
-    }
 
     /////////////////
 
@@ -1263,9 +1236,6 @@ export function Content() {
               let color;
               if (tag === 'product') {
                 color = 'geekblue';
-              }
-              if (tag === 'topic') {
-                color = 'green';
               }
               return (
                 <Tag color={color} key={tag}>
@@ -1447,7 +1417,7 @@ export function Content() {
 
     const data: any[] = filterRelevantDataTypes.map((navItem: any): any => {
       return {
-        modelElement: navItem.label,
+        modelElement: { id: navItem.key, text: navItem.label },
         dataTypes: [navItem.dataType],
       };
     });
@@ -1459,9 +1429,9 @@ export function Content() {
         key: 'modelElement',
         defaultSortOrder: 'ascend',
         sorter: {
-          compare: (a, b) => sorter(a.modelElement, b.modelElement),
+          compare: (a, b) => sorter(a.modelElement.text, b.modelElement.text),
         },
-        render: (text: string) => <a>{text}</a>, // TODO
+        render: (object) => <Link to={`/documentation/${object.id}${getSearchStringFromHash()}`}>{object.text}</Link>,
       },
       {
         title: 'Typ',
@@ -1522,7 +1492,7 @@ export function Content() {
 
     const data: any[] = filterRelevantDataTypes.map((navItem: any): any => {
       return {
-        modelElement: navItem.label,
+        modelElement: { id: navItem.key, text: navItem.label },
         dataTypes: [navItem.dataType],
       };
     });
@@ -1534,9 +1504,9 @@ export function Content() {
         key: 'modelElement',
         defaultSortOrder: 'ascend',
         sorter: {
-          compare: (a, b) => sorter(a.modelElement, b.modelElement),
+          compare: (a, b) => sorter(a.modelElement.text, b.modelElement.text),
         },
-        render: (text: string) => <a>{text}</a>, // TODO
+        render: (object) => <Link to={`/documentation/${object.id}${getSearchStringFromHash()}`}>{object.text}</Link>,
       },
       {
         title: 'Typ',
@@ -1833,6 +1803,30 @@ export function Content() {
     return jsonDataFromXml.getElementsByTagName('Aktivität');
   }
 
+  async function getGlossaryEntryContent(): Promise<XMLElement[]> {
+    const expressionUrl =
+      weitApiUrl +
+      '/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      tailoringParameter.modelVariantId +
+      '/Begriff/' +
+      glossaryEntryId;
+
+    const jsonDataFromXml = await getJsonDataFromXml(expressionUrl);
+
+    const description = decodeXml(jsonDataFromXml.getElementsByTagName('Erläuterung')[0]?.value);
+
+    const tableEntries: TableEntry[] = [];
+
+    //////////////////////////////////////////////
+
+    return {
+      id: jsonDataFromXml.attributes.id,
+      header: jsonDataFromXml.attributes.name,
+      descriptionText: description,
+      tableEntries: tableEntries,
+    };
+  }
+
   async function getTemplatesContent(): Promise<PageEntry> {
     const disciplineId = templateDisciplineId?.replace('td_', '');
     // get all products with externalTemplate info for templateDisciplineId
@@ -1877,7 +1871,6 @@ export function Content() {
 
         const jsonDataFromXml = await getJsonDataFromXml(externalTemplateUrl);
 
-        const templateId = jsonDataFromXml.attributes.id;
         const templateName = jsonDataFromXml.attributes.name;
         const templateUri = jsonDataFromXml.getElementsByTagName('URI')[0]?.value;
 
@@ -1982,16 +1975,42 @@ export function Content() {
     //////////////////////////////////////////////
 
     const activitiesData = await getActivitiesData();
-    const activitiesToTools = [];
+    const activitiesToTools: DataEntry[] = [];
+    const activitiesToProducts: DataEntry[] = [];
 
     for (const activity of activitiesData) {
       const methodReferences = activity.getElementsByTagName('MethodenreferenzRef');
       for (const methodReference of methodReferences) {
         if (methodReference.attributes.id === methodReferenceId) {
-          activitiesToTools.push({
-            id: activity.attributes.id,
-            title: activity.attributes.name,
-          });
+          /* The method and tool references (reference work aids) contain links to the corresponding activities.
+             As the activities are no longer part of the documentation (since version 2.4), the links cannot be resolved.
+             Instead of the activity, a link should therefore be created to the product linked to the activity.
+
+             -> So, if the activity id is not in navigation menu change linked site to products page of the activity.
+           */
+
+          const foundActivity = getMenuItemByAttributeValue(navigationData, 'key', activity.attributes.id);
+
+          if (foundActivity) {
+            activitiesToTools.push({
+              id: activity.attributes.id,
+              title: activity.attributes.name,
+            });
+          } else {
+            const products = activity.getElementsByTagName('ProduktRef');
+
+            for (const product of products) {
+              const foundProduct = getMenuItemByAttributeValue(navigationData, 'key', product.attributes.id);
+
+              if (foundProduct) {
+                activitiesToProducts.push({
+                  id: product.attributes.id,
+                  title: activity.attributes.name,
+                  suffix: '(' + product.attributes.name + ')',
+                });
+              }
+            }
+          }
         }
       }
     }
@@ -1999,13 +2018,19 @@ export function Content() {
     if (activitiesToTools.length > 0) {
       tableEntries.push({
         id: (idCounter++).toString(),
-        descriptionEntry: 'Aktivitäten',
+        descriptionEntry: t('translation:label.activities'),
         dataEntries: activitiesToTools,
+      });
+    } else if (activitiesToProducts.length > 0) {
+      tableEntries.push({
+        id: (idCounter++).toString(),
+        descriptionEntry: t('translation:label.products'),
+        dataEntries: activitiesToProducts,
       });
     }
 
     // //////////////////////////////////////////////
-    //
+
     const quellen = quelleRefs.flatMap((entry: XMLElement) => {
       return entry.getElementsByTagName('QuelleRef').map((productRef) => {
         return {
@@ -2053,16 +2078,42 @@ export function Content() {
     //////////////////////////////////////////////
 
     const activitiesData = await getActivitiesData();
-    const activitiesToTools = [];
+    const activitiesToTools: DataEntry[] = [];
+    const activitiesToProducts: DataEntry[] = [];
 
     for (const activity of activitiesData) {
       const toolReferences = activity.getElementsByTagName('WerkzeugreferenzRef');
       for (const toolReference of toolReferences) {
         if (toolReference.attributes.id === toolReferenceId) {
-          activitiesToTools.push({
-            id: activity.attributes.id,
-            title: activity.attributes.name,
-          });
+          /* The method and tool references (reference work aids) contain links to the corresponding activities.
+             As the activities are no longer part of the documentation (since version 2.4), the links cannot be resolved.
+             Instead of the activity, a link should therefore be created to the product linked to the activity.
+
+             -> So, if the activity id is not in navigation menu change linked site to products page of the activity.
+           */
+
+          const foundActivity = getMenuItemByAttributeValue(navigationData, 'key', activity.attributes.id);
+
+          if (foundActivity) {
+            activitiesToTools.push({
+              id: activity.attributes.id,
+              title: activity.attributes.name,
+            });
+          } else {
+            const products = activity.getElementsByTagName('ProduktRef');
+
+            for (const product of products) {
+              const foundProduct = getMenuItemByAttributeValue(navigationData, 'key', product.attributes.id);
+
+              if (foundProduct) {
+                activitiesToProducts.push({
+                  id: product.attributes.id,
+                  title: activity.attributes.name,
+                  suffix: '(' + product.attributes.name + ')',
+                });
+              }
+            }
+          }
         }
       }
     }
@@ -2070,8 +2121,14 @@ export function Content() {
     if (activitiesToTools.length > 0) {
       tableEntries.push({
         id: (idCounter++).toString(),
-        descriptionEntry: 'Aktivitäten',
+        descriptionEntry: t('translation:label.activities'),
         dataEntries: activitiesToTools,
+      });
+    } else if (activitiesToProducts.length > 0) {
+      tableEntries.push({
+        id: (idCounter++).toString(),
+        descriptionEntry: t('translation:label.products'),
+        dataEntries: activitiesToProducts,
       });
     }
 
@@ -2456,7 +2513,30 @@ export function Content() {
 
     let idCounter = 2000;
 
+    const title = decodeXml(jsonDataFromXml.attributes.name);
+    const projectType: ProjectType = jsonDataFromXml.getElementsByTagName('ProjekttypRef')[0]
+      ?.attributes as ProjectType;
+
     const sequence = decodeXml(jsonDataFromXml.getElementsByTagName('Ablauf')[0]?.value);
+    const figureDesignation = getFigureDesignationFromText(sequence);
+
+    const getFigureUrl =
+      weitApiUrl +
+      '/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      tailoringParameter.modelVariantId +
+      '/Projekttyp/' +
+      projectType.id +
+      '/Projekttypvariante/' +
+      projectTypeVariantId +
+      '/Grafik/Abb:' +
+      figureDesignation +
+      '?' +
+      getProjectFeaturesString();
+
+    const imageTag = '<p><img alt="" id="1489155545306" src=' + getFigureUrl + '/></p>';
+    const imageDescriptionTag =
+      '<p style="margin-top: 0px;">' + '<i>Abbildung [' + figureDesignation + ']: ' + title + '</i></p>';
+
     const ablaufbausteinRefs: XMLElement[] = jsonDataFromXml.getElementsByTagName('AblaufbausteinRef');
 
     const ablaufbausteine = ablaufbausteinRefs.map((ablaufbausteinRef) => {
@@ -2484,7 +2564,8 @@ export function Content() {
       id: jsonDataFromXml.attributes.id,
       // menuEntryId: jsonDataFromXml.attributes.id,
       header: jsonDataFromXml.attributes.name,
-      descriptionText: replaceUrlInText(sequence, tailoringParameter, getProjectFeaturesString()),
+      descriptionText:
+        replaceUrlInText(sequence, tailoringParameter, getProjectFeaturesString()) + imageTag + imageDescriptionTag,
       tableEntries: tableEntries,
       // subPageEntries: subPageEntries,
     };
@@ -2509,7 +2590,7 @@ export function Content() {
     let idCounter = 2000;
 
     const sinnUndZweck = decodeXml(jsonDataFromXml.getElementsByTagName('Sinn_und_Zweck')[0]?.value);
-    const aktivityRef: XMLElement[] = jsonDataFromXml.getElementsByTagName('AktivitätZuProduktRef');
+    const activityRef: XMLElement[] = jsonDataFromXml.getElementsByTagName('AktivitätZuProduktRef');
     const methodsRef: XMLElement[] = jsonDataFromXml.getElementsByTagName('AktivitätZuMethodenreferenzRef');
     const toolsRef: XMLElement[] = jsonDataFromXml.getElementsByTagName('AktivitätZuWerkzeugreferenzRef');
     // const description = decodeXml(jsonDataFromXml.getElementsByTagName('Beschreibung')[0]?.value);
@@ -2518,7 +2599,7 @@ export function Content() {
 
     //////////////////////////////////////////////
 
-    const products = aktivityRef.flatMap((entry) => {
+    const products = activityRef.flatMap((entry) => {
       return entry.getElementsByTagName('ProduktRef').map((productRef) => {
         return {
           id: productRef.attributes.id,

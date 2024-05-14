@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import {
   AuditOutlined,
@@ -50,6 +50,7 @@ export enum NavTypeEnum {
   TEMPLATE_DISCIPLINE = 'templateDiscipline',
   PRODUCT_DISCIPLINE = 'productDiscipline',
   SAMPLE_TEXT = 'sampleText',
+  GLOSSARY_ENTRY = 'glossaryEntry',
 }
 
 export enum IndexTypeEnum {
@@ -108,7 +109,7 @@ export interface SectionDetail {
   replacedContent?: NavMenuItem[];
   mergedChildren?: NavMenuItem[];
   addedChildren?: NavMenuItem[];
-  indexItem?: { key: string; label: string; onClick: () => any };
+  indexItem?: { key: string; label: string; children: NavMenuItem[]; onClick?: () => any; onTitleClick?: () => any };
 }
 
 export type NavMenuItem = {
@@ -139,7 +140,7 @@ export function Navigation() {
   } = useDocumentation();
 
   const navigate = useNavigate();
-  const location = useLocation();
+  // const location = useLocation();
 
   const [loading, setLoading] = useState(false);
 
@@ -221,11 +222,20 @@ export function Navigation() {
           i++;
           // }
         }
+
+        // cleanup menu clicks because inner nodes of the ant tree throw onTitleClick event
+        // and leaf nodes throw onClick event
         if (item.children && item.children.length > 0) {
-          item.onTitleClick = (item: any) => handleSelectedItem(item.key);
+          // Überschreibt ansonsten das onTitleClick aus dem Index:Arbeitshilfen
+          if (!item.hasOwnProperty('onTitleClick')) {
+            item.onTitleClick = (item: any) => handleSelectedItem(item.key);
+          }
           await addParentRecursive(item.children);
         } else {
-          item.onClick = (item: any) => handleSelectedItem(item.key);
+          // Überschreibt ansonsten das onClick aus dem Index:Arbeitshilfen
+          if (!item.hasOwnProperty('onClick')) {
+            item.onClick = (item: any) => handleSelectedItem(item.key);
+          }
           item.children = undefined;
         }
       }
@@ -276,6 +286,11 @@ export function Navigation() {
         addedChildren = getDisciplineGroup(childItem.parent, jsonDataFromXml).filter((navMenuItem) =>
           disciplineIds.includes(navMenuItem.key)
         );
+      } else if (
+        generatedContent === 'Elemente:Produktvorlagen_und_Beispielprodukte_nach_Disziplinen' &&
+        childItem.parent
+      ) {
+        addedChildren = await getTemplates(childItem);
       } else {
         switch (generatedContent) {
           case 'Index:Produkte': {
@@ -314,12 +329,19 @@ export function Navigation() {
             indexItem = {
               key: childItem.key,
               label: childItem.label,
-              onClick: () => setSelectedIndexType(IndexTypeEnum.WORK_AIDS),
+              children: childItem.children,
+              onClick:
+                childItem.children?.length > 0 ? () => false : () => setSelectedIndexType(IndexTypeEnum.WORK_AIDS),
+              onTitleClick: () => setSelectedIndexType(IndexTypeEnum.WORK_AIDS),
             };
             break;
           }
         }
       }
+    }
+
+    if (childItem.label === 'Glossar') {
+      addedChildren = await getGlossaryEntries(childItem);
     }
 
     if (
@@ -797,6 +819,23 @@ export function Navigation() {
     });
   }
 
+  async function getGlossaryEntries(target: NavMenuItem): Promise<NavMenuItem[]> {
+    const expressionsUrl =
+      weitApiUrl + '/V-Modellmetamodell/mm_2021/V-Modellvariante/' + tailoringParameter.modelVariantId + '/Begriff/';
+
+    const jsonDataFromXml = await getJsonDataFromXml(expressionsUrl);
+
+    return jsonDataFromXml.getElementsByTagName('Begriff').map((expression) => {
+      return {
+        key: expression.attributes.id,
+        parent: target,
+        label: expression.attributes.name,
+        dataType: NavTypeEnum.GLOSSARY_ENTRY,
+        onClick: (item: any) => handleSelectedItem(item.key),
+      };
+    });
+  }
+
   async function getTemplates(target: NavMenuItem): Promise<NavMenuItem[]> {
     const templatesUrl =
       weitApiUrl +
@@ -916,15 +955,21 @@ export function Navigation() {
 
     const navigation: NavMenuItem[] = [];
 
-    jsonDataFromXmlProjectTypeVariants.getElementsByTagName('Projekttypvariante').map((projectTypeVariantValue) => {
-      navigation.push({
-        key: 'pes_' + projectTypeVariantValue.attributes.id,
-        parent: target,
-        label: projectTypeVariantValue.attributes.name,
-        dataType: NavTypeEnum.PROJECT_TYPE_VARIANT_SEQUENCE, // TODO: oder auch ProjectExecutionStrategy
-        onClick: (item: any) => handleSelectedItem(item.key), // TODO: different Types
+    jsonDataFromXmlProjectTypeVariants
+      .getElementsByTagName('Projekttypvariante')
+      .filter(
+        (projectTypeVariantValue) => projectTypeVariantValue.attributes.id === tailoringParameter.projectTypeVariantId
+      )
+      .map((projectTypeVariantValue) => {
+        navigation.push({
+          key: 'pes_' + projectTypeVariantValue.attributes.id,
+          parent: target,
+          label: projectTypeVariantValue.attributes.name,
+          dataType: NavTypeEnum.PROJECT_TYPE_VARIANT_SEQUENCE, // TODO: oder auch ProjectExecutionStrategy
+          onClick: (item: any) => handleSelectedItem(item.key), // TODO: different Types
+          onTitleClick: (item: any) => handleSelectedItem(item.key), // TODO: different Types
+        });
       });
-    });
 
     return navigation;
   }

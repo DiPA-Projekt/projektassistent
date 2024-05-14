@@ -26,6 +26,7 @@
     "SimpleDate": "{{date, date}}"
   },
   "label": {
+    "activities": "Aktivitäten",
     "bibliography": "Literaturverzeichnis",
     "group": "Gruppe",
     "product": "Produkt",
@@ -34,6 +35,7 @@
   },
   "text": {
     "insertTopicDescription": "Themenbeschreibungen einfügen",
-    "generateNavigation": "Erstelle Navigation"
+    "generateNavigation": "Erstelle Navigation",
+    "pleaseSelectSubChapter": "Bitte wählen Sie ein Unterkapitel."
   }
 }
