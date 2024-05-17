@@ -50,7 +50,6 @@ export function Content() {
     contentProductDependencyId,
     roleId,
     decisionPointId,
-    processModuleId,
     methodReferenceId,
     toolReferenceId,
     processBuildingBlockId,
@@ -186,18 +185,6 @@ export function Content() {
     void mount().then();
     //eslint-disable-next-line
   }, [decisionPointId]);
-
-  useEffect(() => {
-    async function mount() {
-      if (processModuleId) {
-        const content = await getProcessModuleContent();
-        setSelectedPageEntry(content);
-      }
-    }
-
-    void mount().then();
-    //eslint-disable-next-line
-  }, [processModuleId]);
 
   useEffect(() => {
     async function mount() {
@@ -1617,39 +1604,6 @@ export function Content() {
     };
   }
 
-  async function getProcessModuleContent(): Promise<PageEntry> {
-    const processModuleUrl =
-      weitApiUrl +
-      '/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      tailoringParameter.modelVariantId +
-      '/Projekttyp/' +
-      tailoringParameter.projectTypeId +
-      '/Projekttypvariante/' +
-      tailoringParameter.projectTypeVariantId +
-      '/Ablaufbaustein/' +
-      processModuleId +
-      '?' +
-      getProjectFeaturesString();
-
-    // let idCounter = 2000;
-
-    const jsonDataFromXml = await getJsonDataFromXml(processModuleUrl);
-
-    const description = decodeXml(jsonDataFromXml.getElementsByTagName('Beschreibung')[0]?.value);
-
-    const tableEntries: TableEntry[] = [];
-
-    //////////////////////////////////////////////
-
-    return {
-      id: jsonDataFromXml.attributes.id,
-      // menuEntryId: jsonDataFromXml.attributes.id,
-      header: jsonDataFromXml.attributes.name,
-      descriptionText: description,
-      tableEntries: tableEntries,
-      // subPageEntries: subPageEntries,
-    };
-  }
   async function getContentProductDependencyContent(): Promise<PageEntry> {
     const contentProductDependenciesUrl =
       weitApiUrl +
@@ -2537,27 +2491,6 @@ export function Content() {
     const imageDescriptionTag =
       '<p style="margin-top: 0px;">' + '<i>Abbildung [' + figureDesignation + ']: ' + title + '</i></p>';
 
-    const ablaufbausteinRefs: XMLElement[] = jsonDataFromXml.getElementsByTagName('AblaufbausteinRef');
-
-    const ablaufbausteine = ablaufbausteinRefs.map((ablaufbausteinRef) => {
-      return {
-        id: ablaufbausteinRef.attributes.id,
-        title: ablaufbausteinRef.attributes.name,
-      };
-    });
-
-    const tableEntries: TableEntry[] = [];
-
-    if (ablaufbausteine.length > 0) {
-      tableEntries.push({
-        id: (idCounter++).toString(),
-        descriptionEntry: 'Ablaufbausteine',
-        dataEntries: ablaufbausteine,
-      });
-    }
-
-    // AblaufbausteinRef;
-
     //////////////////////////////////////////////
 
     return {
@@ -2566,7 +2499,7 @@ export function Content() {
       header: jsonDataFromXml.attributes.name,
       descriptionText:
         replaceUrlInText(sequence, tailoringParameter, getProjectFeaturesString()) + imageTag + imageDescriptionTag,
-      tableEntries: tableEntries,
+      tableEntries: [],
       // subPageEntries: subPageEntries,
     };
   }
