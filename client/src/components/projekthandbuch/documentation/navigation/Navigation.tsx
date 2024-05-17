@@ -37,7 +37,6 @@ export enum NavTypeEnum {
   PROJECT_TEAM_ROLE = 'projectTeamRole',
   ORGANISATION_ROLE = 'organisationRole',
   DECISION_POINT = 'decisionPoint',
-  PROCESS_MODULE = 'processModule',
   PROCESS_BUILDING_BLOCK = 'processBuildingBlock',
   ACTIVITY = 'activity',
   ACTIVITY_DISCIPLINE = 'activityDiscipline',
@@ -184,6 +183,8 @@ export function Navigation() {
         let currentGeneratedChildren: NavMenuItem[] = [];
 
         let i = 0;
+        const indexesToRemove = [];
+
         for (const child of item.children) {
           let foundInGeneratedChildren = false;
 
@@ -201,26 +202,40 @@ export function Navigation() {
               console.log('child.parent null', item);
             }
 
-            const test = await fetchSectionDetailsData(child);
-            if (test.replacedContent) {
-              item.children = test.replacedContent;
-            } else if (test.mergedChildren) {
+            const sectionDetailsData = await fetchSectionDetailsData(child);
+
+            if (sectionDetailsData == null) {
+              //item.children.delete [i] = null
+              const index = item.children.indexOf(child);
+              // item.children.splice(index, 1);
+              indexesToRemove.push(index);
+            } else if (sectionDetailsData.replacedContent) {
+              item.children = sectionDetailsData.replacedContent;
+            } else if (sectionDetailsData.mergedChildren) {
               // ermittle child Einträge!
-              currentGeneratedChildren = test.mergedChildren;
+              currentGeneratedChildren = sectionDetailsData.mergedChildren;
 
               // TODO: für das erste muss das auch gemacht werden... vllt sollte man es daher rausziehen
               const foundMenuItem = getMenuItemByAttributeValue(currentGeneratedChildren, 'key', child.key);
               if (foundMenuItem) {
                 item.children[i] = foundMenuItem;
               }
-            } else if (test.addedChildren) {
-              child.children = test.addedChildren;
-            } else if (test.indexItem) {
-              item.children[i] = test.indexItem;
+            } else if (sectionDetailsData.addedChildren) {
+              child.children = sectionDetailsData.addedChildren;
+            } else if (sectionDetailsData.indexItem) {
+              item.children[i] = sectionDetailsData.indexItem;
             }
           }
           i++;
           // }
+        }
+
+        // remove empty children
+        const indexesToRemoveDescending = indexesToRemove.sort(function (a, b) {
+          return b - a;
+        });
+        for (const removeIndex of indexesToRemoveDescending) {
+          item.children.splice(removeIndex, 1);
         }
 
         // cleanup menu clicks because inner nodes of the ant tree throw onTitleClick event
@@ -244,11 +259,11 @@ export function Navigation() {
     return items;
   }
 
-  async function fetchSectionDetailsData(childItem: NavMenuItem): Promise<SectionDetail> {
+  async function fetchSectionDetailsData(childItem: NavMenuItem): Promise<SectionDetail | null> {
     const sectionId = childItem.key;
 
     if (!tailoringParameter.modelVariantId) {
-      return undefined;
+      return null;
     }
 
     const sectionDetailUrl =
@@ -391,17 +406,14 @@ export function Navigation() {
       addedChildren = await getDecisionPoints(childItem);
     }
 
+    // do not show Ablaufbausteine in menu
     if (childItem.parent?.label === 'Referenz Abläufe' && childItem.label === 'Ablaufbausteine') {
-      addedChildren = await getProcessModules(childItem);
+      return null;
     }
 
     if (childItem.parent?.label === 'Produktvorlagen' && childItem.label === 'Übersicht über Produktvorlagen') {
       addedChildren = await getTemplates(childItem);
     }
-
-    // const sections: Section[] = jsonDataFromXml.getElementsByTagName('Kapitel').map((section: any) => {
-    //   return section.attributes as Section;
-    // });
 
     return {
       // text: textPart,
@@ -630,33 +642,6 @@ export function Navigation() {
         parent: target,
         label: decisionPointValue.attributes.name,
         dataType: NavTypeEnum.DECISION_POINT,
-        onClick: (item: any) => handleSelectedItem(item.key),
-      };
-    });
-  }
-
-  async function getProcessModules(target: NavMenuItem): Promise<NavMenuItem[]> {
-    const processModulesUrl =
-      weitApiUrl +
-      '/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      tailoringParameter.modelVariantId +
-      '/Projekttyp/' +
-      tailoringParameter.projectTypeId +
-      '/Projekttypvariante/' +
-      tailoringParameter.projectTypeVariantId +
-      '/Ablaufbaustein?' +
-      getProjectFeaturesQueryString();
-
-    const jsonDataFromXml = await getJsonDataFromXml(processModulesUrl);
-
-    const ablaufbausteine: XMLElement[] = jsonDataFromXml.getElementsByTagName('Ablaufbaustein');
-
-    return ablaufbausteine.map((processModuleValue) => {
-      return {
-        key: processModuleValue.attributes.id,
-        parent: target,
-        label: processModuleValue.attributes.name,
-        dataType: NavTypeEnum.PROCESS_MODULE,
         onClick: (item: any) => handleSelectedItem(item.key),
       };
     });

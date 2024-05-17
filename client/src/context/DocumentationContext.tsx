@@ -22,7 +22,6 @@ type DocumentationSession = {
   productId: string | null;
   contentProductDependencyId: string | null;
   roleId: string | null;
-  processModuleId: string | null;
   decisionPointId: string | null;
   processBuildingBlockId: string | null;
   methodReferenceId: string | null;
@@ -69,7 +68,6 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
   const [productId, setProductId] = useState<string | null>(null);
   const [contentProductDependencyId, setContentProductDependencyId] = useState<string | null>(null);
   const [roleId, setRoleId] = useState<string | null>(null);
-  const [processModuleId, setProcessModuleId] = useState<string | null>(null);
   const [decisionPointId, setDecisionPointId] = useState<string | null>(null);
   const [processBuildingBlockId, setProcessBuildingBlockId] = useState<string | null>(null);
   const [methodReferenceId, setMethodReferenceId] = useState<string | null>(null);
@@ -98,7 +96,6 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
     productId,
     contentProductDependencyId,
     roleId,
-    processModuleId,
     decisionPointId,
     processBuildingBlockId,
     methodReferenceId,
@@ -147,7 +144,6 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
     setProductId(null);
     setContentProductDependencyId(null);
     setRoleId(null);
-    setProcessModuleId(null);
     setDecisionPointId(null);
     setProcessBuildingBlockId(null);
     setMethodReferenceId(null);
@@ -188,8 +184,6 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
         )
       ) {
         setRoleId(foundMenuItem.key);
-      } else if (foundMenuItem.dataType === NavTypeEnum.PROCESS_MODULE) {
-        setProcessModuleId(foundMenuItem.key);
       } else if (foundMenuItem.dataType === NavTypeEnum.DECISION_POINT) {
         setDecisionPointId(foundMenuItem.key);
       } else if (foundMenuItem.dataType === NavTypeEnum.PROCESS_BUILDING_BLOCK) {
