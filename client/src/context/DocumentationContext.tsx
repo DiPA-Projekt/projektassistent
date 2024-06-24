@@ -23,6 +23,8 @@ type DocumentationSession = {
   contentProductDependencyId: string | null;
   roleId: string | null;
   decisionPointId: string | null;
+  conventionFigureId: string | null;
+  divisionId: string | null;
   processBuildingBlockId: string | null;
   methodReferenceId: string | null;
   toolReferenceId: string | null;
@@ -69,6 +71,8 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
   const [contentProductDependencyId, setContentProductDependencyId] = useState<string | null>(null);
   const [roleId, setRoleId] = useState<string | null>(null);
   const [decisionPointId, setDecisionPointId] = useState<string | null>(null);
+  const [conventionFigureId, setConventionFigureId] = useState<string | null>(null);
+  const [divisionId, setDivisionId] = useState<string | null>(null);
   const [processBuildingBlockId, setProcessBuildingBlockId] = useState<string | null>(null);
   const [methodReferenceId, setMethodReferenceId] = useState<string | null>(null);
   const [toolReferenceId, setToolReferenceId] = useState<string | null>(null);
@@ -97,6 +101,8 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
     contentProductDependencyId,
     roleId,
     decisionPointId,
+    conventionFigureId,
+    divisionId,
     processBuildingBlockId,
     methodReferenceId,
     toolReferenceId,
@@ -145,6 +151,8 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
     setContentProductDependencyId(null);
     setRoleId(null);
     setDecisionPointId(null);
+    setConventionFigureId(null);
+    setDivisionId(null);
     setProcessBuildingBlockId(null);
     setMethodReferenceId(null);
     setToolReferenceId(null);
@@ -186,6 +194,10 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
         setRoleId(foundMenuItem.key);
       } else if (foundMenuItem.dataType === NavTypeEnum.DECISION_POINT) {
         setDecisionPointId(foundMenuItem.key);
+      } else if (foundMenuItem.dataType === NavTypeEnum.CONVENTION_FIGURE) {
+        setConventionFigureId(foundMenuItem.key);
+      } else if (foundMenuItem.dataType === NavTypeEnum.DIVISION) {
+        setDivisionId(foundMenuItem.key);
       } else if (foundMenuItem.dataType === NavTypeEnum.PROCESS_BUILDING_BLOCK) {
         setProcessBuildingBlockId(foundMenuItem.key);
       } else if (foundMenuItem.dataType === NavTypeEnum.METHOD_REFERENCE) {
