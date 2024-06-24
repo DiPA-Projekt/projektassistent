@@ -12,6 +12,12 @@ export function TableEntriesList(props: { inputData: DataEntry[] }) {
     if (Array.isArray(entryItem)) {
       for (const entrySubItem of entryItem) {
         entries.push(
+          <div key={`table-sub-header-entry-description-${entrySubItem.subheader.id}`}>
+            {entrySubItem?.dataEntryDescription ? <div>{parse(entrySubItem.dataEntryDescription)}</div> : ''}
+          </div>
+        );
+
+        entries.push(
           <span style={{ fontWeight: 'bold', display: 'block' }} key={`table-sub-header-${entrySubItem.subheader.id}`}>
             {entrySubItem.subheader?.isLink ? (
               <Link to={`/documentation/${entrySubItem.subheader.id}${getSearchStringFromHash()}`}>

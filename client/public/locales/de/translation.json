@@ -6,7 +6,9 @@
   },
   "dataType": {
     "activity": "Aktivität",
+    "conventionFigure": "Konventionsabbildung",
     "decisionPoint": "Entscheidungspunkt",
+    "division": "Bereich",
     "externalTemplate": "Externe Kopiervorlage",
     "methodReference": "Methodenreferenz",
     "organisationRole": "Organisationsrolle",
