@@ -14,6 +14,7 @@ import {
   getJsonDataFromXml,
   getMenuItemByAttributeValue,
   getSearchStringFromHash,
+  replaceImageUrlInText,
   replaceUrlInText,
 } from '../../../../shares/utils';
 import { AnchorLinkItemProps } from 'antd/es/anchor/Anchor';
@@ -32,7 +33,7 @@ import { ProjectType } from '../../projekt/project';
 function getConceptMappingData(conceptMapping: XMLElement, tagName: string, suffix: string): DataEntry[] {
   return conceptMapping.getElementsByTagName(tagName).map((data: XMLElement) => {
     const dataEntry: DataEntry = {
-      id: data.attributes.id,
+      id: tagName !== 'wird_abgebildet_durchThemaRef' ? data.attributes.id : undefined,
       title: data.attributes?.name || data.attributes?.titel,
       suffix: suffix,
     };
@@ -1726,7 +1727,7 @@ export function Content() {
     return {
       id: jsonDataFromXml.attributes.id,
       header: jsonDataFromXml.attributes.name,
-      descriptionText: summary,
+      descriptionText: replaceImageUrlInText(summary, tailoringParameter),
       tableEntries: tableEntries,
     };
   }
