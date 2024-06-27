@@ -150,7 +150,6 @@ export function Navigation() {
   } = useDocumentation();
 
   const navigate = useNavigate();
-  // const location = useLocation();
 
   const [loading, setLoading] = useState(false);
 
@@ -171,6 +170,19 @@ export function Navigation() {
     void mount().then();
     //eslint-disable-next-line
   }, [tailoringParameter.modelVariantId]);
+
+  useEffect(() => {
+    if (navigationData.length > 0) {
+      const firstMenuItemKey = navigationData[0].key;
+      if (firstMenuItemKey) {
+        setSelectedItemKey(firstMenuItemKey);
+
+        navigate(`/documentation/${firstMenuItemKey}${getSearchStringFromHash()}`);
+      }
+    }
+
+    //eslint-disable-next-line
+  }, [navigationData]);
 
   // https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/c62d12f444739b2/Kapitel
 

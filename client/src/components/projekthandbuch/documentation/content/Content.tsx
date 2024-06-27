@@ -4,7 +4,7 @@ import parse, { domToReact } from 'html-react-parser';
 import { Anchor, Col, FloatButton, Layout, Row, Spin, Tag } from 'antd';
 import React, { useEffect, useState } from 'react';
 // import { DataEntry, PageEntry, TableEntry } from '@dipa-projekt/projektassistent-openapi';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useDocumentation } from '../../../../context/DocumentationContext';
 import {
   decodeXml,
@@ -77,7 +77,10 @@ export function Content() {
     glossaryEntryId,
     entryId,
     selectedIndexType,
+    setSelectedItemKey,
   } = useDocumentation();
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (selectedPageEntry?.subPageEntries) {
@@ -99,14 +102,10 @@ export function Content() {
   }, [productId]);
 
   useEffect(() => {
-    async function mount() {
-      if (productDisciplineId) {
-        const content = await getProductDisciplineContent();
-        setSelectedPageEntry(content);
-      }
+    if (productDisciplineId) {
+      redirectToFirstChildWithContent(productDisciplineId);
     }
 
-    void mount().then();
     //eslint-disable-next-line
   }, [productDisciplineId]);
 
@@ -539,6 +538,9 @@ export function Content() {
       const childText = jsonDataFromXml.children.find((child) => child.name === 'Text');
       if (childText) {
         textPart = decodeXml(childText.value);
+      } else if (jsonDataFromXml.children.length > 0) {
+        // redirect to first child with content
+        redirectToFirstChildWithContent(sectionId);
       } else {
         textPart = t('text.pleaseSelectSubChapter');
       }
@@ -551,38 +553,6 @@ export function Content() {
       descriptionText: replaceUrlInText(textPart, tailoringParameter, getProjectFeaturesString()),
       tableEntries: [],
       subPageEntries: [],
-    };
-  }
-
-  async function getProductDisciplineContent(): Promise<PageEntry> {
-    const disciplineId = productDisciplineId?.replace('productDiscipline_', '');
-
-    const projectTypeUrl =
-      weitApiUrl +
-      '/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      tailoringParameter.modelVariantId +
-      '/Projekttyp/' +
-      tailoringParameter.projectTypeId +
-      '/Projekttypvariante/' +
-      tailoringParameter.projectTypeVariantId +
-      '/Disziplin/' +
-      disciplineId +
-      '?' +
-      getProjectFeaturesString();
-
-    const jsonDataFromXml = await getJsonDataFromXml(projectTypeUrl);
-
-    const tableEntries: TableEntry[] = [];
-
-    //////////////////////////////////////////////
-
-    return {
-      id: jsonDataFromXml.attributes.id,
-      // menuEntryId: jsonDataFromXml.attributes.id,
-      header: jsonDataFromXml.attributes.name,
-      descriptionText: t('text.pleaseSelectSubChapter'),
-      tableEntries: tableEntries,
-      // subPageEntries: subPageEntries,
     };
   }
 
@@ -2845,6 +2815,21 @@ export function Content() {
       tableEntries: tableEntries,
       // subPageEntries: subPageEntries,
     };
+  }
+
+  function redirectToFirstChildWithContent(sectionId: string) {
+    const currentMenuItem = getMenuItemByAttributeValue(navigationData, 'key', sectionId);
+    const currentChildren = currentMenuItem?.children;
+
+    if (currentChildren?.length > 0) {
+      const childId = currentChildren[0].key;
+
+      if (childId) {
+        setSelectedItemKey(childId);
+
+        navigate(`/documentation/${childId}${getSearchStringFromHash()}`);
+      }
+    }
   }
 
   return (
