@@ -102,7 +102,8 @@ export function Content() {
   }, [productId]);
 
   useEffect(() => {
-    if (productDisciplineId) {
+    // redirect only if discipline was selected directly
+    if (productDisciplineId && !productId) {
       redirectToFirstChildWithContent(productDisciplineId);
     }
 
