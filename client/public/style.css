@@ -147,7 +147,7 @@ ul.sideMenu > li > ul > li > ul > li > div {
 
 /* side background color like menu background color */
 .ant-layout-sider-children {
-  background: #fafafa;
+  background: #f5f5f5;
 }
 
 .ant-layout-header {
