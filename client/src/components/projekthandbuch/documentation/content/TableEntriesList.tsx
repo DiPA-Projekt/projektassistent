@@ -12,6 +12,12 @@ export function TableEntriesList(props: { inputData: DataEntry[] }) {
     if (Array.isArray(entryItem)) {
       for (const entrySubItem of entryItem) {
         entries.push(
+          <div key={`table-sub-header-entry-description-${entrySubItem.subheader.id}`}>
+            {entrySubItem?.dataEntryDescription ? <div>{parse(entrySubItem.dataEntryDescription)}</div> : ''}
+          </div>
+        );
+
+        entries.push(
           <span style={{ fontWeight: 'bold', display: 'block' }} key={`table-sub-header-${entrySubItem.subheader.id}`}>
             {entrySubItem.subheader?.isLink ? (
               <Link to={`/documentation/${entrySubItem.subheader.id}${getSearchStringFromHash()}`}>
@@ -36,7 +42,7 @@ export function TableEntriesList(props: { inputData: DataEntry[] }) {
           } else {
             entries.push(
               <span style={{ marginRight: '20px' }} key={`table-item-entrySubItem-${innerEntryItemIndex}`}>
-                {parse(fixLinksInText(innerEntryItem.title))}
+                <span style={{ color: '#333' }}>{parse(fixLinksInText(innerEntryItem.title))}</span>
                 {innerEntryItem.suffix && <span style={{ marginLeft: '5px' }}>{innerEntryItem.suffix}</span>}
               </span>
             );
@@ -54,7 +60,7 @@ export function TableEntriesList(props: { inputData: DataEntry[] }) {
       } else {
         entries.push(
           <span style={{ marginRight: '20px' }} key={`table-item-entryItem-${entryItemIndex}`}>
-            {parse(fixLinksInText(entryItem.title))}
+            <span style={{ color: '#333' }}>{parse(fixLinksInText(entryItem.title))}</span>
             {entryItem.suffix && <span style={{ marginLeft: '5px' }}>{entryItem.suffix}</span>}
           </span>
         );

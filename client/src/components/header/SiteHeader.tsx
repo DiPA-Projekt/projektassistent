@@ -106,7 +106,6 @@ export const SiteHeader = (props: any) => {
         <Col span={20}>
           <Menu
             mode="horizontal"
-            theme="dark"
             defaultSelectedKeys={[props.selectedKey]}
             selectedKeys={[current]}
             // onClick={handleMenuClick}

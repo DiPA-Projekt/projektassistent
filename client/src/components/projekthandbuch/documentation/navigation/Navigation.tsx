@@ -9,13 +9,19 @@ import {
   HomeOutlined,
   OrderedListOutlined,
   PaperClipOutlined,
+  ReadOutlined,
   ScissorOutlined,
   ShoppingOutlined,
   TeamOutlined,
   ToolOutlined,
 } from '@ant-design/icons';
 import { Layout, Menu, Spin } from 'antd';
-import { getJsonDataFromXml, getMenuItemByAttributeValue, getSearchStringFromHash } from '../../../../shares/utils';
+import {
+  decodeXml,
+  getJsonDataFromXml,
+  getMenuItemByAttributeValue,
+  getSearchStringFromHash,
+} from '../../../../shares/utils';
 // import { MenuEntry } from '@dipa-projekt/projektassistent-openapi';
 import { useDocumentation } from '../../../../context/DocumentationContext';
 
@@ -37,7 +43,6 @@ export enum NavTypeEnum {
   PROJECT_TEAM_ROLE = 'projectTeamRole',
   ORGANISATION_ROLE = 'organisationRole',
   DECISION_POINT = 'decisionPoint',
-  PROCESS_MODULE = 'processModule',
   PROCESS_BUILDING_BLOCK = 'processBuildingBlock',
   ACTIVITY = 'activity',
   ACTIVITY_DISCIPLINE = 'activityDiscipline',
@@ -51,6 +56,8 @@ export enum NavTypeEnum {
   PRODUCT_DISCIPLINE = 'productDiscipline',
   SAMPLE_TEXT = 'sampleText',
   GLOSSARY_ENTRY = 'glossaryEntry',
+  CONVENTION_FIGURE = 'conventionFigure',
+  DIVISION = 'division',
 }
 
 export enum IndexTypeEnum {
@@ -62,6 +69,7 @@ export enum IndexTypeEnum {
   GLOSSARY = 'glossaryIndex',
   ABBREVIATIONS = 'abbreviationsIndex',
   LITERATURE = 'literatureIndex',
+  OTHER_STANDARDS = 'otherStandardsIndex',
 }
 
 function renderIcon(param: string | undefined): React.ReactNode {
@@ -88,6 +96,8 @@ function renderIcon(param: string | undefined): React.ReactNode {
       return <ScissorOutlined />;
     case 'Referenz Arbeitshilfen':
       return <ToolOutlined />;
+    case 'Referenz Andere Standards':
+      return <ReadOutlined />;
     case 'Anhang':
       return <PaperClipOutlined />;
     default:
@@ -136,11 +146,10 @@ export function Navigation() {
     navigationData,
     setNavigationData,
     currentSelectedKeys,
-    // openKeys,
+    openKeys,
   } = useDocumentation();
 
   const navigate = useNavigate();
-  // const location = useLocation();
 
   const [loading, setLoading] = useState(false);
 
@@ -161,6 +170,19 @@ export function Navigation() {
     void mount().then();
     //eslint-disable-next-line
   }, [tailoringParameter.modelVariantId]);
+
+  useEffect(() => {
+    if (navigationData.length > 0) {
+      const firstMenuItemKey = navigationData[0].key;
+      if (firstMenuItemKey) {
+        setSelectedItemKey(firstMenuItemKey);
+
+        navigate(`/documentation/${firstMenuItemKey}${getSearchStringFromHash()}`);
+      }
+    }
+
+    //eslint-disable-next-line
+  }, [navigationData]);
 
   // https://vm-api.weit-verein.de/V-Modellmetamodell/mm_2021/V-Modellvariante/c62d12f444739b2/Kapitel
 
@@ -184,6 +206,8 @@ export function Navigation() {
         let currentGeneratedChildren: NavMenuItem[] = [];
 
         let i = 0;
+        const indexesToRemove = [];
+
         for (const child of item.children) {
           let foundInGeneratedChildren = false;
 
@@ -201,26 +225,40 @@ export function Navigation() {
               console.log('child.parent null', item);
             }
 
-            const test = await fetchSectionDetailsData(child);
-            if (test.replacedContent) {
-              item.children = test.replacedContent;
-            } else if (test.mergedChildren) {
+            const sectionDetailsData = await fetchSectionDetailsData(child);
+
+            if (sectionDetailsData == null) {
+              //item.children.delete [i] = null
+              const index = item.children.indexOf(child);
+              // item.children.splice(index, 1);
+              indexesToRemove.push(index);
+            } else if (sectionDetailsData.replacedContent) {
+              item.children = sectionDetailsData.replacedContent;
+            } else if (sectionDetailsData.mergedChildren) {
               // ermittle child Einträge!
-              currentGeneratedChildren = test.mergedChildren;
+              currentGeneratedChildren = sectionDetailsData.mergedChildren;
 
               // TODO: für das erste muss das auch gemacht werden... vllt sollte man es daher rausziehen
               const foundMenuItem = getMenuItemByAttributeValue(currentGeneratedChildren, 'key', child.key);
               if (foundMenuItem) {
                 item.children[i] = foundMenuItem;
               }
-            } else if (test.addedChildren) {
-              child.children = test.addedChildren;
-            } else if (test.indexItem) {
-              item.children[i] = test.indexItem;
+            } else if (sectionDetailsData.addedChildren) {
+              child.children = sectionDetailsData.addedChildren;
+            } else if (sectionDetailsData.indexItem) {
+              item.children[i] = sectionDetailsData.indexItem;
             }
           }
           i++;
           // }
+        }
+
+        // remove empty children
+        const indexesToRemoveDescending = indexesToRemove.sort(function (a, b) {
+          return b - a;
+        });
+        for (const removeIndex of indexesToRemoveDescending) {
+          item.children.splice(removeIndex, 1);
         }
 
         // cleanup menu clicks because inner nodes of the ant tree throw onTitleClick event
@@ -244,11 +282,11 @@ export function Navigation() {
     return items;
   }
 
-  async function fetchSectionDetailsData(childItem: NavMenuItem): Promise<SectionDetail> {
+  async function fetchSectionDetailsData(childItem: NavMenuItem): Promise<SectionDetail | null> {
     const sectionId = childItem.key;
 
     if (!tailoringParameter.modelVariantId) {
-      return undefined;
+      return null;
     }
 
     const sectionDetailUrl =
@@ -336,6 +374,14 @@ export function Navigation() {
             };
             break;
           }
+          case 'Index:AndereStandards': {
+            indexItem = {
+              key: childItem.key,
+              label: childItem.label,
+              onClick: () => setSelectedIndexType(IndexTypeEnum.OTHER_STANDARDS),
+            };
+            break;
+          }
         }
       }
     }
@@ -391,17 +437,18 @@ export function Navigation() {
       addedChildren = await getDecisionPoints(childItem);
     }
 
+    // do not show Ablaufbausteine in menu
     if (childItem.parent?.label === 'Referenz Abläufe' && childItem.label === 'Ablaufbausteine') {
-      addedChildren = await getProcessModules(childItem);
+      return null;
+    }
+
+    if (childItem.parent?.label === 'Referenz Andere Standards' && childItem.label === 'Konventionsabbildungen') {
+      addedChildren = await getConventionFigures(childItem);
     }
 
     if (childItem.parent?.label === 'Produktvorlagen' && childItem.label === 'Übersicht über Produktvorlagen') {
       addedChildren = await getTemplates(childItem);
     }
-
-    // const sections: Section[] = jsonDataFromXml.getElementsByTagName('Kapitel').map((section: any) => {
-    //   return section.attributes as Section;
-    // });
 
     return {
       // text: textPart,
@@ -635,31 +682,55 @@ export function Navigation() {
     });
   }
 
-  async function getProcessModules(target: NavMenuItem): Promise<NavMenuItem[]> {
-    const processModulesUrl =
+  async function getConventionFigures(target: NavMenuItem): Promise<NavMenuItem[]> {
+    const conventionFiguresUrl =
       weitApiUrl +
-      '/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      '/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
       tailoringParameter.modelVariantId +
-      '/Projekttyp/' +
-      tailoringParameter.projectTypeId +
-      '/Projekttypvariante/' +
-      tailoringParameter.projectTypeVariantId +
-      '/Ablaufbaustein?' +
-      getProjectFeaturesQueryString();
+      '/Konventionsabbildung/';
 
-    const jsonDataFromXml = await getJsonDataFromXml(processModulesUrl);
+    const jsonDataFromXml = await getJsonDataFromXml(conventionFiguresUrl);
 
-    const ablaufbausteine: XMLElement[] = jsonDataFromXml.getElementsByTagName('Ablaufbaustein');
+    const conventionFigures: XMLElement[] = jsonDataFromXml.getElementsByTagName('Konventionsabbildung');
 
-    return ablaufbausteine.map((processModuleValue) => {
-      return {
-        key: processModuleValue.attributes.id,
+    const conventionFigureEntries = [];
+
+    for (const conventionFigure of conventionFigures) {
+      const conventionFigureEntry: NavMenuItem = {
+        key: conventionFigure.attributes.id,
         parent: target,
-        label: processModuleValue.attributes.name,
-        dataType: NavTypeEnum.PROCESS_MODULE,
-        onClick: (item: any) => handleSelectedItem(item.key),
+        label: conventionFigure.attributes.name,
+        dataType: NavTypeEnum.CONVENTION_FIGURE,
+        onTitleClick: (item: any) => handleSelectedItem(item.key),
       };
-    });
+
+      ////////////////////
+
+      const divisionsFiguresUrl =
+        weitApiUrl +
+        '/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+        tailoringParameter.modelVariantId +
+        '/Konventionsabbildung/' +
+        conventionFigure.attributes.id;
+
+      const jsonDataFromXml2 = await getJsonDataFromXml(divisionsFiguresUrl);
+
+      const divisions: NavMenuItem[] = jsonDataFromXml2.getElementsByTagName('Bereich').map((division): NavMenuItem => {
+        return {
+          key: division.attributes.id,
+          parent: conventionFigureEntry,
+          label: decodeXml(division.attributes.name),
+          dataType: NavTypeEnum.DIVISION,
+          onClick: (item: any) => handleSelectedItem(item.key),
+          // children: [],
+        };
+      });
+
+      conventionFigureEntry.children = divisions;
+      conventionFigureEntries.push(conventionFigureEntry);
+    }
+
+    return conventionFigureEntries;
   }
 
   async function getContentProductDependencies(target: NavMenuItem): Promise<NavMenuItem[]> {
@@ -1002,7 +1073,7 @@ export function Navigation() {
               inlineIndent={12}
               items={navigationData}
               selectedKeys={currentSelectedKeys}
-              // openKeys={openKeys} // TODO: funzt noch nicht
+              openKeys={openKeys}
             />
           )}
 

@@ -31,6 +31,7 @@ export type PageEntry = {
 export type TableEntry = {
   id: string;
   descriptionEntry: string;
+  dataEntryDescription?: string;
   dataEntries: DataEntry[];
 };
 

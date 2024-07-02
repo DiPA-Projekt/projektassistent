@@ -4,7 +4,7 @@ import parse, { domToReact } from 'html-react-parser';
 import { Anchor, Col, FloatButton, Layout, Row, Spin, Tag } from 'antd';
 import React, { useEffect, useState } from 'react';
 // import { DataEntry, PageEntry, TableEntry } from '@dipa-projekt/projektassistent-openapi';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useDocumentation } from '../../../../context/DocumentationContext';
 import {
   decodeXml,
@@ -14,6 +14,7 @@ import {
   getJsonDataFromXml,
   getMenuItemByAttributeValue,
   getSearchStringFromHash,
+  replaceImageUrlInText,
   replaceUrlInText,
 } from '../../../../shares/utils';
 import { AnchorLinkItemProps } from 'antd/es/anchor/Anchor';
@@ -28,6 +29,17 @@ import { weitApiUrl } from '../../../app/App';
 import { HashLink } from 'react-router-hash-link';
 import { DataEntry, PageEntry, TableEntry } from '../Documentation';
 import { ProjectType } from '../../projekt/project';
+
+function getConceptMappingData(conceptMapping: XMLElement, tagName: string, suffix: string): DataEntry[] {
+  return conceptMapping.getElementsByTagName(tagName).map((data: XMLElement) => {
+    const dataEntry: DataEntry = {
+      id: tagName !== 'wird_abgebildet_durchThemaRef' ? data.attributes.id : undefined,
+      title: data.attributes?.name || data.attributes?.titel,
+      suffix: suffix,
+    };
+    return dataEntry;
+  });
+}
 
 export function Content() {
   const [loading, setLoading] = useState(false);
@@ -50,7 +62,8 @@ export function Content() {
     contentProductDependencyId,
     roleId,
     decisionPointId,
-    processModuleId,
+    conventionFigureId,
+    divisionId,
     methodReferenceId,
     toolReferenceId,
     processBuildingBlockId,
@@ -64,7 +77,10 @@ export function Content() {
     glossaryEntryId,
     entryId,
     selectedIndexType,
+    setSelectedItemKey,
   } = useDocumentation();
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (selectedPageEntry?.subPageEntries) {
@@ -86,14 +102,11 @@ export function Content() {
   }, [productId]);
 
   useEffect(() => {
-    async function mount() {
-      if (productDisciplineId) {
-        const content = await getProductDisciplineContent();
-        setSelectedPageEntry(content);
-      }
+    // redirect only if discipline was selected directly
+    if (productDisciplineId && !productId) {
+      redirectToFirstChildWithContent(productDisciplineId);
     }
 
-    void mount().then();
     //eslint-disable-next-line
   }, [productDisciplineId]);
 
@@ -128,19 +141,22 @@ export function Content() {
         let content;
         switch (selectedIndexType) {
           case IndexTypeEnum.PRODUCT:
-            content = await getProductIndexContent();
+            content = getProductIndexContent();
             break;
           case IndexTypeEnum.ROLE:
-            content = await getRoleIndexContent();
+            content = getRoleIndexContent();
             break;
           case IndexTypeEnum.PROCESS:
-            content = await getProcessIndexContent();
+            content = getProcessIndexContent();
             break;
           case IndexTypeEnum.TAILORING:
-            content = await getTailoringIndexContent();
+            content = getTailoringIndexContent();
             break;
           case IndexTypeEnum.WORK_AIDS:
-            content = await getWorkAidsIndexContent();
+            content = getWorkAidsIndexContent();
+            break;
+          case IndexTypeEnum.OTHER_STANDARDS:
+            content = getOtherStandardsIndexContent();
             break;
         }
         setSelectedPageEntry(content);
@@ -189,15 +205,27 @@ export function Content() {
 
   useEffect(() => {
     async function mount() {
-      if (processModuleId) {
-        const content = await getProcessModuleContent();
+      if (conventionFigureId) {
+        const content = await getConventionFigureContent();
         setSelectedPageEntry(content);
       }
     }
 
     void mount().then();
     //eslint-disable-next-line
-  }, [processModuleId]);
+  }, [conventionFigureId]);
+
+  useEffect(() => {
+    async function mount() {
+      if (divisionId) {
+        const content = await getDivisionContent();
+        setSelectedPageEntry(content);
+      }
+    }
+
+    void mount().then();
+    //eslint-disable-next-line
+  }, [divisionId]);
 
   useEffect(() => {
     async function mount() {
@@ -511,6 +539,9 @@ export function Content() {
       const childText = jsonDataFromXml.children.find((child) => child.name === 'Text');
       if (childText) {
         textPart = decodeXml(childText.value);
+      } else if (jsonDataFromXml.children.length > 0) {
+        // redirect to first child with content
+        redirectToFirstChildWithContent(sectionId);
       } else {
         textPart = t('text.pleaseSelectSubChapter');
       }
@@ -523,38 +554,6 @@ export function Content() {
       descriptionText: replaceUrlInText(textPart, tailoringParameter, getProjectFeaturesString()),
       tableEntries: [],
       subPageEntries: [],
-    };
-  }
-
-  async function getProductDisciplineContent(): Promise<PageEntry> {
-    const disciplineId = productDisciplineId?.replace('productDiscipline_', '');
-
-    const projectTypeUrl =
-      weitApiUrl +
-      '/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      tailoringParameter.modelVariantId +
-      '/Projekttyp/' +
-      tailoringParameter.projectTypeId +
-      '/Projekttypvariante/' +
-      tailoringParameter.projectTypeVariantId +
-      '/Disziplin/' +
-      disciplineId +
-      '?' +
-      getProjectFeaturesString();
-
-    const jsonDataFromXml = await getJsonDataFromXml(projectTypeUrl);
-
-    const tableEntries: TableEntry[] = [];
-
-    //////////////////////////////////////////////
-
-    return {
-      id: jsonDataFromXml.attributes.id,
-      // menuEntryId: jsonDataFromXml.attributes.id,
-      header: jsonDataFromXml.attributes.name,
-      descriptionText: t('text.pleaseSelectSubChapter'),
-      tableEntries: tableEntries,
-      // subPageEntries: subPageEntries,
     };
   }
 
@@ -1190,7 +1189,7 @@ export function Content() {
     };
   }
 
-  async function getProductIndexContent(): Promise<PageEntry> {
+  function getProductIndexContent(): PageEntry {
     const filterRelevantDataTypes = flatten(navigationData).filter((item: any) =>
       [NavTypeEnum.PRODUCT].includes(item.dataType)
     );
@@ -1260,7 +1259,7 @@ export function Content() {
     };
   }
 
-  async function getRoleIndexContent(): Promise<PageEntry> {
+  function getRoleIndexContent(): PageEntry {
     const filterRelevantDataTypes = flatten(navigationData).filter((item: any) =>
       [NavTypeEnum.PROJECT_TEAM_ROLE, NavTypeEnum.PROJECT_ROLE, NavTypeEnum.ORGANISATION_ROLE].includes(item.dataType)
     );
@@ -1331,11 +1330,9 @@ export function Content() {
     };
   }
 
-  async function getProcessIndexContent(): Promise<PageEntry> {
+  function getProcessIndexContent(): PageEntry {
     const filterRelevantDataTypes = flatten(navigationData).filter((item: any) =>
-      [NavTypeEnum.PROCESS_MODULE, NavTypeEnum.DECISION_POINT, NavTypeEnum.PROJECT_TYPE_VARIANT_SEQUENCE].includes(
-        item.dataType
-      )
+      [NavTypeEnum.DECISION_POINT, NavTypeEnum.PROJECT_TYPE_VARIANT_SEQUENCE].includes(item.dataType)
     );
 
     const data: any[] = filterRelevantDataTypes.map((navItem: any): any => {
@@ -1405,7 +1402,7 @@ export function Content() {
     };
   }
 
-  async function getTailoringIndexContent(): Promise<PageEntry> {
+  function getTailoringIndexContent(): PageEntry {
     const filterRelevantDataTypes = flatten(navigationData).filter((item: any) =>
       [
         NavTypeEnum.PROJECT_TYPE_VARIANT,
@@ -1484,7 +1481,7 @@ export function Content() {
     };
   }
 
-  async function getWorkAidsIndexContent(): Promise<PageEntry> {
+  function getWorkAidsIndexContent(): PageEntry {
     const filterRelevantDataTypes = flatten(navigationData).filter((item: any) =>
       [NavTypeEnum.ACTIVITY, NavTypeEnum.METHOD_REFERENCE, NavTypeEnum.TOOL_REFERENCE].includes(item.dataType)
     );
@@ -1562,6 +1559,73 @@ export function Content() {
     };
   }
 
+  function getOtherStandardsIndexContent(): PageEntry {
+    const filterRelevantDataTypes = flatten(navigationData).filter((item: any) =>
+      [NavTypeEnum.CONVENTION_FIGURE, NavTypeEnum.DIVISION].includes(item.dataType)
+    );
+
+    const data: any[] = filterRelevantDataTypes.map((navItem: any): any => {
+      return {
+        modelElement: { id: navItem.key, text: navItem.label },
+        dataTypes: [navItem.dataType],
+      };
+    });
+
+    const columns: ColumnsType<any> = [
+      {
+        title: 'Modellelement',
+        dataIndex: 'modelElement',
+        key: 'modelElement',
+        defaultSortOrder: 'ascend',
+        sorter: {
+          compare: (a, b) => sorter(a.modelElement.text, b.modelElement.text),
+        },
+        render: (object) => <Link to={`/documentation/${object.id}${getSearchStringFromHash()}`}>{object.text}</Link>,
+      },
+      {
+        title: 'Typ',
+        dataIndex: 'dataTypes',
+        key: 'dataTypes',
+        filters: [...new Set(data.map((item) => item.dataTypes[0]))].map((item) => ({
+          text: t('translation:dataType.' + item),
+          value: item,
+        })),
+        onFilter: (value: string | number | boolean, record: any) => record.dataTypes.indexOf(value) === 0,
+        sorter: {
+          compare: (a, b) => sorter(a.dataTypes[0], b.dataTypes[0]),
+        },
+        render: (tags: string[]) => (
+          <span>
+            {tags?.map((tag) => {
+              let color;
+              if (tag === 'conventionFigure') {
+                color = 'geekblue';
+              }
+              if (tag === 'division') {
+                color = 'green';
+              }
+              return (
+                <Tag color={color} key={tag}>
+                  {t('translation:dataType.' + tag)}
+                </Tag>
+              );
+            })}
+          </span>
+        ),
+      },
+    ];
+
+    return {
+      id: 'otherStandardsIndexContent', //jsonDataFromXml.attributes.id,
+      // menuEntryId: jsonDataFromXml.attributes.id,
+      header: 'Andere-Standards-Index', //jsonDataFromXml.attributes.name,
+      descriptionText: '',
+      tableEntries: [],
+      dataSource: data,
+      columns: columns,
+    };
+  }
+
   async function getDecisionPointContent(): Promise<PageEntry> {
     const tailoringProcessBuildingBlocksUrl =
       weitApiUrl +
@@ -1617,39 +1681,153 @@ export function Content() {
     };
   }
 
-  async function getProcessModuleContent(): Promise<PageEntry> {
-    const processModuleUrl =
+  async function getConventionFigureContent(): Promise<PageEntry> {
+    const conventionFigureUrl =
       weitApiUrl +
-      '/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      '/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
       tailoringParameter.modelVariantId +
-      '/Projekttyp/' +
-      tailoringParameter.projectTypeId +
-      '/Projekttypvariante/' +
-      tailoringParameter.projectTypeVariantId +
-      '/Ablaufbaustein/' +
-      processModuleId +
-      '?' +
-      getProjectFeaturesString();
+      '/Konventionsabbildung/' +
+      conventionFigureId;
 
-    // let idCounter = 2000;
+    const jsonDataFromXml = await getJsonDataFromXml(conventionFigureUrl);
 
-    const jsonDataFromXml = await getJsonDataFromXml(processModuleUrl);
-
-    const description = decodeXml(jsonDataFromXml.getElementsByTagName('Beschreibung')[0]?.value);
+    const summary = decodeXml(jsonDataFromXml.getElementsByTagName('Zusammenfassung')[0]?.value);
 
     const tableEntries: TableEntry[] = [];
 
-    //////////////////////////////////////////////
-
     return {
       id: jsonDataFromXml.attributes.id,
-      // menuEntryId: jsonDataFromXml.attributes.id,
       header: jsonDataFromXml.attributes.name,
-      descriptionText: description,
+      descriptionText: replaceImageUrlInText(summary, tailoringParameter),
       tableEntries: tableEntries,
-      // subPageEntries: subPageEntries,
     };
   }
+
+  async function getDivisionContent(): Promise<PageEntry> {
+    if (divisionId) {
+      const foundDivision = getMenuItemByAttributeValue(navigationData, 'key', divisionId);
+
+      const conventionFigureId = foundDivision?.parent?.key;
+
+      const conventionFigureUrl =
+        weitApiUrl +
+        '/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+        tailoringParameter.modelVariantId +
+        '/Konventionsabbildung/' +
+        conventionFigureId;
+
+      let idCounter = 2000;
+
+      const jsonDataFromXml = await getJsonDataFromXml(conventionFigureUrl);
+
+      const divisionData = jsonDataFromXml
+        .getElementsByTagName('Bereich')
+        .find((division) => division.attributes.id === divisionId);
+
+      if (!divisionData) {
+        return null;
+      }
+
+      const explanation = decodeXml(divisionData.getElementsByTagName('Erläuterung')[0]?.value);
+      const conceptMappings = divisionData.getElementsByTagName('Begriffsabbildung');
+
+      const tableEntries: TableEntry[] = [];
+
+      conceptMappings.forEach((conceptMapping) => {
+        const conceptMappingName = conceptMapping.attributes.name;
+
+        const description = decodeXml(conceptMapping.getElementsByTagName('Beschreibung')[0]?.value);
+
+        let dataEntries: DataEntry[] = [];
+
+        const wird_abgebildet_durchKapitelRefs = getConceptMappingData(
+          conceptMapping,
+          'wird_abgebildet_durchKapitelRef',
+          '(Kapitel)'
+        );
+        const wird_abgebildet_durchVBRefs = getConceptMappingData(
+          conceptMapping,
+          'wird_abgebildet_durchVBRef',
+          '(Vorgehensbaustein)'
+        );
+        const wird_abgebildet_durchPTVRefs = getConceptMappingData(
+          conceptMapping,
+          'wird_abgebildet_durchPTVRef',
+          '(Projekttypvariante)'
+        );
+        const wird_abgebildet_durchRolleRefs = getConceptMappingData(
+          conceptMapping,
+          'wird_abgebildet_durchRolleRef',
+          '(Rolle)'
+        );
+        const wird_abgebildet_durchAktivitaetRefs = getConceptMappingData(
+          conceptMapping,
+          'wird_abgebildet_durchAktivitätRef',
+          '(Aktivität)'
+        );
+        const wird_abgebildet_durchDisziplinRefs = getConceptMappingData(
+          conceptMapping,
+          'wird_abgebildet_durchDisziplinRef',
+          '(Disziplin)'
+        );
+        const wird_abgebildet_durchProduktRefs = getConceptMappingData(
+          conceptMapping,
+          'wird_abgebildet_durchProduktRef',
+          '(Produkt)'
+        );
+
+        // TODO: Hier gibt's noch Probleme bei der Verlinkung, weil Themen keine eigene Seite haben, sondern nur auf
+        // Produkten angezeigt werden.
+        const wird_abgebildet_durchThemaRefs = getConceptMappingData(
+          conceptMapping,
+          'wird_abgebildet_durchThemaRef',
+          '(Thema)'
+        );
+
+        dataEntries = [
+          ...dataEntries,
+          ...wird_abgebildet_durchKapitelRefs,
+          ...wird_abgebildet_durchVBRefs,
+          ...wird_abgebildet_durchPTVRefs,
+          ...wird_abgebildet_durchRolleRefs,
+          ...wird_abgebildet_durchAktivitaetRefs,
+          ...wird_abgebildet_durchDisziplinRefs,
+          ...wird_abgebildet_durchProduktRefs,
+          ...wird_abgebildet_durchThemaRefs,
+        ];
+
+        const isRepresentedByData = [];
+
+        if (dataEntries.length > 0) {
+          isRepresentedByData.push([
+            {
+              subheader: {
+                id: idCounter + '_isRepresentedBy',
+                title: 'Wird erfüllt durch:',
+                isLink: false,
+              },
+              dataEntryDescription: description,
+              dataEntries: dataEntries,
+            },
+          ]);
+        }
+
+        tableEntries.push({
+          id: (idCounter++).toString(),
+          descriptionEntry: conceptMappingName,
+          dataEntries: isRepresentedByData,
+        });
+      });
+
+      return {
+        id: divisionData.attributes.id,
+        header: decodeXml(divisionData.attributes.name),
+        descriptionText: explanation,
+        tableEntries: tableEntries,
+      };
+    }
+  }
+
   async function getContentProductDependencyContent(): Promise<PageEntry> {
     const contentProductDependenciesUrl =
       weitApiUrl +
@@ -2537,27 +2715,6 @@ export function Content() {
     const imageDescriptionTag =
       '<p style="margin-top: 0px;">' + '<i>Abbildung [' + figureDesignation + ']: ' + title + '</i></p>';
 
-    const ablaufbausteinRefs: XMLElement[] = jsonDataFromXml.getElementsByTagName('AblaufbausteinRef');
-
-    const ablaufbausteine = ablaufbausteinRefs.map((ablaufbausteinRef) => {
-      return {
-        id: ablaufbausteinRef.attributes.id,
-        title: ablaufbausteinRef.attributes.name,
-      };
-    });
-
-    const tableEntries: TableEntry[] = [];
-
-    if (ablaufbausteine.length > 0) {
-      tableEntries.push({
-        id: (idCounter++).toString(),
-        descriptionEntry: 'Ablaufbausteine',
-        dataEntries: ablaufbausteine,
-      });
-    }
-
-    // AblaufbausteinRef;
-
     //////////////////////////////////////////////
 
     return {
@@ -2566,7 +2723,7 @@ export function Content() {
       header: jsonDataFromXml.attributes.name,
       descriptionText:
         replaceUrlInText(sequence, tailoringParameter, getProjectFeaturesString()) + imageTag + imageDescriptionTag,
-      tableEntries: tableEntries,
+      tableEntries: [],
       // subPageEntries: subPageEntries,
     };
   }
@@ -2659,6 +2816,21 @@ export function Content() {
       tableEntries: tableEntries,
       // subPageEntries: subPageEntries,
     };
+  }
+
+  function redirectToFirstChildWithContent(sectionId: string) {
+    const currentMenuItem = getMenuItemByAttributeValue(navigationData, 'key', sectionId);
+    const currentChildren = currentMenuItem?.children;
+
+    if (currentChildren?.length > 0) {
+      const childId = currentChildren[0].key;
+
+      if (childId) {
+        setSelectedItemKey(childId);
+
+        navigate(`/documentation/${childId}${getSearchStringFromHash()}`);
+      }
+    }
   }
 
   return (

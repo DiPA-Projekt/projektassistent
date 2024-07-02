@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import { useDocumentation } from '../context/DocumentationContext';
 import { Breadcrumb } from 'antd';
-import { getSearchStringFromHash } from '../shares/utils';
+import { decodeXml, getSearchStringFromHash } from '../shares/utils';
 
 export function Breadcrumbs() {
   // const [pathSnippets, setPathSnippets] = useState<string[]>([]);
@@ -49,7 +49,7 @@ export function Breadcrumbs() {
             const url = '/documentation/' + parent?.key + getSearchStringFromHash();
             return {
               key: url,
-              title: <Link to={url}>{parent?.label}</Link>,
+              title: <Link to={url}>{decodeXml(parent?.label)}</Link>,
             };
           })
           .reverse();
