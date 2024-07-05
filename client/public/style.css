@@ -141,6 +141,15 @@ ul.sideMenu > li > ul > li > ul > li > div {
   color: rgba(0, 0, 0, 0.88);
 }
 
-.disable-link{
+.disable-link {
   pointer-events: none;
+}
+
+/* side background color like menu background color */
+.ant-layout-sider-children {
+  background: #f5f5f5;
+}
+
+.ant-layout-header {
+  background: #fff;
 }

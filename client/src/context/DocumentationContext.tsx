@@ -22,8 +22,9 @@ type DocumentationSession = {
   productId: string | null;
   contentProductDependencyId: string | null;
   roleId: string | null;
-  processModuleId: string | null;
   decisionPointId: string | null;
+  conventionFigureId: string | null;
+  divisionId: string | null;
   processBuildingBlockId: string | null;
   methodReferenceId: string | null;
   toolReferenceId: string | null;
@@ -34,6 +35,7 @@ type DocumentationSession = {
   activityId: string | null;
   templateDisciplineId: string | null;
   productDisciplineId: string | null;
+  glossaryEntryId: string | null;
   entryId: string | null;
   getNavigationPath: Function;
   onRouteChanged: Function;
@@ -68,8 +70,9 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
   const [productId, setProductId] = useState<string | null>(null);
   const [contentProductDependencyId, setContentProductDependencyId] = useState<string | null>(null);
   const [roleId, setRoleId] = useState<string | null>(null);
-  const [processModuleId, setProcessModuleId] = useState<string | null>(null);
   const [decisionPointId, setDecisionPointId] = useState<string | null>(null);
+  const [conventionFigureId, setConventionFigureId] = useState<string | null>(null);
+  const [divisionId, setDivisionId] = useState<string | null>(null);
   const [processBuildingBlockId, setProcessBuildingBlockId] = useState<string | null>(null);
   const [methodReferenceId, setMethodReferenceId] = useState<string | null>(null);
   const [toolReferenceId, setToolReferenceId] = useState<string | null>(null);
@@ -80,6 +83,7 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
   const [activityId, setActivityId] = useState<string | null>(null);
   const [templateDisciplineId, setTemplateDisciplineId] = useState<string | null>(null);
   const [productDisciplineId, setProductDisciplineId] = useState<string | null>(null);
+  const [glossaryEntryId, setGlossaryEntryId] = useState<string | null>(null);
   const [entryId, setEntryId] = useState<string | null>(null);
 
   const value: DocumentationSession = {
@@ -96,8 +100,9 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
     productId,
     contentProductDependencyId,
     roleId,
-    processModuleId,
     decisionPointId,
+    conventionFigureId,
+    divisionId,
     processBuildingBlockId,
     methodReferenceId,
     toolReferenceId,
@@ -108,6 +113,7 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
     activityId,
     templateDisciplineId,
     productDisciplineId,
+    glossaryEntryId,
     entryId,
     getNavigationPath,
     onRouteChanged,
@@ -126,7 +132,7 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
 
     // mount().then();
     //eslint-disable-next-line
-  }, [selectedItemKey]); // TODO selectedIndexType
+  }, [selectedItemKey]);
 
   useEffect(() => {
     // async function mount() {
@@ -137,17 +143,16 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
 
     // mount().then();
     //eslint-disable-next-line
-  }, [selectedIndexType]); // TODO selectedIndexType
-
-  // TODO: onIndexPageChanged
+  }, [selectedIndexType]);
 
   function resetSelectedMenuEntryId() {
     setDisciplineId(null);
     setProductId(null);
     setContentProductDependencyId(null);
     setRoleId(null);
-    setProcessModuleId(null);
     setDecisionPointId(null);
+    setConventionFigureId(null);
+    setDivisionId(null);
     setProcessBuildingBlockId(null);
     setMethodReferenceId(null);
     setToolReferenceId(null);
@@ -158,10 +163,12 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
     setActivityId(null);
     setTemplateDisciplineId(null);
     setProductDisciplineId(null);
+    setGlossaryEntryId(null);
     setEntryId(null);
   }
 
   function onRouteChanged(menuEntryId: string): void {
+    setSelectedIndexType(undefined);
     resetSelectedMenuEntryId();
 
     const foundMenuItem = getMenuItemByAttributeValue(navigationData, 'key', menuEntryId);
@@ -185,10 +192,12 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
         )
       ) {
         setRoleId(foundMenuItem.key);
-      } else if (foundMenuItem.dataType === NavTypeEnum.PROCESS_MODULE) {
-        setProcessModuleId(foundMenuItem.key);
       } else if (foundMenuItem.dataType === NavTypeEnum.DECISION_POINT) {
         setDecisionPointId(foundMenuItem.key);
+      } else if (foundMenuItem.dataType === NavTypeEnum.CONVENTION_FIGURE) {
+        setConventionFigureId(foundMenuItem.key);
+      } else if (foundMenuItem.dataType === NavTypeEnum.DIVISION) {
+        setDivisionId(foundMenuItem.key);
       } else if (foundMenuItem.dataType === NavTypeEnum.PROCESS_BUILDING_BLOCK) {
         setProcessBuildingBlockId(foundMenuItem.key);
       } else if (foundMenuItem.dataType === NavTypeEnum.METHOD_REFERENCE) {
@@ -207,6 +216,8 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
         setActivityId(foundMenuItem.key);
       } else if (foundMenuItem.dataType === NavTypeEnum.TEMPLATE_DISCIPLINE) {
         setTemplateDisciplineId(foundMenuItem.key);
+      } else if (foundMenuItem.dataType === NavTypeEnum.GLOSSARY_ENTRY) {
+        setGlossaryEntryId(foundMenuItem.key);
       } else {
         setEntryId(foundMenuItem.key);
       }
@@ -235,7 +246,7 @@ const DocumentationSessionContextProvider = ({ children }: DocumentationSessionP
   }
 
   function onIndexPageSelected(indexPageType: IndexTypeEnum): void {
-    console.log('onIndexPageSelected content', indexPageType);
+    resetSelectedMenuEntryId();
     setSelectedIndexType(indexPageType);
   }
 

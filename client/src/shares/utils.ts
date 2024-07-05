@@ -81,6 +81,15 @@ export function getSearchStringFromHash() {
   return searchHash.substring(searchHash.indexOf('?'));
 }
 
+export function getFigureDesignationFromText(text: string) {
+  const matches = text.match(/\[Abb:(.*?)\]/);
+
+  if (matches) {
+    return matches[1];
+  }
+  return null;
+}
+
 export function fixLinksInText(testString: string): string {
   const url = '#/documentation/';
 
@@ -104,6 +113,15 @@ export function replaceUrlInText(text: string, tailoringParameter: any, projectF
       '/Grafik/images/$1?' +
       projectFeaturesString +
       '"'
+  );
+}
+
+export function replaceImageUrlInText(text: string, tailoringParameter: any): string {
+  return text.replace(
+    /src=['"](?:[^"'\/]*\/)*([^'"]+)['"]/g,
+    'src="https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      tailoringParameter.modelVariantId +
+      '/Projekttyp/xxx/Projekttypvariante/xxx/Grafik/images/$1"'
   );
 }
 

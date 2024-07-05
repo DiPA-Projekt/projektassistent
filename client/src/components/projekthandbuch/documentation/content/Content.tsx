@@ -4,15 +4,17 @@ import parse, { domToReact } from 'html-react-parser';
 import { Anchor, Col, FloatButton, Layout, Row, Spin, Tag } from 'antd';
 import React, { useEffect, useState } from 'react';
 // import { DataEntry, PageEntry, TableEntry } from '@dipa-projekt/projektassistent-openapi';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useDocumentation } from '../../../../context/DocumentationContext';
 import {
   decodeXml,
   fixLinksInText,
   flatten,
+  getFigureDesignationFromText,
   getJsonDataFromXml,
   getMenuItemByAttributeValue,
   getSearchStringFromHash,
+  replaceImageUrlInText,
   replaceUrlInText,
 } from '../../../../shares/utils';
 import { AnchorLinkItemProps } from 'antd/es/anchor/Anchor';
@@ -26,6 +28,18 @@ import { PageEntryContent } from './PageEntryContent';
 import { weitApiUrl } from '../../../app/App';
 import { HashLink } from 'react-router-hash-link';
 import { DataEntry, PageEntry, TableEntry } from '../Documentation';
+import { ProjectType } from '../../projekt/project';
+
+function getConceptMappingData(conceptMapping: XMLElement, tagName: string, suffix: string): DataEntry[] {
+  return conceptMapping.getElementsByTagName(tagName).map((data: XMLElement) => {
+    const dataEntry: DataEntry = {
+      id: tagName !== 'wird_abgebildet_durchThemaRef' ? data.attributes.id : undefined,
+      title: data.attributes?.name || data.attributes?.titel,
+      suffix: suffix,
+    };
+    return dataEntry;
+  });
+}
 
 export function Content() {
   const [loading, setLoading] = useState(false);
@@ -48,7 +62,8 @@ export function Content() {
     contentProductDependencyId,
     roleId,
     decisionPointId,
-    processModuleId,
+    conventionFigureId,
+    divisionId,
     methodReferenceId,
     toolReferenceId,
     processBuildingBlockId,
@@ -59,9 +74,13 @@ export function Content() {
     activityId,
     templateDisciplineId,
     productDisciplineId,
+    glossaryEntryId,
     entryId,
     selectedIndexType,
+    setSelectedItemKey,
   } = useDocumentation();
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (selectedPageEntry?.subPageEntries) {
@@ -83,14 +102,11 @@ export function Content() {
   }, [productId]);
 
   useEffect(() => {
-    async function mount() {
-      if (productDisciplineId) {
-        const content = await getProductDisciplineContent();
-        setSelectedPageEntry(content);
-      }
+    // redirect only if discipline was selected directly
+    if (productDisciplineId && !productId) {
+      redirectToFirstChildWithContent(productDisciplineId);
     }
 
-    void mount().then();
     //eslint-disable-next-line
   }, [productDisciplineId]);
 
@@ -125,24 +141,25 @@ export function Content() {
         let content;
         switch (selectedIndexType) {
           case IndexTypeEnum.PRODUCT:
-            content = await getProductIndexContent();
+            content = getProductIndexContent();
             break;
           case IndexTypeEnum.ROLE:
-            content = await getRoleIndexContent();
+            content = getRoleIndexContent();
             break;
           case IndexTypeEnum.PROCESS:
-            content = await getProcessIndexContent();
+            content = getProcessIndexContent();
             break;
           case IndexTypeEnum.TAILORING:
-            content = await getTailoringIndexContent();
+            content = getTailoringIndexContent();
             break;
           case IndexTypeEnum.WORK_AIDS:
-            content = await getWorkAidsIndexContent();
+            content = getWorkAidsIndexContent();
+            break;
+          case IndexTypeEnum.OTHER_STANDARDS:
+            content = getOtherStandardsIndexContent();
             break;
         }
         setSelectedPageEntry(content);
-      } else {
-        console.log('no selectedIndexType');
       }
     }
 
@@ -188,15 +205,27 @@ export function Content() {
 
   useEffect(() => {
     async function mount() {
-      if (processModuleId) {
-        const content = await getProcessModuleContent();
+      if (conventionFigureId) {
+        const content = await getConventionFigureContent();
         setSelectedPageEntry(content);
       }
     }
 
     void mount().then();
     //eslint-disable-next-line
-  }, [processModuleId]);
+  }, [conventionFigureId]);
+
+  useEffect(() => {
+    async function mount() {
+      if (divisionId) {
+        const content = await getDivisionContent();
+        setSelectedPageEntry(content);
+      }
+    }
+
+    void mount().then();
+    //eslint-disable-next-line
+  }, [divisionId]);
 
   useEffect(() => {
     async function mount() {
@@ -293,6 +322,18 @@ export function Content() {
     void mount().then();
     //eslint-disable-next-line
   }, [templateDisciplineId]);
+
+  useEffect(() => {
+    async function mount() {
+      if (glossaryEntryId) {
+        const content = await getGlossaryEntryContent();
+        setSelectedPageEntry(content);
+      }
+    }
+
+    void mount().then();
+    //eslint-disable-next-line
+  }, [glossaryEntryId]);
 
   useEffect(() => {
     async function mount() {
@@ -498,6 +539,11 @@ export function Content() {
       const childText = jsonDataFromXml.children.find((child) => child.name === 'Text');
       if (childText) {
         textPart = decodeXml(childText.value);
+      } else if (jsonDataFromXml.children.length > 0) {
+        // redirect to first child with content
+        redirectToFirstChildWithContent(sectionId);
+      } else {
+        textPart = t('text.pleaseSelectSubChapter');
       }
     }
 
@@ -508,38 +554,6 @@ export function Content() {
       descriptionText: replaceUrlInText(textPart, tailoringParameter, getProjectFeaturesString()),
       tableEntries: [],
       subPageEntries: [],
-    };
-  }
-
-  async function getProductDisciplineContent(): Promise<PageEntry> {
-    const disciplineId = productDisciplineId?.replace('productDiscipline_', '');
-
-    const projectTypeUrl =
-      weitApiUrl +
-      '/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      tailoringParameter.modelVariantId +
-      '/Projekttyp/' +
-      tailoringParameter.projectTypeId +
-      '/Projekttypvariante/' +
-      tailoringParameter.projectTypeVariantId +
-      '/Disziplin/' +
-      disciplineId +
-      '?' +
-      getProjectFeaturesString();
-
-    const jsonDataFromXml = await getJsonDataFromXml(projectTypeUrl);
-
-    const tableEntries: TableEntry[] = [];
-
-    //////////////////////////////////////////////
-
-    return {
-      id: jsonDataFromXml.attributes.id,
-      // menuEntryId: jsonDataFromXml.attributes.id,
-      header: jsonDataFromXml.attributes.name,
-      descriptionText: '',
-      tableEntries: tableEntries,
-      // subPageEntries: subPageEntries,
     };
   }
 
@@ -742,7 +756,10 @@ export function Content() {
     }
     /////////////////////////////
 
-    const tools = [...activities, ...products, ...activitiesToTools];
+    // To hide the links to the activities in the tools section of a product the id has to removed here
+    const activitiesWithoutId = activities.map(({ id, ...keepAttrs }) => keepAttrs);
+
+    const tools = [...activitiesWithoutId, ...products, ...activitiesToTools];
 
     if (tools.length > 0) {
       tableEntries.push({
@@ -1172,12 +1189,12 @@ export function Content() {
     };
   }
 
-  async function getProductIndexContent(): Promise<PageEntry> {
+  function getProductIndexContent(): PageEntry {
     const filterRelevantDataTypes = flatten(navigationData).filter((item: any) =>
       [NavTypeEnum.PRODUCT].includes(item.dataType)
     );
 
-    let data: any[] = filterRelevantDataTypes.map((navItem: any): any => {
+    const data: any[] = filterRelevantDataTypes.map((navItem: any): any => {
       return {
         modelElement: {
           id: navItem.key,
@@ -1186,51 +1203,6 @@ export function Content() {
         dataTypes: [navItem.dataType],
       };
     });
-
-    /////////////////
-
-    const filterDisciplineDataTypes = flatten(navigationData).filter((item: any) =>
-      [NavTypeEnum.DISCIPLINE].includes(item.dataType)
-    );
-
-    for (const discipline of filterDisciplineDataTypes) {
-      const productsUrl =
-        weitApiUrl +
-        '/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-        tailoringParameter.modelVariantId +
-        '/Projekttyp/' +
-        tailoringParameter.projectTypeId +
-        '/Projekttypvariante/' +
-        tailoringParameter.projectTypeVariantId +
-        '/Disziplin/' +
-        discipline.key +
-        '/Produkt?' +
-        getProjectFeaturesString();
-
-      const jsonDataFromXml = await getJsonDataFromXml(productsUrl);
-
-      let productTopicEntries: any[] = [];
-
-      if (jsonDataFromXml.children) {
-        for (const product of jsonDataFromXml.children) {
-          const themaRef: XMLElement[] = product.getElementsByTagName('ThemaRef');
-          productTopicEntries = [
-            ...productTopicEntries,
-            ...themaRef.map((subjectRef) => {
-              return {
-                modelElement: {
-                  id: product.attributes.id + '#' + subjectRef.attributes.id,
-                  text: subjectRef.attributes.name,
-                },
-                dataTypes: [NavTypeEnum.TOPIC],
-              };
-            }),
-          ];
-        }
-      }
-
-      data = [...data, ...productTopicEntries];
-    }
 
     /////////////////
 
@@ -1264,9 +1236,6 @@ export function Content() {
               if (tag === 'product') {
                 color = 'geekblue';
               }
-              if (tag === 'topic') {
-                color = 'green';
-              }
               return (
                 <Tag color={color} key={tag}>
                   {t('translation:dataType.' + tag)}
@@ -1290,7 +1259,7 @@ export function Content() {
     };
   }
 
-  async function getRoleIndexContent(): Promise<PageEntry> {
+  function getRoleIndexContent(): PageEntry {
     const filterRelevantDataTypes = flatten(navigationData).filter((item: any) =>
       [NavTypeEnum.PROJECT_TEAM_ROLE, NavTypeEnum.PROJECT_ROLE, NavTypeEnum.ORGANISATION_ROLE].includes(item.dataType)
     );
@@ -1361,11 +1330,9 @@ export function Content() {
     };
   }
 
-  async function getProcessIndexContent(): Promise<PageEntry> {
+  function getProcessIndexContent(): PageEntry {
     const filterRelevantDataTypes = flatten(navigationData).filter((item: any) =>
-      [NavTypeEnum.PROCESS_MODULE, NavTypeEnum.DECISION_POINT, NavTypeEnum.PROJECT_TYPE_VARIANT_SEQUENCE].includes(
-        item.dataType
-      )
+      [NavTypeEnum.DECISION_POINT, NavTypeEnum.PROJECT_TYPE_VARIANT_SEQUENCE].includes(item.dataType)
     );
 
     const data: any[] = filterRelevantDataTypes.map((navItem: any): any => {
@@ -1435,7 +1402,7 @@ export function Content() {
     };
   }
 
-  async function getTailoringIndexContent(): Promise<PageEntry> {
+  function getTailoringIndexContent(): PageEntry {
     const filterRelevantDataTypes = flatten(navigationData).filter((item: any) =>
       [
         NavTypeEnum.PROJECT_TYPE_VARIANT,
@@ -1447,7 +1414,7 @@ export function Content() {
 
     const data: any[] = filterRelevantDataTypes.map((navItem: any): any => {
       return {
-        modelElement: navItem.label,
+        modelElement: { id: navItem.key, text: navItem.label },
         dataTypes: [navItem.dataType],
       };
     });
@@ -1459,9 +1426,9 @@ export function Content() {
         key: 'modelElement',
         defaultSortOrder: 'ascend',
         sorter: {
-          compare: (a, b) => sorter(a.modelElement, b.modelElement),
+          compare: (a, b) => sorter(a.modelElement.text, b.modelElement.text),
         },
-        render: (text: string) => <a>{text}</a>, // TODO
+        render: (object) => <Link to={`/documentation/${object.id}${getSearchStringFromHash()}`}>{object.text}</Link>,
       },
       {
         title: 'Typ',
@@ -1514,7 +1481,7 @@ export function Content() {
     };
   }
 
-  async function getWorkAidsIndexContent(): Promise<PageEntry> {
+  function getWorkAidsIndexContent(): PageEntry {
     const filterRelevantDataTypes = flatten(navigationData).filter((item: any) =>
       [NavTypeEnum.ACTIVITY, NavTypeEnum.METHOD_REFERENCE, NavTypeEnum.TOOL_REFERENCE].includes(item.dataType)
     );
@@ -1522,7 +1489,7 @@ export function Content() {
 
     const data: any[] = filterRelevantDataTypes.map((navItem: any): any => {
       return {
-        modelElement: navItem.label,
+        modelElement: { id: navItem.key, text: navItem.label },
         dataTypes: [navItem.dataType],
       };
     });
@@ -1534,9 +1501,9 @@ export function Content() {
         key: 'modelElement',
         defaultSortOrder: 'ascend',
         sorter: {
-          compare: (a, b) => sorter(a.modelElement, b.modelElement),
+          compare: (a, b) => sorter(a.modelElement.text, b.modelElement.text),
         },
-        render: (text: string) => <a>{text}</a>, // TODO
+        render: (object) => <Link to={`/documentation/${object.id}${getSearchStringFromHash()}`}>{object.text}</Link>,
       },
       {
         title: 'Typ',
@@ -1589,6 +1556,73 @@ export function Content() {
       dataSource: data,
       columns: columns,
       //subPageEntries: subPageEntries, // TODO
+    };
+  }
+
+  function getOtherStandardsIndexContent(): PageEntry {
+    const filterRelevantDataTypes = flatten(navigationData).filter((item: any) =>
+      [NavTypeEnum.CONVENTION_FIGURE, NavTypeEnum.DIVISION].includes(item.dataType)
+    );
+
+    const data: any[] = filterRelevantDataTypes.map((navItem: any): any => {
+      return {
+        modelElement: { id: navItem.key, text: navItem.label },
+        dataTypes: [navItem.dataType],
+      };
+    });
+
+    const columns: ColumnsType<any> = [
+      {
+        title: 'Modellelement',
+        dataIndex: 'modelElement',
+        key: 'modelElement',
+        defaultSortOrder: 'ascend',
+        sorter: {
+          compare: (a, b) => sorter(a.modelElement.text, b.modelElement.text),
+        },
+        render: (object) => <Link to={`/documentation/${object.id}${getSearchStringFromHash()}`}>{object.text}</Link>,
+      },
+      {
+        title: 'Typ',
+        dataIndex: 'dataTypes',
+        key: 'dataTypes',
+        filters: [...new Set(data.map((item) => item.dataTypes[0]))].map((item) => ({
+          text: t('translation:dataType.' + item),
+          value: item,
+        })),
+        onFilter: (value: string | number | boolean, record: any) => record.dataTypes.indexOf(value) === 0,
+        sorter: {
+          compare: (a, b) => sorter(a.dataTypes[0], b.dataTypes[0]),
+        },
+        render: (tags: string[]) => (
+          <span>
+            {tags?.map((tag) => {
+              let color;
+              if (tag === 'conventionFigure') {
+                color = 'geekblue';
+              }
+              if (tag === 'division') {
+                color = 'green';
+              }
+              return (
+                <Tag color={color} key={tag}>
+                  {t('translation:dataType.' + tag)}
+                </Tag>
+              );
+            })}
+          </span>
+        ),
+      },
+    ];
+
+    return {
+      id: 'otherStandardsIndexContent', //jsonDataFromXml.attributes.id,
+      // menuEntryId: jsonDataFromXml.attributes.id,
+      header: 'Andere-Standards-Index', //jsonDataFromXml.attributes.name,
+      descriptionText: '',
+      tableEntries: [],
+      dataSource: data,
+      columns: columns,
     };
   }
 
@@ -1647,39 +1681,153 @@ export function Content() {
     };
   }
 
-  async function getProcessModuleContent(): Promise<PageEntry> {
-    const processModuleUrl =
+  async function getConventionFigureContent(): Promise<PageEntry> {
+    const conventionFigureUrl =
       weitApiUrl +
-      '/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      '/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
       tailoringParameter.modelVariantId +
-      '/Projekttyp/' +
-      tailoringParameter.projectTypeId +
-      '/Projekttypvariante/' +
-      tailoringParameter.projectTypeVariantId +
-      '/Ablaufbaustein/' +
-      processModuleId +
-      '?' +
-      getProjectFeaturesString();
+      '/Konventionsabbildung/' +
+      conventionFigureId;
 
-    // let idCounter = 2000;
+    const jsonDataFromXml = await getJsonDataFromXml(conventionFigureUrl);
 
-    const jsonDataFromXml = await getJsonDataFromXml(processModuleUrl);
-
-    const description = decodeXml(jsonDataFromXml.getElementsByTagName('Beschreibung')[0]?.value);
+    const summary = decodeXml(jsonDataFromXml.getElementsByTagName('Zusammenfassung')[0]?.value);
 
     const tableEntries: TableEntry[] = [];
 
-    //////////////////////////////////////////////
-
     return {
       id: jsonDataFromXml.attributes.id,
-      // menuEntryId: jsonDataFromXml.attributes.id,
       header: jsonDataFromXml.attributes.name,
-      descriptionText: description,
+      descriptionText: replaceImageUrlInText(summary, tailoringParameter),
       tableEntries: tableEntries,
-      // subPageEntries: subPageEntries,
     };
   }
+
+  async function getDivisionContent(): Promise<PageEntry> {
+    if (divisionId) {
+      const foundDivision = getMenuItemByAttributeValue(navigationData, 'key', divisionId);
+
+      const conventionFigureId = foundDivision?.parent?.key;
+
+      const conventionFigureUrl =
+        weitApiUrl +
+        '/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+        tailoringParameter.modelVariantId +
+        '/Konventionsabbildung/' +
+        conventionFigureId;
+
+      let idCounter = 2000;
+
+      const jsonDataFromXml = await getJsonDataFromXml(conventionFigureUrl);
+
+      const divisionData = jsonDataFromXml
+        .getElementsByTagName('Bereich')
+        .find((division) => division.attributes.id === divisionId);
+
+      if (!divisionData) {
+        return null;
+      }
+
+      const explanation = decodeXml(divisionData.getElementsByTagName('Erläuterung')[0]?.value);
+      const conceptMappings = divisionData.getElementsByTagName('Begriffsabbildung');
+
+      const tableEntries: TableEntry[] = [];
+
+      conceptMappings.forEach((conceptMapping) => {
+        const conceptMappingName = conceptMapping.attributes.name;
+
+        const description = decodeXml(conceptMapping.getElementsByTagName('Beschreibung')[0]?.value);
+
+        let dataEntries: DataEntry[] = [];
+
+        const wird_abgebildet_durchKapitelRefs = getConceptMappingData(
+          conceptMapping,
+          'wird_abgebildet_durchKapitelRef',
+          '(Kapitel)'
+        );
+        const wird_abgebildet_durchVBRefs = getConceptMappingData(
+          conceptMapping,
+          'wird_abgebildet_durchVBRef',
+          '(Vorgehensbaustein)'
+        );
+        const wird_abgebildet_durchPTVRefs = getConceptMappingData(
+          conceptMapping,
+          'wird_abgebildet_durchPTVRef',
+          '(Projekttypvariante)'
+        );
+        const wird_abgebildet_durchRolleRefs = getConceptMappingData(
+          conceptMapping,
+          'wird_abgebildet_durchRolleRef',
+          '(Rolle)'
+        );
+        const wird_abgebildet_durchAktivitaetRefs = getConceptMappingData(
+          conceptMapping,
+          'wird_abgebildet_durchAktivitätRef',
+          '(Aktivität)'
+        );
+        const wird_abgebildet_durchDisziplinRefs = getConceptMappingData(
+          conceptMapping,
+          'wird_abgebildet_durchDisziplinRef',
+          '(Disziplin)'
+        );
+        const wird_abgebildet_durchProduktRefs = getConceptMappingData(
+          conceptMapping,
+          'wird_abgebildet_durchProduktRef',
+          '(Produkt)'
+        );
+
+        // TODO: Hier gibt's noch Probleme bei der Verlinkung, weil Themen keine eigene Seite haben, sondern nur auf
+        // Produkten angezeigt werden.
+        const wird_abgebildet_durchThemaRefs = getConceptMappingData(
+          conceptMapping,
+          'wird_abgebildet_durchThemaRef',
+          '(Thema)'
+        );
+
+        dataEntries = [
+          ...dataEntries,
+          ...wird_abgebildet_durchKapitelRefs,
+          ...wird_abgebildet_durchVBRefs,
+          ...wird_abgebildet_durchPTVRefs,
+          ...wird_abgebildet_durchRolleRefs,
+          ...wird_abgebildet_durchAktivitaetRefs,
+          ...wird_abgebildet_durchDisziplinRefs,
+          ...wird_abgebildet_durchProduktRefs,
+          ...wird_abgebildet_durchThemaRefs,
+        ];
+
+        const isRepresentedByData = [];
+
+        if (dataEntries.length > 0) {
+          isRepresentedByData.push([
+            {
+              subheader: {
+                id: idCounter + '_isRepresentedBy',
+                title: 'Wird erfüllt durch:',
+                isLink: false,
+              },
+              dataEntryDescription: description,
+              dataEntries: dataEntries,
+            },
+          ]);
+        }
+
+        tableEntries.push({
+          id: (idCounter++).toString(),
+          descriptionEntry: conceptMappingName,
+          dataEntries: isRepresentedByData,
+        });
+      });
+
+      return {
+        id: divisionData.attributes.id,
+        header: decodeXml(divisionData.attributes.name),
+        descriptionText: explanation,
+        tableEntries: tableEntries,
+      };
+    }
+  }
+
   async function getContentProductDependencyContent(): Promise<PageEntry> {
     const contentProductDependenciesUrl =
       weitApiUrl +
@@ -1833,6 +1981,30 @@ export function Content() {
     return jsonDataFromXml.getElementsByTagName('Aktivität');
   }
 
+  async function getGlossaryEntryContent(): Promise<XMLElement[]> {
+    const expressionUrl =
+      weitApiUrl +
+      '/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      tailoringParameter.modelVariantId +
+      '/Begriff/' +
+      glossaryEntryId;
+
+    const jsonDataFromXml = await getJsonDataFromXml(expressionUrl);
+
+    const description = decodeXml(jsonDataFromXml.getElementsByTagName('Erläuterung')[0]?.value);
+
+    const tableEntries: TableEntry[] = [];
+
+    //////////////////////////////////////////////
+
+    return {
+      id: jsonDataFromXml.attributes.id,
+      header: jsonDataFromXml.attributes.name,
+      descriptionText: description,
+      tableEntries: tableEntries,
+    };
+  }
+
   async function getTemplatesContent(): Promise<PageEntry> {
     const disciplineId = templateDisciplineId?.replace('td_', '');
     // get all products with externalTemplate info for templateDisciplineId
@@ -1877,7 +2049,6 @@ export function Content() {
 
         const jsonDataFromXml = await getJsonDataFromXml(externalTemplateUrl);
 
-        const templateId = jsonDataFromXml.attributes.id;
         const templateName = jsonDataFromXml.attributes.name;
         const templateUri = jsonDataFromXml.getElementsByTagName('URI')[0]?.value;
 
@@ -1982,16 +2153,42 @@ export function Content() {
     //////////////////////////////////////////////
 
     const activitiesData = await getActivitiesData();
-    const activitiesToTools = [];
+    const activitiesToTools: DataEntry[] = [];
+    const activitiesToProducts: DataEntry[] = [];
 
     for (const activity of activitiesData) {
       const methodReferences = activity.getElementsByTagName('MethodenreferenzRef');
       for (const methodReference of methodReferences) {
         if (methodReference.attributes.id === methodReferenceId) {
-          activitiesToTools.push({
-            id: activity.attributes.id,
-            title: activity.attributes.name,
-          });
+          /* The method and tool references (reference work aids) contain links to the corresponding activities.
+             As the activities are no longer part of the documentation (since version 2.4), the links cannot be resolved.
+             Instead of the activity, a link should therefore be created to the product linked to the activity.
+
+             -> So, if the activity id is not in navigation menu change linked site to products page of the activity.
+           */
+
+          const foundActivity = getMenuItemByAttributeValue(navigationData, 'key', activity.attributes.id);
+
+          if (foundActivity) {
+            activitiesToTools.push({
+              id: activity.attributes.id,
+              title: activity.attributes.name,
+            });
+          } else {
+            const products = activity.getElementsByTagName('ProduktRef');
+
+            for (const product of products) {
+              const foundProduct = getMenuItemByAttributeValue(navigationData, 'key', product.attributes.id);
+
+              if (foundProduct) {
+                activitiesToProducts.push({
+                  id: product.attributes.id,
+                  title: activity.attributes.name,
+                  suffix: '(' + product.attributes.name + ')',
+                });
+              }
+            }
+          }
         }
       }
     }
@@ -1999,13 +2196,19 @@ export function Content() {
     if (activitiesToTools.length > 0) {
       tableEntries.push({
         id: (idCounter++).toString(),
-        descriptionEntry: 'Aktivitäten',
+        descriptionEntry: t('translation:label.activities'),
         dataEntries: activitiesToTools,
+      });
+    } else if (activitiesToProducts.length > 0) {
+      tableEntries.push({
+        id: (idCounter++).toString(),
+        descriptionEntry: t('translation:label.products'),
+        dataEntries: activitiesToProducts,
       });
     }
 
     // //////////////////////////////////////////////
-    //
+
     const quellen = quelleRefs.flatMap((entry: XMLElement) => {
       return entry.getElementsByTagName('QuelleRef').map((productRef) => {
         return {
@@ -2053,16 +2256,42 @@ export function Content() {
     //////////////////////////////////////////////
 
     const activitiesData = await getActivitiesData();
-    const activitiesToTools = [];
+    const activitiesToTools: DataEntry[] = [];
+    const activitiesToProducts: DataEntry[] = [];
 
     for (const activity of activitiesData) {
       const toolReferences = activity.getElementsByTagName('WerkzeugreferenzRef');
       for (const toolReference of toolReferences) {
         if (toolReference.attributes.id === toolReferenceId) {
-          activitiesToTools.push({
-            id: activity.attributes.id,
-            title: activity.attributes.name,
-          });
+          /* The method and tool references (reference work aids) contain links to the corresponding activities.
+             As the activities are no longer part of the documentation (since version 2.4), the links cannot be resolved.
+             Instead of the activity, a link should therefore be created to the product linked to the activity.
+
+             -> So, if the activity id is not in navigation menu change linked site to products page of the activity.
+           */
+
+          const foundActivity = getMenuItemByAttributeValue(navigationData, 'key', activity.attributes.id);
+
+          if (foundActivity) {
+            activitiesToTools.push({
+              id: activity.attributes.id,
+              title: activity.attributes.name,
+            });
+          } else {
+            const products = activity.getElementsByTagName('ProduktRef');
+
+            for (const product of products) {
+              const foundProduct = getMenuItemByAttributeValue(navigationData, 'key', product.attributes.id);
+
+              if (foundProduct) {
+                activitiesToProducts.push({
+                  id: product.attributes.id,
+                  title: activity.attributes.name,
+                  suffix: '(' + product.attributes.name + ')',
+                });
+              }
+            }
+          }
         }
       }
     }
@@ -2070,8 +2299,14 @@ export function Content() {
     if (activitiesToTools.length > 0) {
       tableEntries.push({
         id: (idCounter++).toString(),
-        descriptionEntry: 'Aktivitäten',
+        descriptionEntry: t('translation:label.activities'),
         dataEntries: activitiesToTools,
+      });
+    } else if (activitiesToProducts.length > 0) {
+      tableEntries.push({
+        id: (idCounter++).toString(),
+        descriptionEntry: t('translation:label.products'),
+        dataEntries: activitiesToProducts,
       });
     }
 
@@ -2456,27 +2691,29 @@ export function Content() {
 
     let idCounter = 2000;
 
+    const title = decodeXml(jsonDataFromXml.attributes.name);
+    const projectType: ProjectType = jsonDataFromXml.getElementsByTagName('ProjekttypRef')[0]
+      ?.attributes as ProjectType;
+
     const sequence = decodeXml(jsonDataFromXml.getElementsByTagName('Ablauf')[0]?.value);
-    const ablaufbausteinRefs: XMLElement[] = jsonDataFromXml.getElementsByTagName('AblaufbausteinRef');
+    const figureDesignation = getFigureDesignationFromText(sequence);
 
-    const ablaufbausteine = ablaufbausteinRefs.map((ablaufbausteinRef) => {
-      return {
-        id: ablaufbausteinRef.attributes.id,
-        title: ablaufbausteinRef.attributes.name,
-      };
-    });
+    const getFigureUrl =
+      weitApiUrl +
+      '/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      tailoringParameter.modelVariantId +
+      '/Projekttyp/' +
+      projectType.id +
+      '/Projekttypvariante/' +
+      projectTypeVariantId +
+      '/Grafik/Abb:' +
+      figureDesignation +
+      '?' +
+      getProjectFeaturesString();
 
-    const tableEntries: TableEntry[] = [];
-
-    if (ablaufbausteine.length > 0) {
-      tableEntries.push({
-        id: (idCounter++).toString(),
-        descriptionEntry: 'Ablaufbausteine',
-        dataEntries: ablaufbausteine,
-      });
-    }
-
-    // AblaufbausteinRef;
+    const imageTag = '<p><img alt="" id="1489155545306" src=' + getFigureUrl + '/></p>';
+    const imageDescriptionTag =
+      '<p style="margin-top: 0px;">' + '<i>Abbildung [' + figureDesignation + ']: ' + title + '</i></p>';
 
     //////////////////////////////////////////////
 
@@ -2484,8 +2721,9 @@ export function Content() {
       id: jsonDataFromXml.attributes.id,
       // menuEntryId: jsonDataFromXml.attributes.id,
       header: jsonDataFromXml.attributes.name,
-      descriptionText: replaceUrlInText(sequence, tailoringParameter, getProjectFeaturesString()),
-      tableEntries: tableEntries,
+      descriptionText:
+        replaceUrlInText(sequence, tailoringParameter, getProjectFeaturesString()) + imageTag + imageDescriptionTag,
+      tableEntries: [],
       // subPageEntries: subPageEntries,
     };
   }
@@ -2509,7 +2747,7 @@ export function Content() {
     let idCounter = 2000;
 
     const sinnUndZweck = decodeXml(jsonDataFromXml.getElementsByTagName('Sinn_und_Zweck')[0]?.value);
-    const aktivityRef: XMLElement[] = jsonDataFromXml.getElementsByTagName('AktivitätZuProduktRef');
+    const activityRef: XMLElement[] = jsonDataFromXml.getElementsByTagName('AktivitätZuProduktRef');
     const methodsRef: XMLElement[] = jsonDataFromXml.getElementsByTagName('AktivitätZuMethodenreferenzRef');
     const toolsRef: XMLElement[] = jsonDataFromXml.getElementsByTagName('AktivitätZuWerkzeugreferenzRef');
     // const description = decodeXml(jsonDataFromXml.getElementsByTagName('Beschreibung')[0]?.value);
@@ -2518,7 +2756,7 @@ export function Content() {
 
     //////////////////////////////////////////////
 
-    const products = aktivityRef.flatMap((entry) => {
+    const products = activityRef.flatMap((entry) => {
       return entry.getElementsByTagName('ProduktRef').map((productRef) => {
         return {
           id: productRef.attributes.id,
@@ -2578,6 +2816,21 @@ export function Content() {
       tableEntries: tableEntries,
       // subPageEntries: subPageEntries,
     };
+  }
+
+  function redirectToFirstChildWithContent(sectionId: string) {
+    const currentMenuItem = getMenuItemByAttributeValue(navigationData, 'key', sectionId);
+    const currentChildren = currentMenuItem?.children;
+
+    if (currentChildren?.length > 0) {
+      const childId = currentChildren[0].key;
+
+      if (childId) {
+        setSelectedItemKey(childId);
+
+        navigate(`/documentation/${childId}${getSearchStringFromHash()}`);
+      }
+    }
   }
 
   return (

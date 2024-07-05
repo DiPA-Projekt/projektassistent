@@ -39,15 +39,23 @@ jobs:
         run: |
           git config user.email "actions@dipa.online"
           git config user.name "DiPA GitHub Actions"
-      - name: Release with Maven
-        run: mvn -s .mvn/settings.xml -B -DreleaseVersion=${{ github.event.inputs.release_version }} gitflow:release --file pom.xml
+      - name: Einstellen des Autorisierungstoken
+        run: |
+          npm config set //npm.pkg.github.com/:_authToken=${{ secrets.GIT_HUB_PACKAGES_ACCESS_TOKEN_WRITE }}
+      - name: Set up Node.js
+        uses: actions/setup-node@v2.1.5
+        with:
+          node-version: 14.x
+          registry-url: "https://npm.pkg.github.com"
+          scope: "@dipa-projekt"
+      - name: Build & Analyze with Maven
+        run: mvn -s .mvn/settings.xml -P develop-ci -Ddocker.skip.build=true -B clean install org.sonarsource.scanner.maven:sonar-maven-plugin:sonar --file pom.xml
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DOCKER_REGISTRY_USERNAME: dipa
-          DOCKER_REGISTRY_TOKEN: ${{ secrets.DOCKER_REGISTRY_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           GIT_HUB_USERNAME: ${{ secrets.GIT_HUB_USERNAME }}
           GIT_HUB_PACKAGES_ACCESS_TOKEN: ${{ secrets.GIT_HUB_PACKAGES_ACCESS_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.GIT_HUB_PACKAGES_ACCESS_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.GIT_HUB_PACKAGES_ACCESS_TOKEN }}      
       - name: Deployment to Kubernetes
         run: |
           git checkout -f main
@@ -63,5 +71,5 @@ jobs:
           DOCKER_REGISTRY_USERNAME: dipa
           DOCKER_REGISTRY_TOKEN: ${{ secrets.DOCKER_REGISTRY_TOKEN }}
           GIT_HUB_USERNAME: ${{ secrets.GIT_HUB_USERNAME }}
-          GIT_HUB_PACKAGES_ACCESS_TOKEN: ${{ secrets.GIT_HUB_PACKAGES_ACCESS_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.GIT_HUB_PACKAGES_ACCESS_TOKEN }}
+          GIT_HUB_PACKAGES_ACCESS_TOKEN: ${{ secrets.GIT_HUB_PACKAGES_ACCESS_TOKEN_WRITE }}
+          NODE_AUTH_TOKEN: ${{ secrets.GIT_HUB_PACKAGES_ACCESS_TOKEN_WRITE }}
