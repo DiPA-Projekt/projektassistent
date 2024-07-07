@@ -38,6 +38,14 @@
             <id>github</id>
             <username>${env.GIT_HUB_USERNAME}</username>
             <password>${env.GIT_HUB_PACKAGES_ACCESS_TOKEN}</password>
+            <configuration>
+                <httpHeaders>
+                    <property>
+                        <name>Authorization</name>
+                        <value>Bearer ${env.GIT_HUB_PACKAGES_ACCESS_TOKEN_WRITE}</value>
+                    </property>
+                </httpHeaders>
+            </configuration>
         </server>
         <server>
             <id>github-packages</id>
