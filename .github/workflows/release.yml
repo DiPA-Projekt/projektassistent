@@ -48,9 +48,8 @@ jobs:
           node-version: 14.x
           registry-url: "https://npm.pkg.github.com"
           scope: "@dipa-projekt"
-      - name: Release with Maven
-        run: mvn -s .mvn/settings.xml -B -DreleaseVersion=${{ github.event.inputs.release_version }} gitflow:release --file pom.xml
-        #run: mvn -s .mvn/settings.xml -P develop-ci -Ddocker.skip.build=true -B clean install org.sonarsource.scanner.maven:sonar-maven-plugin:sonar --file pom.xml
+      - name: Build & Analyze with Maven
+        run: mvn -s .mvn/settings.xml -P develop-ci -Ddocker.skip.build=true -B clean install org.sonarsource.scanner.maven:sonar-maven-plugin:sonar --file pom.xml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
