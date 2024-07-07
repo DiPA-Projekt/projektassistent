@@ -37,11 +37,19 @@
         <server>
             <id>github</id>
             <username>${env.GIT_HUB_USERNAME}</username>
-            <password>${env.GIT_HUB_PACKAGES_ACCESS_TOKEN}</password>
+            <password>${env.GIT_HUB_PACKAGES_ACCESS_TOKEN_WRITE}</password>
         </server>
         <server>
             <id>github-packages</id>
             <username>${env.GIT_HUB_USERNAME}</username>
+            <configuration>
+                <httpHeaders>
+                    <property>
+                        <name>Authorization</name>
+                        <value>Bearer ${env.GIT_HUB_PACKAGES_ACCESS_TOKEN_WRITE}</value>
+                    </property>
+                </httpHeaders>
+            </configuration>
             <password>${env.GIT_HUB_PACKAGES_ACCESS_TOKEN_WRITE}</password>
         </server>
         <server>
@@ -49,5 +57,6 @@
             <username>${env.DOCKER_REGISTRY_USERNAME}</username>
             <password>${env.DOCKER_REGISTRY_TOKEN}</password>
         </server>
+
     </servers>
 </settings>
