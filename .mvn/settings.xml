@@ -38,10 +38,6 @@
             <id>github</id>
             <username>${env.GIT_HUB_USERNAME}</username>
             <password>${env.GIT_HUB_PACKAGES_ACCESS_TOKEN_WRITE}</password>
-        </server>
-        <server>
-            <id>github-packages</id>
-            <username>${env.GIT_HUB_USERNAME}</username>
             <configuration>
                 <httpHeaders>
                     <property>
@@ -50,6 +46,10 @@
                     </property>
                 </httpHeaders>
             </configuration>
+        </server>
+        <server>
+            <id>github-packages</id>
+            <username>${env.GIT_HUB_USERNAME}</username>
             <password>${env.GIT_HUB_PACKAGES_ACCESS_TOKEN_WRITE}</password>
         </server>
         <server>
