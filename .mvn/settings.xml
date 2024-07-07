@@ -37,12 +37,12 @@
         <server>
             <id>github</id>
             <username>${env.GIT_HUB_USERNAME}</username>
-            <password>${env.GIT_HUB_PACKAGES_ACCESS_TOKEN}</password>
+            <password>${env.GIT_HUB_PACKAGES_ACCESS_TOKEN_WRITE}</password>
         </server>
         <server>
             <id>github-packages</id>
             <username>${env.GIT_HUB_USERNAME}</username>
-            <password>${env.GIT_HUB_PACKAGES_ACCESS_TOKEN}</password>
+            <password>${env.GIT_HUB_PACKAGES_ACCESS_TOKEN_WRITE}</password>
         </server>
         <server>
             <id>docker.dipa.online</id>
