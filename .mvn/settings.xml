@@ -34,23 +34,15 @@
         </profile>
     </profiles>
     <servers>
-        <server>
-            <id>github</id>
-            <username>${env.GIT_HUB_USERNAME}</username>
-            <password>${env.GIT_HUB_TOKEN}</password>
-            <configuration>
-                <httpHeaders>
-                    <property>
-                        <name>Authorization</name>
-                        <value>Bearer ${env.GIT_HUB_TOKEN}</value>
-                    </property>
-                </httpHeaders>
-            </configuration>
-        </server>
+       <server>
+         <id>github</id>
+         <username>${env.GITHUB_ACTOR}</username>
+         <password>${env.GITHUB_TOKEN}</password>
+       </server>
         <server>
             <id>github-packages</id>
-            <username>${env.GIT_HUB_USERNAME}</username>
-            <password>${env.GIT_HUB_TOKEN}</password>
+            <username>${env.GITHUB_ACTOR}</username>
+            <password>${env.GITHUB_TOKEN}</password>
         </server>
         <server>
             <id>docker.dipa.online</id>
@@ -58,4 +50,5 @@
             <password>${env.DOCKER_REGISTRY_TOKEN}</password>
         </server>
     </servers>
+
 </settings>
