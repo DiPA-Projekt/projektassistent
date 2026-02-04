@@ -40,7 +40,7 @@ spec:
         track: @k8s.release.track@
     spec:
       containers:
-        - image: docker.dipa.online/dipa-projekt/projektassistent:@k8s.image.version@
+        - image: ghcr.io/dipa-projekt/projektassistent:@k8s.image.version@
           name: projektassistent
           ports:
             - containerPort: 9081
