@@ -76,6 +76,7 @@ jobs:
           scp server/target/deployment/*.yaml dipa-deployment@dipa.rz-housing.tu-clausthal.de:pa-deployment/develop
           ssh dipa-deployment@dipa.rz-housing.tu-clausthal.de kubectl apply -k pa-deployment/develop
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DOCKER_REGISTRY_USERNAME: ${{ github.actor }}
           DOCKER_REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GIT_HUB_USERNAME: ${{ secrets.GIT_HUB_USERNAME }}
