@@ -180,7 +180,7 @@
                             <skip>false</skip>
                             <images>
                                 <image>
-                                    <name>docker.dipa.online/dipa-projekt/projektassistent:${k8s.image.version}</name>
+                                    <name>ghcr.io/dipa-projekt/projektassistent:${k8s.image.version}</name>
                                     <build>
                                         <contextDir>${project.basedir}</contextDir>
                                         <args>
