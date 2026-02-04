@@ -1,4 +1,4 @@
-FROM openjdk:17-alpine
+FROM eclipse-temurin:17-alpine
 
 RUN addgroup -S dipa && adduser -S dipa -G dipa
 USER dipa:dipa
