@@ -150,9 +150,9 @@ export function replaceImageUrlsInHtml(
   const imageBaseUrl = new URL(imageBasePath, normalizedApiBaseUrl);
 
   return html.replace(
-    /(<img\\b[^>]*?\\bsrc\\s*=\\s*)(["'])(.*?)\\2/gi,
+    /(<img\b[^>]*?\bsrc\s*=\s*)(["'])(.*?)\2/gi,
     (imageTag: string, _prefix: string, quote: string, source: string): string => {
-      if (!source || /^(?:[a-z][a-z0-9+.-]*:|\\/\\/|#)/i.test(source)) {
+      if (!source || /^(?:[a-z][a-z0-9+.-]*:|\/\/|#)/i.test(source)) {
         return imageTag;
       }
 
@@ -174,10 +174,10 @@ export function replaceImageUrlsInHtml(
         }
 
         const resolvedImageTag = imageTag.replace(
-          /\\bsrc\\s*=\\s*(["'])(.*?)\\1/i,
+          /\bsrc\s*=\s*(["'])(.*?)\1/i,
           `src=${quote}${resolvedUrl.toString()}${quote}`
         );
-        const styleMatch = resolvedImageTag.match(/\\bstyle\\s*=\\s*(["'])(.*?)\\1/i);
+        const styleMatch = resolvedImageTag.match(/\bstyle\s*=\s*(["'])(.*?)\1/i);
         const responsiveStyle = 'max-width:100%;height:auto';
 
         if (styleMatch) {
@@ -188,7 +188,7 @@ export function replaceImageUrlsInHtml(
           );
         }
 
-        return resolvedImageTag.replace(/<img\\b/i, '<img style="max-width:100%;height:auto"');
+        return resolvedImageTag.replace(/<img\b/i, '<img style="max-width:100%;height:auto"');
       } catch {
         return imageTag;
       }
