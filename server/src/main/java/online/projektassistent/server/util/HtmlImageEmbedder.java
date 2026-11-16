@@ -56,7 +56,7 @@ final class HtmlImageEmbedder {
                     images.add(image);
                 }
                 String updated = tag.replace(srcMatcher.group(), "src=\"" + escapeAttribute(image.location) + "\"");
-                updated = applyWidth(updated, image.widthPx);
+                updated = applyWidth(updated, image.widthPx, image.heightPx);
                 matcher.appendReplacement(rewritten, Matcher.quoteReplacement(updated));
             } catch (Exception ex) {
                 String alt = extractAlt(tag);
@@ -143,7 +143,10 @@ final class HtmlImageEmbedder {
             BufferedImage dimensions = ImageIO.read(new ByteArrayInputStream(bytes));
             if (contentType == null || dimensions == null) throw new IOException("Unsupported image format");
 
-            return new ImagePart(uri.toASCIIString(), contentType, bytes, Math.min(dimensions.getWidth(), maxWidthPx));
+            int displayWidth = Math.min(dimensions.getWidth(), maxWidthPx);
+            int displayHeight = Math.max(1, (int) Math.round(
+                    dimensions.getHeight() * (displayWidth / (double) dimensions.getWidth())));
+            return new ImagePart(uri.toASCIIString(), contentType, bytes, displayWidth, displayHeight);
         } finally {
             connection.disconnect();
         }
@@ -158,16 +161,24 @@ final class HtmlImageEmbedder {
         };
     }
 
-    private static String applyWidth(String tag, int widthPx) {
+    private static String applyWidth(String tag, int widthPx, int heightPx) {
+        // Word's MHTML importer does not consistently honor CSS image dimensions.
+        // Set explicit HTML dimensions as well, preserving the source aspect ratio.
         String updated = DIMENSION.matcher(tag).replaceAll("");
+        updated = updated.replaceFirst(
+                "(?i)<img\\b",
+                Matcher.quoteReplacement("<img width=\"" + widthPx + "\" height=\"" + heightPx + "\""));
+
         Matcher style = STYLE.matcher(updated);
-        String widthStyle = "width:" + widthPx + "px;height:auto;max-width:100%";
+        String widthStyle = "width:" + widthPx + "px;height:" + heightPx + "px;max-width:100%";
         if (style.find()) {
             String existing = style.group(2).trim();
             String combined = existing + (existing.isEmpty() || existing.endsWith(";") ? "" : ";") + widthStyle;
             return style.replaceFirst(Matcher.quoteReplacement("style=\"" + combined + "\""));
         }
-        return updated.replaceFirst("(?i)<img\\b", Matcher.quoteReplacement("<img style=\"" + widthStyle + "\""));
+        return updated.replaceFirst(
+                "(?i)<img\\b",
+                Matcher.quoteReplacement("<img style=\"" + widthStyle + "\""));
     }
 
     private static String base64(byte[] bytes) {
@@ -192,12 +203,14 @@ final class HtmlImageEmbedder {
         private final String contentType;
         private final byte[] bytes;
         private final int widthPx;
+        private final int heightPx;
 
-        private ImagePart(String location, String contentType, byte[] bytes, int widthPx) {
+        private ImagePart(String location, String contentType, byte[] bytes, int widthPx, int heightPx) {
             this.location = location;
             this.contentType = contentType;
             this.bytes = bytes;
             this.widthPx = widthPx;
+            this.heightPx = heightPx;
         }
     }
 }
