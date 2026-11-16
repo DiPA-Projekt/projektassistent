@@ -202,7 +202,7 @@ final class HtmlImageEmbedder {
     private static String unescapeHtmlAttribute(String value) {
         // Decode each entity exactly once. A sequence such as &amp;lt; must
         // remain &amp;lt; after the subsequent text escaping, not become '<'.
-        Pattern entity = Pattern.compile("&(#\\\\d+|#x[0-9a-fA-F]+|amp|quot|apos|lt|gt);");
+        Pattern entity = Pattern.compile("&(#\\d+|#x[0-9a-fA-F]+|amp|quot|apos|lt|gt);");
         Matcher matcher = entity.matcher(value);
         StringBuffer decoded = new StringBuffer();
         while (matcher.find()) {
