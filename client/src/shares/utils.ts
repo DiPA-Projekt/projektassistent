@@ -118,7 +118,7 @@ export function replaceUrlInText(text: string, tailoringParameter: any, projectF
 
 export function replaceImageUrlInText(text: string, tailoringParameter: any): string {
   return text.replace(
-    /src=['"](?:[^"'/]*/)*([^'"]+)['"]/g,
+    /src=['"](?:[^"'\/]*\/)*([^'"]+)['"]/g,
     'src="https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
       tailoringParameter.modelVariantId +
       '/Projekttyp/xxx/Projekttypvariante/xxx/Grafik/images/$1"'
