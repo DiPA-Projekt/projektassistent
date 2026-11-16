@@ -80,12 +80,12 @@ export function SubmitArea() {
         samplesText: samples
           .filter((sample) => checkedKeys.checked.includes(sample.id))
           .map((sample) => sample.text)
-          .join('\\n'),
+          .join('\n'),
       }));
     }
     return topics.map(({ samples, ...keepAttrs }) => ({
       ...keepAttrs,
-      text: samples.map((sample) => sample.text).join('\\n'),
+      text: samples.map((sample) => sample.text).join('\n'),
     }));
   }
 
