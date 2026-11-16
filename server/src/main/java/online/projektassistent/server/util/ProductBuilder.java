@@ -499,17 +499,38 @@ public class ProductBuilder implements Placeholders {
         BigInteger rightMargin = BigInteger.valueOf(1440);
 
         if (section != null) {
-            if (section.getPgSz() != null && section.getPgSz().getW() != null) {
-                pageWidth = section.getPgSz().getW();
+            if (section.getPgSz() != null) {
+                pageWidth = toBigInteger(section.getPgSz().getW(), pageWidth);
             }
             if (section.getPgMar() != null) {
-                if (section.getPgMar().getLeft() != null) leftMargin = section.getPgMar().getLeft();
-                if (section.getPgMar().getRight() != null) rightMargin = section.getPgMar().getRight();
+                leftMargin = toBigInteger(section.getPgMar().getLeft(), leftMargin);
+                rightMargin = toBigInteger(section.getPgMar().getRight(), rightMargin);
             }
         }
 
         long usableTwips = pageWidth.longValue() - leftMargin.longValue() - rightMargin.longValue();
         return (int) Math.max(1, Math.floor(usableTwips / 15.0));
+    }
+
+    /**
+     * Converts XMLBeans values to BigInteger. Some generated schema getters expose
+     * measurement values as Object rather than BigInteger.
+     */
+    private static BigInteger toBigInteger(Object value, BigInteger fallback) {
+        if (value == null) {
+            return fallback;
+        }
+        if (value instanceof BigInteger bigInteger) {
+            return bigInteger;
+        }
+        if (value instanceof Number number) {
+            return BigInteger.valueOf(number.longValue());
+        }
+        try {
+            return new BigInteger(value.toString());
+        } catch (NumberFormatException ex) {
+            return fallback;
+        }
     }
 
     private static void insertAltChunk(HtmlXWPFDocument htmlXWPFDocument, XmlCursor cursor) {
