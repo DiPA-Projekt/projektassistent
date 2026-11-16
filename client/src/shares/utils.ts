@@ -125,7 +125,6 @@ export function replaceImageUrlInText(text: string, tailoringParameter: any): st
   );
 }
 
-
 /**
  * Resolves relative image sources in Tailoring HTML against the selected Tailoring's
  * Grafik directory. Existing absolute, data, blob and protocol-relative URLs are left untouched.
