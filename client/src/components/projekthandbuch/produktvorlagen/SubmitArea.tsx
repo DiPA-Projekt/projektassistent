@@ -163,7 +163,7 @@ export function SubmitArea() {
     const projectFeaturesString = getProjectFeaturesQueryString();
     const productsWithResolvedImages = products.map((product) => ({
       ...product,
-      chapters: product.chapters.map((chapter) => ({
+      chapters: (product.chapters ?? []).map((chapter) => ({
         ...chapter,
         text: chapter.text
           ? replaceImageUrlsInHtml(chapter.text, tailoringParameter, weitApiUrl, projectFeaturesString)
