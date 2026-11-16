@@ -196,7 +196,17 @@ final class HtmlImageEmbedder {
 
     private static String extractAlt(String tag) {
         Matcher matcher = Pattern.compile("\\balt\\s*=\\s*([\"'])(.*?)\\1", Pattern.CASE_INSENSITIVE).matcher(tag);
-        return matcher.find() ? matcher.group(2) : "";
+        return matcher.find() ? unescapeHtmlAttribute(matcher.group(2)) : "";
+    }
+
+    private static String unescapeHtmlAttribute(String value) {
+        // Attribute values are HTML-encoded in the source. Decode once before
+        // inserting the fallback as text, where escapeText() encodes it again.
+        return value.replace("&amp;", "&")
+                .replace("&quot;", "\\\"")
+                .replace("&apos;", "'")
+                .replace("&lt;", "<")
+                .replace("&gt;", ">");
     }
 
     private static String escapeAttribute(String value) {
