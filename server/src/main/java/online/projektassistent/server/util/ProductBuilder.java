@@ -495,8 +495,8 @@ public class ProductBuilder implements Placeholders {
     private static int getMaxImageWidthPx(XWPFDocument document) {
         CTSectPr section = document.getDocument().getBody().getSectPr();
         BigInteger pageWidth = BigInteger.valueOf(11906); // A4 width in twips
-        BigInteger leftMargin = BigInteger.valueOf(1134);
-        BigInteger rightMargin = BigInteger.valueOf(1134);
+        BigInteger leftMargin = BigInteger.valueOf(1440);
+        BigInteger rightMargin = BigInteger.valueOf(1440);
 
         if (section != null) {
             if (section.getPgSz() != null && section.getPgSz().getW() != null) {
@@ -557,7 +557,7 @@ public class ProductBuilder implements Placeholders {
         private XWPFHtmlRelation() {
             super("message/rfc822",
                     "http://schemas.openxmlformats.org/officeDocument/2006/relationships/aFChunk",
-                    "/word/htmlDoc#.html");
+                    "/word/htmlDoc#.mht");
         }
     }
 }
