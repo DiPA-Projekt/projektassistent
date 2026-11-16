@@ -125,6 +125,79 @@ export function replaceImageUrlInText(text: string, tailoringParameter: any): st
   );
 }
 
+
+/**
+ * Resolves relative image sources in Tailoring HTML against the selected Tailoring's
+ * Grafik directory. Existing absolute, data, blob and protocol-relative URLs are left untouched.
+ */
+export function replaceImageUrlsInHtml(
+  html: string,
+  tailoringParameter: {
+    modelVariantId?: string;
+    projectTypeId?: string;
+    projectTypeVariantId?: string;
+  },
+  apiBaseUrl: string,
+  projectFeaturesString: string
+): string {
+  const { modelVariantId, projectTypeId, projectTypeVariantId } = tailoringParameter;
+
+  if (!html || !modelVariantId || !projectTypeId || !projectTypeVariantId) {
+    return html;
+  }
+
+  const imageBaseUrl = new URL(
+    '/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
+      modelVariantId +
+      '/Projekttyp/' +
+      projectTypeId +
+      '/Projekttypvariante/' +
+      projectTypeVariantId +
+      '/Grafik/',
+    apiBaseUrl.endsWith('/') ? apiBaseUrl : apiBaseUrl + '/'
+  );
+
+  return html.replace(/(<img\b[^>]*?\bsrc\s*=\s*)(["'])(.*?)\2/gi, (imageTag, prefix, quote, source) => {
+    if (!source || /^(?:[a-z][a-z0-9+.-]*:|\/\/|#)/i.test(source)) {
+      return imageTag;
+    }
+
+    try {
+      const resolvedUrl = new URL(source, imageBaseUrl);
+
+      // Do not allow a relative path to escape the selected Tailoring's Grafik directory.
+      if (resolvedUrl.origin !== imageBaseUrl.origin || !resolvedUrl.pathname.startsWith(imageBaseUrl.pathname)) {
+        return imageTag;
+      }
+
+      if (projectFeaturesString) {
+        new URLSearchParams(projectFeaturesString).forEach((value, key) => {
+          resolvedUrl.searchParams.set(key, value);
+        });
+      }
+
+      const resolvedImageTag = imageTag.replace(
+        /\bsrc\s*=\s*(["'])(.*?)\1/i,
+        'src=' + quote + resolvedUrl.toString() + quote
+      );
+      const styleMatch = resolvedImageTag.match(/\bstyle\s*=\s*(["'])(.*?)\1/i);
+      const responsiveStyle = 'max-width:100%;height:auto';
+
+      if (styleMatch) {
+        const existingStyle = styleMatch[2].trim().replace(/;?$/, ';');
+        return resolvedImageTag.replace(
+          styleMatch[0],
+          'style=' + styleMatch[1] + existingStyle + responsiveStyle + styleMatch[1]
+        );
+      }
+
+      return resolvedImageTag.replace(/<img\b/i, '<img style="max-width:100%;height:auto"');
+    } catch {
+      return imageTag;
+    }
+  });
+}
+
 export function removeLinksFromHtml(htmlString: string) {
   const elem = document.createElement('div');
   elem.innerHTML = htmlString;
