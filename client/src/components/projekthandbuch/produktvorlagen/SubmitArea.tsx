@@ -10,14 +10,14 @@ import { TemplateFormModal } from './TemplateFormModal';
 import { useTranslation } from 'react-i18next';
 import { BookTwoTone } from '@ant-design/icons';
 import { weitApiUrl } from '../../app/App';
-import { decodeXml, getJsonDataFromXml } from '../../../shares/utils';
+import { decodeXml, getJsonDataFromXml, replaceImageUrlsInHtml } from '../../../shares/utils';
 import parse from 'html-react-parser';
 import { useTailoring } from '../../../context/TailoringContext';
 
 export function SubmitArea() {
   const { t } = useTranslation();
 
-  const { tailoringParameter } = useTailoring();
+  const { tailoringParameter, getProjectFeaturesQueryString } = useTailoring();
 
   const { checkedKeys, productsMap, insertTopicDescription, setInsertTopicDescription } = useTemplate();
 
@@ -80,12 +80,12 @@ export function SubmitArea() {
         samplesText: samples
           .filter((sample) => checkedKeys.checked.includes(sample.id))
           .map((sample) => sample.text)
-          .join('\n'),
+          .join('\\n'),
       }));
     }
     return topics.map(({ samples, ...keepAttrs }) => ({
       ...keepAttrs,
-      text: samples.map((sample) => sample.text).join('\n'),
+      text: samples.map((sample) => sample.text).join('\\n'),
     }));
   }
 
@@ -160,7 +160,21 @@ export function SubmitArea() {
       }
     }
 
-    setSelectedProducts(products);
+    const projectFeaturesString = getProjectFeaturesQueryString();
+    const productsWithResolvedImages = products.map((product) => ({
+      ...product,
+      chapters: product.chapters.map((chapter) => ({
+        ...chapter,
+        text: chapter.text
+          ? replaceImageUrlsInHtml(chapter.text, tailoringParameter, weitApiUrl, projectFeaturesString)
+          : chapter.text,
+        samplesText: chapter.samplesText
+          ? replaceImageUrlsInHtml(chapter.samplesText, tailoringParameter, weitApiUrl, projectFeaturesString)
+          : chapter.samplesText,
+      })),
+    }));
+
+    setSelectedProducts(productsWithResolvedImages);
   }
 
   const handleClose = async (values: { projectName: string; responsible: string; participants: string[] }) => {
