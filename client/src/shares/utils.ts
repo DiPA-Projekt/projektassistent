@@ -101,11 +101,7 @@ export function fixLinksInText(testString: string): string {
   );
 }
 
-export function replaceUrlInText(
-  text: string,
-  tailoringParameter: any,
-  projectFeaturesString: string
-): string {
+export function replaceUrlInText(text: string, tailoringParameter: any, projectFeaturesString: string): string {
   return text.replace(
     /src=['"](?:[^"'\/]*\/)*([^'"]+)['"]/g,
     'src="https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
@@ -166,10 +162,7 @@ export function replaceImageUrlsInHtml(
         const resolvedUrl = new URL(source, imageBaseUrl);
 
         // Do not allow a relative path to escape the selected Tailoring's Grafik directory.
-        if (
-          resolvedUrl.origin !== imageBaseUrl.origin ||
-          !resolvedUrl.pathname.startsWith(imageBaseUrl.pathname)
-        ) {
+        if (resolvedUrl.origin !== imageBaseUrl.origin || !resolvedUrl.pathname.startsWith(imageBaseUrl.pathname)) {
           return imageTag;
         }
 
