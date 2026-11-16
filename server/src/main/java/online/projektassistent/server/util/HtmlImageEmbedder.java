@@ -210,7 +210,7 @@ final class HtmlImageEmbedder {
             String replacement;
             switch (token) {
                 case "amp": replacement = "&"; break;
-                case "quot": replacement = "\\\""; break;
+                case "quot": replacement = "\""; break;
                 case "apos": replacement = "'"; break;
                 case "lt": replacement = "<"; break;
                 case "gt": replacement = ">"; break;
