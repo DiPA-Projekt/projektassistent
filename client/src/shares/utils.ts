@@ -96,14 +96,14 @@ export function fixLinksInText(testString: string): string {
   // TODO: only replace link to entries if they match a navigation id otherwise it is a local reference to an anchor
   //  on the same page like in glossary
   return testString.replace(
-    /href=['"]#(?:[^"'\\/]*/)*([^'"]+)['"]/g,
+    /href=['"]#(?:[^"'\/]*\/)*([^'"]+)['"]/g,
     'href="' + url + '$1' + getSearchStringFromHash() + '"'
   );
 }
 
 export function replaceUrlInText(text: string, tailoringParameter: any, projectFeaturesString: string): string {
   return text.replace(
-    /src=['"](?:[^"'\\/]*/)*([^'"]+)['"]/g,
+    /src=['"](?:[^"'\/]*\/)*([^'"]+)['"]/g,
     'src="https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
       tailoringParameter.modelVariantId +
       '/Projekttyp/' +
