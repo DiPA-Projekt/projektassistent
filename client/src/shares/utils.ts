@@ -176,21 +176,22 @@ export function replaceImageUrlsInHtml(
         });
       }
 
-      const imageAttributes = imageTag.slice(prefix.length + quote.length + source.length + quote.length);
-      const styleMatch = imageAttributes.match(/\\bstyle\\s*=\\s*(["'])(.*?)\\1/i);
+      const resolvedImageTag = imageTag.replace(
+        /\bsrc\s*=\s*(["'])(.*?)\1/i,
+        'src=' + quote + resolvedUrl.toString() + quote
+      );
+      const styleMatch = resolvedImageTag.match(/\bstyle\s*=\s*(["'])(.*?)\1/i);
       const responsiveStyle = 'max-width:100%;height:auto';
 
       if (styleMatch) {
         const existingStyle = styleMatch[2].trim().replace(/;?$/, ';');
-        const updatedStyle = existingStyle + responsiveStyle;
-        const updatedTag = imageTag.replace(styleMatch[0], 'style=' + styleMatch[1] + updatedStyle + styleMatch[1]);
-        return updatedTag.replace(source, resolvedUrl.toString());
+        return resolvedImageTag.replace(
+          styleMatch[0],
+          'style=' + styleMatch[1] + existingStyle + responsiveStyle + styleMatch[1]
+        );
       }
 
-      return imageTag.replace(
-        /\\bsrc\\s*=\\s*(["'])(.*?)\\1/i,
-        'src=' + quote + resolvedUrl.toString() + quote
-      ).replace(/<img\\b/i, '<img style="max-width:100%;height:auto"');
+      return resolvedImageTag.replace(/<img\b/i, '<img style="max-width:100%;height:auto"');
     } catch {
       return imageTag;
     }
