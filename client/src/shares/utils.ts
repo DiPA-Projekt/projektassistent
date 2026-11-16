@@ -82,7 +82,7 @@ export function getSearchStringFromHash() {
 }
 
 export function getFigureDesignationFromText(text: string) {
-  const matches = text.match(/\[Abb:(.*?)\]/);
+  const matches = text.match(/\\[Abb:(.*?)\\]/);
 
   if (matches) {
     return matches[1];
@@ -96,14 +96,14 @@ export function fixLinksInText(testString: string): string {
   // TODO: only replace link to entries if they match a navigation id otherwise it is a local reference to an anchor
   //  on the same page like in glossary
   return testString.replace(
-    /href=['"]#(?:[^"'\/]*\/)*([^'"]+)['"]/g,
+    /href=['\\"]#(?:[^"'\\/]*\\/)*([^'\\"]+)['\\"]/g,
     'href="' + url + '$1' + getSearchStringFromHash() + '"'
   );
 }
 
 export function replaceUrlInText(text: string, tailoringParameter: any, projectFeaturesString: string): string {
   return text.replace(
-    /src=['"](?:[^"'\/]*\/)*([^'"]+)['"]/g,
+    /src=['\\"](?:[^"'\\/]*\\/)*([^'\\"]+)['\\"]/g,
     'src="https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
       tailoringParameter.modelVariantId +
       '/Projekttyp/' +
@@ -118,11 +118,62 @@ export function replaceUrlInText(text: string, tailoringParameter: any, projectF
 
 export function replaceImageUrlInText(text: string, tailoringParameter: any): string {
   return text.replace(
-    /src=['"](?:[^"'\/]*\/)*([^'"]+)['"]/g,
+    /src=['\\"](?:[^"'\\/]*\\/)*([^'\\"]+)['\\"]/g,
     'src="https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
       tailoringParameter.modelVariantId +
       '/Projekttyp/xxx/Projekttypvariante/xxx/Grafik/images/$1"'
   );
+}
+
+/**
+ * Resolves relative image sources in Tailoring HTML against the selected Tailoring's
+ * Grafik directory. Existing absolute, data, blob and protocol-relative URLs are left untouched.
+ */
+export function replaceImageUrlsInHtml(
+  html: string,
+  tailoringParameter: {
+    modelVariantId?: string;
+    projectTypeId?: string;
+    projectTypeVariantId?: string;
+  },
+  apiBaseUrl: string,
+  projectFeaturesString: string
+): string {
+  const { modelVariantId, projectTypeId, projectTypeVariantId } = tailoringParameter;
+
+  if (!html || !modelVariantId || !projectTypeId || !projectTypeVariantId) {
+    return html;
+  }
+
+  const imageBaseUrl = new URL(
+    `/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/${modelVariantId}/Projekttyp/${projectTypeId}/Projekttypvariante/${projectTypeVariantId}/Grafik/`,
+    apiBaseUrl.endsWith('/') ? apiBaseUrl : `${apiBaseUrl}/`
+  );
+
+  return html.replace(/(<img\\b[^>]*?\\bsrc\\s*=\\s*)(["'])(.*?)\\2/gi, (imageTag, prefix, quote, source) => {
+    if (!source || /^(?:[a-z][a-z0-9+.-]*:|\\/\\/|#)/i.test(source)) {
+      return imageTag;
+    }
+
+    try {
+      const resolvedUrl = new URL(source, imageBaseUrl);
+
+      // Do not allow a relative path to escape the selected Tailoring's Grafik directory.
+      if (resolvedUrl.origin !== imageBaseUrl.origin || !resolvedUrl.pathname.startsWith(imageBaseUrl.pathname)) {
+        return imageTag;
+      }
+
+      if (projectFeaturesString) {
+        new URLSearchParams(projectFeaturesString).forEach((value, key) => {
+          resolvedUrl.searchParams.set(key, value);
+        });
+      }
+
+      return `${prefix}${quote}${resolvedUrl.toString()}${quote}`;
+    } catch {
+      return imageTag;
+    }
+  });
 }
 
 export function removeLinksFromHtml(htmlString: string) {
