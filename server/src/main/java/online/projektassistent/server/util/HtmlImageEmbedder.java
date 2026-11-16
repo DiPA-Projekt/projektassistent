@@ -28,7 +28,7 @@ final class HtmlImageEmbedder {
     private static final Pattern IMG = Pattern.compile("<img\\b[^>]*>", Pattern.CASE_INSENSITIVE);
     private static final Pattern SRC = Pattern.compile("\\bsrc\\s*=\\s*([\"'])(.*?)\\1", Pattern.CASE_INSENSITIVE);
     private static final Pattern STYLE = Pattern.compile("\\bstyle\\s*=\\s*([\"'])(.*?)\\1", Pattern.CASE_INSENSITIVE);
-    private static final Pattern WIDTH = Pattern.compile("\\bwidth\\s*=\\s*([\"']?)[^\\s>]+\\1", Pattern.CASE_INSENSITIVE);
+    private static final Pattern DIMENSION = Pattern.compile("\\b(?:width|height)\\s*=\\s*([\"']?)[^\\s>]+\\1", Pattern.CASE_INSENSITIVE);
 
     private HtmlImageEmbedder() { }
 
@@ -73,7 +73,7 @@ final class HtmlImageEmbedder {
                     + body + "</body></html>";
         }
 
-        String rootLocation = "file:///word/" + partName + ".html";
+        String rootLocation = "file:///word/" + partName + ".mht";
         StringBuilder mhtml = new StringBuilder()
                 .append("MIME-Version: 1.0\r\n")
                 .append("Content-Type: multipart/related; type=\"text/html\"; boundary=\"").append(boundary).append("\"\r\n\r\n")
@@ -159,7 +159,7 @@ final class HtmlImageEmbedder {
     }
 
     private static String applyWidth(String tag, int widthPx) {
-        String updated = WIDTH.matcher(tag).replaceAll("");
+        String updated = DIMENSION.matcher(tag).replaceAll("");
         Matcher style = STYLE.matcher(updated);
         String widthStyle = "width:" + widthPx + "px;height:auto;max-width:100%";
         if (style.find()) {
