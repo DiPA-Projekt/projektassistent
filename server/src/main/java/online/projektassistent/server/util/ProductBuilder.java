@@ -338,8 +338,9 @@ public class ProductBuilder implements Placeholders {
         cur.toNextToken();
         XWPFParagraph paraContent = document.insertNewParagraph(cur);
 
-        HtmlXWPFDocument contentHtmlXWPFDocument = createHtmlDoc(document, "contentHtmlDoc" + index);
-        contentHtmlXWPFDocument.setHtml(contentHtmlXWPFDocument.getHtml().replace("<body></body>", content));
+        int maxImageWidthPx = getMaxImageWidthPx(document);
+        HtmlXWPFDocument contentHtmlXWPFDocument = createHtmlDoc(
+                document, "contentHtmlDoc" + index, content, maxImageWidthPx);
 
         XmlCursor contentCursor = paraContent.getCTP().newCursor();
         insertAltChunk(contentHtmlXWPFDocument, contentCursor);
@@ -349,8 +350,8 @@ public class ProductBuilder implements Placeholders {
         cur.toNextToken();
         XWPFParagraph paraSamples = document.insertNewParagraph(cur);
 
-        HtmlXWPFDocument samplesHtmlXWPFDocument = createHtmlDoc(document, "samplesHtmlDoc" + index);
-        samplesHtmlXWPFDocument.setHtml(samplesHtmlXWPFDocument.getHtml().replace("<body></body>", samplesText));
+        HtmlXWPFDocument samplesHtmlXWPFDocument = createHtmlDoc(
+                document, "samplesHtmlDoc" + index, samplesText, maxImageWidthPx);
 
         XmlCursor samplesCursor = paraSamples.getCTP().newCursor();
         insertAltChunk(samplesHtmlXWPFDocument, samplesCursor);
@@ -477,13 +478,38 @@ public class ProductBuilder implements Placeholders {
         run.setText(text, 0);
     }
 
-    private static HtmlXWPFDocument createHtmlDoc(XWPFDocument document, String id) throws Exception {
+    private static HtmlXWPFDocument createHtmlDoc(
+            XWPFDocument document, String id, String html, int maxImageWidthPx) throws Exception {
         OPCPackage oPCPackage = document.getPackage();
-        PackagePartName partName = PackagingURIHelper.createPartName("/word/" + id + ".html");
-        PackagePart part = oPCPackage.createPart(partName, "text/html");
+        PackagePartName partName = PackagingURIHelper.createPartName("/word/" + id + ".mht");
+        PackagePart part = oPCPackage.createPart(partName, "message/rfc822");
         HtmlXWPFDocument htmlXWPFDocument = new HtmlXWPFDocument(part, id);
+        htmlXWPFDocument.setHtml(HtmlImageEmbedder.toMhtml(html, id, maxImageWidthPx));
         document.addRelation(htmlXWPFDocument.getId(), new XWPFHtmlRelation(), htmlXWPFDocument);
         return htmlXWPFDocument;
+    }
+
+    /**
+     * Calculates the usable page width in CSS pixels from the section page size and margins.
+     */
+    private static int getMaxImageWidthPx(XWPFDocument document) {
+        CTSectPr section = document.getDocument().getBody().getSectPr();
+        BigInteger pageWidth = BigInteger.valueOf(11906); // A4 width in twips
+        BigInteger leftMargin = BigInteger.valueOf(1440);
+        BigInteger rightMargin = BigInteger.valueOf(1440);
+
+        if (section != null) {
+            if (section.getPgSz() != null && section.getPgSz().getW() != null) {
+                pageWidth = section.getPgSz().getW();
+            }
+            if (section.getPgMar() != null) {
+                if (section.getPgMar().getLeft() != null) leftMargin = section.getPgMar().getLeft();
+                if (section.getPgMar().getRight() != null) rightMargin = section.getPgMar().getRight();
+            }
+        }
+
+        long usableTwips = pageWidth.longValue() - leftMargin.longValue() - rightMargin.longValue();
+        return (int) Math.max(1, Math.floor(usableTwips / 15.0));
     }
 
     private static void insertAltChunk(HtmlXWPFDocument htmlXWPFDocument, XmlCursor cursor) {
@@ -529,9 +555,9 @@ public class ProductBuilder implements Placeholders {
 
     private final static class XWPFHtmlRelation extends POIXMLRelation {
         private XWPFHtmlRelation() {
-            super("text/html",
+            super("message/rfc822",
                     "http://schemas.openxmlformats.org/officeDocument/2006/relationships/aFChunk",
-                    "/word/htmlDoc#.html");
+                    "/word/htmlDoc#.mht");
         }
     }
 }
