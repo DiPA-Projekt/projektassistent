@@ -200,13 +200,36 @@ final class HtmlImageEmbedder {
     }
 
     private static String unescapeHtmlAttribute(String value) {
-        // Attribute values are HTML-encoded in the source. Decode once before
-        // inserting the fallback as text, where escapeText() encodes it again.
-        return value.replace("&amp;", "&")
-                .replace("&quot;", "\\\"")
-                .replace("&apos;", "'")
-                .replace("&lt;", "<")
-                .replace("&gt;", ">");
+        // Decode each entity exactly once. A sequence such as &amp;lt; must
+        // remain &amp;lt; after the subsequent text escaping, not become '<'.
+        Pattern entity = Pattern.compile("&(#\\\\d+|#x[0-9a-fA-F]+|amp|quot|apos|lt|gt);");
+        Matcher matcher = entity.matcher(value);
+        StringBuffer decoded = new StringBuffer();
+        while (matcher.find()) {
+            String token = matcher.group(1);
+            String replacement;
+            switch (token) {
+                case "amp": replacement = "&"; break;
+                case "quot": replacement = "\\\""; break;
+                case "apos": replacement = "'"; break;
+                case "lt": replacement = "<"; break;
+                case "gt": replacement = ">"; break;
+                default:
+                    try {
+                        int codePoint = token.startsWith("#x")
+                                ? Integer.parseInt(token.substring(2), 16)
+                                : Integer.parseInt(token.substring(1));
+                        replacement = Character.isValidCodePoint(codePoint)
+                                && (codePoint < Character.MIN_SURROGATE || codePoint > Character.MAX_SURROGATE)
+                                ? new String(Character.toChars(codePoint)) : matcher.group();
+                    } catch (NumberFormatException ex) {
+                        replacement = matcher.group();
+                    }
+            }
+            matcher.appendReplacement(decoded, Matcher.quoteReplacement(replacement));
+        }
+        matcher.appendTail(decoded);
+        return decoded.toString();
     }
 
     private static String escapeAttribute(String value) {
