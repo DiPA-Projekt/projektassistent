@@ -96,14 +96,14 @@ export function fixLinksInText(testString: string): string {
   // TODO: only replace link to entries if they match a navigation id otherwise it is a local reference to an anchor
   //  on the same page like in glossary
   return testString.replace(
-    /href=['"]#(?:[^"'\/]*\/)*([^'"]+)['"]/g,
+    /href=['"]#(?:[^"'/]*/)*([^'"]+)['"]/g,
     'href="' + url + '$1' + getSearchStringFromHash() + '"'
   );
 }
 
 export function replaceUrlInText(text: string, tailoringParameter: any, projectFeaturesString: string): string {
   return text.replace(
-    /src=['"](?:[^"'\/]*\/)*([^'"]+)['"]/g,
+    /src=['"](?:[^"'/]*/)*([^'"]+)['"]/g,
     'src="https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
       tailoringParameter.modelVariantId +
       '/Projekttyp/' +
@@ -118,7 +118,7 @@ export function replaceUrlInText(text: string, tailoringParameter: any, projectF
 
 export function replaceImageUrlInText(text: string, tailoringParameter: any): string {
   return text.replace(
-    /src=['"](?:[^"'\/]*\/)*([^'"]+)['"]/g,
+    /src=['"](?:[^"'/]*/)*([^'"]+)['"]/g,
     'src="https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
       tailoringParameter.modelVariantId +
       '/Projekttyp/xxx/Projekttypvariante/xxx/Grafik/images/$1"'
@@ -145,56 +145,55 @@ export function replaceImageUrlsInHtml(
     return html;
   }
 
-  const imageBaseUrl = new URL(
-    '/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
-      modelVariantId +
-      '/Projekttyp/' +
-      projectTypeId +
-      '/Projekttypvariante/' +
-      projectTypeVariantId +
-      '/Grafik/',
-    apiBaseUrl.endsWith('/') ? apiBaseUrl : apiBaseUrl + '/'
-  );
+  const imageBasePath = `/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/${modelVariantId}/Projekttyp/${projectTypeId}/Projekttypvariante/${projectTypeVariantId}/Grafik/`;
+  const normalizedApiBaseUrl = apiBaseUrl.endsWith('/') ? apiBaseUrl : `${apiBaseUrl}/`;
+  const imageBaseUrl = new URL(imageBasePath, normalizedApiBaseUrl);
 
-  return html.replace(/(<img\b[^>]*?\bsrc\s*=\s*)(["'])(.*?)\2/gi, (imageTag, prefix, quote, source) => {
-    if (!source || /^(?:[a-z][a-z0-9+.-]*:|\/\/|#)/i.test(source)) {
-      return imageTag;
-    }
-
-    try {
-      const resolvedUrl = new URL(source, imageBaseUrl);
-
-      // Do not allow a relative path to escape the selected Tailoring's Grafik directory.
-      if (resolvedUrl.origin !== imageBaseUrl.origin || !resolvedUrl.pathname.startsWith(imageBaseUrl.pathname)) {
+  return html.replace(
+    /(<img\\b[^>]*?\\bsrc\\s*=\\s*)(["'])(.*?)\\2/gi,
+    (imageTag: string, _prefix: string, quote: string, source: string): string => {
+      if (!source || /^(?:[a-z][a-z0-9+.-]*:|\\/\\/|#)/i.test(source)) {
         return imageTag;
       }
 
-      if (projectFeaturesString) {
-        new URLSearchParams(projectFeaturesString).forEach((value, key) => {
-          resolvedUrl.searchParams.set(key, value);
-        });
-      }
+      try {
+        const resolvedUrl = new URL(source, imageBaseUrl);
 
-      const resolvedImageTag = imageTag.replace(
-        /\bsrc\s*=\s*(["'])(.*?)\1/i,
-        'src=' + quote + resolvedUrl.toString() + quote
-      );
-      const styleMatch = resolvedImageTag.match(/\bstyle\s*=\s*(["'])(.*?)\1/i);
-      const responsiveStyle = 'max-width:100%;height:auto';
+        // Do not allow a relative path to escape the selected Tailoring's Grafik directory.
+        if (
+          resolvedUrl.origin !== imageBaseUrl.origin ||
+          !resolvedUrl.pathname.startsWith(imageBaseUrl.pathname)
+        ) {
+          return imageTag;
+        }
 
-      if (styleMatch) {
-        const existingStyle = styleMatch[2].trim().replace(/;?$/, ';');
-        return resolvedImageTag.replace(
-          styleMatch[0],
-          'style=' + styleMatch[1] + existingStyle + responsiveStyle + styleMatch[1]
+        if (projectFeaturesString) {
+          new URLSearchParams(projectFeaturesString).forEach((value, key) => {
+            resolvedUrl.searchParams.set(key, value);
+          });
+        }
+
+        const resolvedImageTag = imageTag.replace(
+          /\\bsrc\\s*=\\s*(["'])(.*?)\\1/i,
+          `src=${quote}${resolvedUrl.toString()}${quote}`
         );
-      }
+        const styleMatch = resolvedImageTag.match(/\\bstyle\\s*=\\s*(["'])(.*?)\\1/i);
+        const responsiveStyle = 'max-width:100%;height:auto';
 
-      return resolvedImageTag.replace(/<img\b/i, '<img style="max-width:100%;height:auto"');
-    } catch {
-      return imageTag;
+        if (styleMatch) {
+          const existingStyle = styleMatch[2].trim().replace(/;?$/, ';');
+          return resolvedImageTag.replace(
+            styleMatch[0],
+            `style=${styleMatch[1]}${existingStyle}${responsiveStyle}${styleMatch[1]}`
+          );
+        }
+
+        return resolvedImageTag.replace(/<img\\b/i, '<img style="max-width:100%;height:auto"');
+      } catch {
+        return imageTag;
+      }
     }
-  });
+  );
 }
 
 export function removeLinksFromHtml(htmlString: string) {
