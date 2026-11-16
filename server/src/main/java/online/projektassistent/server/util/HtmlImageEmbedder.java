@@ -33,6 +33,10 @@ final class HtmlImageEmbedder {
     private HtmlImageEmbedder() { }
 
     static String toMhtml(String html, String partName, int maxWidthPx) {
+        return toMhtml(html, partName, maxWidthPx, HtmlImageEmbedder::download);
+    }
+
+    static String toMhtml(String html, String partName, int maxWidthPx, ImageDownloader downloader) {
         String boundary = "----=_Projektassistent_" + UUID.randomUUID().toString().replace("-", "");
         List<ImagePart> images = new ArrayList<>();
         Map<String, ImagePart> cache = new HashMap<>();
@@ -51,7 +55,7 @@ final class HtmlImageEmbedder {
             try {
                 ImagePart image = cache.get(source);
                 if (image == null) {
-                    image = download(source, maxWidthPx);
+                    image = downloader.download(source, maxWidthPx);
                     cache.put(source, image);
                     images.add(image);
                 }
@@ -92,6 +96,11 @@ final class HtmlImageEmbedder {
                     .append(base64(image.bytes)).append("\r\n");
         }
         return mhtml.append("--").append(boundary).append("--\r\n").toString();
+    }
+
+    @FunctionalInterface
+    interface ImageDownloader {
+        ImagePart download(String source, int maxWidthPx) throws Exception;
     }
 
     private static ImagePart download(String source, int maxWidthPx) throws Exception {
@@ -198,14 +207,14 @@ final class HtmlImageEmbedder {
         return value.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
     }
 
-    private static final class ImagePart {
+    static final class ImagePart {
         private final String location;
         private final String contentType;
         private final byte[] bytes;
         private final int widthPx;
         private final int heightPx;
 
-        private ImagePart(String location, String contentType, byte[] bytes, int widthPx, int heightPx) {
+        ImagePart(String location, String contentType, byte[] bytes, int widthPx, int heightPx) {
             this.location = location;
             this.contentType = contentType;
             this.bytes = bytes;
