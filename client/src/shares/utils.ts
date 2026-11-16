@@ -101,7 +101,11 @@ export function fixLinksInText(testString: string): string {
   );
 }
 
-export function replaceUrlInText(text: string, tailoringParameter: any, projectFeaturesString: string): string {
+export function replaceUrlInText(
+  text: string,
+  tailoringParameter: any,
+  projectFeaturesString: string
+): string {
   return text.replace(
     /src=['"](?:[^"'\/]*\/)*([^'"]+)['"]/g,
     'src="https://vm-api.weit-verein.de/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/' +
@@ -145,7 +149,9 @@ export function replaceImageUrlsInHtml(
     return html;
   }
 
-  const imageBasePath = `/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/${modelVariantId}/Projekttyp/${projectTypeId}/Projekttypvariante/${projectTypeVariantId}/Grafik/`;
+  const imageBasePath =
+    `/Tailoring/V-Modellmetamodell/mm_2021/V-Modellvariante/${modelVariantId}/` +
+    `Projekttyp/${projectTypeId}/Projekttypvariante/${projectTypeVariantId}/Grafik/`;
   const normalizedApiBaseUrl = apiBaseUrl.endsWith('/') ? apiBaseUrl : `${apiBaseUrl}/`;
   const imageBaseUrl = new URL(imageBasePath, normalizedApiBaseUrl);
 
