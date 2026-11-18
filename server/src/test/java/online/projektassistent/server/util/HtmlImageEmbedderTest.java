@@ -99,7 +99,7 @@ class HtmlImageEmbedderTest {
     @Test
     void replacesImageWithEmptyAltUsingGenericFallback() {
         String mhtml = HtmlImageEmbedder.toMhtml(
-                "<img src=\\" + IMAGE_URL + "\">", "chapter", 600,
+                "<img src=\"" + IMAGE_URL + "\">", "chapter", 600,
                 (source, maxWidth) -> { throw new IOException("Image unavailable"); });
 
         assertTrue(decodeHtmlPart(mhtml).contains("[Bild konnte nicht eingebettet werden]"));
