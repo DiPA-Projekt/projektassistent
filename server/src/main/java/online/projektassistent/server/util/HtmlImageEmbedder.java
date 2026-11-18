@@ -25,6 +25,7 @@ final class HtmlImageEmbedder {
     private static final int CONNECT_TIMEOUT_MS = 5000;
     private static final int READ_TIMEOUT_MS = 10000;
     private static final int MAX_IMAGE_BYTES = 10 * 1024 * 1024;
+    private static final String HTML_AMPERSAND = "&amp;";
     private static final Pattern IMG = Pattern.compile("<img\\b[^>]*>", Pattern.CASE_INSENSITIVE);
     private static final Pattern SRC = Pattern.compile("\\bsrc\\s*=\\s*([\"'])(.*?)\\1", Pattern.CASE_INSENSITIVE);
     private static final Pattern STYLE = Pattern.compile("\\bstyle\\s*=\\s*([\"'])(.*?)\\1", Pattern.CASE_INSENSITIVE);
@@ -44,30 +45,8 @@ final class HtmlImageEmbedder {
         StringBuffer rewritten = new StringBuffer();
 
         while (matcher.find()) {
-            String tag = matcher.group();
-            Matcher srcMatcher = SRC.matcher(tag);
-            if (!srcMatcher.find()) {
-                matcher.appendReplacement(rewritten, Matcher.quoteReplacement(tag));
-                continue;
-            }
-
-            String source = srcMatcher.group(2).replace("&amp;", "&");
-            try {
-                ImagePart image = cache.get(source);
-                if (image == null) {
-                    image = downloader.download(source, maxWidthPx);
-                    cache.put(source, image);
-                    images.add(image);
-                }
-                String updated = tag.replace(srcMatcher.group(), "src=\"" + escapeAttribute(image.location) + "\"");
-                updated = applyWidth(updated, image.widthPx, image.heightPx);
-                matcher.appendReplacement(rewritten, Matcher.quoteReplacement(updated));
-            } catch (Exception ex) {
-                String alt = extractAlt(tag);
-                String fallback = alt.isBlank() ? "[Bild konnte nicht eingebettet werden]"
-                        : "[Bild konnte nicht eingebettet werden: " + alt + "]";
-                matcher.appendReplacement(rewritten, Matcher.quoteReplacement("<span>" + escapeText(fallback) + "</span>"));
-            }
+            String updated = rewriteImageTag(matcher.group(), maxWidthPx, downloader, cache, images);
+            matcher.appendReplacement(rewritten, Matcher.quoteReplacement(updated));
         }
         matcher.appendTail(rewritten);
 
@@ -98,13 +77,81 @@ final class HtmlImageEmbedder {
         return mhtml.append("--").append(boundary).append("--\r\n").toString();
     }
 
-    @FunctionalInterface
-    interface ImageDownloader {
-        ImagePart download(String source, int maxWidthPx) throws Exception;
+    private static String rewriteImageTag(
+            String tag, int maxWidthPx, ImageDownloader downloader,
+            Map<String, ImagePart> cache, List<ImagePart> images) {
+        Matcher srcMatcher = SRC.matcher(tag);
+        if (!srcMatcher.find()) {
+            return tag;
+        }
+
+        String source = srcMatcher.group(2).replace(HTML_AMPERSAND, "&");
+        try {
+            ImagePart image = cache.get(source);
+            if (image == null) {
+                image = downloader.download(source, maxWidthPx);
+                cache.put(source, image);
+                images.add(image);
+            }
+            String updated = tag.replace(srcMatcher.group(), "src=\"" + escapeAttribute(image.location) + "\"");
+            return applyWidth(updated, image.widthPx, image.heightPx);
+        } catch (IOException ex) {
+            String alt = extractAlt(tag);
+            String fallback = alt.isBlank() ? "[Bild konnte nicht eingebettet werden]"
+                    : "[Bild konnte nicht eingebettet werden: " + alt + "]";
+            return "<span>" + escapeText(fallback) + "</span>";
+        }
     }
 
-    private static ImagePart download(String source, int maxWidthPx) throws Exception {
-        URI uri = URI.create(source);
+    @FunctionalInterface
+    interface ImageDownloader {
+        ImagePart download(String source, int maxWidthPx) throws IOException;
+    }
+
+    private static ImagePart download(String source, int maxWidthPx) throws IOException {
+        return download(source, maxWidthPx, url -> (HttpURLConnection) url.openConnection());
+    }
+
+    static ImagePart download(String source, int maxWidthPx, HttpConnectionFactory connectionFactory)
+            throws IOException {
+        URI uri = validateImageUri(source);
+        URL url = uri.toURL();
+        HttpURLConnection connection = connectionFactory.open(url);
+        configureConnection(connection);
+
+        try (DisconnectingConnection resource = new DisconnectingConnection(connection)) {
+            int status = connection.getResponseCode();
+            if (status < 200 || status >= 300) {
+                throw new IOException("Image HTTP status " + status);
+            }
+
+            byte[] bytes = readImageBytes(connection);
+            String contentType = imageContentType(connection.getContentType());
+            BufferedImage dimensions = ImageIO.read(new ByteArrayInputStream(bytes));
+            if (contentType == null || dimensions == null) {
+                throw new IOException("Unsupported image format");
+            }
+
+            int displayWidth = Math.min(dimensions.getWidth(), maxWidthPx);
+            int displayHeight = Math.max(1, (int) Math.round(
+                    dimensions.getHeight() * (displayWidth / (double) dimensions.getWidth())));
+            return new ImagePart(uri.toASCIIString(), contentType, bytes, displayWidth, displayHeight);
+        }
+    }
+
+    @FunctionalInterface
+    interface HttpConnectionFactory {
+        HttpURLConnection open(URL url) throws IOException;
+    }
+
+    private static URI validateImageUri(String source) throws IOException {
+        URI uri;
+        try {
+            uri = URI.create(source);
+        } catch (IllegalArgumentException ex) {
+            throw new IOException("Invalid image URL", ex);
+        }
+
         String scheme = uri.getScheme();
         if (scheme == null || (!scheme.equalsIgnoreCase("https") && !scheme.equalsIgnoreCase("http"))
                 || uri.getHost() == null || uri.getUserInfo() != null) {
@@ -120,43 +167,47 @@ final class HtmlImageEmbedder {
                 || address.isSiteLocalAddress() || address.isMulticastAddress()) {
             throw new IOException("Private network image URLs are not allowed");
         }
+        return uri;
+    }
 
-        URL url = uri.toURL();
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    private static void configureConnection(HttpURLConnection connection) {
         connection.setConnectTimeout(CONNECT_TIMEOUT_MS);
         connection.setReadTimeout(READ_TIMEOUT_MS);
         connection.setInstanceFollowRedirects(false);
         connection.setRequestProperty("Accept", "image/png,image/jpeg,image/gif,image/bmp");
         connection.setRequestProperty("User-Agent", "Projektassistent-Docx-Exporter");
+    }
 
-        try {
-            int status = connection.getResponseCode();
-            if (status < 200 || status >= 300) throw new IOException("Image HTTP status " + status);
-            if (connection.getContentLength() > MAX_IMAGE_BYTES) throw new IOException("Image too large");
+    private static byte[] readImageBytes(HttpURLConnection connection) throws IOException {
+        if (connection.getContentLength() > MAX_IMAGE_BYTES) {
+            throw new IOException("Image too large");
+        }
 
-            byte[] bytes;
-            try (ByteArrayOutputStream out = new ByteArrayOutputStream();
-                 var in = connection.getInputStream()) {
-                byte[] buffer = new byte[8192];
-                int total = 0;
-                int count;
-                while ((count = in.read(buffer)) != -1) {
-                    total += count;
-                    if (total > MAX_IMAGE_BYTES) throw new IOException("Image too large");
-                    out.write(buffer, 0, count);
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream();
+             var in = connection.getInputStream()) {
+            byte[] buffer = new byte[8192];
+            int total = 0;
+            int count;
+            while ((count = in.read(buffer)) != -1) {
+                total += count;
+                if (total > MAX_IMAGE_BYTES) {
+                    throw new IOException("Image too large");
                 }
-                bytes = out.toByteArray();
+                out.write(buffer, 0, count);
             }
+            return out.toByteArray();
+        }
+    }
 
-            String contentType = imageContentType(connection.getContentType());
-            BufferedImage dimensions = ImageIO.read(new ByteArrayInputStream(bytes));
-            if (contentType == null || dimensions == null) throw new IOException("Unsupported image format");
+    private static final class DisconnectingConnection implements AutoCloseable {
+        private final HttpURLConnection connection;
 
-            int displayWidth = Math.min(dimensions.getWidth(), maxWidthPx);
-            int displayHeight = Math.max(1, (int) Math.round(
-                    dimensions.getHeight() * (displayWidth / (double) dimensions.getWidth())));
-            return new ImagePart(uri.toASCIIString(), contentType, bytes, displayWidth, displayHeight);
-        } finally {
+        private DisconnectingConnection(HttpURLConnection connection) {
+            this.connection = connection;
+        }
+
+        @Override
+        public void close() {
             connection.disconnect();
         }
     }
@@ -206,53 +257,73 @@ final class HtmlImageEmbedder {
         Matcher matcher = entity.matcher(value);
         StringBuffer decoded = new StringBuffer();
         while (matcher.find()) {
-            String token = matcher.group(1);
-            String replacement;
-            switch (token) {
-                case "amp": replacement = "&"; break;
-                case "quot": replacement = "\""; break;
-                case "apos": replacement = "'"; break;
-                case "lt": replacement = "<"; break;
-                case "gt": replacement = ">"; break;
-                default:
-                    try {
-                        int codePoint = token.startsWith("#x")
-                                ? Integer.parseInt(token.substring(2), 16)
-                                : Integer.parseInt(token.substring(1));
-                        replacement = Character.isValidCodePoint(codePoint)
-                                && (codePoint < Character.MIN_SURROGATE || codePoint > Character.MAX_SURROGATE)
-                                ? new String(Character.toChars(codePoint)) : matcher.group();
-                    } catch (NumberFormatException ex) {
-                        replacement = matcher.group();
-                    }
-            }
+            String original = matcher.group();
+            String replacement = decodeHtmlEntity(matcher.group(1), original);
             matcher.appendReplacement(decoded, Matcher.quoteReplacement(replacement));
         }
         matcher.appendTail(decoded);
         return decoded.toString();
     }
 
+    private static String decodeHtmlEntity(String token, String original) {
+        return switch (token) {
+            case "amp" -> "&";
+            case "quot" -> "\"";
+            case "apos" -> "'";
+            case "lt" -> "<";
+            case "gt" -> ">";
+            default -> decodeNumericEntity(token, original);
+        };
+    }
+
+    private static String decodeNumericEntity(String token, String original) {
+        try {
+            int codePoint = token.startsWith("#x")
+                    ? Integer.parseInt(token.substring(2), 16)
+                    : Integer.parseInt(token.substring(1));
+            if (!Character.isValidCodePoint(codePoint)
+                    || (codePoint >= Character.MIN_SURROGATE && codePoint <= Character.MAX_SURROGATE)) {
+                return original;
+            }
+            return new String(Character.toChars(codePoint));
+        } catch (NumberFormatException ex) {
+            return original;
+        }
+    }
+
     private static String escapeAttribute(String value) {
-        return value.replace("&", "&amp;").replace("\"", "&quot;");
+        return value.replace("&", HTML_AMPERSAND).replace("\"", "&quot;");
     }
 
     private static String escapeText(String value) {
-        return value.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
+        return value.replace("&", HTML_AMPERSAND).replace("<", "&lt;").replace(">", "&gt;");
     }
 
-    static final class ImagePart {
-        private final String location;
-        private final String contentType;
-        private final byte[] bytes;
-        private final int widthPx;
-        private final int heightPx;
+    record ImagePart(String location, String contentType, byte[] bytes, int widthPx, int heightPx) {
+        @Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            if (!(other instanceof ImagePart imagePart)) return false;
+            return widthPx == imagePart.widthPx
+                    && heightPx == imagePart.heightPx
+                    && location.equals(imagePart.location)
+                    && contentType.equals(imagePart.contentType)
+                    && java.util.Arrays.equals(bytes, imagePart.bytes);
+        }
 
-        ImagePart(String location, String contentType, byte[] bytes, int widthPx, int heightPx) {
-            this.location = location;
-            this.contentType = contentType;
-            this.bytes = bytes;
-            this.widthPx = widthPx;
-            this.heightPx = heightPx;
+        @Override
+        public int hashCode() {
+            int result = java.util.Objects.hash(location, contentType, widthPx, heightPx);
+            return 31 * result + java.util.Arrays.hashCode(bytes);
+        }
+
+        @Override
+        public String toString() {
+            return "ImagePart[location=" + location
+                    + ", contentType=" + contentType
+                    + ", bytes=" + java.util.Arrays.toString(bytes)
+                    + ", widthPx=" + widthPx
+                    + ", heightPx=" + heightPx + "]";
         }
     }
 }

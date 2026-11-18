@@ -63,6 +63,16 @@ jobs:
           GIT_HUB_USERNAME: ${{ secrets.GIT_HUB_USERNAME }}
           GIT_HUB_PACKAGES_ACCESS_TOKEN: ${{ secrets.GIT_HUB_PACKAGES_ACCESS_TOKEN_WRITE }}
           NODE_AUTH_TOKEN: ${{ secrets.GIT_HUB_PACKAGES_ACCESS_TOKEN_WRITE }}
+      - name: Upload JaCoCo coverage reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-coverage-reports
+          path: |
+            **/target/site/jacoco/**
+            **/target/jacoco.exec
+          if-no-files-found: warn
+          retention-days: 7
       - name: Deployment to Kubernetes
         if: github.ref == 'refs/heads/develop'
         run: |

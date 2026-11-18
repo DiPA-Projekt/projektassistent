@@ -26,7 +26,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -65,7 +68,7 @@ public class ProductBuilder implements Placeholders {
         dataParams.put(PARTICIPANTS, String.join("; ", singleProduct.getParticipants()));
         dataParams.put(MODEL_VARIANT, singleProduct.getModelVariant());
         dataParams.put(VERSION, singleProduct.getVersion());
-        dataParams.put(DATE, SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.SHORT, SimpleDateFormat.LONG, Locale.GERMANY).format(new Date()));
+        dataParams.put(DATE, formatCurrentDateTime());
 
         List<Chapter> chapters = singleProduct.getChapters();
 
@@ -83,6 +86,12 @@ public class ProductBuilder implements Placeholders {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static String formatCurrentDateTime() {
+        return DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT, FormatStyle.LONG)
+                .withLocale(Locale.GERMANY)
+                .format(ZonedDateTime.now(ZoneId.of("Europe/Berlin")));
     }
 
     private static String getProjectTemplateFilename(String modelVariant) {
@@ -104,7 +113,7 @@ public class ProductBuilder implements Placeholders {
         dataParams.put(PROJECT_NAME, multiProducts.getProjectName());
         dataParams.put(MODEL_VARIANT, multiProducts.getModelVariant());
         dataParams.put(VERSION, multiProducts.getVersion());
-        dataParams.put(DATE, SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.SHORT, SimpleDateFormat.LONG, Locale.GERMANY).format(new Date()));
+        dataParams.put(DATE, formatCurrentDateTime());
 
         Map<String, Path> productTempFiles = createProductTempFiles(multiProducts.getProducts(), dataParams);
         String zipFilenameNoExt = FileUtil.sanitizeFilename(multiProducts.getProjectName()) + "_products";
@@ -293,7 +302,8 @@ public class ProductBuilder implements Placeholders {
      * @param document docx template document
      * @param chapters list of chapters to create
      */
-    private void createChapters(XWPFDocument document, List<Chapter> chapters) throws Exception {
+    private void createChapters(XWPFDocument document, List<Chapter> chapters)
+            throws org.apache.poi.openxml4j.exceptions.InvalidFormatException {
         Optional<XWPFRun> firstChapter = document.getParagraphs().stream().flatMap(paragraph -> paragraph.getRuns().stream())
                 .filter(run -> FIRST_CHAPTER.equals(run.text()))
                 .findFirst();
@@ -321,7 +331,8 @@ public class ProductBuilder implements Placeholders {
      * @param document docx template document
      * @param chapter  chapter
      */
-    private void createChapter(XmlCursor cur, XWPFDocument document, Chapter chapter, Integer index) throws Exception {
+    private void createChapter(XmlCursor cur, XWPFDocument document, Chapter chapter, Integer index)
+            throws org.apache.poi.openxml4j.exceptions.InvalidFormatException {
         String title = chapter.getTitle();
         String content = chapter.getText();
         String samplesText = chapter.getSamplesText();
@@ -479,7 +490,8 @@ public class ProductBuilder implements Placeholders {
     }
 
     private static HtmlXWPFDocument createHtmlDoc(
-            XWPFDocument document, String id, String html, int maxImageWidthPx) throws Exception {
+            XWPFDocument document, String id, String html, int maxImageWidthPx)
+            throws org.apache.poi.openxml4j.exceptions.InvalidFormatException {
         OPCPackage oPCPackage = document.getPackage();
         PackagePartName partName = PackagingURIHelper.createPartName("/word/" + id + ".mht");
         PackagePart part = oPCPackage.createPart(partName, "message/rfc822");
@@ -553,10 +565,6 @@ public class ProductBuilder implements Placeholders {
 
         private String getId() {
             return id;
-        }
-
-        private String getHtml() {
-            return html;
         }
 
         private void setHtml(String html) {
