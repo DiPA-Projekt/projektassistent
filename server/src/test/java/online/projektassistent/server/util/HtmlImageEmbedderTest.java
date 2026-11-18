@@ -239,7 +239,7 @@ class HtmlImageEmbedderTest {
         }
 
         @Override
-        public String contentType() {
+        public String getContentType() {
             return contentType;
         }
 
