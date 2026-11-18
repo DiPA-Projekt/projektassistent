@@ -310,16 +310,17 @@ public class ProductBuilder implements Placeholders {
 
         if (firstChapter.isPresent()) {
             XWPFParagraph para = (XWPFParagraph) firstChapter.get().getParent();
-            XmlCursor cur = para.getCTP().newCursor();
-            cur.toNextSibling();
+            try (XmlCursor cur = para.getCTP().newCursor()) {
+                cur.toNextSibling();
 
-            document.removeBodyElement(document.getPosOfParagraph(para));
+                document.removeBodyElement(document.getPosOfParagraph(para));
 
-            XWPFDocument doc = para.getDocument();
-            int idx = 0;
-            for (Chapter chapter : chapters) {
-                createChapter(cur, doc, chapter, idx++);
-                setCursorToNextStartToken(cur);
+                XWPFDocument doc = para.getDocument();
+                int idx = 0;
+                for (Chapter chapter : chapters) {
+                    createChapter(cur, doc, chapter, idx++);
+                    setCursorToNextStartToken(cur);
+                }
             }
         }
     }
@@ -353,8 +354,9 @@ public class ProductBuilder implements Placeholders {
         HtmlXWPFDocument contentHtmlXWPFDocument = createHtmlDoc(
                 document, "contentHtmlDoc" + index, content, maxImageWidthPx);
 
-        XmlCursor contentCursor = paraContent.getCTP().newCursor();
-        insertAltChunk(contentHtmlXWPFDocument, contentCursor);
+        try (XmlCursor contentCursor = paraContent.getCTP().newCursor()) {
+            insertAltChunk(contentHtmlXWPFDocument, contentCursor);
+        }
 
         // Samples text
 
@@ -364,8 +366,9 @@ public class ProductBuilder implements Placeholders {
         HtmlXWPFDocument samplesHtmlXWPFDocument = createHtmlDoc(
                 document, "samplesHtmlDoc" + index, samplesText, maxImageWidthPx);
 
-        XmlCursor samplesCursor = paraSamples.getCTP().newCursor();
-        insertAltChunk(samplesHtmlXWPFDocument, samplesCursor);
+        try (XmlCursor samplesCursor = paraSamples.getCTP().newCursor()) {
+            insertAltChunk(samplesHtmlXWPFDocument, samplesCursor);
+        }
 
         cur.toNextToken();
 
@@ -453,17 +456,14 @@ public class ProductBuilder implements Placeholders {
      */
     private Path createZipFile(String zipFilename, Map<String, Path> zipEntries) throws IOException {
         Path zipFile = Files.createTempFile(zipFilename, ".zip");
-        OutputStream fos = Files.newOutputStream(zipFile);
-        ZipOutputStream zipOut = new ZipOutputStream(fos);
-
-        for (Map.Entry<String, Path> entry : zipEntries.entrySet()) {
-            ZipEntry zipEntry = new ZipEntry(entry.getKey());
-            zipOut.putNextEntry(zipEntry);
-            zipOut.write(Files.readAllBytes(entry.getValue()));
+        try (ZipOutputStream zipOut = new ZipOutputStream(Files.newOutputStream(zipFile))) {
+            for (Map.Entry<String, Path> entry : zipEntries.entrySet()) {
+                ZipEntry zipEntry = new ZipEntry(entry.getKey());
+                zipOut.putNextEntry(zipEntry);
+                zipOut.write(Files.readAllBytes(entry.getValue()));
+                zipOut.closeEntry();
+            }
         }
-
-        zipOut.close();
-        fos.close();
         return zipFile;
     }
 
