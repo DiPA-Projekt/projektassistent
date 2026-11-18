@@ -59,8 +59,10 @@ class ProductBuilderTest {
     void replacesPlaceholderAcrossMultipleRunsAndRemovesIntermediateRuns() throws Exception {
         try (XWPFDocument document = new XWPFDocument()) {
             XWPFParagraph paragraph = document.createParagraph();
+            XWPFRun prefix = paragraph.createRun();
+            prefix.setText("Vorher ");
             XWPFRun first = paragraph.createRun();
-            first.setText("Vorher [NA");
+            first.setText("[NA");
             XWPFRun middle = paragraph.createRun();
             middle.setText("ME");
             XWPFRun last = paragraph.createRun();
@@ -69,9 +71,10 @@ class ProductBuilderTest {
             ProductBuilder.replaceTextSegment(paragraph, "[NAME]", "Projekt");
 
             assertEquals("Vorher Projekt nachher", paragraph.getText());
-            assertEquals(2, paragraph.getRuns().size());
-            assertEquals("Vorher Projekt", paragraph.getRuns().get(0).text());
-            assertEquals(" nachher", paragraph.getRuns().get(1).text());
+            assertEquals(3, paragraph.getRuns().size());
+            assertEquals("Vorher ", paragraph.getRuns().get(0).text());
+            assertEquals("Projekt", paragraph.getRuns().get(1).text());
+            assertEquals(" nachher", paragraph.getRuns().get(2).text());
         }
     }
 
