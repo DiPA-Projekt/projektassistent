@@ -247,30 +247,38 @@ final class HtmlImageEmbedder {
         Matcher matcher = entity.matcher(value);
         StringBuffer decoded = new StringBuffer();
         while (matcher.find()) {
-            String token = matcher.group(1);
-            String replacement;
-            switch (token) {
-                case "amp": replacement = "&"; break;
-                case "quot": replacement = "\""; break;
-                case "apos": replacement = "'"; break;
-                case "lt": replacement = "<"; break;
-                case "gt": replacement = ">"; break;
-                default:
-                    try {
-                        int codePoint = token.startsWith("#x")
-                                ? Integer.parseInt(token.substring(2), 16)
-                                : Integer.parseInt(token.substring(1));
-                        replacement = Character.isValidCodePoint(codePoint)
-                                && (codePoint < Character.MIN_SURROGATE || codePoint > Character.MAX_SURROGATE)
-                                ? new String(Character.toChars(codePoint)) : matcher.group();
-                    } catch (NumberFormatException ex) {
-                        replacement = matcher.group();
-                    }
-            }
+            String original = matcher.group();
+            String replacement = decodeHtmlEntity(matcher.group(1), original);
             matcher.appendReplacement(decoded, Matcher.quoteReplacement(replacement));
         }
         matcher.appendTail(decoded);
         return decoded.toString();
+    }
+
+    private static String decodeHtmlEntity(String token, String original) {
+        return switch (token) {
+            case "amp" -> "&";
+            case "quot" -> "\"";
+            case "apos" -> "'";
+            case "lt" -> "<";
+            case "gt" -> ">";
+            default -> decodeNumericEntity(token, original);
+        };
+    }
+
+    private static String decodeNumericEntity(String token, String original) {
+        try {
+            int codePoint = token.startsWith("#x")
+                    ? Integer.parseInt(token.substring(2), 16)
+                    : Integer.parseInt(token.substring(1));
+            if (!Character.isValidCodePoint(codePoint)
+                    || (codePoint >= Character.MIN_SURROGATE && codePoint <= Character.MAX_SURROGATE)) {
+                return original;
+            }
+            return new String(Character.toChars(codePoint));
+        } catch (NumberFormatException ex) {
+            return original;
+        }
     }
 
     private static String escapeAttribute(String value) {
