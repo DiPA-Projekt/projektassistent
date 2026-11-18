@@ -109,9 +109,14 @@ final class HtmlImageEmbedder {
     }
 
     private static ImagePart download(String source, int maxWidthPx) throws IOException {
+        return download(source, maxWidthPx, url -> (HttpURLConnection) url.openConnection());
+    }
+
+    static ImagePart download(String source, int maxWidthPx, HttpConnectionFactory connectionFactory)
+            throws IOException {
         URI uri = validateImageUri(source);
         URL url = uri.toURL();
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        HttpURLConnection connection = connectionFactory.open(url);
         configureConnection(connection);
 
         try (DisconnectingConnection resource = new DisconnectingConnection(connection)) {
@@ -132,6 +137,11 @@ final class HtmlImageEmbedder {
                     dimensions.getHeight() * (displayWidth / (double) dimensions.getWidth())));
             return new ImagePart(uri.toASCIIString(), contentType, bytes, displayWidth, displayHeight);
         }
+    }
+
+    @FunctionalInterface
+    interface HttpConnectionFactory {
+        HttpURLConnection open(URL url) throws IOException;
     }
 
     private static URI validateImageUri(String source) throws IOException {
