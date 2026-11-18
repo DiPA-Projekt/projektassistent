@@ -51,6 +51,7 @@ jobs:
       - name: Check via MAVEN
         run: mvn clean install -s .mvn/settings.xml
         env:
+          GITHUB_TOKEN: ${{ secrets.GIT_HUB_PACKAGES_ACCESS_TOKEN_WRITE }}
           GIT_HUB_USERNAME: ${{ secrets.GIT_HUB_USERNAME }}
           GIT_HUB_PACKAGES_ACCESS_TOKEN: ${{ secrets.GIT_HUB_PACKAGES_ACCESS_TOKEN_WRITE }}
           NODE_AUTH_TOKEN: ${{ secrets.GIT_HUB_PACKAGES_ACCESS_TOKEN_WRITE }}
