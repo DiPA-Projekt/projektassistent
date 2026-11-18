@@ -164,6 +164,31 @@ class HtmlImageEmbedderTest {
     }
 
     @Test
+    void imagePartUsesArrayContentForEqualityHashCodeAndToString() {
+        HtmlImageEmbedder.ImagePart first =
+                new HtmlImageEmbedder.ImagePart(IMAGE_URL, "image/png", new byte[]{1, 2, 3}, 20, 10);
+        HtmlImageEmbedder.ImagePart equal =
+                new HtmlImageEmbedder.ImagePart(IMAGE_URL, "image/png", new byte[]{1, 2, 3}, 20, 10);
+        HtmlImageEmbedder.ImagePart different =
+                new HtmlImageEmbedder.ImagePart(IMAGE_URL, "image/png", new byte[]{1, 2, 4}, 20, 10);
+
+        assertEquals(first, equal);
+        assertEquals(first.hashCode(), equal.hashCode());
+        assertNotEquals(first, different);
+        assertTrue(first.toString().contains("bytes=[1, 2, 3]"));
+    }
+
+    @Test
+    void decodesNumericEntitiesInFallbackAltText() {
+        String html = decodeHtmlPart(HtmlImageEmbedder.toMhtml(
+                "<img src=\"" + IMAGE_URL + "\" alt=\"Gr\u00fc\u00dfe &#65; &#x1F600; &#0; &#xD800; &#xZZ;\">",
+                "chapter", 600,
+                (source, maxWidth) -> { throw new IOException("unavailable"); }));
+
+        assertTrue(html.contains("Gr\u00fc\u00dfe A \uD83D\uDE00 &#0; &#xD800; &#xZZ;"));
+    }
+
+    @Test
     void downloadsPngAndCalculatesDimensionsWithoutExternalNetwork() throws Exception {
         byte[] png = createPng(100, 50);
         FakeHttpConnection connection = new FakeHttpConnection(
