@@ -185,7 +185,7 @@ class HtmlImageEmbedderTest {
                 "chapter", 600,
                 (source, maxWidth) -> { throw new IOException("unavailable"); }));
 
-        assertTrue(html.contains("Gr\u00fc\u00dfe A \uD83D\uDE00 &#0; &#xD800; &#xZZ;"));
+        assertTrue(html.contains("Gr\u00fc\u00dfe A \uD83D\uDE00 &amp;#x110000; &amp;#xD800; &amp;#xZZ;"));
     }
 
     @Test
