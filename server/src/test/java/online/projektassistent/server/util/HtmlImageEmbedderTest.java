@@ -236,6 +236,34 @@ class HtmlImageEmbedderTest {
         assertTrue(oversized.disconnected);
     }
 
+
+    @Test
+    void rejectsLocalhostAndPrivateNetworkImageUrlsBeforeOpeningConnection() {
+        assertThrows(IOException.class, () -> HtmlImageEmbedder.download(
+                "http://localhost/image.png", 600,
+                url -> { throw new AssertionError("A local URL must never be opened"); }));
+        assertThrows(IOException.class, () -> HtmlImageEmbedder.download(
+                "http://127.0.0.1/image.png", 600,
+                url -> { throw new AssertionError("A loopback URL must never be opened"); }));
+        assertThrows(IOException.class, () -> HtmlImageEmbedder.download(
+                "http://192.168.1.10/image.png", 600,
+                url -> { throw new AssertionError("A private-network URL must never be opened"); }));
+        assertThrows(IOException.class, () -> HtmlImageEmbedder.download(
+                "http://user@example.com/image.png", 600,
+                url -> { throw new AssertionError("A URL containing user info must never be opened"); }));
+    }
+
+    @Test
+    void rejectsImageWhenStreamExceedsLimitDespiteSmallContentLength() throws Exception {
+        byte[] oversized = new byte[10 * 1024 * 1024 + 1];
+        FakeHttpConnection connection = new FakeHttpConnection(
+                new URL("https://8.8.8.8/image.png"), 200, "image/png", oversized, 1);
+
+        assertThrows(IOException.class, () -> HtmlImageEmbedder.download(
+                "https://8.8.8.8/image.png", 600, url -> connection));
+        assertTrue(connection.disconnected);
+    }
+
     private static byte[] createPng(int width, int height) throws IOException {
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         ByteArrayOutputStream output = new ByteArrayOutputStream();
