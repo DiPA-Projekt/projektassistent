@@ -4,6 +4,14 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.junit.jupiter.api.Test;
+import online.projektassistent.server.model.Chapter;
+import online.projektassistent.server.model.SingleProduct;
+
+import java.io.ByteArrayInputStream;
+import java.lang.reflect.Field;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import java.net.URL;
 import java.util.Optional;
@@ -11,6 +19,49 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ProductBuilderTest {
+
+    @Test
+    void createsSingleProductDocumentWithChapterAndHtmlParts() throws Exception {
+        Chapter chapter = new Chapter();
+        setField(chapter, "title", "Testkapitel");
+        setField(chapter, "text", "<p>Kapitelinhalt</p>");
+        setField(chapter, "samplesText", "<p>Beispielinhalt</p>");
+
+        SingleProduct product = new SingleProduct();
+        setField(product, "productName", "Testprodukt");
+        setField(product, "projectName", "Testprojekt");
+        setField(product, "responsible", "Verantwortlich");
+        setField(product, "participants", List.of("Person A", "Person B"));
+        setField(product, "modelVariant", "Standard");
+        setField(product, "version", "1.0");
+        setField(product, "chapters", List.of(chapter));
+
+        byte[] result = new ProductBuilder().createSingleProduct(product);
+
+        assertTrue(result.length > 0);
+        try (XWPFDocument document = new XWPFDocument(new ByteArrayInputStream(result))) {
+            assertTrue(document.getParagraphs().stream()
+                    .anyMatch(paragraph -> paragraph.getText().contains("Testkapitel")));
+            assertTrue(document.getParagraphs().stream()
+                    .anyMatch(paragraph -> paragraph.getText().contains(ProductBuilder.INSERT_TEXT)));
+        }
+
+        try (ZipInputStream zip = new ZipInputStream(new ByteArrayInputStream(result))) {
+            List<String> entries = new java.util.ArrayList<>();
+            ZipEntry entry;
+            while ((entry = zip.getNextEntry()) != null) {
+                entries.add(entry.getName());
+            }
+            assertTrue(entries.contains("word/contentHtmlDoc0.mht"));
+            assertTrue(entries.contains("word/samplesHtmlDoc0.mht"));
+        }
+    }
+
+    private static void setField(Object target, String name, Object value) throws Exception {
+        Field field = target.getClass().getDeclaredField(name);
+        field.setAccessible(true);
+        field.set(target, value);
+    }
 
     @Test
     void extractsFileExtensionFromUrl() throws Exception {
