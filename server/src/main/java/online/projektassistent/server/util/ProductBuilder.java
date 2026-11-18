@@ -26,7 +26,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.*;
@@ -67,8 +68,7 @@ public class ProductBuilder implements Placeholders {
         dataParams.put(PARTICIPANTS, String.join("; ", singleProduct.getParticipants()));
         dataParams.put(MODEL_VARIANT, singleProduct.getModelVariant());
         dataParams.put(VERSION, singleProduct.getVersion());
-        dataParams.put(DATE, DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT, FormatStyle.LONG)
-                .withLocale(Locale.GERMANY).format(LocalDateTime.now()));
+        dataParams.put(DATE, formatCurrentDateTime());
 
         List<Chapter> chapters = singleProduct.getChapters();
 
@@ -86,6 +86,12 @@ public class ProductBuilder implements Placeholders {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static String formatCurrentDateTime() {
+        return DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT, FormatStyle.LONG)
+                .withLocale(Locale.GERMANY)
+                .format(ZonedDateTime.now(ZoneId.of("Europe/Berlin")));
     }
 
     private static String getProjectTemplateFilename(String modelVariant) {
@@ -107,8 +113,7 @@ public class ProductBuilder implements Placeholders {
         dataParams.put(PROJECT_NAME, multiProducts.getProjectName());
         dataParams.put(MODEL_VARIANT, multiProducts.getModelVariant());
         dataParams.put(VERSION, multiProducts.getVersion());
-        dataParams.put(DATE, DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT, FormatStyle.LONG)
-                .withLocale(Locale.GERMANY).format(LocalDateTime.now()));
+        dataParams.put(DATE, formatCurrentDateTime());
 
         Map<String, Path> productTempFiles = createProductTempFiles(multiProducts.getProducts(), dataParams);
         String zipFilenameNoExt = FileUtil.sanitizeFilename(multiProducts.getProjectName()) + "_products";
