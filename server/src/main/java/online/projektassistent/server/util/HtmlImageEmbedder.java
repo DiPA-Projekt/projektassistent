@@ -1,10 +1,12 @@
 package online.projektassistent.server.util;
 
 import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Iterator;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.URI;
@@ -25,6 +27,8 @@ final class HtmlImageEmbedder {
     private static final int CONNECT_TIMEOUT_MS = 5000;
     private static final int READ_TIMEOUT_MS = 10000;
     private static final int MAX_IMAGE_BYTES = 10 * 1024 * 1024;
+    private static final int MAX_IMAGE_DIMENSION = 12_000;
+    private static final long MAX_IMAGE_PIXELS = 20_000_000L;
     private static final String HTML_AMPERSAND = "&amp;";
     private static final Pattern IMG = Pattern.compile("<img\\b[^>]*>", Pattern.CASE_INSENSITIVE);
     private static final Pattern SRC = Pattern.compile("\\bsrc\\s*=\\s*([\"'])(.*?)\\1", Pattern.CASE_INSENSITIVE);
@@ -127,15 +131,41 @@ final class HtmlImageEmbedder {
 
             byte[] bytes = readImageBytes(connection);
             String contentType = imageContentType(connection.getContentType());
-            BufferedImage dimensions = ImageIO.read(new ByteArrayInputStream(bytes));
-            if (contentType == null || dimensions == null) {
+            if (contentType == null) {
+                throw new IOException("Unsupported image format");
+            }
+            int[] dimensions = readImageDimensions(bytes);
+            int displayWidth = Math.min(dimensions[0], maxWidthPx);
+            int displayHeight = Math.max(1, (int) Math.round(
+                    dimensions[1] * (displayWidth / (double) dimensions[0])));
+            return new ImagePart(uri.toASCIIString(), contentType, bytes, displayWidth, displayHeight);
+        }
+    }
+
+    private static int[] readImageDimensions(byte[] bytes) throws IOException {
+        try (ImageInputStream input = ImageIO.createImageInputStream(new ByteArrayInputStream(bytes))) {
+            if (input == null) {
+                throw new IOException("Unsupported image format");
+            }
+            Iterator<ImageReader> readers = ImageIO.getImageReaders(input);
+            if (!readers.hasNext()) {
                 throw new IOException("Unsupported image format");
             }
 
-            int displayWidth = Math.min(dimensions.getWidth(), maxWidthPx);
-            int displayHeight = Math.max(1, (int) Math.round(
-                    dimensions.getHeight() * (displayWidth / (double) dimensions.getWidth())));
-            return new ImagePart(uri.toASCIIString(), contentType, bytes, displayWidth, displayHeight);
+            ImageReader reader = readers.next();
+            try {
+                reader.setInput(input, true, true);
+                int width = reader.getWidth(0);
+                int height = reader.getHeight(0);
+                if (width <= 0 || height <= 0
+                        || width > MAX_IMAGE_DIMENSION || height > MAX_IMAGE_DIMENSION
+                        || (long) width * height > MAX_IMAGE_PIXELS) {
+                    throw new IOException("Image dimensions exceed the allowed limit");
+                }
+                return new int[]{width, height};
+            } finally {
+                reader.dispose();
+            }
         }
     }
 
