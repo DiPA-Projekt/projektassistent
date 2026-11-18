@@ -5,10 +5,14 @@ import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.junit.jupiter.api.Test;
 import online.projektassistent.server.model.Chapter;
+import online.projektassistent.server.model.MultiProducts;
+import online.projektassistent.server.model.ProductOfProject;
 import online.projektassistent.server.model.SingleProduct;
 
 import java.io.ByteArrayInputStream;
 import java.lang.reflect.Field;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.lang.reflect.Method;
@@ -59,6 +63,54 @@ class ProductBuilderTest {
         }
     }
 
+
+    @Test
+    void createsZipWithReadableDocxForMultipleProducts() throws Exception {
+        Chapter chapter = new Chapter();
+        setField(chapter, "title", "Testkapitel");
+        setField(chapter, "text", "<p>Kapitelinhalt</p>");
+        setField(chapter, "samplesText", "<p>Beispielinhalt</p>");
+
+        ProductOfProject product = new ProductOfProject();
+        setField(product, "productName", "Testprodukt");
+        setField(product, "responsible", "Verantwortlich");
+        setField(product, "participants", List.of("Person A"));
+        setField(product, "modelVariant", "Standard");
+        setField(product, "version", "1.0");
+        setField(product, "chapters", List.of(chapter));
+        setField(product, "externalCopyTemplates", List.of());
+
+        MultiProducts multiProducts = new MultiProducts();
+        setField(multiProducts, "projectName", "Testprojekt");
+        setField(multiProducts, "modelVariant", "Standard");
+        setField(multiProducts, "version", "1.0");
+        setField(multiProducts, "products", List.of(product));
+
+        Path zipFile = new ProductBuilder().createMultipleProducts(multiProducts);
+        try {
+            assertTrue(Files.exists(zipFile));
+            assertTrue(Files.size(zipFile) > 0);
+
+            try (ZipInputStream zip = new ZipInputStream(Files.newInputStream(zipFile))) {
+                ZipEntry entry = zip.getNextEntry();
+                assertNotNull(entry);
+                assertEquals("Testprodukt.docx", entry.getName());
+
+                byte[] docxBytes = zip.readAllBytes();
+                assertTrue(docxBytes.length > 0);
+                try (XWPFDocument document = new XWPFDocument(new ByteArrayInputStream(docxBytes))) {
+                    assertTrue(document.getParagraphs().stream()
+                            .anyMatch(paragraph -> paragraph.getText().contains("Testkapitel")));
+                    assertTrue(document.getParagraphs().stream()
+                            .anyMatch(paragraph -> paragraph.getText().contains(ProductBuilder.INSERT_TEXT)));
+                }
+
+                assertNull(zip.getNextEntry(), "ZIP should contain exactly one product document");
+            }
+        } finally {
+            Files.deleteIfExists(zipFile);
+        }
+    }
 
     @Test
     void replacesPlaceholdersInsideTableCells() throws Exception {
