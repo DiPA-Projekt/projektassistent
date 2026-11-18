@@ -3,6 +3,13 @@ package online.projektassistent.server.util;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -154,6 +161,112 @@ class HtmlImageEmbedderTest {
 
         assertTrue(malformed.contains("[Bild konnte nicht eingebettet werden]"));
         assertTrue(unsupported.contains("[Bild konnte nicht eingebettet werden]"));
+    }
+
+    @Test
+    void downloadsPngAndCalculatesDimensionsWithoutExternalNetwork() throws Exception {
+        byte[] png = createPng(100, 50);
+        FakeHttpConnection connection = new FakeHttpConnection(
+                new URL("https://8.8.8.8/image.png"), 200, "image/png", png, png.length);
+
+        HtmlImageEmbedder.ImagePart image = HtmlImageEmbedder.download(
+                "https://8.8.8.8/image.png", 40, url -> connection);
+
+        assertEquals("https://8.8.8.8/image.png", image.location);
+        assertEquals("image/png", image.contentType);
+        assertArrayEquals(png, image.bytes);
+        assertEquals(40, image.widthPx);
+        assertEquals(20, image.heightPx);
+        assertTrue(connection.disconnected);
+        assertEquals(5000, connection.getConnectTimeout());
+        assertEquals(10000, connection.getReadTimeout());
+        assertFalse(connection.getInstanceFollowRedirects());
+        assertEquals("image/png,image/jpeg,image/gif,image/bmp",
+                connection.getRequestProperty("Accept"));
+    }
+
+    @Test
+    void rejectsHttpErrorAndDisconnectsConnection() throws Exception {
+        FakeHttpConnection connection = new FakeHttpConnection(
+                new URL("https://8.8.8.8/image.png"), 404, "image/png", new byte[0], 0);
+
+        assertThrows(IOException.class, () -> HtmlImageEmbedder.download(
+                "https://8.8.8.8/image.png", 600, url -> connection));
+        assertTrue(connection.disconnected);
+    }
+
+    @Test
+    void rejectsUnsupportedContentTypeAndOversizedImages() throws Exception {
+        byte[] png = createPng(10, 10);
+        FakeHttpConnection unsupported = new FakeHttpConnection(
+                new URL("https://8.8.8.8/image.png"), 200, "text/html", png, png.length);
+        assertThrows(IOException.class, () -> HtmlImageEmbedder.download(
+                "https://8.8.8.8/image.png", 600, url -> unsupported));
+        assertTrue(unsupported.disconnected);
+
+        FakeHttpConnection oversized = new FakeHttpConnection(
+                new URL("https://8.8.8.8/image.png"), 200, "image/png", png, 10 * 1024 * 1024 + 1);
+        assertThrows(IOException.class, () -> HtmlImageEmbedder.download(
+                "https://8.8.8.8/image.png", 600, url -> oversized));
+        assertTrue(oversized.disconnected);
+    }
+
+    private static byte[] createPng(int width, int height) throws IOException {
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        ImageIO.write(image, "png", output);
+        return output.toByteArray();
+    }
+
+    private static final class FakeHttpConnection extends HttpURLConnection {
+        private final int status;
+        private final String contentType;
+        private final byte[] bytes;
+        private final int contentLength;
+        private boolean disconnected;
+
+        private FakeHttpConnection(URL url, int status, String contentType, byte[] bytes, int contentLength) {
+            super(url);
+            this.status = status;
+            this.contentType = contentType;
+            this.bytes = bytes;
+            this.contentLength = contentLength;
+        }
+
+        @Override
+        public int getResponseCode() {
+            return status;
+        }
+
+        @Override
+        public String getContentType() {
+            return contentType;
+        }
+
+        @Override
+        public int getContentLength() {
+            return contentLength;
+        }
+
+        @Override
+        public InputStream getInputStream() {
+            return new ByteArrayInputStream(bytes);
+        }
+
+        @Override
+        public void disconnect() {
+            disconnected = true;
+        }
+
+        @Override
+        public boolean usingProxy() {
+            return false;
+        }
+
+        @Override
+        public void connect() {
+            // No network connection is made in this test.
+        }
     }
 
     private static String decodeHtmlPart(String mhtml) {
