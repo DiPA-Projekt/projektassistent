@@ -10,6 +10,8 @@ import online.projektassistent.server.model.SingleProduct;
 import java.io.ByteArrayInputStream;
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Map;
+import java.lang.reflect.Method;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -55,6 +57,58 @@ class ProductBuilderTest {
             assertTrue(entries.contains("word/contentHtmlDoc0.mht"));
             assertTrue(entries.contains("word/samplesHtmlDoc0.mht"));
         }
+    }
+
+
+    @Test
+    void replacesPlaceholdersInsideTableCells() throws Exception {
+        try (XWPFDocument document = new XWPFDocument()) {
+            var table = document.createTable(1, 1);
+            table.getRow(0).getCell(0).getParagraphs().get(0)
+                    .createRun().setText("Vorher [NAME] nachher");
+
+            Method replace = ProductBuilder.class.getDeclaredMethod(
+                    "replacePlaceholdersInDocument", Map.class, XWPFDocument.class);
+            replace.setAccessible(true);
+            replace.invoke(new ProductBuilder(), Map.of("[NAME]", "Projekt"), document);
+
+            assertEquals("Vorher Projekt nachher",
+                    table.getRow(0).getCell(0).getText());
+        }
+    }
+
+    @Test
+    void createsTableOfContentsWhenPlaceholderExists() throws Exception {
+        try (XWPFDocument document = new XWPFDocument()) {
+            XWPFParagraph paragraph = document.createParagraph();
+            paragraph.createRun().setText("TOC");
+
+            invokeCreateTableOfContents(document);
+
+            assertEquals(1, paragraph.getCTP().sizeOfFldSimpleArray());
+            assertEquals("TOC \\h", paragraph.getCTP().getFldSimpleArray(0).getInstr());
+            assertNotNull(document.getStyles());
+        }
+    }
+
+    @Test
+    void leavesDocumentWithoutTableOfContentsPlaceholderUnchanged() throws Exception {
+        try (XWPFDocument document = new XWPFDocument()) {
+            XWPFParagraph paragraph = document.createParagraph();
+            paragraph.createRun().setText("Kein Inhaltsverzeichnis");
+
+            invokeCreateTableOfContents(document);
+
+            assertEquals(0, paragraph.getCTP().sizeOfFldSimpleArray());
+            assertNull(document.getStyles());
+        }
+    }
+
+    private static void invokeCreateTableOfContents(XWPFDocument document) throws Exception {
+        Method method = ProductBuilder.class.getDeclaredMethod(
+                "createTableOfContents", XWPFDocument.class);
+        method.setAccessible(true);
+        method.invoke(new ProductBuilder(), document);
     }
 
     private static void setField(Object target, String name, Object value) throws Exception {
