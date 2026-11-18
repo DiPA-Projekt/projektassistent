@@ -117,9 +117,9 @@ class HtmlImageEmbedderTest {
 
         assertTrue(html.startsWith("<html>"));
         assertTrue(html.contains("<title>Existing</title>"));
-        assertTrue(html.contains("width=\\"320\\""));
-        assertTrue(html.contains("height=\\"160\\""));
-        assertTrue(html.contains("style=\\"border:0;width:320px;height:160px;max-width:100%\\""));
+        assertTrue(html.contains("width=\"320\""));
+        assertTrue(html.contains("height=\"160\""));
+        assertTrue(html.contains("style=\"border:0;width:320px;height:160px;max-width:100%\""));
         assertFalse(html.contains("width='900'"));
     }
 
@@ -135,7 +135,7 @@ class HtmlImageEmbedderTest {
         String html = decodeHtmlPart(HtmlImageEmbedder.toMhtml(
                 "<img src=\"" + source + "\">", "chapter", 600, downloader));
 
-        assertTrue(html.contains("src=\\"https://cdn.example.test/image.png?a=1&amp;b=2\\""));
+        assertTrue(html.contains("src=\"https://cdn.example.test/image.png?a=1&amp;b=2\""));
     }
 
     @Test
@@ -148,9 +148,9 @@ class HtmlImageEmbedderTest {
     @Test
     void replacesMalformedAndUnsupportedImageUrlsWithFallback() {
         String malformed = decodeHtmlPart(HtmlImageEmbedder.toMhtml(
-                "<img src=\\"http://[invalid\\">", "chapter", 600));
+                "<img src=\"http://[invalid\">", "chapter", 600));
         String unsupported = decodeHtmlPart(HtmlImageEmbedder.toMhtml(
-                "<img src=\\"file:///tmp/image.png\\">", "chapter", 600));
+                "<img src=\"file:///tmp/image.png\">", "chapter", 600));
 
         assertTrue(malformed.contains("[Bild konnte nicht eingebettet werden]"));
         assertTrue(unsupported.contains("[Bild konnte nicht eingebettet werden]"));
