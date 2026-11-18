@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class HtmlImageEmbedderTest {
 
     private static final String IMAGE_URL = "https://example.test/image.png";
-    private static final byte[] IMAGE_BYTES = new byte[]{1, 2, 3, 4, 5};
+    private static final byte[] IMAGE_BYTES = {1, 2, 3, 4, 5};
 
     @Test
     void embedsImageAsMimeResourceAndLimitsDimensions() {
@@ -103,6 +103,57 @@ class HtmlImageEmbedderTest {
                 (source, maxWidth) -> { throw new IOException("Image unavailable"); });
 
         assertTrue(decodeHtmlPart(mhtml).contains("[Bild konnte nicht eingebettet werden]"));
+    }
+
+    @Test
+    void preservesExistingHtmlAndExistingStyleWhileReplacingDimensions() {
+        HtmlImageEmbedder.ImageDownloader downloader = (source, maxWidth) ->
+                new HtmlImageEmbedder.ImagePart(source, "image/png", IMAGE_BYTES, 320, 160);
+        String input = "<html><head><title>Existing</title></head><body>"
+                + "<img src='" + IMAGE_URL + "' width='900' height='450' style='border:0'>"
+                + "</body></html>";
+
+        String html = decodeHtmlPart(HtmlImageEmbedder.toMhtml(input, "chapter", 600, downloader));
+
+        assertTrue(html.startsWith("<html>"));
+        assertTrue(html.contains("<title>Existing</title>"));
+        assertTrue(html.contains("width=\\"320\\""));
+        assertTrue(html.contains("height=\\"160\\""));
+        assertTrue(html.contains("style=\\"border:0;width:320px;height:160px;max-width:100%\\""));
+        assertFalse(html.contains("width='900'"));
+    }
+
+    @Test
+    void decodesAmpersandInSourceAndEscapesReturnedLocation() {
+        String source = "https://example.test/image.png?a=1&amp;b=2";
+        HtmlImageEmbedder.ImageDownloader downloader = (url, maxWidth) -> {
+            assertEquals("https://example.test/image.png?a=1&b=2", url);
+            return new HtmlImageEmbedder.ImagePart(
+                    "https://cdn.example.test/image.png?a=1&b=2", "image/png", IMAGE_BYTES, 20, 10);
+        };
+
+        String html = decodeHtmlPart(HtmlImageEmbedder.toMhtml(
+                "<img src=\"" + source + "\">", "chapter", 600, downloader));
+
+        assertTrue(html.contains("src=\\"https://cdn.example.test/image.png?a=1&amp;b=2\\""));
+    }
+
+    @Test
+    void wrapsNullHtmlAsAnEmptyHtmlDocument() {
+        String html = decodeHtmlPart(HtmlImageEmbedder.toMhtml(null, "chapter", 600));
+        assertTrue(html.contains("<html>"));
+        assertTrue(html.contains("<body></body>"));
+    }
+
+    @Test
+    void replacesMalformedAndUnsupportedImageUrlsWithFallback() {
+        String malformed = decodeHtmlPart(HtmlImageEmbedder.toMhtml(
+                "<img src=\\"http://[invalid\\">", "chapter", 600));
+        String unsupported = decodeHtmlPart(HtmlImageEmbedder.toMhtml(
+                "<img src=\\"file:///tmp/image.png\\">", "chapter", 600));
+
+        assertTrue(malformed.contains("[Bild konnte nicht eingebettet werden]"));
+        assertTrue(unsupported.contains("[Bild konnte nicht eingebettet werden]"));
     }
 
     private static String decodeHtmlPart(String mhtml) {
