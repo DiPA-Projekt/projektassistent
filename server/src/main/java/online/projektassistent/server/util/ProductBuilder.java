@@ -302,7 +302,8 @@ public class ProductBuilder implements Placeholders {
      * @param document docx template document
      * @param chapters list of chapters to create
      */
-    private void createChapters(XWPFDocument document, List<Chapter> chapters) throws Exception {
+    private void createChapters(XWPFDocument document, List<Chapter> chapters)
+            throws org.apache.poi.openxml4j.exceptions.InvalidFormatException {
         Optional<XWPFRun> firstChapter = document.getParagraphs().stream().flatMap(paragraph -> paragraph.getRuns().stream())
                 .filter(run -> FIRST_CHAPTER.equals(run.text()))
                 .findFirst();
@@ -330,7 +331,8 @@ public class ProductBuilder implements Placeholders {
      * @param document docx template document
      * @param chapter  chapter
      */
-    private void createChapter(XmlCursor cur, XWPFDocument document, Chapter chapter, Integer index) throws Exception {
+    private void createChapter(XmlCursor cur, XWPFDocument document, Chapter chapter, Integer index)
+            throws org.apache.poi.openxml4j.exceptions.InvalidFormatException {
         String title = chapter.getTitle();
         String content = chapter.getText();
         String samplesText = chapter.getSamplesText();
