@@ -238,6 +238,19 @@ class HtmlImageEmbedderTest {
 
 
     @Test
+    void rejectsImagesWithExcessiveDimensionsBeforeFullDecode() throws Exception {
+        byte[] png = createPng(12_001, 1);
+        FakeHttpConnection connection = new FakeHttpConnection(
+                new URL("https://8.8.8.8/image.png"), 200, "image/png", png, png.length);
+
+        IOException error = assertThrows(IOException.class, () -> HtmlImageEmbedder.download(
+                "https://8.8.8.8/image.png", 600, url -> connection));
+
+        assertTrue(error.getMessage().contains("dimensions"));
+        assertTrue(connection.disconnected);
+    }
+
+    @Test
     void rejectsLocalhostAndPrivateNetworkImageUrlsBeforeOpeningConnection() {
         assertThrows(IOException.class, () -> HtmlImageEmbedder.download(
                 "http://localhost/image.png", 600,
