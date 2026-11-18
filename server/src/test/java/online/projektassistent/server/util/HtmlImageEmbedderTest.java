@@ -24,7 +24,7 @@ class HtmlImageEmbedderTest {
         };
 
         String mhtml = HtmlImageEmbedder.toMhtml(
-                "<p>Vorher</p><img src=\"" + IMAGE_URL + "\" width=\"1200\" height=\"600\" alt=\"Diagramm\">",
+                "<img src=\"" + IMAGE_URL + "\">", "chapter", 600,
                 "chapter", 400, downloader);
 
         assertTrue(mhtml.contains("Content-Type: multipart/related"));
