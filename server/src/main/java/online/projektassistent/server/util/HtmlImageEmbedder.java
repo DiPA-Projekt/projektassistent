@@ -254,11 +254,11 @@ final class HtmlImageEmbedder {
     }
 
     private static String escapeAttribute(String value) {
-        return value.replace("&", "&amp;").replace("\"", "&quot;");
+        return value.replace("&", HTML_AMPERSAND).replace("\"", "&quot;");
     }
 
     private static String escapeText(String value) {
-        return value.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
+        return value.replace("&", HTML_AMPERSAND).replace("<", "&lt;").replace(">", "&gt;");
     }
 
     static final class ImagePart {
