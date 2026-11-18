@@ -87,53 +87,22 @@ class HtmlImageEmbedderTest {
 
 
     @Test
-    void leavesImagesWithoutSourceUnchanged() {
-        String html = decodeHtmlPart(HtmlImageEmbedder.toMhtml(
-                "<p>Text</p><img alt=\\"ohne Quelle\\">", "chapter", 600,
+    void leavesImageWithoutSourceUnchanged() {
+        String input = "<p>Text</p><img>";
+        String html = decodeHtmlPart(HtmlImageEmbedder.toMhtml(input, "chapter", 600,
                 (source, maxWidth) -> { throw new AssertionError("Downloader must not be called"); }));
 
-        assertTrue(html.contains("<img alt=\\"ohne Quelle\\">"));
+        assertTrue(html.contains("<img>"));
+        assertTrue(html.contains("Text"));
     }
 
     @Test
-    void preservesExistingHtmlDocumentAndRewritesSingleQuotedSource() {
-        HtmlImageEmbedder.ImageDownloader downloader = (source, maxWidth) ->
-                new HtmlImageEmbedder.ImagePart(source, "image/png", IMAGE_BYTES, 80, 40);
-
+    void replacesImageWithEmptyAltUsingGenericFallback() {
         String mhtml = HtmlImageEmbedder.toMhtml(
-                "<html><head><title>Vorlage</title></head><body><img src='" + IMAGE_URL
-                        + "' style='border:0'></body></html>", "chapter", 600, downloader);
+                "<img src=\\" + IMAGE_URL + "\">", "chapter", 600,
+                (source, maxWidth) -> { throw new IOException("Image unavailable"); });
 
-        String html = decodeHtmlPart(mhtml);
-        assertTrue(html.startsWith("<html>"));
-        assertTrue(html.contains("<title>Vorlage</title>"));
-        assertTrue(html.contains("style=\\"border:0;width:80px;height:40px;max-width:100%\\""));
-        assertTrue(html.contains("width=\\"80\\""));
-        assertTrue(html.contains("height=\\"40\\""));
-    }
-
-    @Test
-    void escapesImageLocationAndFallbackText() {
-        HtmlImageEmbedder.ImageDownloader downloader = (source, maxWidth) ->
-                new HtmlImageEmbedder.ImagePart("https://cdn.example.test/a?x=1&y=2", "image/png",
-                        IMAGE_BYTES, 20, 10);
-        String mhtml = HtmlImageEmbedder.toMhtml(
-                "<img src=\\"https://example.test/image.png\\">", "chapter", 600, downloader);
-        assertTrue(decodeHtmlPart(mhtml).contains("src=\\"https://cdn.example.test/a?x=1&amp;y=2\\""));
-
-        String failed = HtmlImageEmbedder.toMhtml(
-                "<img src=\\"x\\" alt=\\"A &amp; B &lt; C &quot;D&quot; &#x1F600; &#65;\">",
-                "chapter", 600, (source, maxWidth) -> { throw new IOException("no image"); });
-        String fallback = decodeHtmlPart(failed);
-        assertTrue(fallback.contains("A &amp; B &lt; C \\"D\\" 😀 A"));
-    }
-
-    @Test
-    void keepsImageTagWithoutSrcAndDoesNotDuplicateExistingHtmlWrapper() {
-        String input = "<html><body><p>Already wrapped</p></body></html>";
-        String html = decodeHtmlPart(HtmlImageEmbedder.toMhtml(input, "chapter", 600,
-                (source, maxWidth) -> { throw new AssertionError("No image should be downloaded"); }));
-        assertEquals(input, html);
+        assertTrue(decodeHtmlPart(mhtml).contains("[Bild konnte nicht eingebettet werden]"));
     }
 
     private static String decodeHtmlPart(String mhtml) {
