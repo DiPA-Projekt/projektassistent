@@ -181,7 +181,7 @@ class HtmlImageEmbedderTest {
     @Test
     void decodesNumericEntitiesInFallbackAltText() {
         String html = decodeHtmlPart(HtmlImageEmbedder.toMhtml(
-                "<img src=\"" + IMAGE_URL + "\" alt=\"Gr\u00fc\u00dfe &#65; &#x1F600; &#0; &#xD800; &#xZZ;\">",
+                "<img src=\"" + IMAGE_URL + "\" alt=\"Gr\u00fc\u00dfe &#65; &#x1F600; &#x110000; &#xD800; &#xZZ;\">",
                 "chapter", 600,
                 (source, maxWidth) -> { throw new IOException("unavailable"); }));
 
