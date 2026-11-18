@@ -136,7 +136,7 @@
                     </execution>
                     <execution>
                         <id>report</id>
-                        <phase>verify</phase>
+                        <phase>install</phase>
                         <goals>
                             <goal>report</goal>
                         </goals>
