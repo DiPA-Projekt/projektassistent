@@ -109,12 +109,39 @@ final class HtmlImageEmbedder {
     }
 
     private static ImagePart download(String source, int maxWidthPx) throws IOException {
+        URI uri = validateImageUri(source);
+        URL url = uri.toURL();
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        configureConnection(connection);
+
+        try (DisconnectingConnection resource = new DisconnectingConnection(connection)) {
+            int status = connection.getResponseCode();
+            if (status < 200 || status >= 300) {
+                throw new IOException("Image HTTP status " + status);
+            }
+
+            byte[] bytes = readImageBytes(connection);
+            String contentType = imageContentType(connection.getContentType());
+            BufferedImage dimensions = ImageIO.read(new ByteArrayInputStream(bytes));
+            if (contentType == null || dimensions == null) {
+                throw new IOException("Unsupported image format");
+            }
+
+            int displayWidth = Math.min(dimensions.getWidth(), maxWidthPx);
+            int displayHeight = Math.max(1, (int) Math.round(
+                    dimensions.getHeight() * (displayWidth / (double) dimensions.getWidth())));
+            return new ImagePart(uri.toASCIIString(), contentType, bytes, displayWidth, displayHeight);
+        }
+    }
+
+    private static URI validateImageUri(String source) throws IOException {
         URI uri;
         try {
             uri = URI.create(source);
         } catch (IllegalArgumentException ex) {
             throw new IOException("Invalid image URL", ex);
         }
+
         String scheme = uri.getScheme();
         if (scheme == null || (!scheme.equalsIgnoreCase("https") && !scheme.equalsIgnoreCase("http"))
                 || uri.getHost() == null || uri.getUserInfo() != null) {
@@ -130,42 +157,35 @@ final class HtmlImageEmbedder {
                 || address.isSiteLocalAddress() || address.isMulticastAddress()) {
             throw new IOException("Private network image URLs are not allowed");
         }
+        return uri;
+    }
 
-        URL url = uri.toURL();
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    private static void configureConnection(HttpURLConnection connection) {
         connection.setConnectTimeout(CONNECT_TIMEOUT_MS);
         connection.setReadTimeout(READ_TIMEOUT_MS);
         connection.setInstanceFollowRedirects(false);
         connection.setRequestProperty("Accept", "image/png,image/jpeg,image/gif,image/bmp");
         connection.setRequestProperty("User-Agent", "Projektassistent-Docx-Exporter");
+    }
 
-        try (DisconnectingConnection resource = new DisconnectingConnection(connection)) {
-            int status = connection.getResponseCode();
-            if (status < 200 || status >= 300) throw new IOException("Image HTTP status " + status);
-            if (connection.getContentLength() > MAX_IMAGE_BYTES) throw new IOException("Image too large");
+    private static byte[] readImageBytes(HttpURLConnection connection) throws IOException {
+        if (connection.getContentLength() > MAX_IMAGE_BYTES) {
+            throw new IOException("Image too large");
+        }
 
-            byte[] bytes;
-            try (ByteArrayOutputStream out = new ByteArrayOutputStream();
-                 var in = connection.getInputStream()) {
-                byte[] buffer = new byte[8192];
-                int total = 0;
-                int count;
-                while ((count = in.read(buffer)) != -1) {
-                    total += count;
-                    if (total > MAX_IMAGE_BYTES) throw new IOException("Image too large");
-                    out.write(buffer, 0, count);
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream();
+             var in = connection.getInputStream()) {
+            byte[] buffer = new byte[8192];
+            int total = 0;
+            int count;
+            while ((count = in.read(buffer)) != -1) {
+                total += count;
+                if (total > MAX_IMAGE_BYTES) {
+                    throw new IOException("Image too large");
                 }
-                bytes = out.toByteArray();
+                out.write(buffer, 0, count);
             }
-
-            String contentType = imageContentType(connection.getContentType());
-            BufferedImage dimensions = ImageIO.read(new ByteArrayInputStream(bytes));
-            if (contentType == null || dimensions == null) throw new IOException("Unsupported image format");
-
-            int displayWidth = Math.min(dimensions.getWidth(), maxWidthPx);
-            int displayHeight = Math.max(1, (int) Math.round(
-                    dimensions.getHeight() * (displayWidth / (double) dimensions.getWidth())));
-            return new ImagePart(uri.toASCIIString(), contentType, bytes, displayWidth, displayHeight);
+            return out.toByteArray();
         }
     }
 
