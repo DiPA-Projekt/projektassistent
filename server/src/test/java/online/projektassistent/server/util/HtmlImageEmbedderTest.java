@@ -18,14 +18,14 @@ class HtmlImageEmbedderTest {
     void embedsImageAsMimeResourceAndLimitsDimensions() {
         HtmlImageEmbedder.ImageDownloader downloader = (source, maxWidth) -> {
             assertEquals(IMAGE_URL, source);
-            assertEquals(400, maxWidth);
+            assertEquals(600, maxWidth);
             return new HtmlImageEmbedder.ImagePart(
                     source, "image/png", IMAGE_BYTES, 400, 200);
         };
 
         String mhtml = HtmlImageEmbedder.toMhtml(
-                "<img src=\"" + IMAGE_URL + "\">", "chapter", 600,
-                "chapter", 400, downloader);
+                "<p>Vorher</p><img src=\"" + IMAGE_URL + "\" alt=\"Diagramm\">",
+                "chapter", 600, downloader);
 
         assertTrue(mhtml.contains("Content-Type: multipart/related"));
         assertTrue(mhtml.contains("Content-Type: image/png"));
