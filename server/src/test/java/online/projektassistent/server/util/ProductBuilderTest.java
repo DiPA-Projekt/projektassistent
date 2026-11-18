@@ -81,7 +81,7 @@ class ProductBuilderTest {
     void createsTableOfContentsWhenPlaceholderExists() throws Exception {
         try (XWPFDocument document = new XWPFDocument()) {
             XWPFParagraph paragraph = document.createParagraph();
-            paragraph.createRun().setText("TOC");
+            paragraph.createRun().setText("{TOC}");
 
             invokeCreateTableOfContents(document);
 
