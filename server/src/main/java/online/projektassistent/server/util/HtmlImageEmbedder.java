@@ -299,5 +299,31 @@ final class HtmlImageEmbedder {
         return value.replace("&", HTML_AMPERSAND).replace("<", "&lt;").replace(">", "&gt;");
     }
 
-    record ImagePart(String location, String contentType, byte[] bytes, int widthPx, int heightPx) { }
+    record ImagePart(String location, String contentType, byte[] bytes, int widthPx, int heightPx) {
+        @Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            if (!(other instanceof ImagePart imagePart)) return false;
+            return widthPx == imagePart.widthPx
+                    && heightPx == imagePart.heightPx
+                    && location.equals(imagePart.location)
+                    && contentType.equals(imagePart.contentType)
+                    && java.util.Arrays.equals(bytes, imagePart.bytes);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = java.util.Objects.hash(location, contentType, widthPx, heightPx);
+            return 31 * result + java.util.Arrays.hashCode(bytes);
+        }
+
+        @Override
+        public String toString() {
+            return "ImagePart[location=" + location
+                    + ", contentType=" + contentType
+                    + ", bytes=" + java.util.Arrays.toString(bytes)
+                    + ", widthPx=" + widthPx
+                    + ", heightPx=" + heightPx + "]";
+        }
+    }
 }
