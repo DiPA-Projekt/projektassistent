@@ -299,39 +299,5 @@ final class HtmlImageEmbedder {
         return value.replace("&", HTML_AMPERSAND).replace("<", "&lt;").replace(">", "&gt;");
     }
 
-    static final class ImagePart {
-        private final String location;
-        private final String contentType;
-        private final byte[] bytes;
-        private final int widthPx;
-        private final int heightPx;
-
-        ImagePart(String location, String contentType, byte[] bytes, int widthPx, int heightPx) {
-            this.location = location;
-            this.contentType = contentType;
-            this.bytes = bytes;
-            this.widthPx = widthPx;
-            this.heightPx = heightPx;
-        }
-
-        String getLocation() {
-            return location;
-        }
-
-        String getContentType() {
-            return contentType;
-        }
-
-        byte[] getBytes() {
-            return bytes;
-        }
-
-        int getWidthPx() {
-            return widthPx;
-        }
-
-        int getHeightPx() {
-            return heightPx;
-        }
-    }
+    record ImagePart(String location, String contentType, byte[] bytes, int widthPx, int heightPx) { }
 }
