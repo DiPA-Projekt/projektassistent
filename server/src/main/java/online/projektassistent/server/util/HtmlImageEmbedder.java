@@ -313,5 +313,25 @@ final class HtmlImageEmbedder {
             this.widthPx = widthPx;
             this.heightPx = heightPx;
         }
+
+        String getLocation() {
+            return location;
+        }
+
+        String getContentType() {
+            return contentType;
+        }
+
+        byte[] getBytes() {
+            return bytes;
+        }
+
+        int getWidthPx() {
+            return widthPx;
+        }
+
+        int getHeightPx() {
+            return heightPx;
+        }
     }
 }
