@@ -172,11 +172,11 @@ class HtmlImageEmbedderTest {
         HtmlImageEmbedder.ImagePart image = HtmlImageEmbedder.download(
                 "https://8.8.8.8/image.png", 40, url -> connection);
 
-        assertEquals("https://8.8.8.8/image.png", image.location);
-        assertEquals("image/png", image.contentType);
-        assertArrayEquals(png, image.bytes);
-        assertEquals(40, image.widthPx);
-        assertEquals(20, image.heightPx);
+        assertEquals("https://8.8.8.8/image.png", image.getLocation());
+        assertEquals("image/png", image.getContentType());
+        assertArrayEquals(png, image.getBytes());
+        assertEquals(40, image.getWidthPx());
+        assertEquals(20, image.getHeightPx());
         assertTrue(connection.disconnected);
         assertEquals(5000, connection.getConnectTimeout());
         assertEquals(10000, connection.getReadTimeout());
