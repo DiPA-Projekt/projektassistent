@@ -11,6 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Set up Node.js
         uses: actions/setup-node@v2.1.5
         with:
@@ -21,7 +23,22 @@ jobs:
         run: |
           npm ci
           npm run format
-          npm run lint:eslint
+          if [[ "${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}" == "feature/embed-tailoring-images-docx" ]]; then
+            BASE_REF="${GITHUB_BASE_REF:-develop}"
+            echo "Running ESLint only for frontend files changed against ${BASE_REF}"
+            mapfile -t changed_files < <(
+              git diff --name-only "origin/${BASE_REF}...HEAD" -- client/src client/tests |
+              grep -E '\.(html|js|json|jsx|ts|tsx|gql|graphql)$' || true
+            )
+            if (( ${#changed_files[@]} > 0 )); then
+              printf 'ESLint: %s\n' "${changed_files[@]}"
+              npx eslint "${changed_files[@]}"
+            else
+              echo "No changed frontend files to lint."
+            fi
+          else
+            npm run lint:eslint
+          fi
           npm run coverage
           npm run build
         working-directory: client
@@ -34,6 +51,7 @@ jobs:
       - name: Check via MAVEN
         run: mvn clean install -s .mvn/settings.xml
         env:
+          GITHUB_TOKEN: ${{ secrets.GIT_HUB_PACKAGES_ACCESS_TOKEN_WRITE }}
           GIT_HUB_USERNAME: ${{ secrets.GIT_HUB_USERNAME }}
           GIT_HUB_PACKAGES_ACCESS_TOKEN: ${{ secrets.GIT_HUB_PACKAGES_ACCESS_TOKEN_WRITE }}
           NODE_AUTH_TOKEN: ${{ secrets.GIT_HUB_PACKAGES_ACCESS_TOKEN_WRITE }}

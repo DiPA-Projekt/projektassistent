@@ -1,5 +1,5 @@
 # This workflow will build a Java project with Maven
-# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-testing-java-project-with-maven
 
 name: Java CI with Maven
 
@@ -54,8 +54,7 @@ jobs:
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
       - name: Build & Analyze with Maven
-        run: | 
-          cat ~/.m2/settings.xml
+        run: |
           mvn -s .mvn/settings.xml -P develop-ci -Ddocker.skip.build=true -B clean install org.sonarsource.scanner.maven:sonar-maven-plugin:sonar --file pom.xml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
@@ -63,6 +62,16 @@ jobs:
           GIT_HUB_USERNAME: ${{ secrets.GIT_HUB_USERNAME }}
           GIT_HUB_PACKAGES_ACCESS_TOKEN: ${{ secrets.GIT_HUB_PACKAGES_ACCESS_TOKEN_WRITE }}
           NODE_AUTH_TOKEN: ${{ secrets.GIT_HUB_PACKAGES_ACCESS_TOKEN_WRITE }}
+      - name: Upload JaCoCo coverage reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-coverage-reports
+          path: |
+            **/target/site/jacoco/**
+            **/target/jacoco.exec
+          if-no-files-found: warn
+          retention-days: 7
       - name: Deployment to Kubernetes
         if: github.ref == 'refs/heads/develop'
         run: |
@@ -74,7 +83,7 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           mvn -s .mvn/settings.xml -P develop-ci -B -DskipTests install docker:push --file pom.xml
           scp server/target/deployment/*.yaml dipa-deployment@dipa.rz-housing.tu-clausthal.de:pa-deployment/develop
-          ssh dipa-deployment@dipa.rz-housing.tu-clausthal.de kubectl apply -k pa-deployment/develop
+          ssh dipa-deployment@dipa.rz-housing.tu-clausthal.de "/snap/bin/microk8s kubectl apply -k pa-deployment/develop"
         env:
           DOCKER_REGISTRY_USERNAME: ${{ github.actor }}
           DOCKER_REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}

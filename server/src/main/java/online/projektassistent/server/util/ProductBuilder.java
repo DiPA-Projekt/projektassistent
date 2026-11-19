@@ -26,7 +26,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -65,7 +68,7 @@ public class ProductBuilder implements Placeholders {
         dataParams.put(PARTICIPANTS, String.join("; ", singleProduct.getParticipants()));
         dataParams.put(MODEL_VARIANT, singleProduct.getModelVariant());
         dataParams.put(VERSION, singleProduct.getVersion());
-        dataParams.put(DATE, SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.SHORT, SimpleDateFormat.LONG, Locale.GERMANY).format(new Date()));
+        dataParams.put(DATE, formatCurrentDateTime());
 
         List<Chapter> chapters = singleProduct.getChapters();
 
@@ -83,6 +86,12 @@ public class ProductBuilder implements Placeholders {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static String formatCurrentDateTime() {
+        return DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT, FormatStyle.LONG)
+                .withLocale(Locale.GERMANY)
+                .format(ZonedDateTime.now(ZoneId.of("Europe/Berlin")));
     }
 
     private static String getProjectTemplateFilename(String modelVariant) {
@@ -104,7 +113,7 @@ public class ProductBuilder implements Placeholders {
         dataParams.put(PROJECT_NAME, multiProducts.getProjectName());
         dataParams.put(MODEL_VARIANT, multiProducts.getModelVariant());
         dataParams.put(VERSION, multiProducts.getVersion());
-        dataParams.put(DATE, SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.SHORT, SimpleDateFormat.LONG, Locale.GERMANY).format(new Date()));
+        dataParams.put(DATE, formatCurrentDateTime());
 
         Map<String, Path> productTempFiles = createProductTempFiles(multiProducts.getProducts(), dataParams);
         String zipFilenameNoExt = FileUtil.sanitizeFilename(multiProducts.getProjectName()) + "_products";
@@ -293,23 +302,25 @@ public class ProductBuilder implements Placeholders {
      * @param document docx template document
      * @param chapters list of chapters to create
      */
-    private void createChapters(XWPFDocument document, List<Chapter> chapters) throws Exception {
+    private void createChapters(XWPFDocument document, List<Chapter> chapters)
+            throws org.apache.poi.openxml4j.exceptions.InvalidFormatException {
         Optional<XWPFRun> firstChapter = document.getParagraphs().stream().flatMap(paragraph -> paragraph.getRuns().stream())
                 .filter(run -> FIRST_CHAPTER.equals(run.text()))
                 .findFirst();
 
         if (firstChapter.isPresent()) {
             XWPFParagraph para = (XWPFParagraph) firstChapter.get().getParent();
-            XmlCursor cur = para.getCTP().newCursor();
-            cur.toNextSibling();
+            try (XmlCursor cur = para.getCTP().newCursor()) {
+                cur.toNextSibling();
 
-            document.removeBodyElement(document.getPosOfParagraph(para));
+                document.removeBodyElement(document.getPosOfParagraph(para));
 
-            XWPFDocument doc = para.getDocument();
-            int idx = 0;
-            for (Chapter chapter : chapters) {
-                createChapter(cur, doc, chapter, idx++);
-                setCursorToNextStartToken(cur);
+                XWPFDocument doc = para.getDocument();
+                int idx = 0;
+                for (Chapter chapter : chapters) {
+                    createChapter(cur, doc, chapter, idx++);
+                    setCursorToNextStartToken(cur);
+                }
             }
         }
     }
@@ -321,7 +332,8 @@ public class ProductBuilder implements Placeholders {
      * @param document docx template document
      * @param chapter  chapter
      */
-    private void createChapter(XmlCursor cur, XWPFDocument document, Chapter chapter, Integer index) throws Exception {
+    private void createChapter(XmlCursor cur, XWPFDocument document, Chapter chapter, Integer index)
+            throws org.apache.poi.openxml4j.exceptions.InvalidFormatException {
         String title = chapter.getTitle();
         String content = chapter.getText();
         String samplesText = chapter.getSamplesText();
@@ -338,22 +350,25 @@ public class ProductBuilder implements Placeholders {
         cur.toNextToken();
         XWPFParagraph paraContent = document.insertNewParagraph(cur);
 
-        HtmlXWPFDocument contentHtmlXWPFDocument = createHtmlDoc(document, "contentHtmlDoc" + index);
-        contentHtmlXWPFDocument.setHtml(contentHtmlXWPFDocument.getHtml().replace("<body></body>", content));
+        int maxImageWidthPx = getMaxImageWidthPx(document);
+        HtmlXWPFDocument contentHtmlXWPFDocument = createHtmlDoc(
+                document, "contentHtmlDoc" + index, content, maxImageWidthPx);
 
-        XmlCursor contentCursor = paraContent.getCTP().newCursor();
-        insertAltChunk(contentHtmlXWPFDocument, contentCursor);
+        try (XmlCursor contentCursor = paraContent.getCTP().newCursor()) {
+            insertAltChunk(contentHtmlXWPFDocument, contentCursor);
+        }
 
         // Samples text
 
         cur.toNextToken();
         XWPFParagraph paraSamples = document.insertNewParagraph(cur);
 
-        HtmlXWPFDocument samplesHtmlXWPFDocument = createHtmlDoc(document, "samplesHtmlDoc" + index);
-        samplesHtmlXWPFDocument.setHtml(samplesHtmlXWPFDocument.getHtml().replace("<body></body>", samplesText));
+        HtmlXWPFDocument samplesHtmlXWPFDocument = createHtmlDoc(
+                document, "samplesHtmlDoc" + index, samplesText, maxImageWidthPx);
 
-        XmlCursor samplesCursor = paraSamples.getCTP().newCursor();
-        insertAltChunk(samplesHtmlXWPFDocument, samplesCursor);
+        try (XmlCursor samplesCursor = paraSamples.getCTP().newCursor()) {
+            insertAltChunk(samplesHtmlXWPFDocument, samplesCursor);
+        }
 
         cur.toNextToken();
 
@@ -441,17 +456,14 @@ public class ProductBuilder implements Placeholders {
      */
     private Path createZipFile(String zipFilename, Map<String, Path> zipEntries) throws IOException {
         Path zipFile = Files.createTempFile(zipFilename, ".zip");
-        OutputStream fos = Files.newOutputStream(zipFile);
-        ZipOutputStream zipOut = new ZipOutputStream(fos);
-
-        for (Map.Entry<String, Path> entry : zipEntries.entrySet()) {
-            ZipEntry zipEntry = new ZipEntry(entry.getKey());
-            zipOut.putNextEntry(zipEntry);
-            zipOut.write(Files.readAllBytes(entry.getValue()));
+        try (ZipOutputStream zipOut = new ZipOutputStream(Files.newOutputStream(zipFile))) {
+            for (Map.Entry<String, Path> entry : zipEntries.entrySet()) {
+                ZipEntry zipEntry = new ZipEntry(entry.getKey());
+                zipOut.putNextEntry(zipEntry);
+                zipOut.write(Files.readAllBytes(entry.getValue()));
+                zipOut.closeEntry();
+            }
         }
-
-        zipOut.close();
-        fos.close();
         return zipFile;
     }
 
@@ -477,13 +489,60 @@ public class ProductBuilder implements Placeholders {
         run.setText(text, 0);
     }
 
-    private static HtmlXWPFDocument createHtmlDoc(XWPFDocument document, String id) throws Exception {
+    private static HtmlXWPFDocument createHtmlDoc(
+            XWPFDocument document, String id, String html, int maxImageWidthPx)
+            throws org.apache.poi.openxml4j.exceptions.InvalidFormatException {
         OPCPackage oPCPackage = document.getPackage();
-        PackagePartName partName = PackagingURIHelper.createPartName("/word/" + id + ".html");
-        PackagePart part = oPCPackage.createPart(partName, "text/html");
+        PackagePartName partName = PackagingURIHelper.createPartName("/word/" + id + ".mht");
+        PackagePart part = oPCPackage.createPart(partName, "message/rfc822");
         HtmlXWPFDocument htmlXWPFDocument = new HtmlXWPFDocument(part, id);
+        htmlXWPFDocument.setHtml(HtmlImageEmbedder.toMhtml(html, id, maxImageWidthPx));
         document.addRelation(htmlXWPFDocument.getId(), new XWPFHtmlRelation(), htmlXWPFDocument);
         return htmlXWPFDocument;
+    }
+
+    /**
+     * Calculates the usable page width in CSS pixels from the section page size and margins.
+     */
+    private static int getMaxImageWidthPx(XWPFDocument document) {
+        CTSectPr section = document.getDocument().getBody().getSectPr();
+        BigInteger pageWidth = BigInteger.valueOf(11906); // A4 width in twips
+        BigInteger leftMargin = BigInteger.valueOf(1440);
+        BigInteger rightMargin = BigInteger.valueOf(1440);
+
+        if (section != null) {
+            if (section.getPgSz() != null) {
+                pageWidth = toBigInteger(section.getPgSz().getW(), pageWidth);
+            }
+            if (section.getPgMar() != null) {
+                leftMargin = toBigInteger(section.getPgMar().getLeft(), leftMargin);
+                rightMargin = toBigInteger(section.getPgMar().getRight(), rightMargin);
+            }
+        }
+
+        long usableTwips = pageWidth.longValue() - leftMargin.longValue() - rightMargin.longValue();
+        return (int) Math.max(1, Math.floor(usableTwips / 15.0));
+    }
+
+    /**
+     * Converts XMLBeans values to BigInteger. Some generated schema getters expose
+     * measurement values as Object rather than BigInteger.
+     */
+    private static BigInteger toBigInteger(Object value, BigInteger fallback) {
+        if (value == null) {
+            return fallback;
+        }
+        if (value instanceof BigInteger bigInteger) {
+            return bigInteger;
+        }
+        if (value instanceof Number number) {
+            return BigInteger.valueOf(number.longValue());
+        }
+        try {
+            return new BigInteger(value.toString());
+        } catch (NumberFormatException ex) {
+            return fallback;
+        }
     }
 
     private static void insertAltChunk(HtmlXWPFDocument htmlXWPFDocument, XmlCursor cursor) {
@@ -508,10 +567,6 @@ public class ProductBuilder implements Placeholders {
             return id;
         }
 
-        private String getHtml() {
-            return html;
-        }
-
         private void setHtml(String html) {
             this.html = html;
         }
@@ -529,9 +584,9 @@ public class ProductBuilder implements Placeholders {
 
     private final static class XWPFHtmlRelation extends POIXMLRelation {
         private XWPFHtmlRelation() {
-            super("text/html",
+            super("message/rfc822",
                     "http://schemas.openxmlformats.org/officeDocument/2006/relationships/aFChunk",
-                    "/word/htmlDoc#.html");
+                    "/word/htmlDoc#.mht");
         }
     }
 }
