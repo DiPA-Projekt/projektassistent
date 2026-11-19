@@ -32,7 +32,7 @@ jobs:
               sed 's#^client/##' |
               grep -E '\.(html|js|json|jsx|ts|tsx|gql|graphql)$' || true
             )
-          elif [[ "$GITHUB_EVENT_NAME" == "push" && "$GITHUB_REF_NAME" == "feature/embed-tailoring-images-docx" ]]; then
+          elif [[ "$GITHUB_EVENT_NAME" == "push" && "$GITHUB_REF_NAME" == "fix/develop-ci-lint-and-docker-plugin" ]]; then
             BASE_REF="develop"
             echo "Running ESLint only for frontend files changed against ${BASE_REF}"
             mapfile -t changed_files < <(
@@ -52,7 +52,7 @@ jobs:
             echo "Running full ESLint check"
             npm run lint:eslint
           fi
-          if [[ "$GITHUB_EVENT_NAME" == "push" && ( "$GITHUB_REF_NAME" == "develop" || "$GITHUB_REF_NAME" == "feature/embed-tailoring-images-docx" ) || "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
+          if [[ "$GITHUB_EVENT_NAME" == "push" && ( "$GITHUB_REF_NAME" == "develop" || "$GITHUB_REF_NAME" == "fix/develop-ci-lint-and-docker-plugin" ) || "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
             if (( ${#changed_files[@]} > 0 )); then
               printf 'ESLint: %s\n' "${changed_files[@]}"
               npx eslint "${changed_files[@]}"
