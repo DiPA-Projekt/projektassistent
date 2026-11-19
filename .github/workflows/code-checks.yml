@@ -30,30 +30,27 @@ jobs:
             mapfile -t changed_files < <(
               git -C "$GITHUB_WORKSPACE" diff --name-only "$BASE_SHA" "$HEAD_SHA" -- client/src client/tests |
               sed 's#^client/##' |
-              grep -E '\.(html|js|json|jsx|ts|tsx|gql|graphql)$' || true
+              grep -E '\\.(html|js|json|jsx|ts|tsx|gql|graphql)$' || true
             )
-            if (( ${#changed_files[@]} > 0 )); then
-              printf 'ESLint: %s\n' "${changed_files[@]}"
-              npx eslint "${changed_files[@]}"
-            else
-              echo "No changed frontend files to lint."
-            fi
-          elif [[ "$GITHUB_HEAD_REF" == "feature/embed-tailoring-images-docx" ]]; then
-            BASE_REF="${GITHUB_BASE_REF:-develop}"
+          elif [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
+            BASE_REF="$GITHUB_BASE_REF"
             echo "Running ESLint only for frontend files changed against ${BASE_REF}"
             mapfile -t changed_files < <(
               git -C "$GITHUB_WORKSPACE" diff --name-only "origin/${BASE_REF}...HEAD" -- client/src client/tests |
               sed 's#^client/##' |
-              grep -E '\.(html|js|json|jsx|ts|tsx|gql|graphql)$' || true
+              grep -E '\\.(html|js|json|jsx|ts|tsx|gql|graphql)$' || true
             )
+          else
+            echo "Running full ESLint check"
+            npm run lint:eslint
+          fi
+          if [[ "$GITHUB_EVENT_NAME" == "push" && "$GITHUB_REF_NAME" == "develop" || "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
             if (( ${#changed_files[@]} > 0 )); then
-              printf 'ESLint: %s\n' "${changed_files[@]}"
+              printf 'ESLint: %s\\n' "${changed_files[@]}"
               npx eslint "${changed_files[@]}"
             else
               echo "No changed frontend files to lint."
             fi
-          else
-            npm run lint:eslint
           fi
           npm run coverage
           npm run build
