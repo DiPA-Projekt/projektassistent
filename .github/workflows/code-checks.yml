@@ -30,10 +30,10 @@ jobs:
             mapfile -t changed_files < <(
               git -C "$GITHUB_WORKSPACE" diff --name-only "$BASE_SHA" "$HEAD_SHA" -- client/src client/tests |
               sed 's#^client/##' |
-              grep -E '\\.(html|js|json|jsx|ts|tsx|gql|graphql)$' || true
+              grep -E '\.(html|js|json|jsx|ts|tsx|gql|graphql)$' || true
             )
             if (( ${#changed_files[@]} > 0 )); then
-              printf 'ESLint: %s\\n' "${changed_files[@]}"
+              printf 'ESLint: %s\n' "${changed_files[@]}"
               npx eslint "${changed_files[@]}"
             else
               echo "No changed frontend files to lint."
@@ -44,10 +44,10 @@ jobs:
             mapfile -t changed_files < <(
               git -C "$GITHUB_WORKSPACE" diff --name-only "origin/${BASE_REF}...HEAD" -- client/src client/tests |
               sed 's#^client/##' |
-              grep -E '\\.(html|js|json|jsx|ts|tsx|gql|graphql)$' || true
+              grep -E '\.(html|js|json|jsx|ts|tsx|gql|graphql)$' || true
             )
             if (( ${#changed_files[@]} > 0 )); then
-              printf 'ESLint: %s\\n' "${changed_files[@]}"
+              printf 'ESLint: %s\n' "${changed_files[@]}"
               npx eslint "${changed_files[@]}"
             else
               echo "No changed frontend files to lint."
